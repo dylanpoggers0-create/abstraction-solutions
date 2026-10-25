@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- FIX: tells the browser how to read characters, so the 🔇 / 🔊 emoji display correctly -->
+    <meta charset="UTF-8">
+    <!-- FIX: makes phones use their real screen width instead of zooming out a desktop page -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Abstraction Solutions: AI Made Simple</title>
+
+    <!-- Favicon Links -->
+    <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
+    <link rel="shortcut icon" href="abstraction_solutions.jpg">
+
+    <style>
+        /* NEW: brand colors in one place. Change them here and the whole page updates. */
+        :root {
+            --green: #7ee96f;
+            --green-dim: rgba(126, 233, 111, 0.35);
+            --text-muted: #9aa69c;
+        }
+
+        /* NEW: makes width/height include padding + border (avoids surprise overflow) */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* NEW: smooth scrolling when you click Home / Services / Contact */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* STICKY HEADER BOX
+           FIX: "fixed" instead of "sticky" so the header floats over the video
+           without needing the -85px margin trick on the video. */
+        .header-wrapper {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            padding: 0 16px;
+            pointer-events: none;
+        }
+
+        .header-container {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 20px;
+            background-color: rgba(0, 0, 0, 0.75);
+            border: 2px solid white;
+            border-radius: 14px;
+            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* NEW: Safari needs this prefix */
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-box img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .brand-box h1 {
+            margin: 0;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        /* HOME / MENU BUTTON */
+        .home-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        .home-btn:hover {
+            background-color: white;
+            color: black;
+        }
+
+        .home-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+        }
+
+        /* SMOOTH EXPANDING NAVBAR LINKS */
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: max-width 0.4s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease;
+            align-items: center;
+        }
+
+        /* WHEN EXPANDED */
+        .header-container.expanded .nav-links {
+            max-width: 250px;
+            opacity: 1;
+            margin-left: 5px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        /* CHANGED: brand green on hover instead of grey */
+        .nav-links a:hover {
+            color: var(--green);
+        }
+
+        /* FULLSCREEN VIDEO CONTAINER
+           FIX: no more negative margin; the header is fixed now, so the video simply starts at the top. */
+        .video-container {
+            position: relative;
+            width: 100%;          /* FIX: 100vw includes the scrollbar and causes sideways scroll */
+            height: 100vh;
+            overflow: hidden;
+            background: black;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            /* FIX: "cover" crops the sides of the ad on narrow screens and cuts off its text.
+               "contain" always shows the whole video; the black background fills any gap. */
+            object-fit: contain;
+            display: block;
+        }
+
+        .audio-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+        }
+
+        .audio-btn:hover {
+            background-color: white;
+            color: black;
+        }
+
+        /* NEW: when you jump to #services or #contact, leave room so the header doesn't cover the heading */
+        section {
+            scroll-margin-top: 110px;
+        }
+
+        /* NEW: shared look for section headings */
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin: 70px 20px 10px;
+        }
+
+        .section-sub {
+            text-align: center;
+            color: var(--text-muted);
+            margin: 0 20px;
+            line-height: 1.5;
+        }
+
+        /* CIRCULAR RECTANGLES (PILLS) SECTION */
+        .pill-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 20px 70px;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            background-color: black;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50px;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;  /* NEW: pills are links now, so remove the underline */
+            transition: all 0.3s ease;
+        }
+
+        .pill:hover {
+            background-color: white;
+            color: black;
+        }
+
+        /* NEW: makes "Get Started" stand out as the main action */
+        .pill.primary {
+            border-color: var(--green);
+            color: var(--green);
+            box-shadow: 0 0 24px var(--green-dim);
+        }
+
+        .pill.primary:hover {
+            background-color: var(--green);
+            color: black;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #333;
+            margin: 30px 0;
+        }
+
+        /* NEW: contact section + footer */
+        .contact {
+            text-align: center;
+            padding-bottom: 60px;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 0 20px 40px;
+        }
+
+        /* NEW: PHONE LAYOUT (screens 600px wide or less) */
+        @media (max-width: 600px) {
+            .header-wrapper {
+                top: 12px;
+            }
+
+            /* let the nav links drop onto their own row under the logo */
+            .header-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+                padding: 10px 14px;
+            }
+
+            .brand-box h1 {
+                font-size: 1rem;
+            }
+
+            .brand-box img {
+                width: 34px;
+                height: 34px;
+            }
+
+            .home-btn {
+                width: 34px;
+                height: 34px;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                max-width: none;
+                max-height: 0;
+                transition: max-height 0.35s ease-in-out, opacity 0.3s ease-in-out;
+            }
+
+            .header-container.expanded .nav-links {
+                max-width: none;
+                max-height: 40px;
+                margin-left: 0;
+            }
+
+            /* a 16:9 box fits the ad exactly on a phone instead of a tall black screen */
+            .video-container {
+                height: auto;
+                aspect-ratio: 16 / 9;
+                margin-top: 90px;
+            }
+
+            .audio-btn {
+                bottom: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                margin-top: 50px;
+            }
+
+            .pill-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY HEADER WITH EXPANDING NAV -->
+    <div class="header-wrapper">
+        <div class="header-container" id="headerBox">
+            <div class="brand-box">
+                <h1>ABSTRACTION SOLUTIONS</h1>
+                <img src="abstraction_solutions.jpg" alt="Abstraction Solutions logo">
+            </div>
+
+            <!-- Home Icon Button
+                 NEW: aria-label / aria-expanded tell screen readers what this button does -->
+            <button class="home-btn" onclick="toggleNav()" title="Toggle Navigation"
+                    aria-label="Toggle navigation" aria-expanded="false" id="navToggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </button>
+
+            <!-- Hidden Links That Expand Out -->
+            <nav class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#services">Services</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- VIDEO
+         FIX: added "loop" so the ad replays instead of freezing on the last frame -->
+    <div class="video-container" id="home">
+        <video id="heroVideo" autoplay muted loop playsinline poster="ad-thumbnail.jpg">
+            <source src="ad1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button id="audioToggle" class="audio-btn" onclick="toggleAudio()">🔇 Unmute</button>
+    </div>
+
+    <!-- THREE CIRCULAR RECTANGLES
+         CHANGED: <a> links instead of <div>s, so clicking them actually goes somewhere -->
+    <section id="services">
+        <h2 class="section-title">What we do</h2>
+        <p class="section-sub">AI education, ethical AI, and custom tools for people, researchers and companies.</p>
+        <div class="pill-container">
+            <a class="pill" href="#contact">AI Automation</a>
+            <a class="pill" href="#contact">Custom Workflows</a>
+            <a class="pill primary" href="#contact">Get Started</a>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- NEW: the "Contact" link in the nav needed somewhere to land -->
+    <section class="contact" id="contact">
+        <h2 class="section-title">Let's build something</h2>
+        <p class="section-sub">Have a project or a question about AI? Reach out.</p>
+        <div class="pill-container">
+            <!-- TODO: replace with your real business email -->
+            <a class="pill primary" href="mailto:hello@example.com">Email us</a>
+        </div>
+    </section>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+    <script>
+        function toggleAudio() {
+            const video = document.getElementById('heroVideo');
+            const btn = document.getElementById('audioToggle');
+
+            if (video.muted) {
+                video.muted = false;
+                video.play(); // NEW: makes sure sound starts even if the video had paused
+                btn.textContent = '🔊 Mute';
+            } else {
+                video.muted = true;
+                btn.textContent = '🔇 Unmute';
+            }
+        }
+
+        function toggleNav() {
+            const headerBox = document.getElementById('headerBox');
+            const isOpen = headerBox.classList.toggle('expanded');
+            // NEW: keep the screen-reader state in sync with what's on screen
+            document.getElementById('navToggle').setAttribute('aria-expanded', isOpen);
+        }
+
+        // NEW: close the menu after you tap a link (mainly helps on phones)
+        document.querySelectorAll('.nav-links a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                document.getElementById('headerBox').classList.remove('expanded');
+                document.getElementById('navToggle').setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+
+</body>
+</html>
