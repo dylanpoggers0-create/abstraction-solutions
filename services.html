@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Services | Abstraction Solutions</title>
+
+    <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
+    <link rel="shortcut icon" href="abstraction_solutions.jpg">
+
+    <!-- Shared styles (header, side nav, pills, footer...) -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Styles only this page uses -->
+    <style>
+        /* SERVICES PAGE ONLY */
+        /* top banner */
+        .hero {
+            padding: 150px 24px 20px;   /* room for the floating header */
+            text-align: center;
+        }
+
+        .eyebrow {
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin: 14px 0 16px;
+        }
+
+        /* grid of service cards: 2 across on wide screens, 1 on phones */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 24px;
+        }
+
+        .service-card {
+            background-color: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 28px;
+            scroll-margin-top: 30px; 
+            transition: border-color 0.25s ease, transform 0.25s ease;
+        }
+
+        .service-card:hover {
+            border-color: var(--green);
+            transform: translateY(-4px);
+        }
+
+        /* highlight the card you jumped to from the home page */
+        .service-card:target {
+            border-color: var(--green);
+            box-shadow: 0 0 30px var(--green-dim);
+        }
+
+        .service-card .icon-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+
+        .service-card .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .service-card h2 {
+            margin: 0 0 10px;
+            font-size: 1.35rem;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* "ethical by design" strip */
+        .promise {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ">" means only the direct child div, not the icon's div inside it */
+        .promise > div {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            border: 1px solid var(--green-dim);
+            background-color: var(--green-soft);
+            border-radius: 18px;
+            padding: 22px 26px;
+        }
+
+        .promise p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .promise strong {
+            color: var(--green);
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding-top: 120px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<!-- data-page tells nav.js which page this is ("Services" shows as the current page) -->
+<body data-page="services">
+
+    <!-- The header, Menu tab and side nav are built here by nav.js -->
+    <div id="site-nav"></div>
+    <script src="nav.js"></script>
+
+    <section class="hero">
+        <div class="eyebrow">SERVICES</div>
+        <h1>AI, made simple.</h1>
+        <p class="section-sub">From understanding AI to building with it, we help people, researchers and companies put it to work clearly and responsibly.</p>
+    </section>
+
+    <!-- Each card has an id so other pages can link straight to it, e.g. services.html#automation -->
+    <div class="services-grid">
+
+        <article class="service-card" id="education">
+            <div class="icon-badge">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <h2>AI Education</h2>
+            <p>Plain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background.</p>
+        </article>
+
+        <article class="service-card" id="automation">
+            <div class="icon-badge">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h2>AI Automation</h2>
+            <p>Hand repetitive work to AI: reports, data entry, sorting and the everyday busywork that slows a team down.</p>
+        </article>
+
+        <article class="service-card" id="workflows">
+            <div class="icon-badge">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M6.5 10v4a3 3 0 0 0 3 3H14"/></svg>
+            </div>
+            <h2>Custom Workflows</h2>
+            <p>Workflows built around how you already work, connecting the tools you use every day instead of replacing them.</p>
+        </article>
+
+        <article class="service-card" id="models">
+            <div class="icon-badge">
+                <svg class="icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <h2>Models, Tools &amp; Code</h2>
+            <p>Custom tools, machine learning models and code for people, researchers and companies, including efficient edge AI built on our SLGN + DPE research.</p>
+        </article>
+
+    </div>
+
+    <section class="promise">
+        <div>
+            <div class="icon-badge">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <p><strong>Ethical by design.</strong> Every project is built to be transparent and responsible, so you know what your AI is doing and why.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title">Not sure what you need?</h2>
+        <p class="section-sub">Tell us what you're working on and we'll point you in the right direction.</p>
+        <div class="pill-container">
+            <a class="pill primary" href="index.html#contact">Get Started</a>
+        </div>
+    </section>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+</body>
+</html>
