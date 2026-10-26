@@ -16,15 +16,21 @@ const ICONS = {
     services: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
     contact:  '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>',
     menu:     '<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>',
-    close:    '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+    close:    '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    about:    '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
 };
 
 // The menu. "id" must match data-page="..." on that page's <body>.
 const PAGES = [
     { id: 'home',     label: 'Home',     href: 'index.html',         icon: 'home' },
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
+    { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
     { id: 'contact',  label: 'Contact',  href: 'index.html#contact', icon: 'contact' }
 ];
+
+// The folder nav.js lives in (your main site folder). Putting BASE in front of
+// links and images makes them work from pages inside subfolders too.
+const BASE = document.currentScript.src.replace(/nav\.js.*$/, '');
 
 function svg(name) {
     return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + ICONS[name] + '</svg>';
@@ -37,7 +43,7 @@ const current = PAGES.find(function (p) { return p.id === currentId; }) || PAGES
 // One link per page; the current one gets class="active" (turns green)
 const links = PAGES.map(function (p) {
     const active = p.id === current.id ? ' class="active" aria-current="page"' : '';
-    return '<a href="' + p.href + '"' + active + '>' + svg(p.icon) + p.label + '</a>';
+    return '<a href="' + BASE + p.href + '"' + active + '>' + svg(p.icon) + p.label + '</a>';
 }).join('');
 
 document.getElementById('site-nav').innerHTML =
@@ -49,7 +55,7 @@ document.getElementById('site-nav').innerHTML =
         '<label for="nav-toggle" class="header-container" title="Open menu">' +
             '<span class="brand-box">' +
                 '<span class="brand-name">ABSTRACTION SOLUTIONS</span>' +
-                '<img src="abstraction_solutions.jpg" alt="Abstraction Solutions logo">' +
+                '<img src="' + BASE + 'abstraction_solutions.jpg" alt="Abstraction Solutions logo">' +
             '</span>' +
         '</label>' +
     '</div>' +
@@ -61,7 +67,7 @@ document.getElementById('site-nav').innerHTML =
     '<aside class="side-nav">' +
         '<div class="side-nav-top">' +
             '<div class="side-brand">' +
-                '<img src="abstraction_solutions.jpg" alt="">' +
+                '<img src="' + BASE + 'abstraction_solutions.jpg" alt="">' +
                 '<span>ABSTRACTION<br>SOLUTIONS</span>' +
             '</div>' +
             '<label for="nav-toggle" class="close-btn" title="Close menu">' + svg('close') + '</label>' +
