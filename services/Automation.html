@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Automation | Abstraction Solutions</title>
+    <link rel="icon" type="image/jpeg" href="../abstraction_solutions.jpg">
+
+    <!-- "../" = go up one folder (these pages live inside the services folder) -->
+
+    <!-- Shared styles (header, side nav, pills, footer) -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Styles for this page only -->
+    <style>
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 130px 24px 40px;   /* top padding keeps content below the floating header */
+        }
+
+        /* round green back button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--green-dim);
+            background-color: var(--green-soft);
+            color: var(--green);                                   /* logo green */
+            box-shadow: 0 0 14px rgba(126, 233, 111, 0.15);        /* faint glow */
+            transition: background-color 0.2s ease, color 0.2s ease,
+                        box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        /* the arrow drawing takes its color from the button */
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* hover: fills green, arrow turns black, nudges left */
+        .back-btn:hover {
+            background-color: var(--green);
+            color: black;
+            box-shadow: 0 0 22px var(--green-dim);
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+
+<!-- "services" keeps the Services link highlighted in the side nav -->
+<body data-page="services">
+
+    <!-- Header, Menu tab and side nav (built by nav.js) -->
+    <div id="site-nav"></div>
+    <script src="../nav.js"></script>
+
+    <main>
+        <a href="../services.html" class="back-btn" aria-label="Back to services" title="Back to services">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </a>
+
+        <h1>AI Automation</h1>
+        <p>Short description of this service.</p>
+
+        <section>
+            <h2>How it works</h2>
+            <!-- video goes here -->
+        </section>
+
+        <section>
+            <h2>Past projects</h2>
+            <!-- project cards go here -->
+        </section>
+    </main>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Education | Abstraction Solutions</title>
+    <link rel="icon" type="image/jpeg" href="../abstraction_solutions.jpg">
+
+    <!-- "../" = go up one folder (this page lives inside the services folder) -->
+
+    <!-- Shared styles (header, side nav, pills, footer) -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Styles for this page only -->
+    <style>
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 130px 24px 40px;   /* top padding keeps content below the floating header */
+        }
+
+        /* ---------- round green back button ---------- */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--green-dim);
+            background-color: var(--green-soft);
+            color: var(--green);                                   /* logo green */
+            box-shadow: 0 0 14px rgba(126, 233, 111, 0.15);        /* faint glow */
+            transition: background-color 0.2s ease, color 0.2s ease,
+                        box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        /* the arrow drawing takes its color from the button */
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* hover: fills green, arrow turns black, nudges left */
+        .back-btn:hover {
+            background-color: var(--green);
+            color: black;
+            box-shadow: 0 0 22px var(--green-dim);
+            transform: translateX(-3px);
+        }
+
+        /* ---------- page heading ---------- */
+        .page-intro {
+            margin: 28px 0 10px;
+        }
+
+        .eyebrow {
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .page-intro h1 {
+            font-size: 3rem;
+            margin: 10px 0 14px;
+        }
+
+        .lead {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            line-height: 1.7;
+            max-width: 680px;
+            margin: 0;
+        }
+
+        /* ---------- section headings ---------- */
+        main section {
+            margin-top: 64px;
+        }
+
+        main h2 {
+            font-size: 1.6rem;
+            margin: 0 0 6px;
+        }
+
+        .section-note {
+            color: var(--text-muted);
+            margin: 0 0 24px;
+            line-height: 1.5;
+        }
+
+        /* ---------- VIDEO GALLERY ---------- */
+        .gallery {
+            display: grid;
+            /* as many columns as fit, each at least 320px (2 videos = 2 columns on a laptop) */
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 22px;
+        }
+
+        .gallery-item {
+            margin: 0;                         /* <figure> has a default margin */
+            background-color: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: hidden;                  /* clips the video to the rounded corners */
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: var(--green-dim);
+            box-shadow: 0 0 30px rgba(126, 233, 111, 0.12);
+        }
+
+        .gallery-item video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            display: block;                    /* removes the small gap under videos */
+            background-color: black;
+        }
+
+        .gallery-item figcaption {
+            padding: 18px 20px 20px;
+        }
+
+        .gallery-item figcaption strong {
+            display: block;
+            font-size: 1.15rem;
+            margin-bottom: 6px;
+        }
+
+        .gallery-item figcaption span {
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* small green "VIDEO · length" label */
+        .tag {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background-color: var(--green-soft);
+            color: var(--green);
+            font-size: 0.72rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+
+        /* ---------- PAST PROJECTS ---------- */
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
+        }
+
+        .project-card {
+            background-color: var(--panel);
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--green);
+            border-radius: 16px;
+            padding: 22px 24px;
+        }
+
+        .project-card h3 {
+            margin: 0 0 8px;
+            font-size: 1.15rem;
+        }
+
+        .project-card p {
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ---------- phones ---------- */
+        @media (max-width: 600px) {
+            main {
+                padding-top: 105px;
+            }
+
+            .page-intro h1 {
+                font-size: 2.2rem;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<!-- "services" keeps the Services link highlighted in the side nav -->
+<body data-page="services">
+
+    <!-- Header, Menu tab and side nav (built by nav.js) -->
+    <div id="site-nav"></div>
+    <script src="../nav.js"></script>
+
+    <main>
+        <a href="../services.html" class="back-btn" aria-label="Back to services" title="Back to services">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </a>
+
+        <!-- PAGE HEADING -->
+        <div class="page-intro">
+            <div class="eyebrow">AI EDUCATION</div>
+            <h1>Making AI make sense.</h1>
+            <p class="lead">Plain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background.</p>
+        </div>
+
+        <!-- VIDEO GALLERY -->
+        <section>
+            <h2>Educational Sources and Explanations</h2>
+            <p class="section-note">Short videos that break down the ideas behind modern AI.</p>
+
+            <div class="gallery">
+
+                <!-- VIDEO (copy this whole <figure> block to add another video) -->
+                <figure class="gallery-item">
+                    <video controls preload="metadata" poster="../videos/mathisart-thumbnail.jpg">
+                        <source src="../videos/mathisart.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption>
+                        <span class="tag">VIDEO · 1:53</span>
+                        <strong>Math is Art: Backpropagation</strong>
+                        <span>How AI models learn, explained through painting a picture: draft, step back, fix what's off, repeat.</span>
+                    </figcaption>
+                </figure>
+
+                <figure class="gallery-item">
+                    <video controls preload="metadata" poster="../videos/ragexplained-thumbnail.jpg">
+                        <source src="../videos/ragexplained.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption>
+                        <span class="tag">VIDEO · 1:43</span>
+                        <strong>RAG Explained Simply</strong>
+                        <span>Why AI sometimes makes things up, and how Retrieval-Augmented Generation makes it answer from real sources instead.</span>
+                    </figcaption>
+                </figure>
+
+            </div>
+        </section>
+
+        <!-- PAST PROJECTS -->
+        <section>
+            <h2>Past projects</h2>
+            <p class="section-note">Things we've made to help people understand AI.</p>
+
+            <div class="projects">
+
+                <!-- PROJECT (copy this whole <article> block to add another project) -->
+                <article class="project-card">
+                    <h3>Project name</h3>
+                    <p>A short description of the project: what it is, who it was for, and what it taught.</p>
+                </article>
+
+                <article class="project-card">
+                    <h3>Project name</h3>
+                    <p>A short description of the project: what it is, who it was for, and what it taught.</p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- CALL TO ACTION -->
+        <section>
+            <div class="pill-container">
+                <a class="pill primary" href="../#contact">Get in touch</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+</body>
+</html>

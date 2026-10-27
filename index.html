@@ -71,6 +71,24 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* QUOTE SECTION */
+        .quote {
+            text-align: center;
+        }
+
+        .quote-note {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            max-width: 560px;
+            margin: -40px auto 40px;   /* tucks it up under the button */
+            padding: 0 20px;
+            line-height: 1.5;
+        }
+
+        .quote-note a {
+            color: var(--green);
+        }
     </style>
 </head>
 
@@ -95,10 +113,27 @@
         <h2 class="section-title">What we do</h2>
         <p class="section-sub">AI education, ethical AI, and custom tools for people, researchers and companies.</p>
         <div class="pill-container">
-            <a class="pill" href="services.html#automation">AI Automation</a>
-            <a class="pill" href="services.html#workflows">Custom Workflows</a>
-            <a class="pill primary" href="#contact">Get Started</a>
+            <a class="pill" href="services/automation.html">AI Automation</a>
+            <a class="pill" href="services/workflows.html">Custom Workflows</a>
+            <a class="pill primary" href="#quote">Get Started</a>
         </div>
+    </section>
+
+    <hr>
+
+    <!-- QUOTE (the button will open the quote engine later) -->
+    <section class="quote" id="quote">
+        <h2 class="section-title">Get a quote today!</h2>
+        <p class="section-sub">Have a project for us, but scared to see the bill? Get an instant quote.</p>
+
+        <div class="pill-container">
+            <a class="pill primary" href="#contact">Get a quote</a>
+        </div>
+
+        <p class="quote-note">
+            Note: This quote is an estimate created by our Abstraction Solutions Computational Engine v1.0.
+            For a final quote, contact us at <a href="mailto:dylanpoggers0@gmail.com">dylanpoggers0@gmail.com</a>.
+        </p>
     </section>
 
     <hr>
