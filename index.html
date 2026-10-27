@@ -77,17 +77,141 @@
             text-align: center;
         }
 
+        .quote-form {
+            max-width: 640px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+
+        .quote-form textarea {
+            width: 100%;
+            min-height: 140px;
+            resize: vertical;
+            background-color: var(--panel);
+            color: white;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            font: inherit;
+            line-height: 1.5;
+        }
+
+        .quote-form textarea:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 14px var(--green-dim);
+        }
+
+        .quote-form .pill-container {
+            margin: 24px 0 30px;
+        }
+
+        .quote-form .pill:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
+
+        .quote-error {
+            color: #ff8a80;
+            min-height: 1.2em;
+            margin: 0 20px 10px;
+        }
+
+        /* THE RESULT CARD (hidden until a quote comes back) */
+        .quote-result {
+            max-width: 640px;
+            margin: 0 auto 40px;
+            padding: 28px;
+            text-align: left;
+            background-color: var(--panel);
+            border: 1px solid var(--green-dim);
+            border-radius: 18px;
+            box-shadow: 0 0 30px var(--green-soft);
+        }
+
+        .quote-result[hidden] {
+            display: none;
+        }
+
+        .quote-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .quote-price {
+            color: var(--green);
+            font-size: 2.4rem;
+            font-weight: bold;
+            margin: 6px 0;
+        }
+
+        .quote-meta {
+            color: var(--text-muted);
+            margin: 0 0 20px;
+            line-height: 1.5;
+        }
+
+        .quote-summary {
+            margin: 0 0 20px;
+            line-height: 1.5;
+        }
+
+        .quote-breakdown {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px;
+        }
+
+        .quote-breakdown li {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .quote-breakdown li span:last-child {
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .quote-result h3 {
+            font-size: 1rem;
+            margin: 20px 0 8px;
+        }
+
+        .quote-result ul.quote-questions {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
         .quote-note {
             color: var(--text-muted);
             font-size: 0.85rem;
             max-width: 560px;
-            margin: -40px auto 40px;   /* tucks it up under the button */
+            margin: 0 auto 40px;
             padding: 0 20px;
             line-height: 1.5;
         }
 
         .quote-note a {
             color: var(--green);
+        }
+
+        @media (max-width: 600px) {
+            .quote-result {
+                margin: 0 16px 40px;
+                padding: 20px;
+            }
+
+            .quote-price {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
@@ -121,13 +245,33 @@
 
     <hr>
 
-    <!-- QUOTE (the button will open the quote engine later) -->
+    <!-- QUOTE: the form sends the description to the Python quote engine (quote-engine/main.py) -->
     <section class="quote" id="quote">
         <h2 class="section-title">Get a quote today!</h2>
-        <p class="section-sub">Have a project for us, but scared to see the bill? Get an instant quote.</p>
+        <p class="section-sub">Have a project for us, but scared to see the bill? Describe it below and get an instant estimate.</p>
 
-        <div class="pill-container">
-            <a class="pill primary" href="#contact">Get a quote</a>
+        <form class="quote-form" id="quoteForm">
+            <textarea id="quoteText" name="description" minlength="10" maxlength="2000" required
+                placeholder="Example: A website for my bakery with online ordering, Stripe payments and email receipts."></textarea>
+            <div class="pill-container">
+                <button class="pill primary" id="quoteButton" type="submit">Get a quote</button>
+            </div>
+        </form>
+
+        <p class="quote-error" id="quoteError" role="alert"></p>
+
+        <!-- Filled in by the script at the bottom of the page -->
+        <div class="quote-result" id="quoteResult" hidden aria-live="polite">
+            <p class="quote-label">Estimated cost</p>
+            <p class="quote-price" id="quotePrice"></p>
+            <p class="quote-meta" id="quoteMeta"></p>
+            <p class="quote-summary" id="quoteSummary"></p>
+            <ul class="quote-breakdown" id="quoteBreakdown"></ul>
+            <p class="quote-meta" id="quoteAdjustments"></p>
+            <div id="quoteQuestionsBox">
+                <h3>To make this more accurate, tell us:</h3>
+                <ul class="quote-questions" id="quoteQuestions"></ul>
+            </div>
         </div>
 
         <p class="quote-note">
@@ -188,6 +332,101 @@
                 video.play();
                 updateButton();
             });
+    </script>
+
+    <!-- QUOTE ENGINE: sends the text to the Python server and shows the answer -->
+    <script>
+        // Where the Python server runs.
+        // On your computer (Live Server) it uses your local server; on the real site it uses Render.
+        const LOCAL = ['127.0.0.1', 'localhost'].includes(location.hostname);
+        const API_BASE = LOCAL ? 'http://127.0.0.1:8000' : 'https://abstraction-quote-engine.onrender.com';
+
+        const form = document.getElementById('quoteForm');
+        const button = document.getElementById('quoteButton');
+        const errorBox = document.getElementById('quoteError');
+        const result = document.getElementById('quoteResult');
+
+        const dollars = n => '$' + n.toLocaleString('en-US');
+
+        // The free server falls asleep when nobody uses it. Poke it as soon as the page
+        // loads, so it's usually awake by the time someone finishes typing.
+        fetch(API_BASE + '/health').catch(function () {});
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();               // don't reload the page
+            errorBox.textContent = '';
+            button.disabled = true;
+            button.textContent = 'Calculating...';
+
+            // If it takes a while, the server is probably waking up. Say so.
+            const slowTimer = setTimeout(function () {
+                button.textContent = 'Waking up the engine (up to a minute)...';
+            }, 5000);
+
+            try {
+                const response = await fetch(API_BASE + '/quote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ description: document.getElementById('quoteText').value.trim() }),
+                    signal: AbortSignal.timeout(90000)   // give up after 90 seconds
+                });
+                if (response.status === 422) throw new Error('Please describe your project in at least 10 characters.');
+                if (response.status === 429) throw new Error('You\'ve asked for a lot of quotes. Please try again later, or email us.');
+                if (!response.ok) throw new Error('The quote engine had a problem. Please try again.');
+                showQuote(await response.json());
+            } catch (error) {
+                // fetch itself fails (TypeError / timeout) when the server can't be reached
+                errorBox.textContent = (error instanceof TypeError || error.name === 'TimeoutError')
+                    ? 'The quote engine is offline right now. Email us for a quote instead.'
+                    : error.message;
+            } finally {
+                clearTimeout(slowTimer);
+                button.disabled = false;
+                button.textContent = 'Get a quote';
+            }
+        });
+
+        // textContent (not innerHTML) so nothing in the answer can run as code
+        function showQuote(q) {
+            document.getElementById('quotePrice').textContent = dollars(q.low) + ' – ' + dollars(q.high);
+
+            const [w1, w2] = q.timeline_weeks;
+            document.getElementById('quoteMeta').textContent =
+                q.project_type_label + ' · about ' + q.hours_low + '–' + q.hours_high + ' hours · ' +
+                (w1 === w2 ? w1 : w1 + '–' + w2) + ' week' + (w2 > 1 ? 's' : '');
+
+            const summary = document.getElementById('quoteSummary');
+            summary.textContent = q.summary;
+            summary.hidden = !q.summary;
+
+            const list = document.getElementById('quoteBreakdown');
+            list.replaceChildren();
+            q.breakdown.forEach(function (line) {
+                const li = document.createElement('li');
+                const name = document.createElement('span');
+                const cost = document.createElement('span');
+                name.textContent = line.label;
+                cost.textContent = dollars(line.low) + ' – ' + dollars(line.high);
+                li.append(name, cost);
+                list.append(li);
+            });
+
+            const adj = document.getElementById('quoteAdjustments');
+            adj.textContent = q.adjustments.length ? 'Includes: ' + q.adjustments.join(', ') : '';
+            adj.hidden = !q.adjustments.length;
+
+            const questions = document.getElementById('quoteQuestions');
+            questions.replaceChildren();
+            q.questions.forEach(function (text) {
+                const li = document.createElement('li');
+                li.textContent = text;
+                questions.append(li);
+            });
+            document.getElementById('quoteQuestionsBox').hidden = !q.questions.length;
+
+            result.hidden = false;
+            result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     </script>
 
 </body>
