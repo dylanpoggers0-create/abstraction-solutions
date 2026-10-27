@@ -21,11 +21,12 @@ const ICONS = {
 };
 
 // The menu. "id" must match data-page="..." on that page's <body>.
+// hrefs are relative to the main site folder (nav.js adds BASE in front of each one).
 const PAGES = [
-    { id: 'home',     label: 'Home',     href: 'index.html',         icon: 'home' },
+    { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
-    { id: 'contact',  label: 'Contact',  href: 'index.html#contact', icon: 'contact' }
+    { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' }   // = abstraction-solutions.com/#contact
 ];
 
 // The folder nav.js lives in (your main site folder). Putting BASE in front of
@@ -89,3 +90,11 @@ document.querySelectorAll('.side-links a').forEach(function (a) {
         document.getElementById('nav-toggle').checked = false;
     });
 });
+
+// Hide ".html" in the address bar (live site only)
+if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    const clean = location.pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
+    if (clean !== location.pathname) {
+        history.replaceState(null, '', clean + location.search + location.hash);
+    }
+}
