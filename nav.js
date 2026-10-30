@@ -27,7 +27,7 @@ const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
-    { id: 'order',    label: 'Order',    href: '',                   icon: 'order' },    // stand-in: goes Home for now. Change to 'order.html' once that page exists
+    { id: 'order',    label: 'Order',    href: 'order.html',         icon: 'order' },    
     { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' }   // = abstraction-solutions.com/#contact
 ];
 
