@@ -14,9 +14,10 @@
     <!-- Styles for this page only -->
     <style>
         main {
-            max-width: 900px;
+            max-width: 820px;
             margin: 0 auto;
             padding: 130px 24px 40px;   /* top padding keeps content below the floating header */
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);   /* keeps text sharp over the background video */
         }
 
         /* round green back button */
@@ -53,6 +54,162 @@
             box-shadow: 0 0 22px var(--green-dim);
             transform: translateX(-3px);
         }
+
+        /* small green label above the title */
+        .eyebrow {
+            margin-top: 28px;
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 10px 0 20px;
+        }
+
+        /* section labels, same style as the About page */
+        main h2 {
+            margin: 0 0 14px;
+            color: var(--green);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        main p {
+            margin: 0 0 18px;
+            color: #f2f6f2;
+            font-size: 1.2rem;
+            line-height: 1.75;
+        }
+
+        /* the opening paragraph a little larger */
+        main .lead {
+            font-size: 1.4rem;
+            line-height: 1.6;
+        }
+
+        main strong {
+            color: var(--green);
+        }
+
+        /* faint line between sections */
+        .divider {
+            border: 0;
+            height: 1px;
+            margin: 44px auto;
+            background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+        }
+
+        main .pill-container {
+            justify-content: flex-start;
+            margin: 26px 0 0;
+            text-shadow: none;
+        }
+
+        .muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* ---------- PAST PROJECTS ---------- */
+        /* one project: picture on the left, words on the right */
+        .project {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .project img {
+            width: 100%;
+            display: block;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--green-soft);
+        }
+
+        .project h3 {
+            font-size: 1.6rem;
+            margin: 0 0 10px;
+        }
+
+        .project p {
+            font-size: 1.1rem;
+        }
+
+        .project a {
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* checklist of what it does */
+        .project ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 18px;
+        }
+
+        .project li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 8px;
+            color: #f2f6f2;
+            line-height: 1.5;
+        }
+
+        .project li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* the parts and tools it uses */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tags span {
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            border-radius: 50px;
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: none;
+        }
+
+        @media (max-width: 760px) {
+            .project {
+                grid-template-columns: 1fr;   /* picture on top on smaller screens */
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 110px 20px 30px 40px;   /* extra room on the left for the Menu tab */
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            main p {
+                font-size: 1.1rem;
+            }
+
+            main .lead {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 
@@ -71,17 +228,97 @@
             </svg>
         </a>
 
+        <div class="eyebrow">SERVICES</div>
         <h1>AI Automation</h1>
-        <p>Short description of this service.</p>
+
+        <p>Here at Abstraction Solutions, we develop various pipelines and architectures to help you
+            automate the tasks you consider simply <strong>busy work</strong>. This can include responding to emails,
+            cleaning up data, or computing complex back-office metrics. We engineer <strong>lightweight, custom AI and
+            data tools</strong> that transform your daily manual overhead into <strong>reliable, automated systems</strong>.</p>
+
+        <hr class="divider">
 
         <section>
             <h2>How it works</h2>
-            <!-- video goes here -->
+            <p>You give us a problem, and we provide you with a solution that is <strong>simple to explain</strong>,
+                <strong>addresses the issue efficiently</strong>, and <strong>does not disrupt your current processes</strong>.
+                You can get a quote estimate here:</p>
+            <div class="pill-container">
+                <a class="pill" href="../services.html">Get a quote</a>
+                <a class="pill primary" href="../index.html#quote">Free quote in seconds</a>
+            </div>
         </section>
+
+        <hr class="divider">
 
         <section>
             <h2>Past projects</h2>
-            <!-- project cards go here -->
+            <!-- ONE PROJECT. To add another, copy everything from <article> to </article>. -->
+            <article class="project">
+                <img src="../videos/cyberdeck.svg"
+                     alt="Drawing of the Email Response Cyberdeck: a small case with a 16x2 LCD screen, send and edit buttons, and a Raspberry Pi 4 and Arduino Uno inside">
+                <div>
+                    <h3>Email Response Cyberdeck</h3>
+                    <p>A small, self-contained device that <strong>takes care of your communications whenever you're busy</strong>.</p>
+                    <ul>
+                        <li>Turns on automatically and starts answering emails as soon as it's powered up</li>
+                        <li>Schedules meetings on your Google Calendar for you</li>
+                        <li>Lets you confirm each email before it's sent</li>
+                        <li>Customizable: replies match the tone and context you give it</li>
+                    </ul>
+                    <div class="tags">
+                        <span>Raspberry Pi 4</span>
+                        <span>Arduino Uno</span>
+                        <span>16x2 LCD</span>
+                        <span>Google Calendar API</span>
+                    </div>
+                </div>
+            </article>
+
+            <hr class="divider">
+
+            <article class="project">
+                <img src="../videos/cbhs-chatbot.svg"
+                     alt="Drawing of the CBHS chatbot: school documents are searched for the right facts, and the chatbot answers a student's question with its source">
+                <div>
+                    <h3>CBHS Information Chatbot</h3>
+                    <p>A chatbot built to answer questions about <strong>Christian Brothers High School</strong>, using
+                        <strong>RAG</strong> to find answers in the school's own information instead of guessing.</p>
+                    <ul>
+                        <li>Used by hundreds of students every day</li>
+                        <li>Deployed to all faculty</li>
+                        <li>Retrieves the right school information before it answers</li>
+                    </ul>
+                    <p><a href="education.html">How does RAG work? Watch our 2-minute explainer &rarr;</a></p>
+                    <div class="tags">
+                        <span>RAG</span>
+                        <span>Chatbot</span>
+                        <span>Education</span>
+                    </div>
+                </div>
+            </article>
+
+            <hr class="divider">
+
+            <article class="project">
+                <img src="../videos/price-model.svg"
+                     alt="Drawing of the price optimization model: past sales data feeds a machine learning model, which points to the price at the top of the profit curve">
+                <div>
+                    <h3>Price Optimization Model</h3>
+                    <p>A machine learning model that learns from <strong>historical pricing data</strong> and suggests
+                        price changes that <strong>increase profit</strong>.</p>
+                    <ul>
+                        <li>Suggests price adjustments based on past sales</li>
+                        <li>Keeps sales high while raising the price per unit</li>
+                        <li>Finds the price where profit is highest</li>
+                    </ul>
+                    <div class="tags">
+                        <span>Machine Learning</span>
+                        <span>Pricing</span>
+                        <span>Sales Data</span>
+                    </div>
+                </div>
+            </article>
         </section>
     </main>
 

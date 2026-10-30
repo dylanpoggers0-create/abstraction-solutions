@@ -14,9 +14,10 @@
     <!-- Styles for this page only -->
     <style>
         main {
-            max-width: 900px;
+            max-width: 820px;
             margin: 0 auto;
             padding: 130px 24px 40px;   /* top padding keeps content below the floating header */
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);   /* keeps text sharp over the background video */
         }
 
         /* round green back button */
@@ -53,6 +54,284 @@
             box-shadow: 0 0 22px var(--green-dim);
             transform: translateX(-3px);
         }
+
+        /* small green label above the title */
+        .eyebrow {
+            margin-top: 28px;
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 10px 0 20px;
+        }
+
+        /* section labels, same style as the About page */
+        main h2 {
+            margin: 0 0 14px;
+            color: var(--green);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        main p {
+            margin: 0 0 18px;
+            color: #f2f6f2;
+            font-size: 1.2rem;
+            line-height: 1.75;
+        }
+
+        /* the opening paragraph a little larger */
+        main .lead {
+            font-size: 1.4rem;
+            line-height: 1.6;
+        }
+
+        main strong {
+            color: var(--green);
+        }
+
+        /* faint line between sections */
+        .divider {
+            border: 0;
+            height: 1px;
+            margin: 44px auto;
+            background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+        }
+
+        main .pill-container {
+            justify-content: flex-start;
+            margin: 26px 0 0;
+            text-shadow: none;
+        }
+
+        .muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* ---------- PAST PROJECTS ---------- */
+        /* one project: picture on the left, words on the right */
+        .project {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .project img,
+        .project video {
+            width: 100%;
+            display: block;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--green-soft);
+        }
+
+        .project h3 {
+            font-size: 1.6rem;
+            margin: 0 0 10px;
+        }
+
+        .project p {
+            font-size: 1.1rem;
+        }
+
+        .project a {
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* checklist of what it does */
+        .project ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 18px;
+        }
+
+        .project li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 8px;
+            color: #f2f6f2;
+            line-height: 1.5;
+        }
+
+        .project li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* the parts and tools it uses */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tags span {
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            border-radius: 50px;
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: none;
+        }
+
+        /* ---------- MODELS WE BUILD (expandable pills) ---------- */
+        .model-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            align-items: start;     /* opening one pill doesn't stretch its neighbor */
+            text-shadow: none;
+        }
+
+        /* <details> opens and closes by itself when you click its <summary>: no JavaScript needed */
+        .model-pill {
+            background-color: rgba(11, 16, 12, 0.88);
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, border-radius 0.2s ease;
+        }
+
+        .model-pill:hover {
+            border-color: var(--green-dim);
+        }
+
+        .model-pill[open] {
+            border-color: var(--green-dim);
+            border-radius: 22px;
+            box-shadow: 0 0 24px var(--green-soft);
+        }
+
+        .model-pill summary {
+            list-style: none;              /* hides the default triangle */
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px 14px 22px;
+            cursor: pointer;
+        }
+
+        .model-pill summary::-webkit-details-marker {
+            display: none;                 /* hides the triangle in Safari */
+        }
+
+        .model-name {
+            display: block;
+            font-weight: bold;
+            font-size: 1.05rem;
+            color: white;
+        }
+
+        .model-tagline {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 2px;
+        }
+
+        /* the round + button, turns into an x when open */
+        .model-pill summary::after {
+            content: "+";
+            margin-left: auto;
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            font-size: 1.3rem;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .model-pill[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        .model-body {
+            padding: 0 22px 20px;
+        }
+
+        .model-body p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0 0 12px;
+        }
+
+        .model-body small {
+            display: block;
+            color: var(--green);
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .model-body ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #d6ddd7;
+            line-height: 1.6;
+        }
+
+        .section-intro {
+            color: var(--text-muted) !important;
+            font-size: 1.05rem !important;
+        }
+
+        /* ---------- ORDER BUTTON AT THE BOTTOM ---------- */
+        .order-cta {
+            text-align: center;
+        }
+
+        .order-cta .pill-container {
+            justify-content: center;
+        }
+
+        @media (max-width: 760px) {
+            .project {
+                grid-template-columns: 1fr;   /* picture on top on smaller screens */
+                gap: 20px;
+            }
+
+            .model-grid {
+                grid-template-columns: 1fr;   /* one column of pills on phones */
+            }
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 110px 20px 30px 40px;   /* extra room on the left for the Menu tab */
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            main p {
+                font-size: 1.1rem;
+            }
+
+            main .lead {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 
@@ -71,17 +350,249 @@
             </svg>
         </a>
 
+        <div class="eyebrow">SERVICES</div>
         <h1>Models, Tools &amp; Code</h1>
-        <p>Short description of this service.</p>
+
+        <p>We design <strong>custom machine learning models, tools and code</strong> for people, researchers and
+            companies.</p>
+
+        <hr class="divider">
 
         <section>
             <h2>How it works</h2>
-            <!-- video goes here -->
+            <p>Tell us what you want to <strong>predict</strong>, <strong>automate</strong> or <strong>understand</strong>.
+                We study your data, build a model that fits the problem, and hand it over with code you can run and a
+                plain-language explanation of how it works. You can get a quote estimate here:</p>
+            <div class="pill-container">
+                <a class="pill" href="../services.html">Get a quote</a>
+                <a class="pill primary" href="../index.html#quote">Free quote in seconds</a>
+            </div>
         </section>
+
+        <hr class="divider">
+
+        <section>
+            <h2>Models we build</h2>
+            <p class="section-intro">Tap a model to see what it does and where it's used.</p>
+            <!-- ONE MODEL = one <details> block. Copy one to add another. -->
+            <div class="model-grid">
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Regression</span><span class="model-tagline">Predicts a number</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Learns how inputs relate to a number, then predicts that number for new cases.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Sales and revenue forecasts</li>
+                            <li>Pricing</li>
+                            <li>Delivery and wait-time estimates</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Classification</span><span class="model-tagline">Sorts things into categories</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Learns from labeled examples, then decides which group something new belongs to.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Spam and fraud filters</li>
+                            <li>Lead and customer scoring</li>
+                            <li>Sorting support tickets</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Decision Trees</span><span class="model-tagline">Makes choices with yes/no questions</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Splits data with a series of simple yes/no questions until it reaches an answer, like a flowchart. Easy to read and explain.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Loan and credit approvals</li>
+                            <li>Diagnosing customer issues</li>
+                            <li>Explaining why a decision was made</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Random Forests</span><span class="model-tagline">Many trees voting together</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Builds hundreds of decision trees on different slices of the data and combines their votes, which makes it more accurate and stable than a single tree.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Predicting customer churn</li>
+                            <li>Fraud detection</li>
+                            <li>Ranking which factors matter most</li>
+                        </ul>
+                    </div>
+                </details>
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Clustering</span><span class="model-tagline">Finds natural groups</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Groups similar items together without needing any labels, revealing patterns you didn't know were there.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Customer segments</li>
+                            <li>Grouping similar products</li>
+                            <li>Organizing large document sets</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Time-Series Forecasting</span><span class="model-tagline">Predicts what comes next</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Studies how data changes over time, including trends and seasons, to forecast future values.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Inventory demand</li>
+                            <li>Staffing schedules</li>
+                            <li>Energy and resource use</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Computer Vision</span><span class="model-tagline">Understands images and video</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Uses neural networks (usually CNNs) to recognize objects, read text and spot details in pictures.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Product defect detection</li>
+                            <li>Counting and tracking items</li>
+                            <li>Reading forms and receipts</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Language Models (NLP)</span><span class="model-tagline">Reads and writes text</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Transformer models that understand and generate language. Paired with RAG, they answer from your own documents.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Chatbots and assistants</li>
+                            <li>Summarizing documents</li>
+                            <li>Drafting email replies</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Recommendation Systems</span><span class="model-tagline">Suggests what people want next</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Learns from what people choose to predict what else they'll like.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Product recommendations</li>
+                            <li>Personalized content</li>
+                            <li>Smarter upsells</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Anomaly Detection</span><span class="model-tagline">Spots what's unusual</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Learns what normal looks like and flags anything that doesn't fit.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Fraud alerts</li>
+                            <li>Early warnings for failing equipment</li>
+                            <li>Network security</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Reinforcement Learning</span><span class="model-tagline">Learns by trial and reward</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>An agent tries actions, gets rewarded for good results, and improves its strategy over time.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Robotics and control</li>
+                            <li>Dynamic pricing</li>
+                            <li>Scheduling and routing</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="model-pill">
+                    <summary>
+                        <span><span class="model-name">Edge AI</span><span class="model-tagline">Tiny models for low-power devices</span></span>
+                    </summary>
+                    <div class="model-body">
+                        <p>Small, efficient models that run right on the device instead of in the cloud, using very little power.</p>
+                        <small>USED FOR</small>
+                        <ul>
+                            <li>Sensors and wearables</li>
+                            <li>Drones</li>
+                            <li>Smart farming</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <hr class="divider">
 
         <section>
             <h2>Past projects</h2>
-            <!-- project cards go here -->
+            <!-- ONE PROJECT. To add another, copy everything from <article> to </article>. -->
+            <article class="project">
+                <img src="../videos/price-model.svg"
+                     alt="Drawing of the price optimization model: past sales data feeds a machine learning model, which points to the price at the top of the profit curve">
+                <div>
+                    <h3>Price Optimization Model</h3>
+                    <p>A machine learning model that learns from <strong>historical pricing data</strong> and suggests
+                        price changes that <strong>increase profit</strong>.</p>
+                    <ul>
+                        <li><strong>In use every week</strong>, suggesting price adjustments based on past sales</li>
+                        <li>Paired with a data cleanup algorithm that <strong>saves about 5–7 hours of work a week</strong></li>
+                        <li>Keeps sales high while raising the price per unit</li>
+                        <li>Finds the price where profit is highest</li>
+                    </ul>
+                    <div class="tags">
+                        <span>Machine Learning</span>
+                        <span>Pricing</span>
+                        <span>Sales Data</span>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <hr class="divider">
+
+        <!-- ORDER BUTTON (points to the home page for now) -->
+        <section class="order-cta">
+            <h2>Ready to build?</h2>
+            <p>Tell us about your data and what you want it to do, and we'll build a model around it.</p>
+            <div class="pill-container">
+                <a class="pill primary" href="../index.html">Order a custom ML model</a>
+            </div>
         </section>
     </main>
 
