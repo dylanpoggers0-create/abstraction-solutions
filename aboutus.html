@@ -8,54 +8,166 @@
     <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
     <link rel="shortcut icon" href="abstraction_solutions.jpg">
 
+    <!-- Shared styles (header, side nav, pills, footer...) -->
     <link rel="stylesheet" href="style.css">
 
+    <!-- Styles only this page uses -->
     <style>
-        main {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 140px 24px 60px;
+        .hero {
+            padding: 150px 24px 10px;   /* room for the floating header */
+            text-align: center;
         }
 
-        main p {
-            color: #d6ddd7;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
+        /* small green label above the title */
         .eyebrow {
             color: var(--green);
             font-size: 0.8rem;
             font-weight: bold;
             letter-spacing: 3px;
-
-        p {
-            margin-bottom: 1em;
         }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin: 14px 0 16px;
+        }
+
+        /* the body text: plain, but big and bright with a dark shadow
+           so it reads clearly over the moving background video */
+        .about-text {
+            max-width: 760px;
+            margin: 30px auto 10px;
+            padding: 0 24px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+        }
+
+        .about-text h2 {
+            margin: 0 0 14px;
+            color: var(--green);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .about-text p {
+            margin: 0 0 18px;
+            color: #f2f6f2;
+            font-size: 1.25rem;
+            line-height: 1.75;
+        }
+
+        /* the first sentence of each section a little larger */
+        .about-text .lead {
+            font-size: 1.45rem;
+            line-height: 1.6;
+        }
+
+        .about-text strong {
+            color: var(--green);
+        }
+
+        .about-text a {
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* faint line between sections */
+        .divider {
+            border: 0;
+            height: 1px;
+            margin: 44px auto;
+            background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+        }
+
+        /* the fields we're hiring in */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 0 0 22px;
+        }
+
+        .tags span {
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            border-radius: 50px;
+            padding: 6px 14px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-shadow: none;
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding-top: 120px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .about-text {
+                padding: 0 20px 0 40px;   /* extra room on the left for the Menu tab */
+            }
+
+            .about-text p {
+                font-size: 1.1rem;
+            }
+
+            .about-text .lead {
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
 
+<!-- "about" must match the id in nav.js -->
 <body data-page="about">
+
+    <!-- The header, Menu tab and side nav are built here by nav.js -->
     <div id="site-nav"></div>
     <script src="nav.js"></script>
 
-    <main>
+    <section class="hero">
         <div class="eyebrow">ABOUT US</div>
-        <h1>About Us</h1>
-            <p>Abstraction Solutions is a forward-thinking AI education and software development firm established in 2026 by CEO and founder Dylan Pogue, a University of Florida Innovation Academy student. Founded on the principle that cutting-edge artificial intelligence should not be a black box, the company builds hardware-efficient software and interactive learning resources that make machine learning models clear, usable, and actionable for developers, educators, and organizations alike.
-            </p>
+        <h1>Making AI make sense.</h1>
+        <p class="section-sub">AI education and efficient software, built so anyone can understand machine learning.</p>
+    </section>
 
-            <p>
-             Dylan brings hands-on experience across web development, hardware engineering, and artificial intelligence, specializing in HTML, CSS, Python, SQL, Python data libraries, machine learning models, Retrieval-Augmented Generation (RAG) architecture, embedded systems, circuit design, and microcontroller programming with Arduino and Raspberry Pi. As Abstraction Solutions expands, he is transitioning from a sole proprietorship into a collaborative team environment and is actively looking to recruit driven college students majoring in Computer Science, Electrical Engineering, Marketing, or Advertising. If you are interested in joining the team or collaborating on a project, reach out directly at dylanpoggers0@gmail.com.
-            </p>
+    <div class="about-text">
+        <section>
+            <h2>Who we are</h2>
+            <p class="lead">Abstraction Solutions is an <strong>AI education and software company</strong> founded in 2026 by CEO
+               <strong>Dylan Pogue</strong>, a Computer Science student in the University of Florida's Innovation Academy.</p>
+            <p>We build <strong>efficient software</strong> and <strong>learning resources</strong> that make machine learning
+               understandable, drawing on experience across web development, hardware and AI.</p>
+        </section>
 
+        <hr class="divider">
 
+        <section>
+            <h2>Join the team</h2>
+            <p class="lead">We're growing from a one-person company into a team, and we're looking for <strong>college students</strong> in:</p>
+            <div class="tags">
+                <span>Computer Science</span>
+                <span>Electrical Engineering</span>
+                <span>Marketing</span>
+                <span>Advertising</span>
+            </div>
+            <p>Interested? Email us at <a href="mailto:dylanpoggers0@gmail.com">dylanpoggers0@gmail.com</a>.</p>
+        </section>
+
+        <hr class="divider">
+    </div>
+
+    <section>
         <div class="pill-container">
+            <a class="pill" href="services.html">Our services</a>
             <a class="pill primary" href="index.html#contact">Get in touch</a>
         </div>
-    </main>
+    </section>
 
     <footer>© 2026 Abstraction Solutions</footer>
+
 </body>
 </html>

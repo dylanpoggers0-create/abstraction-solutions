@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 66 740 436" role="img" aria-labelledby="t">
+  <title id="t">Email Response Cyberdeck: a small case with a 16x2 LCD screen, confirm buttons, and a Raspberry Pi 4 and Arduino Uno inside</title>
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="48%" r="60%">
+      <stop offset="0" stop-color="#173a1c"/>
+      <stop offset="1" stop-color="#050806"/>
+    </radialGradient>
+    <linearGradient id="caseTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a302b"/>
+      <stop offset="1" stop-color="#161a17"/>
+    </linearGradient>
+    <linearGradient id="lcd" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9ff58f"/>
+      <stop offset="1" stop-color="#6fd85f"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#7ee96f" stroke-opacity=".06"/>
+    </pattern>
+  </defs>
+
+  <!-- background -->
+  <rect width="800" height="520" fill="url(#bgGlow)"/>
+  <rect width="800" height="520" fill="url(#grid)"/>
+
+  <!-- incoming email (left) -->
+  <g transform="translate(58 150)">
+    <rect width="96" height="66" rx="10" fill="#0b100c" stroke="#7ee96f" stroke-width="2.5"/>
+    <path d="M8 10 48 40 88 10" fill="none" stroke="#7ee96f" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="92" cy="2" r="13" fill="#7ee96f"/>
+    <text x="92" y="7" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="14" fill="#06120a">3</text>
+  </g>
+  <path d="M160 190 C 200 190, 205 230, 232 238" fill="none" stroke="#7ee96f" stroke-width="2" stroke-dasharray="6 7" stroke-opacity=".7"/>
+
+  <!-- calendar (right) -->
+  <g transform="translate(650 150)">
+    <rect width="88" height="84" rx="10" fill="#0b100c" stroke="#7ee96f" stroke-width="2.5"/>
+    <rect width="88" height="24" rx="10" fill="#7ee96f"/>
+    <rect y="14" width="88" height="10" fill="#7ee96f"/>
+    <line x1="24" y1="-8" x2="24" y2="8" stroke="#eaf8d0" stroke-width="4" stroke-linecap="round"/>
+    <line x1="64" y1="-8" x2="64" y2="8" stroke="#eaf8d0" stroke-width="4" stroke-linecap="round"/>
+    <g fill="#2c4a2f">
+      <rect x="12" y="34" width="14" height="12" rx="2"/><rect x="37" y="34" width="14" height="12" rx="2"/><rect x="62" y="34" width="14" height="12" rx="2"/>
+      <rect x="12" y="56" width="14" height="12" rx="2"/><rect x="62" y="56" width="14" height="12" rx="2"/>
+    </g>
+    <rect x="37" y="56" width="14" height="12" rx="2" fill="#7ee96f"/>
+  </g>
+  <path d="M568 238 C 600 230, 610 205, 642 196" fill="none" stroke="#7ee96f" stroke-width="2" stroke-dasharray="6 7" stroke-opacity=".7"/>
+
+  <!-- soft glow under the device -->
+  <ellipse cx="400" cy="460" rx="230" ry="22" fill="#7ee96f" opacity=".18" filter="url(#glow)"/>
+
+  <!-- ===== the cyberdeck ===== -->
+  <!-- case -->
+  <rect x="222" y="86" width="356" height="368" rx="22" fill="url(#caseTop)" stroke="#3b443d" stroke-width="2"/>
+  <!-- corner screws -->
+  <g fill="#0c0f0d" stroke="#4a544c" stroke-width="1.5">
+    <circle cx="242" cy="106" r="5"/><circle cx="558" cy="106" r="5"/>
+    <circle cx="242" cy="434" r="5"/><circle cx="558" cy="434" r="5"/>
+  </g>
+
+  <!-- 16x2 LCD module -->
+  <rect x="252" y="110" width="296" height="104" rx="8" fill="#0a3d1a" stroke="#1d5a2b" stroke-width="2"/>
+  <rect x="266" y="124" width="268" height="76" rx="4" fill="url(#lcd)"/>
+  <rect x="266" y="124" width="268" height="76" rx="4" fill="#7ee96f" opacity=".35" filter="url(#glow)"/>
+  <!-- 16 characters per line -->
+  <g font-family="'Courier New', monospace" font-weight="bold" font-size="22" fill="#0b2a12" letter-spacing="1.2">
+    <text x="276" y="156">INBOX: 3 NEW</text>
+    <text x="276" y="186">SEND REPLY? Y/N</text>
+  </g>
+
+  <!-- controls row -->
+  <!-- power toggle -->
+  <rect x="258" y="236" width="56" height="28" rx="14" fill="#0b100c" stroke="#3b443d" stroke-width="2"/>
+  <circle cx="300" cy="250" r="10" fill="#7ee96f"/>
+  <text x="286" y="284" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa69c" letter-spacing="1.5">ON</text>
+  <!-- status LED -->
+  <circle cx="346" cy="250" r="6" fill="#7ee96f"/>
+  <circle cx="346" cy="250" r="12" fill="#7ee96f" opacity=".5" filter="url(#glow)"/>
+  <!-- confirm / edit buttons -->
+  <circle cx="452" cy="250" r="20" fill="#7ee96f"/>
+  <path d="M443 250 l6 6 l12 -12" fill="none" stroke="#06120a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="452" y="284" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa69c" letter-spacing="1.5">SEND</text>
+  <circle cx="512" cy="250" r="20" fill="#2c332d" stroke="#4a544c" stroke-width="2"/>
+  <path d="M505 243 l14 14 M519 243 l-14 14" stroke="#cfd8d0" stroke-width="3" stroke-linecap="round"/>
+  <text x="512" y="284" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa69c" letter-spacing="1.5">EDIT</text>
+
+  <!-- clear window showing the electronics -->
+  <rect x="252" y="300" width="296" height="134" rx="10" fill="#070a08" stroke="#2f3831" stroke-width="2"/>
+
+  <!-- Raspberry Pi 4 (generic green board) -->
+  <g transform="translate(268 314)">
+    <rect width="170" height="106" rx="6" fill="#1f7a3a" stroke="#2f9a4d" stroke-width="1.5"/>
+    <!-- GPIO header -->
+    <g fill="#c9a227">
+      <rect x="14" y="6" width="120" height="10" rx="2" fill="#1a1a1a"/>
+    </g>
+    <g fill="#d8b542">
+      <circle cx="20" cy="11" r="2"/><circle cx="29" cy="11" r="2"/><circle cx="38" cy="11" r="2"/><circle cx="47" cy="11" r="2"/>
+      <circle cx="56" cy="11" r="2"/><circle cx="65" cy="11" r="2"/><circle cx="74" cy="11" r="2"/><circle cx="83" cy="11" r="2"/>
+      <circle cx="92" cy="11" r="2"/><circle cx="101" cy="11" r="2"/><circle cx="110" cy="11" r="2"/><circle cx="119" cy="11" r="2"/><circle cx="128" cy="11" r="2"/>
+    </g>
+    <!-- processor + RAM -->
+    <rect x="36" y="34" width="38" height="38" rx="3" fill="#b9bdb9"/>
+    <rect x="84" y="38" width="30" height="22" rx="2" fill="#1b1b1b"/>
+    <!-- USB / Ethernet ports on the right edge -->
+    <rect x="140" y="26" width="34" height="22" rx="2" fill="#c8ccc9"/>
+    <rect x="140" y="54" width="34" height="22" rx="2" fill="#c8ccc9"/>
+    <rect x="140" y="80" width="34" height="20" rx="2" fill="#c8ccc9"/>
+    <text x="10" y="98" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#bff5c7" letter-spacing="1">PI 4</text>
+  </g>
+
+  <!-- Arduino Uno (generic blue board) -->
+  <g transform="translate(452 322)">
+    <rect width="84" height="92" rx="6" fill="#1b6f8f" stroke="#2a8db3" stroke-width="1.5"/>
+    <rect x="8" y="8" width="68" height="8" rx="2" fill="#1a1a1a"/>
+    <rect x="8" y="76" width="68" height="8" rx="2" fill="#1a1a1a"/>
+    <rect x="22" y="34" width="40" height="16" rx="2" fill="#1b1b1b"/>
+    <rect x="-6" y="22" width="18" height="16" rx="2" fill="#c8ccc9"/>
+    <text x="42" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#cfefff" letter-spacing="1">UNO</text>
+  </g>
+
+  <!-- ribbon cable from the boards up to the screen -->
+  <path d="M404 314 C 404 296, 470 300, 470 286" fill="none" stroke="#9aa69c" stroke-width="5" stroke-opacity=".55"/>
+</svg>

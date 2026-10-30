@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 66 740 436" role="img" aria-labelledby="t">
+  <title id="t">CBHS chatbot: school documents are searched and the matching facts are passed to a chatbot, which answers a student's question with its source</title>
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="48%" r="60%">
+      <stop offset="0" stop-color="#173a1c"/>
+      <stop offset="1" stop-color="#050806"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#7ee96f" stroke-opacity=".06"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="520" fill="url(#bgGlow)"/>
+  <rect width="800" height="520" fill="url(#grid)"/>
+
+  <!-- ===== left: the school's documents (the "R" in RAG) ===== -->
+  <g font-family="Arial, sans-serif">
+    <text x="150" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="#7ee96f" letter-spacing="2.5">SCHOOL INFO</text>
+    <!-- stacked documents -->
+    <g transform="translate(78 132)">
+      <rect x="22" y="0" width="112" height="140" rx="8" fill="#101712" stroke="#2c4a2f" stroke-width="2"/>
+      <rect x="11" y="12" width="112" height="140" rx="8" fill="#121a14" stroke="#33553a" stroke-width="2"/>
+      <rect x="0" y="24" width="112" height="140" rx="8" fill="#0b100c" stroke="#7ee96f" stroke-width="2.5"/>
+      <g fill="#2c4a2f">
+        <rect x="14" y="42" width="60" height="8" rx="4" fill="#7ee96f"/>
+        <rect x="14" y="62" width="84" height="6" rx="3"/>
+        <rect x="14" y="76" width="76" height="6" rx="3"/>
+        <rect x="14" y="90" width="84" height="6" rx="3"/>
+        <rect x="14" y="104" width="54" height="6" rx="3"/>
+        <rect x="14" y="124" width="84" height="6" rx="3"/>
+        <rect x="14" y="138" width="66" height="6" rx="3"/>
+      </g>
+      <!-- highlighted matching passage -->
+      <rect x="9" y="85" width="94" height="30" rx="5" fill="#7ee96f" fill-opacity=".14" stroke="#7ee96f" stroke-width="1.5"/>
+    </g>
+    <!-- magnifying glass -->
+    <g transform="translate(168 270)">
+      <circle r="22" fill="#0b100c" stroke="#7ee96f" stroke-width="4"/>
+      <line x1="16" y1="16" x2="34" y2="34" stroke="#7ee96f" stroke-width="6" stroke-linecap="round"/>
+    </g>
+    <text x="150" y="350" text-anchor="middle" font-size="12" fill="#9aa69c" letter-spacing="1.5">1. FIND THE FACTS</text>
+  </g>
+
+  <!-- flow arrow: documents -> chatbot -->
+  <path d="M232 230 C 262 230, 262 230, 292 230" fill="none" stroke="#7ee96f" stroke-width="2.5" stroke-dasharray="6 7"/>
+  <path d="M286 222 l10 8 l-10 8" fill="none" stroke="#7ee96f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ===== right: the chat window ===== -->
+  <ellipse cx="530" cy="470" rx="200" ry="18" fill="#7ee96f" opacity=".16" filter="url(#glow)"/>
+  <g font-family="Arial, sans-serif">
+    <rect x="310" y="88" width="430" height="370" rx="20" fill="#0b100c" stroke="#2f4a33" stroke-width="2"/>
+    <!-- title bar -->
+    <path d="M310 108 a20 20 0 0 1 20 -20 h390 a20 20 0 0 1 20 20 v28 h-430 z" fill="#121a14"/>
+    <line x1="310" y1="136" x2="740" y2="136" stroke="#2f4a33" stroke-width="2"/>
+    <circle cx="340" cy="112" r="13" fill="#7ee96f"/>
+    <path d="M334 108 h12 M334 113 h8" stroke="#06120a" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="362" y="117" font-size="15" font-weight="bold" fill="#f2f6f2">CBHS Assistant</text>
+    <circle cx="712" cy="112" r="5" fill="#7ee96f"/>
+    <circle cx="712" cy="112" r="10" fill="#7ee96f" opacity=".45" filter="url(#glow)"/>
+
+    <!-- student question (right side) -->
+    <rect x="470" y="156" width="250" height="58" rx="16" fill="#1f3d24" stroke="#3f7a47" stroke-width="1.5"/>
+    <text x="488" y="181" font-size="14" fill="#f2f6f2">When is the next</text>
+    <text x="488" y="201" font-size="14" fill="#f2f6f2">half day?</text>
+
+    <!-- bot answer (left side) -->
+    <rect x="330" y="232" width="300" height="118" rx="16" fill="#151d17" stroke="#2c4a2f" stroke-width="1.5"/>
+    <text x="348" y="258" font-size="14" fill="#f2f6f2">Here's what the school</text>
+    <text x="348" y="278" font-size="14" fill="#f2f6f2">calendar says:</text>
+    <rect x="348" y="292" width="230" height="7" rx="3.5" fill="#3a5a3e"/>
+    <rect x="348" y="306" width="180" height="7" rx="3.5" fill="#3a5a3e"/>
+    <!-- source chip -->
+    <rect x="348" y="322" width="182" height="18" rx="9" fill="#7ee96f" fill-opacity=".14" stroke="#7ee96f" stroke-width="1.2"/>
+    <text x="358" y="335" font-size="11" font-weight="bold" fill="#7ee96f">SOURCE: SCHOOL CALENDAR</text>
+
+    <!-- typing indicator -->
+    <rect x="330" y="366" width="74" height="34" rx="17" fill="#151d17" stroke="#2c4a2f" stroke-width="1.5"/>
+    <circle cx="352" cy="383" r="4" fill="#7ee96f"/><circle cx="367" cy="383" r="4" fill="#7ee96f" opacity=".65"/><circle cx="382" cy="383" r="4" fill="#7ee96f" opacity=".35"/>
+
+    <!-- input bar -->
+    <rect x="330" y="410" width="390" height="32" rx="16" fill="#070a08" stroke="#2f4a33" stroke-width="1.5"/>
+    <text x="348" y="431" font-size="13" fill="#5f6f62">Ask anything about CBHS...</text>
+    <circle cx="702" cy="426" r="12" fill="#7ee96f"/>
+    <path d="M697 426 h10 M703 421 l5 5 l-5 5" fill="none" stroke="#06120a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="530" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#9aa69c" letter-spacing="1.5">2. ANSWER FROM THEM</text>
+</svg>

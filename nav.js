@@ -17,7 +17,8 @@ const ICONS = {
     contact:  '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>',
     menu:     '<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>',
     close:    '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
-    about:    '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
+    about:    '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    order:    '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>'
 };
 
 // The menu. "id" must match data-page="..." on that page's <body>.
@@ -26,6 +27,7 @@ const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
+    { id: 'order',    label: 'Order',    href: '',                   icon: 'order' },    // stand-in: goes Home for now. Change to 'order.html' once that page exists
     { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' }   // = abstraction-solutions.com/#contact
 ];
 
@@ -91,10 +93,22 @@ document.querySelectorAll('.side-links a').forEach(function (a) {
     });
 });
 
-// Hide ".html" in the address bar (live site only)
-if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-    const clean = location.pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
-    if (clean !== location.pathname) {
-        history.replaceState(null, '', clean + location.search + location.hash);
-    }
-}
+/* ---------------------------------------------------------
+   LOOPING BACKGROUND VIDEO
+   Adds the silent network animation behind every page.
+   Skipped for visitors who turned on "reduce motion" on their device.
+   --------------------------------------------------------- */
+(function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    const bg = document.createElement('video');
+    bg.className = 'bg-loop';
+    bg.src = BASE + 'videos/network-loop.mp4';
+    bg.muted = true;          // must be muted, or browsers won't autoplay it
+    bg.loop = true;
+    bg.autoplay = true;
+    bg.playsInline = true;    // stops iPhones from opening it fullscreen
+    bg.setAttribute('aria-hidden', 'true');
+    document.body.prepend(bg);
+})();

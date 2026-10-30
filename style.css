@@ -451,3 +451,25 @@ footer {
         gap: 14px;
     }
 }
+/* ---------------------------------------------------------
+   LOOPING BACKGROUND VIDEO (added by nav.js on every page except home)
+   --------------------------------------------------------- */
+.bg-loop {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;            /* sits behind everything */
+    opacity: 0.35;          /* faint, so text stays easy to read. 0 = invisible, 1 = full */
+    pointer-events: none;   /* clicks go through it */
+}
+
+/* the page itself must be see-through for the video to show */
+body:has(.bg-loop) {
+    background-color: transparent;
+}
+
+html {
+    background-color: black;
+}
