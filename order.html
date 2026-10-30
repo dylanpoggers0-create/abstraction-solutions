@@ -30,6 +30,65 @@
             margin: 14px 0 16px;
         }
 
+        /* ---------- ORDER FORM ---------- */
+        .order-form {
+            max-width: 640px;
+            margin: 30px auto 0;
+            padding: 0 24px;
+        }
+
+        /* each label sits above its box */
+        .order-form label {
+            display: block;
+            margin: 20px 0 8px;
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* all the boxes look the same */
+        .order-form input,
+        .order-form select,
+        .order-form textarea {
+            width: 100%;
+            background-color: rgba(11, 16, 12, 0.92);
+            color: white;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font: inherit;              /* use the site's font, not the browser's default */
+            font-size: 1rem;
+        }
+
+        .order-form textarea {
+            min-height: 160px;
+            resize: vertical;           /* can be dragged taller, not wider */
+            line-height: 1.5;
+        }
+
+        /* green glow on the box you're typing in */
+        .order-form input:focus,
+        .order-form select:focus,
+        .order-form textarea:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 14px var(--green-dim);
+        }
+
+        .order-form .pill-container {
+            margin: 30px 0 10px;
+        }
+
+        /* "Order received!" or an error message goes here (filled in by Step 3b) */
+        #orderMsg {
+            max-width: 640px;
+            margin: 0 auto 60px;
+            padding: 0 24px;
+            text-align: center;
+            min-height: 1.4em;
+        }
+
         @media (max-width: 600px) {
             .hero {
                 padding-top: 120px;
@@ -37,6 +96,11 @@
 
             .hero h1 {
                 font-size: 2.2rem;
+            }
+
+            .order-form,
+            #orderMsg {
+                padding: 0 20px 0 40px;   /* room on the left for the Menu tab */
             }
         }
     </style>
@@ -55,9 +119,81 @@
         <p class="section-sub">Tell us what you need, and we'll get back to you with next steps and a final quote.</p>
     </section>
 
-    <!-- STEP 3: the order form goes here -->
+    <!-- ORDER FORM. Each name="..." must match a field in the Order model in main.py -->
+    <form class="order-form" id="orderForm">
+        <label for="name">YOUR NAME</label>
+        <input id="name" name="name" type="text" required maxlength="100" autocomplete="name">
+
+        <label for="email">EMAIL</label>
+        <input id="email" name="email" type="email" required maxlength="200" autocomplete="email">
+
+        <label for="service">SERVICE</label>
+        <select id="service" name="service" required>
+            <option value="">Choose a service</option>
+            <option>AI Automation</option>
+            <option>Custom Workflows</option>
+            <option>Custom ML Model</option>
+            <option>AI Education</option>
+            <option>Other</option>
+        </select>
+
+        <label for="details">PROJECT DETAILS</label>
+        <textarea id="details" name="details" required minlength="20" maxlength="3000"
+            placeholder="What do you want built or automated? What tools do you use now? Any deadline?"></textarea>
+
+        <div class="pill-container">
+            <button class="pill primary" id="orderButton" type="submit">Place order</button>
+        </div>
+    </form>
+
+    <!-- STEP 3b: the JavaScript that sends the form to POST /orders goes here -->
+    <p id="orderMsg" role="status"></p>
 
     <footer>© 2026 Abstraction Solutions</footer>
+    <!-- STEP 3b: send the form to the Python server -->
+    <script>
+        const API_BASE = 'https://abstraction-quote-engine.onrender.com';
 
+        const orderForm = document.getElementById('orderForm');
+        const orderButton = document.getElementById('orderButton');
+        const orderMsg = document.getElementById('orderMsg');
+
+        // Wake up the free server as soon as the page opens
+        fetch(API_BASE + '/health').catch(function () {});
+
+        orderForm.addEventListener('submit', async function (event) {
+            event.preventDefault();                    // stop the page from reloading
+
+            const order = Object.fromEntries(new FormData(orderForm));
+            // order is now: { name: "...", email: "...", service: "...", details: "..." }
+
+            orderButton.disabled = true;               // stop double-clicks = double orders
+            orderButton.textContent = 'Sending...';
+            orderMsg.textContent = '';
+
+            try {
+                const response = await fetch(API_BASE + '/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(order)
+                });
+
+                if (response.status === 422) throw new Error('Please check your email and give at least 20 characters of detail.');
+                if (response.status === 429) throw new Error('Too many orders from you today. Please email us instead.');
+                if (!response.ok) throw new Error('Something went wrong on our end. Please try again or email us.');
+
+                const result = await response.json();  // { ok: true, id: 7 }
+                orderForm.hidden = true;               // hide the form
+                orderMsg.textContent = 'Order #' + result.id + ' received! We\'ll email you within 2 business days.';
+            } catch (error) {
+                orderMsg.textContent = error instanceof TypeError
+                    ? 'Our order system is offline right now. Please email dylanpoggers0@gmail.com.'
+                    : error.message;
+            } finally {
+                orderButton.disabled = false;
+                orderButton.textContent = 'Place order';
+            }
+        });
+    </script>
 </body>
 </html>
