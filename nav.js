@@ -19,7 +19,11 @@ const ICONS = {
     close:    '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
     about:    '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     order:    '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>',
-    admin:    '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
+    admin:    '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    cases:    '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="13" x2="22" y2="13"/>',
+    privacy:  '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    returns:  '<polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/>',
+    terms:    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>'
 };
 
 // The menu. "id" must match data-page="..." on that page's <body>.
@@ -27,9 +31,15 @@ const ICONS = {
 const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
+    { id: 'cases',    label: 'Case Studies', href: 'case-studies.html', icon: 'cases' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
     { id: 'order',    label: 'Order',    href: 'order.html',         icon: 'order' },
-    { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' }   // = abstraction-solutions.com/#contact
+    { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' },  // = abstraction-solutions.com/#contact
+
+    // group: 'legal' puts these under their own small LEGAL heading in the menu
+    { id: 'privacy',  label: 'Privacy Policy',    href: 'privacy.html', icon: 'privacy', group: 'legal' },
+    { id: 'returns',  label: 'Returns & Refunds', href: 'returns.html', icon: 'returns', group: 'legal' },
+    { id: 'terms',    label: 'Terms of Service',  href: 'terms.html',   icon: 'terms',   group: 'legal' }
 ];
 // Admin isn't listed on purpose: go to abstraction-solutions.com/admin.html directly.
 
@@ -46,10 +56,13 @@ const currentId = document.body.dataset.page || 'home';
 const current = PAGES.find(function (p) { return p.id === currentId; }) || PAGES[0];
 
 // One link per page; the current one gets class="active" (turns green)
-const links = PAGES.map(function (p) {
+function navLink(p) {
     const active = p.id === current.id ? ' class="active" aria-current="page"' : '';
     return '<a href="' + BASE + p.href + '"' + active + '>' + svg(p.icon) + p.label + '</a>';
-}).join('');
+}
+const links = PAGES.filter(function (p) { return !p.group; }).map(navLink).join('') +
+    '<small style="margin-top:14px">LEGAL</small>' +
+    PAGES.filter(function (p) { return p.group === 'legal'; }).map(navLink).join('');
 
 document.getElementById('site-nav').innerHTML =
     // hidden checkbox that remembers open/closed (must come first)
@@ -162,18 +175,44 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '</div>' +
             '<div><h4>EXPLORE</h4><ul>' +
                 link('services.html', 'Services') + link('aboutus.html', 'About Us') +
-                link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
+                link('case-studies.html', 'Case Studies') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') +
             '</ul></div>' +
             '<div><h4>CONTACT</h4><ul>' +
                 '<li><a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></li>' +
             '</ul></div>' +
             '<div><h4>LEGAL</h4><ul>' +
-                link('privacy.html', 'Privacy Policy') + link('terms.html', 'Terms &amp; Refunds') +
+                link('privacy.html', 'Privacy Policy') + link('returns.html', 'Returns &amp; Refunds') +
+                link('terms.html', 'Terms of Service') +
             '</ul></div>' +
             '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA</div>';
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
     else build();
+})();
+
+/* ---------------------------------------------------------
+   ANALYTICS (GoatCounter: free, no cookies, no personal data)
+   1. Sign up at goatcounter.com and pick a code (e.g. "abstraction")
+   2. Put that code between the quotes below. Leave it empty to turn analytics off.
+   Pages call trackEvent('quote-requested') etc. to count quotes, orders and payments.
+   --------------------------------------------------------- */
+const GOATCOUNTER_CODE = '';
+
+window.trackEvent = function (name) {
+    try {
+        if (window.goatcounter && window.goatcounter.count) {
+            window.goatcounter.count({ path: name, title: name, event: true });
+        }
+    } catch (e) {}
+};
+
+(function () {
+    if (!GOATCOUNTER_CODE) return;
+    const gc = document.createElement('script');
+    gc.async = true;
+    gc.src = 'https://gc.zgo.at/count.js';
+    gc.dataset.goatcounter = 'https://' + GOATCOUNTER_CODE + '.goatcounter.com/count';
+    document.head.appendChild(gc);
 })();

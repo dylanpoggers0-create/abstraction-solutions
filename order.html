@@ -442,6 +442,7 @@
                 if (!response.ok) throw new Error('Something went wrong on our end. Please try again or email us.');
 
                 const result = await response.json();  // { ok: true, confirmation: "12345678" }
+                window.trackEvent && trackEvent('order-placed');
                 orderForm.hidden = true;               // hide the form
                 orderMsg.textContent = 'Order received! Your confirmation number is ' + result.confirmation +
                     '. We\'ve emailed it to you, and we\'ll be in touch within 2 business days.';
@@ -489,6 +490,17 @@
         if (codeFromLink || location.hash === '#lookup') {
             lookupPanel.open = true;
             document.getElementById('lookupEmail').focus();
+        }
+
+        // "Accept this quote" on the home page sends ?service=...&details=... : fill in and open New order
+        const fromQuote = new URLSearchParams(location.search);
+        if (fromQuote.get('details') && !codeFromLink) {
+            const serviceBox = document.getElementById('service');
+            const wanted = fromQuote.get('service');
+            if ([...serviceBox.options].some(function (o) { return o.value === wanted; })) serviceBox.value = wanted;
+            document.getElementById('details').value = fromQuote.get('details').slice(0, 3000);
+            newOrderPanel.open = true;
+            document.getElementById('name').focus();
         }
 
         lookupForm.addEventListener('submit', async function (event) {
@@ -641,6 +653,7 @@
                         return;
                     }
                     form.unmount();
+                    window.trackEvent && trackEvent('payment-completed');
                     payMsg.textContent = 'Payment received, thank you! Updating your order...';
                     checkPaid(0);
                 } catch (error) {
