@@ -198,7 +198,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
    2. Put that code between the quotes below. Leave it empty to turn analytics off.
    Pages call trackEvent('quote-requested') etc. to count quotes, orders and payments.
    --------------------------------------------------------- */
-const GOATCOUNTER_CODE = '';
+const GOATCOUNTER_CODE = 'abstractiondp';
 
 window.trackEvent = function (name) {
     try {
