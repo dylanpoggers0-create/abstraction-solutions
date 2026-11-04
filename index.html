@@ -14,20 +14,112 @@
 
     <!-- Styles only the home page uses -->
     <style>
-        /* FULLSCREEN VIDEO */
+        /* HERO: headline + buttons on the left, video on the right (stacked on phones) */
+        .hero-split {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 48px;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 130px 40px 60px 72px;
+        }
+
+        .hero-text .eyebrow {
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .hero-text h1 {
+            font-size: 3.2rem;
+            line-height: 1.12;
+            margin: 14px 0 18px;
+        }
+
+        .hero-text h1 span {
+            color: var(--green);
+        }
+
+        .hero-text p {
+            color: #d6ddd7;
+            font-size: 1.15rem;
+            line-height: 1.65;
+            margin: 0;
+            max-width: 520px;
+        }
+
+        .hero-text .pill-container {
+            justify-content: flex-start;
+            margin: 30px 0 0;
+        }
+
         .video-container {
             position: relative;
             width: 100%;
-            height: 100vh;
+            aspect-ratio: 16 / 9;
             overflow: hidden;
             background: black;
+            border-radius: 20px;
+            border: 1px solid var(--line);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px var(--green-soft);
         }
 
         video {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
+        }
+
+        /* PROOF: real numbers from real projects */
+        .proof {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            margin: 40px auto 10px;
+            padding: 0 24px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 26px 20px;
+            background-color: rgba(11, 16, 12, 0.85);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+        }
+
+        .stat strong {
+            display: block;
+            color: var(--green);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .stat span {
+            color: #d6ddd7;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .hero-split {
+                grid-template-columns: 1fr;
+                min-height: 0;
+                gap: 30px;
+                padding: 120px 24px 30px 44px;
+            }
+
+            .hero-text h1 {
+                font-size: 2.4rem;
+            }
+
+            .proof {
+                grid-template-columns: 1fr;
+                padding: 0 20px 0 40px;
+            }
         }
 
         /* UNMUTE BUTTON (bottom-right of the video) */
@@ -58,12 +150,6 @@
         }
 
         @media (max-width: 600px) {
-            .video-container {
-                height: auto;
-                aspect-ratio: 16 / 9;
-                margin-top: 90px;
-            }
-
             .audio-btn {
                 bottom: 10px;
                 right: 10px;
@@ -223,14 +309,34 @@
     <div id="site-nav"></div>
     <script src="nav.js"></script>
 
-    <!-- VIDEO -->
-    <div class="video-container" id="home">
-        <video id="heroVideo" playsinline preload="auto" poster="ad-thumbnail.jpg">
-            <source src="ad1.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <button id="audioToggle" class="audio-btn" type="button">🔇 Unmute</button>
-    </div>
+    <!-- HERO: what we do + the two main buttons, next to the video -->
+    <section class="hero-split" id="home">
+        <div class="hero-text">
+            <div class="eyebrow">AI MADE SIMPLE</div>
+            <h1>Put AI to work, <span>without the confusion.</span></h1>
+            <p>Custom automations, workflows and machine learning models for people, researchers and
+               small businesses, plus plain-language AI education.</p>
+            <div class="pill-container">
+                <a class="pill primary" href="#quote">Get a free quote</a>
+                <a class="pill" href="order.html">Start a project</a>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <video id="heroVideo" playsinline preload="auto" poster="ad-thumbnail.jpg">
+                <source src="ad1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <button id="audioToggle" class="audio-btn" type="button">🔇 Unmute</button>
+        </div>
+    </section>
+
+    <!-- PROOF: only real, checkable numbers here -->
+    <section class="proof" aria-label="Results">
+        <div class="stat"><strong>Hundreds</strong><span>of students use our school chatbot every day</span></div>
+        <div class="stat"><strong>5–7 hrs</strong><span>of work saved every week by our pricing and data-cleanup tools</span></div>
+        <div class="stat"><strong>Weekly</strong><span>our price-optimization model guides real pricing decisions</span></div>
+    </section>
 
     <!-- WHAT WE DO -->
     <section id="services">
@@ -336,10 +442,9 @@
 
     <!-- QUOTE ENGINE: sends the text to the Python server and shows the answer -->
     <script>
-        // Where the Python server runs.
-        // On your computer (Live Server) it uses your local server; on the real site it uses Render.
-        const LOCAL = ['127.0.0.1', 'localhost'].includes(location.hostname);
-        const API_BASE = LOCAL ? 'http://127.0.0.1:8000' : 'https://abstraction-quote-engine.onrender.com';
+        // Where the Python quote engine runs (your Render server).
+        // Must match the address at the top of your Render service page exactly.
+        const API_BASE = 'https://abstraction-quote-engine.onrender.com';
 
         const form = document.getElementById('quoteForm');
         const button = document.getElementById('quoteButton');

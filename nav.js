@@ -29,9 +29,9 @@ const PAGES = [
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
     { id: 'order',    label: 'Order',    href: 'order.html',         icon: 'order' },
-    { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' },  // = abstraction-solutions.com/#contact
-    { id: 'admin',    label: 'Admin',    href: 'admin.html',         icon: 'admin' }
+    { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' }   // = abstraction-solutions.com/#contact
 ];
+// Admin isn't listed on purpose: go to abstraction-solutions.com/admin.html directly.
 
 // The folder nav.js lives in (your main site folder). Putting BASE in front of
 // links and images makes them work from pages inside subfolders too.
@@ -114,3 +114,10 @@ document.querySelectorAll('.side-links a').forEach(function (a) {
     bg.setAttribute('aria-hidden', 'true');
     document.body.prepend(bg);
 })();
+
+/* ---------------------------------------------------------
+   WAKE UP THE SERVER
+   The free Render server sleeps after 15 minutes. Poking it from every page
+   means it's usually awake by the time someone asks for a quote or orders.
+   --------------------------------------------------------- */
+fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () {});

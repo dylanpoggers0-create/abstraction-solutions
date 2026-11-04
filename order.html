@@ -30,17 +30,97 @@
             margin: 14px 0 16px;
         }
 
+        /* ---------- THE TWO DROP-DOWN PANELS ---------- */
+        .panels {
+            max-width: 680px;
+            margin: 30px auto 60px;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* <details> opens and closes by itself when you click its <summary> */
+        .panel {
+            background-color: rgba(11, 16, 12, 0.88);
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            scroll-margin-top: 110px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, border-radius 0.2s ease;
+        }
+
+        .panel:hover {
+            border-color: var(--green-dim);
+        }
+
+        .panel[open] {
+            border-color: var(--green-dim);
+            border-radius: 22px;
+            box-shadow: 0 0 24px var(--green-soft);
+        }
+
+        .panel summary {
+            list-style: none;                  /* hide the default triangle */
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px 18px 26px;
+            cursor: pointer;
+        }
+
+        .panel summary::-webkit-details-marker {
+            display: none;                     /* hide the triangle in Safari */
+        }
+
+        .panel-title {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .panel-sub {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+
+        /* round + that turns into an x when open */
+        .panel summary::after {
+            content: "+";
+            margin-left: auto;
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            font-size: 1.4rem;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .panel[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        .panel-body {
+            padding: 0 26px 24px;
+        }
+
         /* ---------- ORDER FORM ---------- */
         .order-form {
-            max-width: 640px;
-            margin: 30px auto 0;
-            padding: 0 24px;
+            margin: 0;
         }
 
         /* each label sits above its box */
         .order-form label {
             display: block;
-            margin: 20px 0 8px;
+            margin: 16px 0 8px;
             color: var(--green);
             font-size: 0.8rem;
             font-weight: bold;
@@ -80,13 +160,101 @@
             margin: 30px 0 10px;
         }
 
+
+
         /* "Order received!" or an error message goes here (filled in by Step 3b) */
         #orderMsg {
-            max-width: 640px;
-            margin: 0 auto 60px;
-            padding: 0 24px;
             text-align: center;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* ---------- CHECK AN EXISTING ORDER ---------- */
+        .panel .section-note {
+            color: var(--text-muted);
+            margin: 0 0 4px;
+            line-height: 1.5;
+        }
+
+        /* the result card */
+        .order-result {
+            margin-top: 10px;
+            padding: 22px 24px;
+            background-color: rgba(11, 16, 12, 0.92);
+            border: 1px solid var(--green-dim);
+            border-radius: 18px;
+        }
+
+        .order-result[hidden] {
+            display: none;
+        }
+
+        .order-result .label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .order-result .big {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin: 4px 0 14px;
+        }
+
+        .order-result dl {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 10px 18px;
+            margin: 0;
+        }
+
+        .order-result dt {
+            color: var(--text-muted);
+        }
+
+        .order-result dd {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+        }
+
+        .status-badge.paid {
+            margin-left: 6px;
+        }
+
+        #payBox {
+            justify-content: flex-start;
+            margin: 18px 0 0;
+        }
+
+        /* .pill-container sets display:flex, which beats the hidden attribute, so say it explicitly */
+        #payBox[hidden] {
+            display: none;
+        }
+
+        .status-badge.in_progress {
+            color: #f5c451;
+            border-color: rgba(245, 196, 81, 0.5);
+            background-color: rgba(245, 196, 81, 0.1);
+        }
+
+        .order-result .note {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 16px 0 0;
+        }
+
+        #lookupMsg {
             min-height: 1.4em;
+            margin: 6px 0 0;
         }
 
         @media (max-width: 600px) {
@@ -98,9 +266,16 @@
                 font-size: 2.2rem;
             }
 
-            .order-form,
-            #orderMsg {
-                padding: 0 20px 0 40px;   /* room on the left for the Menu tab */
+            .panels {
+                padding: 0 16px 0 36px;   /* room on the left for the Menu tab */
+            }
+
+            .panel summary {
+                padding: 16px 16px 16px 20px;
+            }
+
+            .panel-body {
+                padding: 0 18px 20px;
             }
         }
     </style>
@@ -119,38 +294,96 @@
         <p class="section-sub">Tell us what you need, and we'll get back to you with next steps and a final quote.</p>
     </section>
 
-    <!-- ORDER FORM. Each name="..." must match a field in the Order model in main.py -->
-    <form class="order-form" id="orderForm">
-        <label for="name">YOUR NAME</label>
-        <input id="name" name="name" type="text" required maxlength="100" autocomplete="name">
+    <!-- TWO DROP-DOWN PANELS: opening one closes the other (see the script at the bottom) -->
+    <div class="panels">
 
-        <label for="email">EMAIL</label>
-        <input id="email" name="email" type="email" required maxlength="200" autocomplete="email">
+        <!-- NEW ORDER. Each name="..." must match a field in the Order model in main.py -->
+        <details class="panel" id="newOrder">
+            <summary>
+                <span>
+                    <span class="panel-title">New order</span>
+                    <span class="panel-sub">Tell us about your project</span>
+                </span>
+            </summary>
+            <div class="panel-body">
+                <form class="order-form" id="orderForm">
+                    <label for="name">YOUR NAME</label>
+                    <input id="name" name="name" type="text" required maxlength="100" autocomplete="name">
 
-        <label for="service">SERVICE</label>
-        <select id="service" name="service" required>
-            <option value="">Choose a service</option>
-            <option>AI Automation</option>
-            <option>Custom Workflows</option>
-            <option>Custom ML Model</option>
-            <option>AI Education</option>
-            <option>Other</option>
-        </select>
+                    <label for="email">EMAIL</label>
+                    <input id="email" name="email" type="email" required maxlength="200" autocomplete="email">
 
-        <label for="details">PROJECT DETAILS</label>
-        <textarea id="details" name="details" required minlength="20" maxlength="3000"
-            placeholder="What do you want built or automated? What tools do you use now? Any deadline?"></textarea>
+                    <label for="service">SERVICE</label>
+                    <select id="service" name="service" required>
+                        <option value="">Choose a service</option>
+                        <option>AI Automation</option>
+                        <option>Custom Workflows</option>
+                        <option>Custom ML Model</option>
+                        <option>AI Education</option>
+                        <option>Other</option>
+                    </select>
 
-        <div class="pill-container">
-            <button class="pill primary" id="orderButton" type="submit">Place order</button>
-        </div>
-    </form>
+                    <label for="details">PROJECT DETAILS</label>
+                    <textarea id="details" name="details" required minlength="20" maxlength="3000"
+                        placeholder="What do you want built or automated? What tools do you use now? Any deadline?"></textarea>
 
-    <!-- STEP 3b: the JavaScript that sends the form to POST /orders goes here -->
-    <p id="orderMsg" role="status"></p>
+                    <div class="pill-container">
+                        <button class="pill primary" id="orderButton" type="submit">Place order</button>
+                    </div>
+                </form>
+                <p id="orderMsg" role="status"></p>
+            </div>
+        </details>
+
+        <!-- CHECK ORDER (the confirmation email links here: order.html?c=12345678#lookup) -->
+        <details class="panel" id="lookup">
+            <summary>
+                <span>
+                    <span class="panel-title">Check order</span>
+                    <span class="panel-sub">See the status and quote of an existing order</span>
+                </span>
+            </summary>
+            <div class="panel-body">
+                <p class="section-note">Enter the email you ordered with and the 8-digit confirmation number from your email.</p>
+
+                <form class="order-form" id="lookupForm">
+                    <label for="lookupEmail">EMAIL</label>
+                    <input id="lookupEmail" type="email" required maxlength="200" autocomplete="email">
+
+                    <label for="lookupCode">CONFIRMATION NUMBER</label>
+                    <input id="lookupCode" type="text" required inputmode="numeric" pattern="[0-9]{8}"
+                        maxlength="8" placeholder="12345678" title="Your 8-digit confirmation number">
+
+                    <div class="pill-container">
+                        <button class="pill" id="lookupButton" type="submit">Find my order</button>
+                    </div>
+                </form>
+
+                <p id="lookupMsg" role="status"></p>
+
+                <div class="order-result" id="lookupResult" hidden>
+                    <div class="label">CONFIRMATION NUMBER</div>
+                    <div class="big" id="resCode"></div>
+                    <dl>
+                        <dt>Service</dt> <dd id="resService"></dd>
+                        <dt>Ordered</dt> <dd id="resDate"></dd>
+                        <dt>Status</dt>  <dd><span class="status-badge" id="resStatus"></span></dd>
+                        <dt>Quote</dt>   <dd id="resQuote"></dd>
+                    </dl>
+                    <p class="note" id="resNote"></p>
+                    <div class="pill-container" id="payBox" hidden>
+                        <button class="pill primary" id="payButton" type="button">Pay now</button>
+                    </div>
+                    <p class="note" id="payMsg" role="status"></p>
+                </div>
+            </div>
+        </details>
+
+    </div>
 
     <footer>© 2026 Abstraction Solutions</footer>
-    <!-- STEP 3b: send the form to the Python server -->
+
+    <!-- send the order form to the Python server, and look up existing orders -->
     <script>
         const API_BASE = 'https://abstraction-quote-engine.onrender.com';
 
@@ -170,6 +403,9 @@
             orderButton.disabled = true;               // stop double-clicks = double orders
             orderButton.textContent = 'Sending...';
             orderMsg.textContent = '';
+            const slowOrder = setTimeout(function () {   // slow = the free server is waking up
+                orderButton.textContent = 'Waking up the server (up to a minute)...';
+            }, 5000);
 
             try {
                 const response = await fetch(API_BASE + '/orders', {
@@ -182,18 +418,166 @@
                 if (response.status === 429) throw new Error('Too many orders from you today. Please email us instead.');
                 if (!response.ok) throw new Error('Something went wrong on our end. Please try again or email us.');
 
-                const result = await response.json();  // { ok: true, id: 7 }
+                const result = await response.json();  // { ok: true, confirmation: "12345678" }
                 orderForm.hidden = true;               // hide the form
-                orderMsg.textContent = 'Order #' + result.id + ' received! We\'ll email you within 2 business days.';
+                orderMsg.textContent = 'Order received! Your confirmation number is ' + result.confirmation +
+                    '. We\'ve emailed it to you, and we\'ll be in touch within 2 business days.';
             } catch (error) {
                 orderMsg.textContent = error instanceof TypeError
                     ? 'Our order system is offline right now. Please email dylanpoggers0@gmail.com.'
                     : error.message;
             } finally {
+                clearTimeout(slowOrder);
                 orderButton.disabled = false;
                 orderButton.textContent = 'Place order';
             }
         });
+
+        // ---------- CHECK AN EXISTING ORDER ----------
+        const lookupForm = document.getElementById('lookupForm');
+        const lookupButton = document.getElementById('lookupButton');
+        const lookupMsg = document.getElementById('lookupMsg');
+        const lookupResult = document.getElementById('lookupResult');
+
+        const STATUS_TEXT = { new: 'Received', in_progress: 'In progress', complete: 'Complete' };
+        let lastSearch = null;   // the email + number from the last search (used by Pay now)
+        const dollars = function (cents) {
+            return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
+        };
+
+        // ---------- THE TWO PANELS ----------
+        const newOrderPanel = document.getElementById('newOrder');
+        const lookupPanel = document.getElementById('lookup');
+
+        // opening one panel closes the other
+        newOrderPanel.addEventListener('toggle', function () {
+            if (newOrderPanel.open) lookupPanel.open = false;
+        });
+        lookupPanel.addEventListener('toggle', function () {
+            if (lookupPanel.open) newOrderPanel.open = false;
+        });
+
+        // The email link fills in the number and opens Check order: order.html?c=12345678#lookup
+        const codeFromLink = new URLSearchParams(location.search).get('c');
+        if (codeFromLink && /^[0-9]{8}$/.test(codeFromLink)) {
+            document.getElementById('lookupCode').value = codeFromLink;
+        }
+        // both panels start closed, unless they came from the email link: then open Check order
+        if (codeFromLink || location.hash === '#lookup') {
+            lookupPanel.open = true;
+            document.getElementById('lookupEmail').focus();
+        }
+
+        lookupForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            lookupButton.disabled = true;
+            lookupButton.textContent = 'Searching...';
+            lookupMsg.textContent = '';
+            lookupResult.hidden = true;
+            const slowLookup = setTimeout(function () {
+                lookupButton.textContent = 'Waking up the server (up to a minute)...';
+            }, 5000);
+
+            lastSearch = {
+                email: document.getElementById('lookupEmail').value.trim(),
+                confirmation: document.getElementById('lookupCode').value.trim()
+            };
+            try {
+                const response = await fetch(API_BASE + '/orders/lookup', {
+                    method: 'POST',   // POST keeps the email out of the address bar and server logs
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(lastSearch)
+                });
+
+                if (response.status === 404) throw new Error('No order matches that email and confirmation number.');
+                if (response.status === 422) throw new Error('The confirmation number should be exactly 8 digits.');
+                if (response.status === 429) throw new Error('Too many searches. Please wait a minute and try again.');
+                if (!response.ok) throw new Error('Something went wrong on our end. Please try again.');
+
+                showOrder(await response.json());
+            } catch (error) {
+                lookupMsg.textContent = error instanceof TypeError
+                    ? 'Our order system is offline right now. Please try again in a minute.'
+                    : error.message;
+            } finally {
+                clearTimeout(slowLookup);
+                lookupButton.disabled = false;
+                lookupButton.textContent = 'Find my order';
+            }
+        });
+
+        // textContent (never innerHTML) so nothing from the server can run as code
+        function showOrder(order) {
+            document.getElementById('resCode').textContent = order.confirmation;
+            document.getElementById('resService').textContent = order.service;
+            document.getElementById('resDate').textContent = new Date(order.created_at).toLocaleDateString();
+
+            const badge = document.getElementById('resStatus');
+            badge.textContent = STATUS_TEXT[order.status] || order.status;
+            badge.className = 'status-badge ' + order.status;
+
+            const hasQuote = order.quote_cents !== null;
+            const paid = Boolean(order.paid_at);
+            const quote = document.getElementById('resQuote');
+            quote.textContent = hasQuote ? dollars(order.quote_cents) : 'Being prepared';
+            if (paid) {
+                const p = document.createElement('span');
+                p.className = 'status-badge paid';
+                p.textContent = 'Paid ✓';
+                quote.append(' ', p);
+            }
+
+            document.getElementById('resNote').textContent =
+                paid ? 'Payment received on ' + new Date(order.paid_at).toLocaleDateString() + '. Thank you!'
+                : order.status === 'complete' ? 'This project is complete. Thank you for working with us!'
+                : hasQuote ? 'Your final quote is ready. You can pay securely online with Stripe.'
+                : 'We\'re reviewing your project and will email you a final quote soon.';
+
+            // show "Pay $X" only when there's a quote and it isn't paid yet
+            const payBox = document.getElementById('payBox');
+            payBox.hidden = !(hasQuote && !paid);
+            document.getElementById('payButton').textContent = hasQuote ? 'Pay ' + dollars(order.quote_cents) : 'Pay now';
+            document.getElementById('payMsg').textContent = '';
+
+            lookupResult.hidden = false;
+        }
+
+        // ---------- PAY ----------
+        const payButton = document.getElementById('payButton');
+        const payMsg = document.getElementById('payMsg');
+
+        payButton.addEventListener('click', async function () {
+            if (!lastSearch) return;
+            payButton.disabled = true;
+            const label = payButton.textContent;
+            payButton.textContent = 'Opening secure checkout...';
+            payMsg.textContent = '';
+            try {
+                // we only say WHICH order; the server looks up the price itself
+                const response = await fetch(API_BASE + '/orders/pay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(lastSearch)
+                });
+                const data = await response.json().catch(function () { return {}; });
+                if (!response.ok) throw new Error(data.detail || 'Couldn\'t start the payment. Please try again.');
+                location.href = data.url;   // off to Stripe's secure payment page
+            } catch (error) {
+                payMsg.textContent = error instanceof TypeError
+                    ? 'Our payment system is offline right now. Please try again in a minute.'
+                    : error.message;
+                payButton.disabled = false;
+                payButton.textContent = label;
+            }
+        });
+
+        // ---------- BACK FROM STRIPE ----------
+        const params = new URLSearchParams(location.search);
+        if (params.get('paid') === '1') {
+            lookupMsg.textContent = 'Thank you! Your payment went through. Enter your email to see your order marked as paid.';
+        } else if (params.get('canceled') === '1') {
+            lookupMsg.textContent = 'Payment canceled, and you weren\'t charged. Enter your email to try again anytime.';
+        }
     </script>
 </body>
 </html>

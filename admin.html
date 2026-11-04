@@ -124,6 +124,44 @@
             border-left-color: #f5c451;     /* yellow stripe = in progress */
         }
 
+        .order.complete {
+            border-left-color: #5d6b60;     /* gray stripe = complete */
+            opacity: 0.75;
+        }
+
+        .order .code {
+            color: var(--green);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* quote box: $ sign + number + Save */
+        .quote-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quote-box input {
+            width: 120px;
+        }
+
+        .paid-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 10px;
+            border-radius: 50px;
+            background-color: var(--green);
+            color: black;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .saved {
+            color: var(--green);
+            font-size: 0.9rem;
+        }
+
         .order-top {
             display: flex;
             flex-wrap: wrap;
@@ -173,6 +211,23 @@
             font: inherit;
             font-weight: bold;
             cursor: pointer;
+        }
+
+        .delete-btn {
+            margin-left: auto;
+            background-color: transparent;
+            color: #ff8a80;
+            border: 1px solid rgba(255, 138, 128, 0.4);
+            border-radius: 50px;
+            padding: 10px 18px;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .delete-btn.confirm {
+            background-color: #ff8a80;
+            color: black;
         }
 
         .complete-btn.confirm {
@@ -323,12 +378,13 @@
             try {
                 const orders = await api('/admin/orders');
                 document.getElementById('orderCount').textContent =
-                    orders.length + ' open order' + (orders.length === 1 ? '' : 's');
+                    orders.length + ' order' + (orders.length === 1 ? '' : 's') + ' · ' +
+                    orders.filter(function (o) { return o.status !== 'complete'; }).length + ' open';
                 orderList.replaceChildren();
                 if (!orders.length) {
                     const p = document.createElement('p');
                     p.className = 'empty';
-                    p.textContent = 'No open orders right now.';
+                    p.textContent = 'No orders yet.';
                     orderList.append(p);
                 }
                 orders.forEach(function (order) { orderList.append(orderCard(order)); });
@@ -345,12 +401,23 @@
             return node;
         }
 
+        // send a change (status and/or quote) for one order
+        function patchOrder(order, changes) {
+            return api('/admin/orders/' + order.id, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(changes)
+            });
+        }
+
         function orderCard(order) {
             const card = el('article', 'order ' + order.status);
 
             const top = el('div', 'order-top');
-            top.append(el('h3', '', '#' + order.id + ' · ' + order.name),
-                       el('span', 'when', new Date(order.created_at).toLocaleString()));
+            const title = el('h3', '', order.name + ' · ');
+            title.append(el('span', 'code', order.confirmation));
+            if (order.paid_at) title.append(el('span', 'paid-badge', 'Paid ' + new Date(order.paid_at).toLocaleDateString()));
+            top.append(title, el('span', 'when', new Date(order.created_at).toLocaleString()));
 
             const meta = el('p', 'meta', order.service + ' · ');
             const email = el('a', '', order.email);
@@ -359,9 +426,10 @@
 
             const details = el('p', 'details', order.details);
 
-            // status dropdown
+            // status dropdown: new -> in progress -> complete
             const status = el('select');
-            [['new', 'New'], ['in_progress', 'In progress']].forEach(function (pair) {
+            status.setAttribute('aria-label', 'Status');
+            [['new', 'New'], ['in_progress', 'In progress'], ['complete', 'Complete']].forEach(function (pair) {
                 const option = el('option', '', pair[1]);
                 option.value = pair[0];
                 option.selected = order.status === pair[0];
@@ -369,28 +437,57 @@
             });
             status.addEventListener('change', async function () {
                 try {
-                    await api('/admin/orders/' + order.id, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ status: status.value })
-                    });
+                    await patchOrder(order, { status: status.value });
                     card.className = 'order ' + status.value;
                 } catch (error) {
-                    if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t update #' + order.id + ': ' + error.message;
+                    if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t update ' + order.confirmation + ': ' + error.message;
                 }
             });
 
-            // complete button: first click asks, second click deletes
-            const complete = el('button', 'complete-btn', 'Mark complete');
-            complete.type = 'button';
+            // quote: type dollars, Save -> the customer gets a "your quote is ready" email
+            const quoteBox = el('div', 'quote-box');
+            const quoteInput = el('input');
+            quoteInput.type = 'number';
+            quoteInput.min = '0';
+            quoteInput.step = '0.01';
+            quoteInput.placeholder = 'Quote $';
+            quoteInput.setAttribute('aria-label', 'Quote in dollars');
+            if (order.quote_cents !== null) quoteInput.value = (order.quote_cents / 100).toFixed(2);
+            const saveQuote = el('button', 'small-btn', order.quote_cents === null ? 'Save quote' : 'Update quote');
+            saveQuote.type = 'button';
+            const saved = el('span', 'saved');
+            saveQuote.addEventListener('click', async function () {
+                const dollars = parseFloat(quoteInput.value);
+                if (isNaN(dollars) || dollars < 0) {
+                    saved.textContent = 'Enter an amount';
+                    return;
+                }
+                try {
+                    await patchOrder(order, { quote: dollars });
+                    saveQuote.textContent = 'Update quote';
+                    saved.textContent = '✓ Saved, customer emailed';
+                } catch (error) {
+                    if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t save the quote: ' + error.message;
+                }
+            });
+            quoteBox.append(el('span', '', '$'), quoteInput, saveQuote, saved);
+            if (order.paid_at) {   // a paid quote can't change (the server refuses too)
+                quoteInput.disabled = true;
+                saveQuote.disabled = true;
+                saveQuote.textContent = 'Paid';
+            }
+
+            // delete (for spam/tests): first click asks, second click deletes for good
+            const del = el('button', 'delete-btn', 'Delete');
+            del.type = 'button';
             let timer;
-            complete.addEventListener('click', async function () {
-                if (!complete.classList.contains('confirm')) {
-                    complete.classList.add('confirm');
-                    complete.textContent = 'Click again to delete';
+            del.addEventListener('click', async function () {
+                if (!del.classList.contains('confirm')) {
+                    del.classList.add('confirm');
+                    del.textContent = 'Click again to delete';
                     timer = setTimeout(function () {
-                        complete.classList.remove('confirm');
-                        complete.textContent = 'Mark complete';
+                        del.classList.remove('confirm');
+                        del.textContent = 'Delete';
                     }, 4000);
                     return;
                 }
@@ -400,12 +497,12 @@
                     card.remove();
                     loadOrders();   // update the count
                 } catch (error) {
-                    if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t complete #' + order.id + ': ' + error.message;
+                    if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t delete ' + order.confirmation + ': ' + error.message;
                 }
             });
 
             const actions = el('div', 'order-actions');
-            actions.append(status, complete);
+            actions.append(status, quoteBox, del);
 
             card.append(top, meta, details, actions);
             return card;
