@@ -20,6 +20,7 @@ const ICONS = {
     about:    '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     order:    '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>',
     admin:    '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    roi:      '<line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="12" width="3" height="8"/><rect x="10.5" y="8" width="3" height="12"/><rect x="16" y="4" width="3" height="16"/>',
     cases:    '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="13" x2="22" y2="13"/>',
     privacy:  '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
     returns:  '<polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/>',
@@ -32,6 +33,7 @@ const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
     { id: 'cases',    label: 'Case Studies', href: 'case-studies.html', icon: 'cases' },
+    { id: 'roi',      label: 'ROI Calculator', href: 'roi.html',        icon: 'roi' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
     { id: 'order',    label: 'Order',    href: 'order.html',         icon: 'order' },
     { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' },  // = abstraction-solutions.com/#contact
@@ -175,7 +177,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '</div>' +
             '<div><h4>EXPLORE</h4><ul>' +
                 link('services.html', 'Services') + link('aboutus.html', 'About Us') +
-                link('case-studies.html', 'Case Studies') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
+                link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') +
             '</ul></div>' +
             '<div><h4>CONTACT</h4><ul>' +

@@ -474,6 +474,7 @@
                 <a class="pill primary" id="acceptQuote" href="order.html">Accept this quote</a>
             </div>
             <p class="accept-note">Opens the order form with your project filled in. We'll confirm your final price by email.</p>
+            <p class="accept-note"><a id="roiLink" href="roi.html" style="color: var(--green); font-weight: bold;">See what this could save you &rarr;</a></p>
         </div>
 
         <p class="quote-note">
@@ -637,6 +638,8 @@
                          ' (' + q.project_type_label + ')\n\n' + document.getElementById('quoteText').value.trim()
             });
             document.getElementById('acceptQuote').href = 'order.html?' + params.toString() + '#newOrder';
+            // ROI calculator starts with the middle of this estimate as the project cost
+            document.getElementById('roiLink').href = 'roi.html?cost=' + Math.round((q.low + q.high) / 2);
             window.trackEvent && trackEvent('quote-requested');
 
             result.hidden = false;

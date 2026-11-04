@@ -79,6 +79,43 @@
             font-weight: bold;
         }
 
+        /* photo of Dylan next to "Who we are" (stacked on phones) */
+        .intro {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .founder {
+            flex-shrink: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        .founder img {
+            width: 240px;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 6px solid var(--green);                  /* the medium green outline */
+            box-shadow: 0 0 34px var(--green-dim);
+            display: block;
+        }
+
+        .founder figcaption {
+            margin-top: 14px;
+            color: #f2f6f2;
+            font-weight: bold;
+        }
+
+        .founder figcaption span {
+            display: block;
+            color: var(--green);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
         /* faint line between sections */
         .divider {
             border: 0;
@@ -126,6 +163,16 @@
             .about-text .lead {
                 font-size: 1.25rem;
             }
+
+            .intro {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .founder img {
+                width: 190px;
+                height: 190px;
+            }
         }
     </style>
 </head>
@@ -144,12 +191,19 @@
     </section>
 
     <div class="about-text">
-        <section>
+        <section class="intro">
+            <!-- Dylan's photo: save it as dylan.jpg in the main folder -->
+            <figure class="founder">
+                <img src="dylan.jpg" alt="Dylan Pogue, founder and CEO of Abstraction Solutions">
+                <figcaption>Dylan Pogue<span>FOUNDER &amp; CEO</span></figcaption>
+            </figure>
+            <div>
             <h2>Who we are</h2>
             <p class="lead">Abstraction Solutions is an <strong>AI education and software company</strong> founded in 2026 by CEO
                <strong>Dylan Pogue</strong>, a Computer Science student in the University of Florida's Innovation Academy.</p>
             <p>We build <strong>efficient software</strong> and <strong>learning resources</strong> that make machine learning
                understandable, drawing on experience across web development, hardware and AI.</p>
+            </div>
         </section>
 
         <hr class="divider">

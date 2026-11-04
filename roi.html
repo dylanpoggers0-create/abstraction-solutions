@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Automation ROI Calculator | Abstraction Solutions</title>
+    <meta name="description" content="Estimate how much time and money an AI automation could save your business: hours saved, yearly savings, payback period and ROI.">
+    <link rel="canonical" href="https://abstraction-solutions.com/roi.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="AI Automation ROI Calculator | Abstraction Solutions">
+    <meta property="og:description" content="Estimate how much time and money an AI automation could save your business: hours saved, yearly savings, payback period and ROI.">
+    <meta property="og:url" content="https://abstraction-solutions.com/roi.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Styles only this page uses -->
+    <style>
+        .hero {
+            padding: 150px 24px 10px;   /* room for the floating header */
+            text-align: center;
+        }
+
+        .eyebrow {
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin: 14px 0 16px;
+        }
+
+        /* two columns: inputs on the left, results on the right (stacked on phones) */
+        .roi {
+            max-width: 1100px;
+            margin: 30px auto 20px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background-color: rgba(11, 16, 12, 0.9);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 28px;
+        }
+
+        .panel h2 {
+            margin: 0 0 6px;
+            font-size: 1.3rem;
+        }
+
+        .panel .note {
+            color: var(--text-muted);
+            margin: 0 0 18px;
+            line-height: 1.5;
+        }
+
+        /* one input: label, slider, and a number box that stay in sync */
+        .field {
+            margin: 0 0 22px;
+        }
+
+        .field label {
+            display: block;
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .field small {
+            display: block;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .field .row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .field input[type="range"] {
+            flex: 1;
+            accent-color: var(--green);
+        }
+
+        .field .num {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background-color: rgba(11, 16, 12, 0.92);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 8px 12px;
+            color: var(--text-muted);
+        }
+
+        .field .num input {
+            width: 78px;
+            background: none;
+            border: 0;
+            color: white;
+            font: inherit;
+            font-size: 1rem;
+            text-align: right;
+        }
+
+        .field .num input:focus {
+            outline: none;
+        }
+
+        .field .num:focus-within {
+            border-color: var(--green);
+            box-shadow: 0 0 14px var(--green-dim);
+        }
+
+        /* results */
+        .big {
+            text-align: center;
+            padding: 6px 0 20px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 18px;
+        }
+
+        .big .label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .big .value {
+            color: var(--green);
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 6px 0 2px;
+        }
+
+        .big .value.bad {
+            color: #ff8a80;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat {
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            border-radius: 14px;
+            padding: 12px 14px;
+        }
+
+        .stat strong {
+            display: block;
+            color: var(--green);
+            font-size: 1.35rem;
+        }
+
+        .stat span {
+            color: #dfe7df;
+            font-size: 0.9rem;
+        }
+
+        /* 12-month chart: money you've saved minus what you've spent */
+        .chart {
+            margin-top: 22px;
+        }
+
+        .chart .label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .chart svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .disclaimer {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        @media (max-width: 860px) {
+            .roi {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding-top: 120px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .roi,
+            .disclaimer {
+                padding: 0 16px 0 36px;   /* room for the Menu tab */
+            }
+
+            .panel {
+                padding: 22px 18px;
+            }
+
+            .big .value {
+                font-size: 2.4rem;
+            }
+        }
+    </style>
+</head>
+
+<!-- "roi" must match the id in nav.js -->
+<body data-page="roi">
+
+    <div id="site-nav"></div>
+    <script src="nav.js"></script>
+
+    <section class="hero">
+        <div class="eyebrow">ROI CALCULATOR</div>
+        <h1>What could AI save you?</h1>
+        <p class="section-sub">Plug in a task your team does by hand, and see what automating it could be worth.</p>
+    </section>
+
+    <div class="roi">
+
+        <!-- INPUTS -->
+        <div class="panel">
+            <h2>Your numbers</h2>
+            <p class="note">Pick one task, like answering emails, entering data or building reports.</p>
+
+            <div class="field">
+                <label for="hours">HOURS PER WEEK ON THIS TASK</label>
+                <small>Add up everyone who does it.</small>
+                <div class="row">
+                    <input type="range" id="hoursR" min="1" max="80" step="1" value="10" aria-label="Hours per week">
+                    <span class="num"><input id="hours" type="number" min="0" max="1000" step="1" value="10"> hrs</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="rate">COST OF AN HOUR OF THAT TIME</label>
+                <small>Hourly pay, plus a bit for taxes and benefits.</small>
+                <div class="row">
+                    <input type="range" id="rateR" min="10" max="150" step="1" value="25" aria-label="Hourly cost">
+                    <span class="num">$<input id="rate" type="number" min="0" max="10000" step="1" value="25"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="share">HOW MUCH OF IT WE AUTOMATE</label>
+                <small>Most projects automate part of a task, not all of it.</small>
+                <div class="row">
+                    <input type="range" id="shareR" min="10" max="100" step="5" value="60" aria-label="Percent automated">
+                    <span class="num"><input id="share" type="number" min="0" max="100" step="5" value="60"> %</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="cost">ONE-TIME PROJECT COST</label>
+                <small>Not sure? <a href="index.html#quote" style="color: var(--green); font-weight: bold;">Get a free instant quote</a>.</small>
+                <div class="row">
+                    <input type="range" id="costR" min="250" max="20000" step="250" value="2500" aria-label="Project cost">
+                    <span class="num">$<input id="cost" type="number" min="0" max="1000000" step="50" value="2500"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="monthly">MONTHLY RUNNING COST</label>
+                <small>Things like AI usage or hosting. Often small, sometimes $0.</small>
+                <div class="row">
+                    <input type="range" id="monthlyR" min="0" max="500" step="5" value="20" aria-label="Monthly cost">
+                    <span class="num">$<input id="monthly" type="number" min="0" max="100000" step="5" value="20"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS (filled in by the script below) -->
+        <div class="panel" aria-live="polite">
+            <div class="big">
+                <div class="label">FIRST-YEAR RETURN</div>
+                <div class="value" id="roiPct">0%</div>
+                <div class="note" id="roiLine" style="margin: 0;"></div>
+            </div>
+            <div class="stats">
+                <div class="stat"><strong id="hrsSaved">0</strong><span>hours saved every week</span></div>
+                <div class="stat"><strong id="perMonth">$0</strong><span>saved every month</span></div>
+                <div class="stat"><strong id="payback">-</strong><span>to pay for itself</span></div>
+                <div class="stat"><strong id="perYear">$0</strong><span>net savings, first year</span></div>
+            </div>
+            <div class="chart">
+                <div class="label">Money saved minus money spent, month by month</div>
+                <svg id="chart" viewBox="0 0 480 200" role="img" aria-label="Net savings over the first 12 months"></svg>
+            </div>
+        </div>
+
+    </div>
+
+    <p class="disclaimer">
+        This is an estimate based only on the numbers you enter, not a promise of results. Real savings depend on the
+        task and how the project is built. We'll talk through realistic numbers with you before you start.
+    </p>
+
+    <section>
+        <div class="pill-container">
+            <a class="pill primary" href="index.html#quote">Get a free quote</a>
+            <a class="pill" href="order.html">Start a project</a>
+        </div>
+    </section>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+    <script>
+        const FIELDS = ['hours', 'rate', 'share', 'cost', 'monthly'];
+        const money = function (n) {
+            const sign = n < 0 ? '-' : '';
+            return sign + '$' + Math.round(Math.abs(n)).toLocaleString('en-US');
+        };
+
+        // The quote page can send a cost: roi.html?cost=2500
+        const fromLink = new URLSearchParams(location.search).get('cost');
+        if (fromLink && !isNaN(fromLink)) {
+            document.getElementById('cost').value = Math.round(Number(fromLink));
+        }
+
+        // keep each slider and its number box in sync
+        FIELDS.forEach(function (id) {
+            const box = document.getElementById(id);
+            const slider = document.getElementById(id + 'R');
+            slider.value = box.value;
+            slider.addEventListener('input', function () { box.value = slider.value; update(); });
+            box.addEventListener('input', function () { slider.value = box.value; update(); });
+        });
+
+        function val(id) {
+            const n = Number(document.getElementById(id).value);
+            return isFinite(n) && n > 0 ? n : 0;
+        }
+
+        let counted = false;
+        function update() {
+            const hours = val('hours'), rate = val('rate'), share = Math.min(val('share'), 100) / 100;
+            const cost = val('cost'), monthly = val('monthly');
+
+            const hoursSaved = hours * share;                       // per week
+            const savedMonth = hoursSaved * rate * 52 / 12;          // value of that time each month
+            const netMonth = savedMonth - monthly;                   // after running costs
+            const yearNet = netMonth * 12 - cost;                    // first year, after paying for the project
+            const roi = cost > 0 ? yearNet / cost * 100 : 0;
+
+            document.getElementById('hrsSaved').textContent = hoursSaved.toFixed(hoursSaved < 10 ? 1 : 0);
+            document.getElementById('perMonth').textContent = money(netMonth);
+            document.getElementById('perYear').textContent = money(yearNet);
+
+            const pay = netMonth > 0 ? cost / netMonth : Infinity;
+            document.getElementById('payback').textContent =
+                !isFinite(pay) ? 'Never' : pay < 1 ? 'Under a month' :
+                pay < 1.5 ? 'About 1 month' : 'About ' + Math.round(pay) + ' months';
+
+            const pct = document.getElementById('roiPct');
+            pct.textContent = (roi > 0 ? '+' : '') + Math.round(roi).toLocaleString('en-US') + '%';
+            pct.classList.toggle('bad', roi < 0);
+            document.getElementById('roiLine').textContent = roi >= 0
+                ? 'Every $1 spent comes back as about $' + (1 + roi / 100).toFixed(2) + ' in year one.'
+                : 'At these numbers it would take more than a year to pay off. Over 3 years: ' + money(netMonth * 36 - cost) + '.';
+
+            drawChart(cost, netMonth);
+
+            if (!counted && window.trackEvent) { counted = true; trackEvent('roi-calculated'); }
+        }
+
+        // simple 12-month bar chart in SVG (no libraries)
+        function drawChart(cost, netMonth) {
+            const svg = document.getElementById('chart');
+            const vals = [];
+            for (let m = 1; m <= 12; m++) vals.push(netMonth * m - cost);
+            const top = Math.max(0, ...vals), bot = Math.min(0, ...vals);
+            const span = (top - bot) || 1;
+            const H = 170, y = function (v) { return 10 + (top - v) / span * H; };
+            const zero = y(0);
+            let s = '<line x1="0" x2="480" y1="' + zero + '" y2="' + zero + '" stroke="#4a5a4c" stroke-width="1"/>';
+            vals.forEach(function (v, i) {
+                const x = 8 + i * 39.5, w = 28;
+                const y0 = Math.min(y(v), zero), h = Math.max(2, Math.abs(y(v) - zero));
+                const col = v >= 0 ? '#7ee96f' : '#ff8a80';
+                s += '<rect x="' + x + '" y="' + y0 + '" width="' + w + '" height="' + h + '" rx="4" fill="' + col + '" opacity="0.85"/>';
+                if (i % 2 === 1 || i === 0) {
+                    s += '<text x="' + (x + w / 2) + '" y="198" fill="#9aa69c" font-size="11" text-anchor="middle">' + (i + 1) + '</text>';
+                }
+            });
+            s += '<text x="472" y="' + (zero - 6) + '" fill="#9aa69c" font-size="11" text-anchor="end">$0</text>';
+            svg.innerHTML = s;   // only numbers we computed go in here, never user text
+        }
+
+        update();
+    </script>
+
+</body>
+</html>
