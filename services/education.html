@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AI Education | Abstraction Solutions</title>
+    <meta name="description" content="AI and computer science education from an experienced teacher and tutor. Learn how machine learning really works.">
+    <link rel="canonical" href="https://abstraction-solutions.com/services/education.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="AI Education | Abstraction Solutions">
+    <meta property="og:description" content="AI and computer science education from an experienced teacher and tutor. Learn how machine learning really works.">
+    <meta property="og:url" content="https://abstraction-solutions.com/services/education.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/jpeg" href="../abstraction_solutions.jpg">
 
     <!-- "../" = go up one folder (this page lives inside the services folder) -->
@@ -152,30 +161,130 @@
             letter-spacing: 1.5px;
         }
 
-        /* ---------- PAST PROJECTS ---------- */
-        .projects {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 22px;
-        }
-
-        .project-card {
-            background-color: var(--panel);
-            border: 1px solid var(--line);
-            border-left: 3px solid var(--green);
-            border-radius: 16px;
-            padding: 22px 24px;
-        }
-
-        .project-card h3 {
-            margin: 0 0 8px;
-            font-size: 1.15rem;
-        }
-
-        .project-card p {
+        /* ---------- TEACHING EXPERIENCE (timeline) ---------- */
+        .timeline {
+            list-style: none;
+            padding: 0;
             margin: 0;
-            color: var(--text-muted);
-            line-height: 1.6;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);   /* readable over the background video */
+        }
+
+        .timeline li {
+            position: relative;
+            padding: 0 0 34px 38px;
+        }
+
+        /* green dot for each role */
+        .timeline li::before {
+            content: "";
+            position: absolute;
+            left: 4px;
+            top: 7px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--green);
+            box-shadow: 0 0 12px var(--green-dim);
+        }
+
+        /* faint line joining the dots */
+        .timeline li:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 9px;
+            top: 26px;
+            bottom: 4px;
+            width: 2px;
+            background-color: var(--green-dim);
+        }
+
+        .timeline h3 {
+            margin: 0 0 4px;
+            font-size: 1.3rem;
+        }
+
+        .timeline .where {
+            display: block;
+            color: var(--green);
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .timeline p {
+            margin: 0;
+            color: #e6ece6;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .timeline strong,
+        .award strong {
+            color: var(--green);
+        }
+
+        /* ---------- AWARDS ---------- */
+        .award {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            margin-bottom: 26px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+        }
+
+        .trophy {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--green-soft);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            box-shadow: 0 0 18px var(--green-soft);
+        }
+
+        .trophy svg {
+            width: 26px;
+            height: 26px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .award h3 {
+            margin: 4px 0 6px;
+            font-size: 1.3rem;
+        }
+
+        .award p {
+            margin: 0;
+            color: #e6ece6;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* the other awards, as pills */
+        .award-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .award-pills span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(11, 16, 12, 0.88);
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            border-radius: 50px;
+            padding: 10px 18px;
+            font-weight: bold;
         }
 
         /* ---------- phones ---------- */
@@ -190,6 +299,10 @@
 
             .gallery {
                 grid-template-columns: 1fr;
+            }
+
+            main {
+                padding-left: 40px;   /* extra room on the left for the Menu tab */
             }
         }
     </style>
@@ -252,26 +365,55 @@
             </div>
         </section>
 
-        <!-- PAST PROJECTS -->
-            <section>
-            <h2>Experience in Education</h2>
-            <p class="section-note">Projects and roles dedicated to helping others understand technology and mathematics.</p>
+        <!-- TEACHING EXPERIENCE -->
+        <section>
+            <h2>Teaching experience</h2>
+            <p class="section-note">Years of helping students understand math, science and AI.</p>
 
-            <div class="projects">
+            <!-- ONE ROLE = one <li> block. Copy one to add another. -->
+            <ul class="timeline">
+                <li>
+                    <h3>Teaching Assistant</h3>
+                    <span class="where">Christian Brothers High School · Aug – Dec 2026</span>
+                    <p>Taught <strong>machine learning models</strong> and the <strong>Stanford design thinking process</strong>,
+                        and introduced hands-on projects for students to work on.</p>
+                </li>
+                <li>
+                    <h3>Instructor</h3>
+                    <span class="where">Mathnasium · 8 months</span>
+                    <p>Taught math to students. Also developed software to <strong>collect and store star cards digitally</strong>
+                        to reduce paper use. It wasn't implemented, but I pitched upgrades to the center director, including
+                        <strong>fuzzy search</strong>, <strong>machine learning to forecast attendance</strong> and a
+                        <strong>team points calculator</strong>.</p>
+                </li>
+                <li>
+                    <h3>Tutor</h3>
+                    <span class="where">Christian Brothers High School · Several years</span>
+                    <p>Tutored students for years, including teaching <strong>trigonometry</strong>.</p>
+                </li>
+            </ul>
+        </section>
 
-                <!-- PROJECT (copy this whole <article> block to add another project) -->
-                <article class="project-card">
-                    <h3><strong>Mathnasium Instructor</strong></h3>
-                    <p>Mathematics instructor supporting students from Pre-K through adulthood in mastering diverse mathematical concepts. Refined core mathematical skills while tailoring problem-solving approaches to match individual learning styles and levels of understanding.</p>
-                </article>
+        <!-- AWARDS -->
+        <section>
+            <h2>Awards</h2>
+            <p class="section-note">Recognition for engineering and computer science work.</p>
 
-                <article class="project-card">
-                    <h3><strong>Christian Brothers High School Teaching Assistant</strong></h3>
-                    <p>Teaching assistant for Python and Introduction to AI with Python courses. Designed student projects, provided technical support with software setup and code debugging, and delivered guest lectures. Introduced students to modern AI tools for project deployment and trained them in the Stanford Design Thinking Process.</p>
-                </article>
-
+            <div class="award">
+                <div class="trophy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></div>
+                <div>
+                    <h3>MAJEC 1st Place</h3>
+                    <p>Designed a <strong>circuit breaker with an Arduino</strong>, then used the idea that breaking a circuit
+                        with a relay can trigger a change to design a <strong>bike lock</strong>. The win earned prize money for the school.</p>
                 </div>
-            </section>
+            </div>
+
+            <div class="award-pills">
+                <span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg> Aerospace Engineering Award</span>
+                <span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg> Computer Science Award</span>
+            </div>
+        </section>
+
         <!-- CALL TO ACTION -->
         <section>
             <div class="pill-container">

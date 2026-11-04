@@ -4,12 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Order | Abstraction Solutions</title>
+    <meta name="description" content="Start a project with Abstraction Solutions, or check and pay for an existing order with your confirmation number.">
+    <link rel="canonical" href="https://abstraction-solutions.com/order.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="Order | Abstraction Solutions">
+    <meta property="og:description" content="Start a project with Abstraction Solutions, or check and pay for an existing order with your confirmation number.">
+    <meta property="og:url" content="https://abstraction-solutions.com/order.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
     <link rel="shortcut icon" href="abstraction_solutions.jpg">
 
     <!-- Shared styles (header, side nav, pills, footer...) -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Stripe's payment form. Always load it from js.stripe.com (never copy it), so card data stays with Stripe -->
+    <script src="https://js.stripe.com/dahlia/stripe.js"></script>
 
     <!-- Styles only this page uses (copied from aboutus.html) -->
     <style>
@@ -240,6 +252,10 @@
             display: none;
         }
 
+        #checkout-form:not(:empty) {
+            margin-top: 18px;
+        }
+
         .status-badge.in_progress {
             color: #f5c451;
             border-color: rgba(245, 196, 81, 0.5);
@@ -278,6 +294,8 @@
                 padding: 0 18px 20px;
             }
         }
+        .agree { color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 0; }
+        .agree a { color: var(--green); }
     </style>
 </head>
 
@@ -327,6 +345,9 @@
                     <textarea id="details" name="details" required minlength="20" maxlength="3000"
                         placeholder="What do you want built or automated? What tools do you use now? Any deadline?"></textarea>
 
+                    <p class="agree">By placing an order you agree to our <a href="terms.html">Terms &amp; Refund Policy</a>
+                       and <a href="privacy.html">Privacy Policy</a>.</p>
+
                     <div class="pill-container">
                         <button class="pill primary" id="orderButton" type="submit">Place order</button>
                     </div>
@@ -375,6 +396,8 @@
                         <button class="pill primary" id="payButton" type="button">Pay now</button>
                     </div>
                     <p class="note" id="payMsg" role="status"></p>
+                    <!-- Stripe's embedded payment form appears here after "Pay" is clicked -->
+                    <div id="checkout-form"></div>
                 </div>
             </div>
         </details>
@@ -424,7 +447,7 @@
                     '. We\'ve emailed it to you, and we\'ll be in touch within 2 business days.';
             } catch (error) {
                 orderMsg.textContent = error instanceof TypeError
-                    ? 'Our order system is offline right now. Please email dylanpoggers0@gmail.com.'
+                    ? 'Our order system is offline right now. Please email dylanpogue@abstraction-solutions.com.'
                     : error.message;
             } finally {
                 clearTimeout(slowOrder);
@@ -538,6 +561,7 @@
             payBox.hidden = !(hasQuote && !paid);
             document.getElementById('payButton').textContent = hasQuote ? 'Pay ' + dollars(order.quote_cents) : 'Pay now';
             document.getElementById('payMsg').textContent = '';
+            document.getElementById('checkout-form').replaceChildren();   // clear any earlier payment form
 
             lookupResult.hidden = false;
         }
@@ -561,7 +585,13 @@
                 });
                 const data = await response.json().catch(function () { return {}; });
                 if (!response.ok) throw new Error(data.detail || 'Couldn\'t start the payment. Please try again.');
-                location.href = data.url;   // off to Stripe's secure payment page
+
+                if (data.url) {            // backup: Stripe's own checkout page
+                    location.href = data.url;
+                    return;
+                }
+                await showPaymentForm(data.client_secret, data.publishable_key);
+                document.getElementById('payBox').hidden = true;   // the form has its own Pay button
             } catch (error) {
                 payMsg.textContent = error instanceof TypeError
                     ? 'Our payment system is offline right now. Please try again in a minute.'
@@ -570,6 +600,73 @@
                 payButton.textContent = label;
             }
         });
+
+        // Stripe's embedded form (from the code Stripe gave us), styled to match the site
+        async function showPaymentForm(clientSecret, publishableKey) {
+            if (typeof Stripe === 'undefined') throw new Error('The payment form couldn\'t load. Please check your connection and try again.');
+            if (!publishableKey) throw new Error('Online payment isn\'t set up yet. Please email us to pay.');
+            const stripe = Stripe(publishableKey);
+
+            const checkout = stripe.initCheckoutFormSdk({
+                clientSecret: clientSecret,
+                appearance: {
+                    theme: 'night',
+                    inputs: 'spaced',
+                    labels: 'auto',
+                    variables: {
+                        borderRadius: '12px',
+                        colorBackground: '#0b100c',
+                        colorPrimary: '#7ee96f',
+                        colorText: '#ffffff',
+                        colorDanger: '#ff8a80',
+                        colorSuccess: '#7ee96f',
+                        fontSizeBase: '16px',
+                        spacingUnit: '4px'
+                    }
+                }
+            });
+
+            const form = checkout.createForm({ layout: 'expanded' });
+            form.mount('#checkout-form');
+
+            const loadActionsResult = await checkout.loadActions();
+            if (loadActionsResult.type !== 'success') throw new Error('The payment form couldn\'t load. Please try again.');
+
+            form.on('confirm', async function (event) {
+                try {
+                    // cards finish right here (no page change); some methods may still redirect to the return page
+                    const result = await loadActionsResult.actions.confirm({ formConfirmEvent: event, redirect: 'if_required' });
+                    if (result && result.type === 'error') {
+                        payMsg.textContent = result.error.message;   // e.g. card declined
+                        return;
+                    }
+                    form.unmount();
+                    payMsg.textContent = 'Payment received, thank you! Updating your order...';
+                    checkPaid(0);
+                } catch (error) {
+                    payMsg.textContent = 'Payment didn\'t go through: ' + (error.message || 'please try again.');
+                }
+            });
+        }
+
+        // Stripe tells OUR server (webhook) a moment after paying, so ask a few times until it shows Paid
+        function checkPaid(tries) {
+            setTimeout(async function () {
+                try {
+                    const response = await fetch(API_BASE + '/orders/lookup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(lastSearch)
+                    });
+                    if (response.ok) {
+                        const order = await response.json();
+                        if (order.paid_at) { showOrder(order); return; }   // the order card now says Paid
+                    }
+                } catch (e) {}
+                if (tries < 2) checkPaid(tries + 1);
+                else payMsg.textContent = 'Payment received, thank you! It may take a minute to show as Paid here.';
+            }, [2000, 4000, 8000][tries]);
+        }
 
         // ---------- BACK FROM STRIPE ----------
         const params = new URLSearchParams(location.search);

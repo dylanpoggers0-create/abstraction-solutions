@@ -121,3 +121,59 @@ document.querySelectorAll('.side-links a').forEach(function (a) {
    means it's usually awake by the time someone asks for a quote or orders.
    --------------------------------------------------------- */
 fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () {});
+
+/* ---------------------------------------------------------
+   SITE FOOTER
+   Fills in the <footer> on every page (or adds one if a page has none),
+   so the links and email only live here.
+   --------------------------------------------------------- */
+(function () {
+    const css = document.createElement('style');
+    css.textContent =
+        '.site-footer{max-width:1000px;margin:60px auto 0;padding:34px 24px 40px;border-top:1px solid var(--line,#1e2a20);' +
+            'display:flex;flex-wrap:wrap;justify-content:space-between;gap:28px;text-align:left;color:var(--text-muted,#9aa69c);font-size:.9rem}' +
+        '.site-footer .f-brand{display:flex;align-items:center;gap:12px;color:#fff;font-weight:bold;letter-spacing:2px;font-size:.85rem}' +
+        '.site-footer .f-brand img{width:34px;height:34px;border-radius:8px}' +
+        '.site-footer p{margin:10px 0 0;max-width:280px;line-height:1.5}' +
+        '.site-footer h4{margin:0 0 10px;color:var(--green,#7ee96f);font-size:.75rem;letter-spacing:2px}' +
+        '.site-footer ul{list-style:none;margin:0;padding:0}' +
+        '.site-footer li{margin:0 0 8px}' +
+        '.site-footer a{color:#dfe7df;text-decoration:none}' +
+        '.site-footer a:hover{color:var(--green,#7ee96f)}' +
+        '.site-footer .f-copy{flex-basis:100%;padding-top:18px;border-top:1px solid var(--line,#1e2a20);font-size:.8rem}' +
+        '@media(max-width:600px){.site-footer{padding-left:44px}}';
+    document.head.appendChild(css);
+
+    function link(href, text) {
+        return '<li><a href="' + BASE + href + '">' + text + '</a></li>';
+    }
+
+    function build() {
+        let footer = document.querySelector('footer');
+        if (!footer) {
+            footer = document.createElement('footer');
+            document.body.appendChild(footer);
+        }
+        footer.className = 'site-footer';
+        footer.innerHTML =
+            '<div>' +
+                '<div class="f-brand"><img src="' + BASE + 'abstraction_solutions.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
+                '<p>AI automations, workflows, machine learning models and AI education.</p>' +
+            '</div>' +
+            '<div><h4>EXPLORE</h4><ul>' +
+                link('services.html', 'Services') + link('aboutus.html', 'About Us') +
+                link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
+                link('order.html#lookup', 'Check an order') +
+            '</ul></div>' +
+            '<div><h4>CONTACT</h4><ul>' +
+                '<li><a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></li>' +
+            '</ul></div>' +
+            '<div><h4>LEGAL</h4><ul>' +
+                link('privacy.html', 'Privacy Policy') + link('terms.html', 'Terms &amp; Refunds') +
+            '</ul></div>' +
+            '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA</div>';
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+    else build();
+})();
