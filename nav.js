@@ -182,6 +182,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '</ul></div>' +
             '<div><h4>CONTACT</h4><ul>' +
                 '<li><a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></li>' +
+                '<li><a href="https://www.youtube.com/@abstractionsolutions" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:8px"><rect x="2" y="5" width="20" height="14" rx="4"/><polygon points="10,9 15.5,12 10,15" fill="currentColor" stroke="none"/></svg>@abstractionsolutions</a></li>' +
                 '<li><a href="https://www.instagram.com/abstraction.solutions/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:8px"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1" fill="currentColor" stroke="none"/></svg>@abstraction.solutions</a></li>' +
             '</ul></div>' +
             '<div><h4>LEGAL</h4><ul>' +

@@ -341,10 +341,11 @@
         };
 
         // The quote page can send a cost: roi.html?cost=2500
-        const fromLink = new URLSearchParams(location.search).get('cost');
-        if (fromLink && !isNaN(fromLink)) {
-            document.getElementById('cost').value = Math.round(Number(fromLink));
-        }
+        const linkParams = new URLSearchParams(location.search);
+        ['cost', 'hours', 'rate'].forEach(function (k) {
+            const v = linkParams.get(k);
+            if (v !== null && v !== '' && !isNaN(v)) document.getElementById(k).value = Math.round(Number(v));
+        });
 
         // keep each slider and its number box in sync
         FIELDS.forEach(function (id) {
