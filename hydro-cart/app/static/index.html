@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydro Cart Monitor</title>
+<!-- Same dashboard as the Hydro Cart tab on abstraction-solutions.com/admin.html -->
+<link rel="stylesheet" href="/hydro-admin.css">
+<style>
+    :root {
+        --green: #7ee96f;
+        --green-soft: rgba(126, 233, 111, 0.12);
+        --green-dim: rgba(126, 233, 111, 0.35);
+        --text-muted: #9aa69c;
+        --panel: #0b100c;
+        --line: #1e2a20;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #050806; color: #eef3ee; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+    header { padding: 20px 24px; border-bottom: 1px solid var(--line); }
+    header h1 { margin: 0; font-size: 1.4rem; }
+    header h1 span { color: var(--green); }
+    main { max-width: 1200px; margin: 0 auto; padding: 22px 20px 60px; }
+    input { background: #0b100c; color: #fff; border: 1px solid var(--line); border-radius: 10px; font: inherit; }
+    .small-btn { background: transparent; color: #eef3ee; border: 1px solid var(--line); border-radius: 20px;
+                 padding: 6px 14px; cursor: pointer; font: inherit; font-size: 0.9rem; }
+    .small-btn:hover { border-color: var(--green); }
+</style>
+</head>
+<body>
+    <header><h1>Hydro Cart <span>Monitor</span></h1></header>
+    <main><div id="hydroPanel"></div></main>
+    <script>window.HYDRO_APP_BASE = location.origin;</script>
+    <script src="/hydro-admin.js"></script>
+    <script>window.HydroAdmin.start();</script>
+</body>
+</html>

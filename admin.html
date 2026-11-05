@@ -10,6 +10,7 @@
 
     <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="hydro-admin.css">
 
     <style>
         main {
@@ -52,6 +53,32 @@
             min-height: 1.4em;
             color: #ff8a80;
         }
+
+        /* ---------- TABS ---------- */
+        main.wide { max-width: 1200px; }
+
+        .tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 22px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tabs #logoutButton { margin-left: auto; margin-bottom: 8px; }
+
+        .tab {
+            background: none;
+            border: 0;
+            border-bottom: 3px solid transparent;
+            color: var(--text-muted);
+            font: inherit;
+            font-weight: bold;
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+
+        .tab.active { color: var(--green); border-bottom-color: var(--green); }
 
         /* ---------- LOGIN ---------- */
         #loginForm {
@@ -259,7 +286,7 @@
 
     <main>
         <div class="eyebrow">ADMIN</div>
-        <h1>Orders</h1>
+        <h1 id="adminTitle">Orders</h1>
 
         <!-- LOGIN (shown until you log in) -->
         <form id="loginForm">
@@ -276,16 +303,28 @@
 
         <!-- DASHBOARD (hidden until you log in) -->
         <section id="dashboard" hidden>
-            <div class="toolbar">
-                <span class="count" id="orderCount"></span>
-                <button class="small-btn" id="refreshButton" type="button">Refresh</button>
+            <!-- TABS: Orders (from the server) and Hydro Cart (from the cart app on this computer) -->
+            <div class="tabs" role="tablist">
+                <button class="tab active" id="tabOrders" type="button" role="tab">Orders</button>
+                <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
                 <button class="small-btn" id="logoutButton" type="button">Log out</button>
             </div>
-            <p class="msg" id="dashMsg" role="alert"></p>
-            <div id="orderList"></div>
+
+            <div id="ordersPanel">
+                <div class="toolbar">
+                    <span class="count" id="orderCount"></span>
+                    <button class="small-btn" id="refreshButton" type="button">Refresh</button>
+                </div>
+                <p class="msg" id="dashMsg" role="alert"></p>
+                <div id="orderList"></div>
+            </div>
+
+            <!-- filled in by hydro-admin.js -->
+            <div id="hydroPanel" hidden></div>
         </section>
     </main>
 
+    <script src="hydro-admin.js"></script>
     <script>
         const API_BASE = 'https://abstraction-quote-engine.onrender.com';
 
@@ -358,12 +397,28 @@
 
         function logout(message) {
             setToken(null);
+            showTab('orders');
             dashboard.hidden = true;
             loginForm.hidden = false;
             loginMsg.textContent = message || '';
         }
 
         document.getElementById('logoutButton').addEventListener('click', function () { logout(); });
+
+        // ---------- tabs ----------
+        function showTab(name) {
+            const hydro = name === 'hydro';
+            document.getElementById('tabOrders').classList.toggle('active', !hydro);
+            document.getElementById('tabHydro').classList.toggle('active', hydro);
+            document.getElementById('ordersPanel').hidden = hydro;
+            document.getElementById('hydroPanel').hidden = !hydro;
+            document.getElementById('adminTitle').textContent = hydro ? 'Hydro Cart' : 'Orders';
+            document.querySelector('main').classList.toggle('wide', hydro);
+            if (hydro) window.HydroAdmin.start();
+            else if (window.HydroAdmin) window.HydroAdmin.stop();
+        }
+        document.getElementById('tabOrders').addEventListener('click', function () { showTab('orders'); });
+        document.getElementById('tabHydro').addEventListener('click', function () { showTab('hydro'); });
         document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
         function showDashboard() {

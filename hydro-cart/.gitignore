@@ -1,0 +1,4 @@
+# made when the app runs: your readings and local settings stay on your computer
+*.db
+app/config.json
+__pycache__/
