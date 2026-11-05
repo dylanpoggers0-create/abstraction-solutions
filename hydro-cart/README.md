@@ -35,9 +35,15 @@ or `--port /dev/cu.usbmodem1101` (Mac). Want to try it without the cart? `python
 - **Live readings:** pH, the plant tank and the backup tank, and temperature and humidity at the tower top (D26) and room air up top (D27).
 - **Suggestions:** pH low/high, pH drifting out of range soon, plant tank low ("More water!"), backup tank empty, too hot or humid,
   humidity near the electronics, sensors not answering, cart offline. Each start and clear is saved in the alert history.
-- **AI benchmark:** every model predicts each reading 30 minutes ahead (change with `--horizon-min`), then gets scored
-  against what actually happened: average error, speed, runs and crashes. The built-in baselines are *Persistence*
-  (nothing changes) and *Linear trend*.
+- **AI benchmark (built to be rigorous):** every model gets the same 50 hours of history and predicts each value
+  30 min, 6 h and 24 h ahead (change with `--horizons 30,360,1440`). Predictions are saved before the real value
+  exists, then scored against what actually happened. Five baselines: persistence, same time yesterday, linear trend,
+  Holt exponential smoothing, ridge regression. Results show MAE, error relative to persistence on the same moments,
+  and Diebold-Mariano significance (Holm-corrected for your model vs the strongest baseline).
+- **Test window:** when your model is final, click "Start test window". The code of every model is fingerprinted;
+  editing `my_model.py` during the window marks it invalid. Use "Test window only" results for any paper.
+  "Download study protocol" gives the full plan + fingerprints (e.g. for OSF pre-registration), and
+  "Download every prediction" gives the raw data.
 - **Your model:** put SLGN+DPE in `app/my_model.py` (instructions inside) and restart. It appears in the benchmark
   automatically, and a crash in your model never stops the app.
 - **Data for training:** "Download all data (CSV)" on the dashboard.

@@ -19,6 +19,8 @@
     let timer = null;
     let tick = 0;
     const charts = {};
+    let benchH = null;       // benchmark horizon shown (seconds)
+    let benchPhase = 'all';  // 'all' data or the frozen 'test' window
     let built = false;
 
     // ---------- small helpers (textContent only: nothing from the app runs as code) ----------
@@ -30,6 +32,40 @@
     }
 
     function $(id) { return document.getElementById(id); }
+
+    async function post(path) {
+        const r = await fetch(appBase + path, { method: 'POST', cache: 'no-store',
+                                                headers: { 'X-Hydro-Action': 'yes' } });
+        let j = {};
+        try { j = await r.json(); } catch (e) {}
+        if (!r.ok) throw new Error(j.error || ('app error ' + r.status));
+        return j;
+    }
+
+    // a button that needs two clicks within 5 s (for anything that can't be undone)
+    function confirmButton(label, armedLabel, action) {
+        const b = el('button', 'small-btn', label);
+        b.type = 'button';
+        let armed = null;
+        b.addEventListener('click', async function () {
+            if (!armed) {
+                b.textContent = armedLabel;
+                b.classList.add('hy-danger');
+                armed = setTimeout(function () { armed = null; b.textContent = label; b.classList.remove('hy-danger'); }, 5000);
+                return;
+            }
+            clearTimeout(armed);
+            armed = null;
+            b.disabled = true;
+            b.classList.remove('hy-danger');
+            b.textContent = 'Working…';
+            let msg;
+            try { msg = await action(); } catch (e) { msg = 'Failed: ' + e.message; }
+            b.textContent = msg || 'Done';
+            setTimeout(function () { b.textContent = label; b.disabled = false; }, 4000);
+        });
+        return b;
+    }
 
     async function getJSON(path) {
         const r = await fetch(appBase + path, { cache: 'no-store' });
@@ -114,37 +150,17 @@
         const exp = el('a', 'small-btn', 'Download all data (CSV)');
         exp.id = 'hyExport';
         exp.href = appBase + '/api/export.csv';
-        const reset = el('button', 'small-btn', 'Reset readings');
-        reset.type = 'button';
-        reset.id = 'hyReset';
-        let armed = null;
-        reset.addEventListener('click', async function () {
-            if (!armed) {   // first click asks, second click within 5 s erases
-                reset.textContent = 'Click again to erase all readings';
-                reset.classList.add('hy-danger');
-                armed = setTimeout(function () {
-                    armed = null;
-                    reset.textContent = 'Reset readings';
-                    reset.classList.remove('hy-danger');
-                }, 5000);
-                return;
-            }
-            clearTimeout(armed);
-            armed = null;
-            reset.disabled = true;
-            reset.textContent = 'Resetting…';
+        const reset = confirmButton('Reset readings', 'Click again to erase all readings', async function () {
             try {
-                const r = await fetch(appBase + '/api/reset', { method: 'POST', cache: 'no-store',
-                                                                headers: { 'X-Hydro-Reset': 'yes' } });
-                if (!r.ok) throw new Error('app error ' + r.status);
-                reset.textContent = 'Reset done (old data backed up)';
-                await refresh(true);
+                await post('/api/reset');
             } catch (e) {
-                reset.textContent = 'Reset failed: restart start.bat with the new files';
+                return e.message.indexOf('app error') === 0 || e.message === 'not allowed'
+                    ? 'Reset failed: restart start.bat with the new files' : 'Reset failed: ' + e.message;
             }
-            reset.classList.remove('hy-danger');
-            setTimeout(function () { reset.textContent = 'Reset readings'; reset.disabled = false; }, 4000);
+            await refresh(true);
+            return 'Reset done (old data backed up)';
         });
+        reset.id = 'hyReset';
         const actions = el('div', 'hy-range');
         actions.append(exp, reset);
         top.append(range, actions);
@@ -164,7 +180,16 @@
         const benchBox = el('section', 'hy-panel');
         benchBox.append(el('h2', 'hy-h', 'AI benchmark'),
                         Object.assign(el('p', 'hy-note'), { id: 'hyBenchNote' }),
+                        Object.assign(el('div', 'hy-row'), { id: 'hyBenchCtl' }),
+                        Object.assign(el('div', 'hy-alert'), { id: 'hyBenchWarn', hidden: true }),
+                        el('h2', 'hy-h hy-h2', 'Your model vs the strongest other model'),
+                        Object.assign(el('div', 'hy-table-wrap'), { id: 'hyVerdict' }),
+                        el('h2', 'hy-h hy-h2', 'Every model'),
                         Object.assign(el('div', 'hy-table-wrap'), { id: 'hyBench' }),
+                        el('h2', 'hy-h hy-h2', 'Model health'),
+                        Object.assign(el('div', 'hy-table-wrap'), { id: 'hyHealth' }),
+                        el('h2', 'hy-h hy-h2', 'Study controls'),
+                        Object.assign(el('div', 'hy-rigor'), { id: 'hyRigor' }),
                         el('h2', 'hy-h hy-h2', 'Cart health (last hour)'),
                         Object.assign(el('div', 'hy-sys'), { id: 'hySys' }));
 
@@ -306,36 +331,192 @@
     }
 
     // ---------- AI benchmark ----------
+    const fmtH = function (sec) { return sec < 3600 ? Math.round(sec / 60) + ' min' : Math.round(sec / 360) / 10 + ' h'; };
+    const fmtP = function (p) { return p === null || p === undefined ? '--' : p < 0.001 ? '< 0.001' : p.toFixed(3); };
+    const digits = function (k) { return k === 'ph' ? 3 : 2; };
+    const fmtDate = function (ts) { return new Date(ts * 1000).toLocaleString(); };
+
+    function table(headers, rows) {
+        const t = el('table', 'hy-table');
+        const head = el('tr');
+        headers.forEach(function (h) { head.append(el('th', '', h)); });
+        t.append(head);
+        rows.forEach(function (cells) {
+            const tr = el('tr');
+            cells.forEach(function (c) {
+                const td = el('td', c.cls || '');
+                (Array.isArray(c.text) ? c.text : [c.text]).forEach(function (line, i) {
+                    td.append(i ? el('div', 'hy-sub', line) : document.createTextNode(line));
+                });
+                tr.append(td);
+            });
+            t.append(tr);
+        });
+        return t;
+    }
+
     function showBenchmark(b) {
         const m = b.models;
-        const mins = m.horizon_min + (m.horizon_min === 1 ? ' minute' : ' minutes');
+        const res = m.results;
+        if (benchH === null || m.horizons_s.indexOf(benchH) < 0) benchH = m.horizons_s[0];
+        const hk = String(benchH);
+        const label = function (k) { return m.labels[k] + (k === 'ph' && !m.ph_calibrated ? ' · uncalibrated' : ''); };
+
         $('hyBenchNote').textContent =
-            'Every model predicts each reading ' + mins + ' ahead; when that time comes, it is scored against ' +
-            'what the sensors actually read. ± is the average error (lower is better, ★ = best). Scores appear ' +
-            'after the first ' + mins + '. ' + m.pending + ' predictions waiting to be scored.';
-        const table = el('table', 'hy-table');
-        const head = el('tr');
-        head.append(el('th', '', 'Model'));
-        m.keys.forEach(function (k) { head.append(el('th', '', m.labels[k])); });
-        ['Speed', 'Runs', 'Errors', 'Status'].forEach(function (h) { head.append(el('th', '', h)); });
-        table.append(head);
-        m.models.forEach(function (mod) {
-            const tr = el('tr');
-            tr.append(el('td', 'hy-model', mod.name));
-            m.keys.forEach(function (k) {
-                const v = mod.mae[k];
-                const best = m.best[k] === mod.name;
-                tr.append(el('td', best ? 'hy-best' : '', v ? '±' + v.mae + (best ? ' ★' : '') : '--'));
-            });
-            tr.append(el('td', '', mod.avg_ms === null ? '--' : mod.avg_ms + ' ms'),
-                      el('td', '', String(mod.runs)),
-                      el('td', mod.errors ? 'hy-bad' : '', String(mod.errors)),
-                      el('td', mod.status === 'running' ? '' : 'hy-muted',
-                         mod.last_error ? mod.status + ' · last error: ' + mod.last_error : mod.status));
-            table.append(tr);
+            'Every model gets the same last ' + m.history_h + ' hours of readings and predicts each value ' +
+            m.horizons_s.map(fmtH).join(', ') + ' ahead. Each prediction is saved before the real value exists, ' +
+            'then scored against what the sensors actually read (no peeking). ± is the average error (MAE, lower ' +
+            'is better). "× persistence" compares a model with "nothing changes" on exactly the same moments: below 1 ' +
+            'beats it. p is a Diebold-Mariano significance test; below 0.05 means the difference is very unlikely ' +
+            'to be luck. p appears only after about 10 horizon-lengths of data.';
+
+        // controls: horizon + which data
+        const ctl = $('hyBenchCtl');
+        ctl.replaceChildren();
+        const hz = el('div', 'hy-range');
+        m.horizons_s.forEach(function (h) {
+            const btn = el('button', 'small-btn' + (h === benchH ? ' active' : ''), fmtH(h) + ' ahead');
+            btn.type = 'button';
+            btn.addEventListener('click', function () { benchH = h; showBenchmark(b); });
+            hz.append(btn);
         });
-        const wrap = $('hyBench');
-        wrap.replaceChildren(table);
+        const ph = el('div', 'hy-range');
+        [['all', 'All data'], ['test', 'Test window only']].forEach(function (p) {
+            const btn = el('button', 'small-btn' + (p[0] === benchPhase ? ' active' : ''), p[1]);
+            btn.type = 'button';
+            btn.disabled = p[0] === 'test' && !m.test_window;
+            btn.addEventListener('click', async function () {
+                benchPhase = p[0];
+                try { showBenchmark(await getJSON('/api/benchmark?phase=' + benchPhase)); } catch (e) {}
+            });
+            ph.append(btn);
+        });
+        ctl.append(hz, ph);
+
+        const warn = $('hyBenchWarn');
+        const warnings = [];
+        if (res && res !== 'computing' && res.invalid) warnings.push('Test window invalid: ' + res.invalid);
+        if (benchPhase === 'all' && m.test_window)
+            warnings.push('Showing all data. For the final result, use "Test window only".');
+        warn.textContent = warnings.join(' ');
+        warn.hidden = !warnings.length;
+
+        const user = m.models.filter(function (x) { return x.kind === 'yours'; })[0];
+        if (res === 'computing' || !res) {
+            const msg = res === 'computing' ? 'Calculating results…' : 'No test window yet.';
+            $('hyVerdict').replaceChildren(el('p', 'hy-note', msg));
+            $('hyBench').replaceChildren(el('p', 'hy-note', msg));
+        } else {
+            // headline: your model vs the strongest other model, Holm-corrected
+            const vh = res.yours_vs_best[hk] || {};
+            const vbox = $('hyVerdict');
+            vbox.replaceChildren();
+            if (user && user.status !== 'running') vbox.append(el('p', 'hy-note', user.name + ': ' + user.status));
+            {
+                vbox.append(table(
+                    ['Value', 'Strongest other model', 'Your error vs it', 'p (corrected)', 'Result'],
+                    m.keys.map(function (k) {
+                        const v = vh[k] || { verdict: 'not enough data' };
+                        const diff = v.rel === null || v.rel === undefined ? '--'
+                            : v.rel < 1 ? Math.round((1 - v.rel) * 1000) / 10 + '% lower'
+                            : Math.round((v.rel - 1) * 1000) / 10 + '% higher';
+                        const cls = v.verdict.indexOf('better') === 0 ? 'hy-best'
+                            : v.verdict.indexOf('worse') === 0 ? 'hy-bad' : 'hy-muted';
+                        return [{ text: label(k), cls: 'hy-model' }, { text: v.baseline || '--' },
+                                { text: [diff, v.n_eff ? '≈' + v.n_eff + ' independent samples' : ''] },
+                                { text: fmtP(v.p_holm) }, { text: v.verdict, cls: cls }];
+                    })));
+            }
+            // every model, every value
+            const by = res.by_h[hk] || {};
+            const best = {};
+            m.keys.forEach(function (k) {
+                let top = null;
+                Object.keys(by[k] || {}).forEach(function (name) {
+                    const c = by[k][name];
+                    if (c.n >= m.min_scored && (top === null || c.mae < by[k][top].mae)) top = name;
+                });
+                best[k] = top;
+            });
+            $('hyBench').replaceChildren(table(['Model'].concat(m.keys.map(label)), m.models.map(function (mod) {
+                return [{ text: mod.name, cls: 'hy-model' }].concat(m.keys.map(function (k) {
+                    const c = (by[k] || {})[mod.name];
+                    if (!c || c.n < m.min_scored) return { text: '--' };
+                    const isBest = best[k] === mod.name;
+                    let sub = mod.name === m.persistence ? 'reference'
+                        : (c.rel === null ? '' : c.rel.toFixed(2) + '× persistence') + (c.p !== null && c.p !== undefined ? ' · p ' + fmtP(c.p) : '');
+                    if (c.coverage !== null && c.coverage < 0.95) sub += ' · ' + Math.round(c.coverage * 100) + '% covered';
+                    return { text: ['±' + c.mae.toFixed(digits(k)) + (isBest ? ' ★' : ''), sub], cls: isBest ? 'hy-best' : '' };
+                }));
+            })));
+        }
+
+        $('hyHealth').replaceChildren(table(['Model', 'Speed', 'Rounds', 'Crashes', 'Code fingerprint', 'Status'],
+            m.models.map(function (mod) {
+                return [{ text: mod.name, cls: 'hy-model' },
+                        { text: mod.avg_ms === null ? '--' : mod.avg_ms + ' ms' }, { text: String(mod.runs) },
+                        { text: String(mod.errors), cls: mod.errors ? 'hy-bad' : '' }, { text: mod.code || '--' },
+                        { text: mod.last_error ? mod.status + ' · last error: ' + mod.last_error : mod.status,
+                          cls: mod.status === 'running' ? '' : 'hy-muted' }];
+            })));
+
+        // study controls: frozen test window, exports, noise floor, rules
+        const rig = $('hyRigor');
+        rig.replaceChildren();
+        const w = m.test_window;
+        const status = el('p', 'hy-note');
+        const btns = el('div', 'hy-range');
+        if (!w || w.ended_ts) {
+            status.textContent = (w ? 'Last test window: ' + fmtDate(w.started_ts) + ' → ' + fmtDate(w.ended_ts) +
+                (w.invalid_reason ? ' (invalid: ' + w.invalid_reason + ')' : '') + '. ' : 'No test window yet. ') +
+                'When your model is final, start a test window. Its code gets fingerprinted, and only predictions ' +
+                'made inside the window count for the final result. Changing my_model.py during the window makes ' +
+                'it invalid. Run it 2+ weeks for 24 h results.';
+            btns.append(confirmButton('Start test window', 'Click again: model is final', async function () {
+                await post('/api/test/start');
+                await refresh(true);
+                return 'Test window started';
+            }));
+        } else {
+            const days = Math.round((Date.now() / 1000 - w.started_ts) / 8640) / 10;
+            status.textContent = 'Test window running since ' + fmtDate(w.started_ts) + ' (' + days + ' days). ' +
+                'Frozen model: ' + w.model_name + ', fingerprint ' + (w.model_hash || '').slice(0, 12) + '. ' +
+                (w.invalid_reason ? 'INVALID: ' + w.invalid_reason : 'Don\'t edit my_model.py until you end it.');
+            btns.append(confirmButton('End test window', 'Click again to end it', async function () {
+                await post('/api/test/end');
+                await refresh(true);
+                return 'Test window ended';
+            }));
+        }
+        const link = function (text, path) {
+            const a = el('a', 'small-btn', text);
+            a.href = appBase + path;
+            return a;
+        };
+        btns.append(link('Download study protocol (JSON)', '/api/protocol.json'),
+                    link('Download every prediction (CSV)', '/api/export_predictions.csv'));
+        rig.append(status, btns);
+
+        const noise = el('ul', 'hy-list');
+        m.keys.forEach(function (k) {
+            const n = m.noise[k];
+            noise.append(el('li', '', label(k) + ': ' + (n.noise_avg !== null && n.noise_avg !== undefined
+                ? 'noise floor ≈ ' + n.noise_avg + ' (one reading ≈ ' + n.noise + ')' : 'not enough readings yet') +
+                (n.accuracy ? ' · sensor accuracy ±' + n.accuracy : '')));
+        });
+        const r2 = res && res !== 'computing' ? res : null;
+        rig.append(el('p', 'hy-note', 'Noise floor: forecasts are scored against 2-minute averages, so an error near these ' +
+                      'numbers can\'t be told apart from sensor noise. Sensor accuracy limits how true the readings ' +
+                      'are, not the forecast score (every model is judged against the same sensor).'), noise,
+                   el('p', 'hy-note', 'Data: ' + (r2 ? r2.scored + ' predictions scored, ' + r2.missing +
+                      ' had no reading to check against, ' + r2.pending + ' waiting. ' : '') +
+                      m.skipped_rounds + ' rounds skipped while the cart was offline.'));
+        const rules = el('details', 'hy-details');
+        rules.append(el('summary', '', 'Pre-declared rules (what counts and what doesn\'t)'));
+        const ul = el('ul', 'hy-list');
+        m.exclusion_rules.forEach(function (t) { ul.append(el('li', '', t)); });
+        rules.append(ul);
+        rig.append(rules);
 
         const s = b.system;
         const sys = $('hySys');
@@ -376,7 +557,7 @@
             if (full) {
                 const rows = await getJSON('/api/history?hours=' + hours);
                 Object.values(charts).forEach(function (c) { c.rows = rows; draw(c); });
-                showBenchmark(await getJSON('/api/benchmark'));
+                showBenchmark(await getJSON('/api/benchmark?phase=' + benchPhase));
             }
         } catch (e) {
             setStatus('off', 'Can\'t reach the cart app at ' + appBase);

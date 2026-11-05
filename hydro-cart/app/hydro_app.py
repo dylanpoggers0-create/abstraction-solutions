@@ -15,19 +15,22 @@ Everything else is Python's standard library. Settings live in config.json (made
 """
 import argparse
 import csv
+import hashlib
 import io
 import json
 import math
+import platform
 import random
 import sqlite3
 import statistics
+import sys
 import threading
 import time
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 
-from models import Benchmark
+from models import Benchmark, EXCLUSION_RULES, KEYS, LABELS, SPEC
 
 HERE = Path(__file__).resolve().parent
 CONFIG_PATH = HERE / "config.json"
@@ -72,6 +75,7 @@ class Store:
         self.db = sqlite3.connect(path, check_same_thread=False)
         self.lock = threading.Lock()
         with self.lock:
+            self.db.execute("PRAGMA journal_mode=WAL")   # lets the benchmark read while readings are written
             self.db.execute(f"CREATE TABLE IF NOT EXISTS readings (ts REAL, {', '.join(f + ' REAL' for f in FIELDS)})")
             self.db.execute("CREATE INDEX IF NOT EXISTS readings_ts ON readings(ts)")
             # every time a suggestion starts or clears, it's logged here ("stored states")
@@ -106,7 +110,7 @@ class Store:
             dst = sqlite3.connect(backup)
             self.db.backup(dst)
             dst.close()
-            for table in ("readings", "events", "predictions"):
+            for table in ("readings", "events", "predictions", "test_window"):
                 if self.db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
                     self.db.execute(f"DELETE FROM {table}")
             self.db.commit()
@@ -325,6 +329,8 @@ def demo_feed(store, tracker):
 ALLOWED_ORIGINS = {"https://abstraction-solutions.com", "https://www.abstraction-solutions.com",
                    "http://localhost:8000", "http://127.0.0.1:8000"}
 STARTED = time.time()
+APP_HASH = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+ACTION_HEADERS = ("X-Hydro-Action", "X-Hydro-Reset")
 
 
 def system_stats(store, every_s=5):
@@ -345,6 +351,38 @@ def system_stats(store, every_s=5):
             "delivery_pct": round(min(100, 100 * len(hour) / expected), 1) if hour else 0,
             "longest_gap_s": round(max(gaps), 1) if gaps else None,
             "sensor_dropout_pct": drop}
+
+
+def protocol(bench):
+    """everything someone needs to check or repeat the study"""
+    return {
+        "title": "Prospective forecasting benchmark on a sensor-monitored hydroponic cart",
+        "generated": time.strftime("%Y-%m-%d %H:%M:%S %z"),
+        "test_window": bench.test_window(),
+        "design": {
+            "prediction_rounds_every_s": bench.every_s,
+            "horizons_s": bench.horizons,
+            "history_given_to_every_model_h": bench.history_s / 3600,
+            "targets": {k: LABELS[k] for k in KEYS},
+            "models": [{"name": m.name, "kind": getattr(m, "kind", "baseline"), "sha256": m.code_hash}
+                       for m in bench.models],
+            "reference_model": "Persistence (baseline)",
+            "metrics": ["MAE", "RMSE", "Rel. MAE = MAE / persistence MAE on the same targets (paired)",
+                        "coverage = share of targets the model predicted"],
+            "significance": "Diebold-Mariano test on absolute-error differences (rectangular long-run variance "
+                            "up to the forecast overlap, Newey-West fallback), Harvey-Leybourne-Newbold correction, "
+                            "Student t p-values, reported only with at least ~10 non-overlapping horizons of data. Loss differences "
+                            "are averaged on an even grid of max(5 min, horizon/12). The headline comparison "
+                            "(your model vs the strongest other model per value and horizon) is Holm-Bonferroni "
+                            "corrected; alpha = 0.05.",
+            "exclusion_rules": EXCLUSION_RULES,
+        },
+        "sensors": {"spec": SPEC, "ph_calibrated": CFG["ph_calibrated"],
+                    "ph_calibration": {"ph7_volts": CFG["ph7_volts"], "volts_per_ph": CFG["volts_per_ph"]},
+                    "firmware": "hydro_sensors.ino, one reading every 5 s over USB at 115200 baud"},
+        "software": {"hydro_app.py_sha256": APP_HASH, "python": sys.version.split()[0],
+                     "platform": platform.platform()},
+    }
 
 
 def make_handler(store, tracker, bench):
@@ -380,7 +418,7 @@ def make_handler(store, tracker, bench):
             self.send_response(204)
             self.cors()
             self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Hydro-Reset")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, " + ", ".join(ACTION_HEADERS))
             self.send_header("Access-Control-Max-Age", "600")
             self.end_headers()
 
@@ -409,7 +447,14 @@ def make_handler(store, tracker, bench):
             if url.path == "/api/config":
                 return self.send(CFG)
             if url.path == "/api/benchmark":
-                return self.send({"models": bench.summary(), "system": system_stats(store)})
+                phase = "test" if q.get("phase", ["all"])[0] == "test" else "all"
+                return self.send({"models": bench.summary(phase), "system": system_stats(store)})
+            if url.path == "/api/protocol.json":   # the study plan + fingerprints, e.g. for OSF pre-registration
+                body = json.dumps(protocol(bench), indent=2)
+                return self.send(body, "application/json",
+                                 extra={"Content-Disposition": "attachment; filename=hydro_protocol.json"})
+            if url.path == "/api/export_predictions.csv":   # every prediction ever made, for the paper
+                return self.stream_predictions()
             if url.path == "/api/export.csv":  # every reading, for training models later
                 buf = io.StringIO()
                 w = csv.writer(buf)
@@ -420,18 +465,49 @@ def make_handler(store, tracker, bench):
                                  extra={"Content-Disposition": "attachment; filename=hydro_readings.csv"})
             self.send({"error": "not found"}, code=404)
 
+        def stream_predictions(self):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/csv")
+            self.send_header("Content-Disposition", "attachment; filename=hydro_predictions.csv")
+            self.cors()
+            self.end_headers()
+            cols = ["model", "made_ts", "target_ts", "horizon_s", "key", "predicted", "actual", "scored", "code"]
+            self.wfile.write((",".join(cols) + "\n").encode())
+            conn = sqlite3.connect(str(store.path))      # separate read connection: never blocks the sensors
+            try:
+                cur = conn.execute(f"SELECT {', '.join(cols)} FROM predictions ORDER BY made_ts, model, horizon_s")
+                while True:
+                    rows = cur.fetchmany(5000)
+                    if not rows:
+                        break
+                    buf = io.StringIO()
+                    csv.writer(buf, lineterminator="\n").writerows(rows)
+                    self.wfile.write(buf.getvalue().encode())
+            except (BrokenPipeError, ConnectionResetError):
+                pass                                     # browser cancelled the download
+            finally:
+                conn.close()
+
         def do_POST(self):
-            # "Reset readings" button. Only the dashboard pages may do this: the browser must send an allowed
-            # Origin plus a custom header, which other websites can't send without the app's permission.
-            if urlparse(self.path).path != "/api/reset":
+            # Dashboard buttons (reset, start/end test window). Only the dashboard pages may do this: the browser
+            # must send an allowed Origin plus a custom header, which other websites can't send without permission.
+            path = urlparse(self.path).path
+            if path not in ("/api/reset", "/api/test/start", "/api/test/end"):
                 return self.send({"error": "not found"}, code=404)
-            if self.headers.get("Origin") not in ALLOWED_ORIGINS or self.headers.get("X-Hydro-Reset") != "yes":
+            if self.headers.get("Origin") not in ALLOWED_ORIGINS or \
+                    not any(self.headers.get(h) == "yes" for h in ACTION_HEADERS):
                 return self.send({"error": "not allowed"}, code=403)
-            backup = store.reset()
-            bench.reset()
-            tracker.active = {}
-            print(f"Readings reset. Old data saved as {backup}")
-            return self.send({"ok": True, "backup": backup})
+            if path == "/api/reset":
+                backup = store.reset()
+                bench.reset()
+                tracker.active = {}
+                print(f"Readings reset. Old data saved as {backup}")
+                return self.send({"ok": True, "backup": backup})
+            err = bench.start_test(APP_HASH) if path == "/api/test/start" else bench.end_test()
+            if err:
+                return self.send({"error": err}, code=409)
+            print("Test window started." if path == "/api/test/start" else "Test window ended.")
+            return self.send({"ok": True, "test_window": bench.test_window()})
 
     return Handler
 
@@ -444,7 +520,10 @@ def main():
     ap.add_argument("--db", default=None, help="database file (default: hydro.db, or demo.db with --demo)")
     ap.add_argument("--allow-origin", action="append", default=[],
                     help="extra website address allowed to read this app (for testing)")
-    ap.add_argument("--horizon-min", type=float, default=30, help="how far ahead the AI models predict (minutes)")
+    ap.add_argument("--horizons", default="30,360,1440",
+                    help="how far ahead every model predicts, in minutes, comma separated (default 30 min, 6 h, 24 h)")
+    ap.add_argument("--horizon-min", type=float, default=None, help="use one horizon only (minutes)")
+    ap.add_argument("--history-h", type=float, default=50, help="hours of history every model gets (default 50)")
     a = ap.parse_args()
 
     ALLOWED_ORIGINS.update(a.allow_origin)
@@ -456,8 +535,11 @@ def main():
     else:
         threading.Thread(target=serial_reader, args=(store, tracker, a.port or CFG["serial_port"]),
                          daemon=True).start()
-    bench = Benchmark(store, horizon_min=a.horizon_min, every_s=max(10, min(60, a.horizon_min * 6)))
+    horizons = [a.horizon_min] if a.horizon_min else [float(x) for x in a.horizons.split(",") if x.strip()]
+    bench = Benchmark(store, horizons_min=horizons, every_s=max(10, min(60, min(horizons) * 6)),
+                      history_h=a.history_h, ph_calibrated=bool(CFG["ph_calibrated"]))
     threading.Thread(target=bench.loop, daemon=True).start()
+    threading.Thread(target=bench.analysis_loop, daemon=True).start()
     srv = ThreadingHTTPServer(("127.0.0.1", a.http_port), make_handler(store, tracker, bench))
     print(f"Dashboard: http://localhost:{a.http_port}   (Ctrl+C to stop)")
     try:
