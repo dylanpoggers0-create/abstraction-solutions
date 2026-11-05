@@ -117,7 +117,7 @@
         top.append(range, exp);
         const grid = el('div', 'hy-charts');
         [['hyPh', 'pH'], ['hyTemp', 'Temperature (°C)'], ['hyHum', 'Humidity (%)'],
-         ['hyTank', 'Side tanks (water strip reading)']].forEach(function (c) {
+         ['hyTank', 'Tanks (water strip reading)']].forEach(function (c) {
             const wrap = el('div');
             const canvasBox = el('div', 'hy-chart');
             const cv = el('canvas');
@@ -138,12 +138,12 @@
         root.append(bar, help, cards, two, chartBox, benchBox);
 
         chart('hyPh', [{ key: 'ph', label: 'pH', color: '#7ee96f' }], ['ph_min', 'ph_max']);
-        chart('hyTemp', [{ key: 't_top', label: 'top', color: '#ffaa50' },
-                         { key: 't_low', label: 'low', color: '#8ab4ff' }]);
-        chart('hyHum', [{ key: 'h_top', label: 'top', color: '#ffaa50' },
-                        { key: 'h_low', label: 'low', color: '#8ab4ff' }]);
-        chart('hyTank', [{ key: 'strip_water', label: 'plain water', color: '#8ab4ff' },
-                         { key: 'strip_nutr', label: 'nutrient', color: '#7ee96f' }]);
+        chart('hyTemp', [{ key: 't_top', label: 'tower top', color: '#ffaa50' },
+                         { key: 't_low', label: 'room', color: '#8ab4ff' }]);
+        chart('hyHum', [{ key: 'h_top', label: 'tower top', color: '#ffaa50' },
+                        { key: 'h_low', label: 'room', color: '#8ab4ff' }]);
+        chart('hyTank', [{ key: 'strip_nutr', label: 'plant tank', color: '#7ee96f' },
+                         { key: 'strip_water', label: 'backup tank', color: '#8ab4ff' }]);
         window.addEventListener('resize', function () { Object.values(charts).forEach(draw); });
     }
 
@@ -167,13 +167,14 @@
         const tankLvl = function (v) { return v !== null && v < cfg.strip_empty_below ? 'urgent' : 'ok'; };
         box.append(
             card('pH', num(r.ph, 2), 'healthy ' + cfg.ph_min + '–' + cfg.ph_max, inRange(r.ph, cfg.ph_min, cfg.ph_max)),
-            card('Plain-water tank', tank(r.strip_water), 'strip reading ' + num(r.strip_water, 0), tankLvl(r.strip_water)),
-            card('Nutrient tank', tank(r.strip_nutr), 'strip reading ' + num(r.strip_nutr, 0), tankLvl(r.strip_nutr)),
-            card('Top of tower', num(r.t_top, 0) + '°C', num(r.h_top, 0) + '% humidity',
-                 inRange(r.t_top, cfg.temp_min_c, cfg.temp_max_c) === 'ok' &&
-                 inRange(r.h_top, cfg.humidity_min, cfg.humidity_max) === 'ok' ? 'ok' : 'warn'),
-            card('By the reservoir', num(r.t_low, 0) + '°C', num(r.h_low, 0) + '% humidity',
-                 r.h_low !== null && r.h_low > cfg.electronics_humidity_max ? 'urgent' : 'ok')
+            card('Plant tank', tank(r.strip_nutr), 'strip reading ' + num(r.strip_nutr, 0), tankLvl(r.strip_nutr)),
+            card('Backup tank', tank(r.strip_water), 'strip reading ' + num(r.strip_water, 0), tankLvl(r.strip_water)),
+            card('Tower top (drip zone)', num(r.t_top, 0) + '°C', num(r.h_top, 0) + '% humidity',
+                 r.t_top === null ? 'warn' : 'ok'),
+            card('Room air (ambient)', num(r.t_low, 0) + '°C', num(r.h_low, 0) + '% humidity',
+                 r.h_low !== null && r.h_low > cfg.electronics_humidity_max ? 'urgent' :
+                 inRange(r.t_low, cfg.temp_min_c, cfg.temp_max_c) === 'ok' &&
+                 inRange(r.h_low, cfg.humidity_min, cfg.humidity_max) === 'ok' ? 'ok' : 'warn')
         );
     }
 
@@ -315,7 +316,7 @@
         stat(s.longest_gap_s === null ? '--' : s.longest_gap_s + ' s', 'longest gap between readings');
         const d = s.sensor_dropout_pct;
         stat((d.ph === null ? '--' : d.ph + '%') + ' / ' + (d.t_top === null ? '--' : d.t_top + '%') + ' / ' +
-             (d.t_low === null ? '--' : d.t_low + '%'), 'missed readings: pH / top / low sensor');
+             (d.t_low === null ? '--' : d.t_low + '%'), 'missed readings: pH / tower-top / room sensor');
         const up = s.uptime_s;
         stat(up >= 3600 ? Math.floor(up / 3600) + 'h ' + Math.floor(up % 3600 / 60) + 'm' : Math.floor(up / 60) + 'm', 'app running');
     }

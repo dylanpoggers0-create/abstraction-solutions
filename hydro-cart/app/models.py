@@ -21,8 +21,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 KEYS = ["ph", "t_top", "h_top", "t_low", "h_low"]          # what every model predicts
-LABELS = {"ph": "pH", "t_top": "Temp top (°C)", "h_top": "Humidity top (%)",
-          "t_low": "Temp low (°C)", "h_low": "Humidity low (%)"}
+LABELS = {"ph": "pH", "t_top": "Temp tower top (°C)", "h_top": "Humidity tower top (%)",
+          "t_low": "Temp ambient (°C)", "h_low": "Humidity ambient (%)"}
 LIMITS = {"ph": (0, 14), "t_top": (-10, 60), "h_top": (0, 100), "t_low": (-10, 60), "h_low": (0, 100)}
 
 

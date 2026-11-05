@@ -8,9 +8,10 @@ predict(history, horizon_s) gets:
   history    a list of readings, oldest first, covering the last 6 hours. Each reading is a dict:
              {"ts": 1730770000.0,          # time (seconds since 1970)
               "ph": 6.02, "ph_volts": 2.68,
-              "t_top": 24.0, "h_top": 61.0, # top DHT11: °C and %
-              "t_low": 22.0, "h_low": 58.0, # low DHT11
-              "strip_water": 410, "strip_nutr": 380}   # side-tank strips (0 = dry)
+              "t_top": 24.0, "h_top": 61.0, # DHT11 at the tower top, drip zone (D26)
+              "t_low": 22.0, "h_low": 58.0, # ambient DHT11 up top (D27)
+              "strip_water": 410,               # backup tank strip (A0, 0 = dry)
+              "strip_nutr": 380}                # plant tank strip (A1)
              Any value can be None if that sensor missed a reading.
   horizon_s  how far ahead to predict, in seconds (default 30 minutes = 1800)
 

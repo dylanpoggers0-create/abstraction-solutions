@@ -6,10 +6,10 @@
   which the laptop app (app/hydro_app.py) saves and turns into suggestions.
 
   Wiring (as built):
-    Water strip #1 (plain-water side tank):  S -> A0,  + -> D24,  - -> GND
-    Water strip #2 (nutrient side tank):     S -> A1,  + -> D25,  - -> GND
-    DHT11 #1 (top of tower):                 S -> D26, middle -> 5V, right -> GND
-    DHT11 #2 (low, by reservoir):            S -> D27, middle -> 5V, right -> GND
+    Water strip #1 (backup tank, up top):     S -> A0,  + -> D24,  - -> GND
+    Water strip #2 (plant tank):             S -> A1,  + -> D25,  - -> GND
+    DHT11 #1 (tower top, drip zone):         S -> D26, middle -> 5V, right -> GND
+    DHT11 #2 (ambient, up top):              S -> D27, middle -> 5V, right -> GND
     pH board:                                Po -> A2, V+ -> 5V, both G -> GND
 
   Library: "DHT sensor library" by Adafruit (Tools -> Manage Libraries)

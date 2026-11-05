@@ -2,7 +2,7 @@
 Hydroponic Cart Monitor - Abstraction Solutions
 
 Reads the Arduino Mega over USB, saves every reading, works out suggestions
-("pH is lower than normal", "refill the water tank", ...) and serves a live
+("pH is lower than normal", "plant tank low", ...) and serves a live
 dashboard at http://localhost:8000
 
 Run:
@@ -166,39 +166,41 @@ def suggestions(store, now=None):
             add("ph_cal", "info", "pH is only roughly calibrated",
                 "For accurate pH, dip the probe in pH 7 and pH 4 liquids and put those readings in config.json.")
 
-    # side tanks
-    if r.get("strip_water") is not None and r["strip_water"] < CFG["strip_empty_below"]:
-        add("water_empty", "warn", "More water! The plain-water tank is empty",
-            "Refill the plain-water side tank so the main reservoir can be topped up.")
+    # tanks: strip_water (A0) = backup tank up top, strip_nutr (A1) = plant tank
     if r.get("strip_nutr") is not None and r["strip_nutr"] < CFG["strip_empty_below"]:
-        add("nutr_empty", "warn", "The nutrient tank is empty",
-            "Mix a fresh batch of water + plant food for the nutrient side tank.")
+        add("plant_tank_low", "urgent", "More water! The plant tank is low",
+            "Refill the plant tank from the backup tank so the pump doesn't run dry.")
+    if r.get("strip_water") is not None and r["strip_water"] < CFG["strip_empty_below"]:
+        add("backup_empty", "warn", "The backup tank is empty",
+            "Refill the backup tank up top so there's water ready for the plant tank.")
 
-    # air: top of the tower
-    t, h = r.get("t_top"), r.get("h_top")
+    # room air around the plants: the ambient DHT11 (D27, up top by the backup tank).
+    # The D26 DHT11 sits at the tower top in the drip zone, where ~100% humidity is normal,
+    # so it is shown and benchmarked but doesn't trigger air alerts.
+    t, h = r.get("t_low"), r.get("h_low")
     if t is not None and t > CFG["temp_max_c"]:
-        add("hot", "warn", f"Top of the tower is hot ({t:.0f}°C)",
+        add("hot", "warn", f"The room is hot ({t:.0f}°C)",
             "Raise the grow lights a little or add airflow. Most greens prefer under 27°C.")
     if t is not None and t < CFG["temp_min_c"]:
-        add("cold", "warn", f"Top of the tower is cold ({t:.0f}°C)",
+        add("cold", "warn", f"The room is cold ({t:.0f}°C)",
             "Growth slows below 18°C. Move the cart somewhere warmer or keep the lights on longer.")
     if h is not None and h > CFG["humidity_max"]:
-        add("humid", "warn", f"Humidity is high ({h:.0f}%)",
+        add("humid", "warn", f"Room humidity is high ({h:.0f}%)",
             "Above 70% raises the risk of mold. Add airflow around the plants.")
     if h is not None and h < CFG["humidity_min"]:
-        add("dry", "info", f"Air is dry ({h:.0f}%)", "Below 40% can stress leaves. Usually fine short term.")
+        add("dry", "info", f"Room air is dry ({h:.0f}%)", "Below 40% can stress leaves. Usually fine short term.")
 
-    # air: by the electronics
+    # ambient air up top (DHT11 on D27, by the backup tank and electronics)
     hl = r.get("h_low")
     if hl is not None and hl > CFG["electronics_humidity_max"]:
-        add("electronics_humid", "urgent", f"Humidity near the electronics is {hl:.0f}%",
+        add("electronics_humid", "urgent", f"Ambient humidity is {hl:.0f}%, too damp for the electronics",
             "Check for splashes or condensation near the Arduino and boards.")
 
     # sensors not answering (3 readings in a row)
-    for key, name in (("t_top", "top"), ("t_low", "low")):
+    for key, name, label, pin in (("t_top", "top", "tower-top", 26), ("t_low", "low", "ambient", 27)):
         if len(last) >= 3 and all(x.get(key) is None for x in last[:3]):
-            add(f"dht_{name}", "warn", f"The {name} temperature sensor isn't answering",
-                f"Check its three wires: S to D{26 if name == 'top' else 27}, middle to 5V, right to GND.")
+            add(f"dht_{name}", "warn", f"The {label} temperature sensor isn't answering",
+                f"Check its three wires: S to D{pin}, middle to 5V, right to GND.")
 
     if not any(s["level"] in ("warn", "urgent") for s in out):
         out.insert(0, {"key": "ok", "level": "ok", "title": "Everything looks healthy",
@@ -270,7 +272,7 @@ def serial_reader(store, tracker, port_arg):
 
 
 def demo_reading(t, start):
-    """fake cart: pH drifts down, the water tank runs dry after ~3 minutes, humidity creeps up"""
+    """fake cart: pH drifts down, the backup tank runs dry after ~3 minutes, humidity creeps up"""
     mins = max(0.0, (t - start) / 60)   # minutes since the demo started (0 for backfilled history)
     day = math.sin((t % 86400) / 86400 * 2 * math.pi)
     ph = 6.15 - 0.012 * ((t - (start - 24 * 3600)) / 3600) - 0.08 * mins / 10 + random.gauss(0, 0.02)

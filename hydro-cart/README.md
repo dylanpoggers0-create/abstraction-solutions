@@ -32,8 +32,8 @@ or `--port /dev/cu.usbmodem1101` (Mac). Want to try it without the cart? `python
 - **Or directly:** open http://localhost:8000. This always works while the app runs.
 
 ## What it does
-- **Live readings:** pH, both side tanks, temperature and humidity at the top and by the reservoir.
-- **Suggestions:** pH low/high, pH drifting out of range soon, tank empty ("More water!"), too hot or humid,
+- **Live readings:** pH, the plant tank and the backup tank, and temperature and humidity at the tower top (D26) and room air up top (D27).
+- **Suggestions:** pH low/high, pH drifting out of range soon, plant tank low ("More water!"), backup tank empty, too hot or humid,
   humidity near the electronics, sensors not answering, cart offline. Each start and clear is saved in the alert history.
 - **AI benchmark:** every model predicts each reading 30 minutes ahead (change with `--horizon-min`), then gets scored
   against what actually happened: average error, speed, runs and crashes. The built-in baselines are *Persistence*
