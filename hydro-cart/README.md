@@ -16,7 +16,9 @@ Your cart data never leaves your computer. The admin page reads it straight from
    `{"t_top":23.0,"h_top":55,"t_low":22.0,"h_low":58,"strip_water":0,"strip_nutr":0,"ph_volts":2.512}`
 
 ## 2. Python app
-Needs Python 3.8+. In a terminal, from this `app` folder:
+**Windows: just double-click `start.bat`** (in this folder). It installs pyserial, starts the app and opens the dashboard.
+
+Or by hand (Python 3.8+), from this `app` folder:
 ```
 pip install pyserial
 python hydro_app.py
