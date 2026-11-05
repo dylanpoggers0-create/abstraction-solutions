@@ -67,6 +67,8 @@ FIELDS = ["t_top", "h_top", "t_low", "h_low", "strip_water", "strip_nutr", "ph_v
 # ------------------------------------------------------------------ storage
 class Store:
     def __init__(self, path):
+        self.path = Path(path)
+        self.reset_at = 0.0
         self.db = sqlite3.connect(path, check_same_thread=False)
         self.lock = threading.Lock()
         with self.lock:
@@ -96,6 +98,20 @@ class Store:
         with self.lock:
             self.db.execute("INSERT INTO events VALUES (?,?,?,?,?)", (ts, key, level, state, title))
             self.db.commit()
+
+    def reset(self):
+        """erase all readings, alerts and AI predictions. A backup copy of the old data is saved first."""
+        backup = self.path.with_name(f"{self.path.stem}_backup_{time.strftime('%Y%m%d_%H%M%S')}.db")
+        with self.lock:
+            dst = sqlite3.connect(backup)
+            self.db.backup(dst)
+            dst.close()
+            for table in ("readings", "events", "predictions"):
+                if self.db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+                    self.db.execute(f"DELETE FROM {table}")
+            self.db.commit()
+            self.reset_at = time.time()
+        return backup.name
 
     def events(self, limit=50):
         with self.lock:
@@ -314,7 +330,7 @@ STARTED = time.time()
 def system_stats(store, every_s=5):
     """benchmark of the cart itself: is data arriving, and which sensors drop out"""
     now = time.time()
-    t0 = max(now - 3600, STARTED)          # last hour, but only while this app was running
+    t0 = max(now - 3600, STARTED, store.reset_at)   # last hour, only while running and since the last reset
     hour = store.since(t0)
     expected = max(1, int((now - t0) / every_s) + 1)
     drop = {}
@@ -363,8 +379,8 @@ def make_handler(store, tracker, bench):
         def do_OPTIONS(self):   # browser "may I?" check before cross-site requests
             self.send_response(204)
             self.cors()
-            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Hydro-Reset")
             self.send_header("Access-Control-Max-Age", "600")
             self.end_headers()
 
@@ -403,6 +419,19 @@ def make_handler(store, tracker, bench):
                 return self.send(buf.getvalue(), "text/csv",
                                  extra={"Content-Disposition": "attachment; filename=hydro_readings.csv"})
             self.send({"error": "not found"}, code=404)
+
+        def do_POST(self):
+            # "Reset readings" button. Only the dashboard pages may do this: the browser must send an allowed
+            # Origin plus a custom header, which other websites can't send without the app's permission.
+            if urlparse(self.path).path != "/api/reset":
+                return self.send({"error": "not found"}, code=404)
+            if self.headers.get("Origin") not in ALLOWED_ORIGINS or self.headers.get("X-Hydro-Reset") != "yes":
+                return self.send({"error": "not allowed"}, code=403)
+            backup = store.reset()
+            bench.reset()
+            tracker.active = {}
+            print(f"Readings reset. Old data saved as {backup}")
+            return self.send({"ok": True, "backup": backup})
 
     return Handler
 

@@ -41,6 +41,8 @@ or `--port /dev/cu.usbmodem1101` (Mac). Want to try it without the cart? `python
 - **Your model:** put SLGN+DPE in `app/my_model.py` (instructions inside) and restart. It appears in the benchmark
   automatically, and a crash in your model never stops the app.
 - **Data for training:** "Download all data (CSV)" on the dashboard.
+- **Start fresh:** "Reset readings" (click twice) erases all readings, alerts and benchmark scores, e.g. after testing
+  with empty tanks. A backup copy is saved first in the `app` folder as `hydro_backup_<date>.db`.
 
 ## Settings: `app/config.json` (made on first run)
 | Setting | Meaning |

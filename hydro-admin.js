@@ -114,7 +114,40 @@
         const exp = el('a', 'small-btn', 'Download all data (CSV)');
         exp.id = 'hyExport';
         exp.href = appBase + '/api/export.csv';
-        top.append(range, exp);
+        const reset = el('button', 'small-btn', 'Reset readings');
+        reset.type = 'button';
+        reset.id = 'hyReset';
+        let armed = null;
+        reset.addEventListener('click', async function () {
+            if (!armed) {   // first click asks, second click within 5 s erases
+                reset.textContent = 'Click again to erase all readings';
+                reset.classList.add('hy-danger');
+                armed = setTimeout(function () {
+                    armed = null;
+                    reset.textContent = 'Reset readings';
+                    reset.classList.remove('hy-danger');
+                }, 5000);
+                return;
+            }
+            clearTimeout(armed);
+            armed = null;
+            reset.disabled = true;
+            reset.textContent = 'Resetting…';
+            try {
+                const r = await fetch(appBase + '/api/reset', { method: 'POST', cache: 'no-store',
+                                                                headers: { 'X-Hydro-Reset': 'yes' } });
+                if (!r.ok) throw new Error('app error ' + r.status);
+                reset.textContent = 'Reset done (old data backed up)';
+                await refresh(true);
+            } catch (e) {
+                reset.textContent = 'Reset failed: restart start.bat with the new files';
+            }
+            reset.classList.remove('hy-danger');
+            setTimeout(function () { reset.textContent = 'Reset readings'; reset.disabled = false; }, 4000);
+        });
+        const actions = el('div', 'hy-range');
+        actions.append(exp, reset);
+        top.append(range, actions);
         const grid = el('div', 'hy-charts');
         [['hyPh', 'pH'], ['hyTemp', 'Temperature (°C)'], ['hyHum', 'Humidity (%)'],
          ['hyTank', 'Tanks (water strip reading)']].forEach(function (c) {

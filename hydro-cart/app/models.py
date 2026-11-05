@@ -90,16 +90,21 @@ class Benchmark:
         self.horizon_s = int(horizon_min * 60)
         self.every_s = every_s
         self.models = [Persistence(), LinearTrend(), UserModel(HERE / "my_model.py")]
-        self.stats = {m.name: {"runs": 0, "errors": 0, "empty": 0, "ms_total": 0.0, "last_error": None,
-                               "last_prediction": {}} for m in self.models}
-        self.started = time.time()
         self.lock = threading.Lock()
+        self.reset()
         with store.lock:
             store.db.execute("""CREATE TABLE IF NOT EXISTS predictions (
                 model TEXT, made_ts REAL, target_ts REAL, key TEXT, predicted REAL,
                 actual REAL, scored INTEGER DEFAULT 0)""")
             store.db.execute("CREATE INDEX IF NOT EXISTS pred_target ON predictions(scored, target_ts)")
             store.db.commit()
+
+    def reset(self):
+        """start the scoreboard over (the store's reset already deleted the saved predictions)"""
+        with self.lock:
+            self.stats = {m.name: {"runs": 0, "errors": 0, "empty": 0, "ms_total": 0.0, "last_error": None,
+                                   "last_prediction": {}} for m in self.models}
+            self.started = time.time()
 
     # one round: every model predicts, then old predictions get scored
     def run_once(self, now=None):

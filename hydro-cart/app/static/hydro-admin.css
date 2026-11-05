@@ -41,7 +41,7 @@
 .hy-events time { color: var(--text-muted); flex-shrink: 0; width: 112px; }
 .ev-clear { color: var(--green); } .ev-info { color: #8ab4ff; } .ev-warn { color: #f5c451; } .ev-urgent { color: #ff8a80; }
 .hy-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-.hy-range { display: flex; gap: 8px; }
+.hy-range { display: flex; flex-wrap: wrap; gap: 8px; }
 .hy-range .active { border-color: var(--green); color: var(--green); }
 a.small-btn { text-decoration: none; }
 .hy-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
@@ -61,3 +61,4 @@ a.small-btn { text-decoration: none; }
 .hy-stat span { color: #dfe7df; font-size: 0.85rem; }
 @media (max-width: 860px) { .hy-two { grid-template-columns: 1fr; } }
 
+.small-btn.hy-danger { border-color: #ff6b6b; color: #ff6b6b; }
