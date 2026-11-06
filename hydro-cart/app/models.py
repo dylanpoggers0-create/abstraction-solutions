@@ -2,7 +2,9 @@
 AI models + a rigorous benchmark for the hydroponic cart.
 
 Design (what makes the comparison fair and hard to fool):
-  - Prospective: every prediction is saved BEFORE the real value exists, then scored later. No peeking.
+  - No peeking: every model only ever sees readings from before the moment it predicts. Live, the prediction is
+    saved before the real value exists. For readings the cart saved on its own (no laptop connected), the app
+    replays those moments in order after downloading them (a walk-forward evaluation), with the same rule.
   - Same inputs for every model: the same history (last HISTORY_H hours), the same moment, the same horizons.
   - Several horizons (default 30 min, 6 h, 24 h), because short horizons are dominated by "nothing changes".
   - Strong baselines, not just easy ones: persistence, seasonal naive (same time yesterday), linear trend,
@@ -39,7 +41,7 @@ SPEC = {"ph": {"accuracy": None, "resolution": 0.01},
         "h_top": {"accuracy": 5.0, "resolution": 1.0}, "h_low": {"accuracy": 5.0, "resolution": 1.0}}
 PERSISTENCE = "Persistence (baseline)"
 DAY = 86400
-STEP = 300                     # baselines that need an even time grid use 5-minute averages
+STEP = 600                     # baselines that need an even time grid use 10-minute averages (the cart's logger rate)
 MIN_SCORED = 5                 # fewer scored predictions than this = no score shown
 EXCLUSION_RULES = [
     "A round of predictions is skipped if the newest reading is more than 60 s old (cart offline).",
@@ -50,6 +52,9 @@ EXCLUSION_RULES = [
     "A model's MAE only includes targets it actually predicted; its Rel. MAE and significance test only use "
     "targets that persistence also predicted (paired).",
     "pH results are flagged as uncalibrated until ph_calibrated is true in config.json.",
+    "Readings the cart saved on its own are 10-minute averages; their predictions are made by walk-forward replay "
+    "after download, using only readings from before each moment. Saved readings whose time can't be pinned down "
+    "(from before an earlier power cut) are dropped, never guessed.",
 ]
 
 
@@ -172,7 +177,7 @@ class HoltDamped:
         for k in KEYS:
             g = _grid(history, k)
             ys = [g[b] for b in sorted(g)]
-            if len(ys) < 24:                  # at least 2 hours of 5-minute averages
+            if len(ys) < 12:                  # at least 2 hours of 10-minute averages
                 continue
             best = None
             for a, b in self.GRID:
@@ -202,7 +207,7 @@ class RidgeAR:
     def _features(g, i, target_t):
         y = g[i]
         hour = 2 * math.pi * ((target_t % DAY) / DAY)
-        return [1.0, y, y - g[i - 1], y - g[i - 6], y - g[i - 12], math.sin(hour), math.cos(hour)]
+        return [1.0, y, y - g[i - 1], y - g[i - 3], y - g[i - 6], math.sin(hour), math.cos(hour)]   # 10, 30, 60 min ago
 
     def predict(self, history, horizon_s):
         out = {}
@@ -212,7 +217,7 @@ class RidgeAR:
             if not g:
                 continue
             last = max(g)
-            need = (1, 6, 12)
+            need = (1, 3, 6)
             xs, ys = [], []
             for i in g:
                 if i + m in g and all(i - d in g for d in need):
@@ -373,6 +378,7 @@ class Benchmark:
             if not hasattr(m, "code_hash"):
                 m.code_hash = BASELINE_HASH
         self.lock = threading.Lock()
+        self.round_lock = threading.Lock()   # live rounds and replays of downloaded data never overlap
         self._cache = {}
         self._wake = threading.Event()
         # analysis reads through its own connection, so long statistics never block new sensor readings
@@ -460,7 +466,21 @@ class Benchmark:
         return None
 
     # ---------- one round: every model predicts every horizon, then due predictions get scored
+    def replay(self, times):
+        """Walk-forward replay for readings the cart saved while no laptop was connected: at each saved moment,
+        every model predicts from only the data before it, exactly as if it had been running live."""
+        done = 0
+        for t in sorted(times):
+            self.run_once(now=t)
+            done += 1
+        self._wake.set()
+        return done
+
     def run_once(self, now=None):
+        with self.round_lock:
+            self._run_once(now)
+
+    def _run_once(self, now=None):
         now = now or time.time()
         history = [r for r in self.store.since(now - self.history_s) if r["ts"] <= now]   # never the future
         if history and now - history[-1]["ts"] <= 60:     # only predict from fresh data
