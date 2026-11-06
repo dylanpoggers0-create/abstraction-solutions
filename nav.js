@@ -35,7 +35,7 @@ const ICONS = {
 const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
-    { id: 'clubs',    label: 'Clubs & Nonprofits', href: 'clubs-nonprofits.html', icon: 'clubs' },
+    { id: 'clubs',    label: 'Nonprofits', href: 'clubs-nonprofits.html', icon: 'clubs' },
     { id: 'cases',    label: 'Case Studies', href: 'case-studies.html', icon: 'cases' },
     { id: 'roi',      label: 'ROI Calculator', href: 'roi.html',        icon: 'roi' },
     { id: 'memphis',  label: 'Built in Memphis', href: 'memphis.html', icon: 'memphis' },
@@ -212,6 +212,21 @@ document.querySelectorAll('.side-links a').forEach(function (a) {
    --------------------------------------------------------- */
 fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () {});
 
+/* Quote promo lines (<p class="promo-line" data-promo-until="...">).
+   Delete this function, or delete those paragraphs, to remove the promo early.
+   data-promo-until is the first moment it should disappear: start of Saturday,
+   November 14, 2026, America/Chicago (CST, UTC-6). */
+(function () {
+    function applyPromo() {
+        document.querySelectorAll('[data-promo-until]').forEach(function (el) {
+            var end = Date.parse(el.getAttribute('data-promo-until'));
+            if (!end || Date.now() >= end) el.remove();
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyPromo);
+    else applyPromo();
+})();
+
 /* ---------------------------------------------------------
    SITE FOOTER
    Fills in the <footer> on every page (or adds one if a page has none),
@@ -255,10 +270,10 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             signup() +
             '<div>' +
                 '<div class="f-brand"><img src="' + BASE + 'abstraction_solutions.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
-                '<p>AI automations, workflows, machine learning models and AI education.</p>' +
+                '<p>Websites, AI automations, and AI education for Memphis small businesses and nonprofits.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul>' +
-                link('services.html', 'Services') + link('clubs-nonprofits.html', 'Clubs &amp; Nonprofits') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('memphis.html', 'Built in Memphis') + link('aboutus.html', 'About Us') +
+                link('services.html', 'Services') + link('clubs-nonprofits.html', 'Nonprofits') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('memphis.html', 'Built in Memphis') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
@@ -384,7 +399,7 @@ const CHAT_ON = true;
                     cancel: ['refund'], money: ['refund'], ml: ['machine', 'learning'], data: ['information', 'privacy'],
                     payment: ['pay', 'stripe'], payments: ['pay', 'stripe'], pay: ['payment'], founded: ['founder'],
                     owner: ['founder'], who: ['founder'], located: ['memphis', 'tennessee'], where: ['memphis'],
-                    rotary: ['club', 'nonprofit'], nonprofit: ['club'], nonprofits: ['club'], civic: ['club'],
+                    nonprofit: ['club'], nonprofits: ['club'],
                     dues: ['club'], rsvp: ['event', 'signup'], volunteer: ['club'], discount: ['50', 'off', 'club'],
                     discounts: ['50', 'off', 'club'], charity: ['nonprofit', 'club'] };
 
@@ -519,6 +534,12 @@ const CHAT_ON = true;
     async function answer(q) {
         await load();
         if (isOverview(q)) return { overview: overview(), hits: [], notes: [] };
+        // "Do you build websites?": answer from the sections that are about websites
+        if (/\bwebsites?\b|\bweb ?sites?\b/i.test(q) && /\b(build|make|design|do|create|offer|help)\b/i.test(q)) {
+            const about = chunks.filter(function (c) { return /website/i.test(c.heading || ''); });
+            about.sort(function (a, b) { return (/\.com\/$/.test(b.url) ? 1 : 0) - (/\.com\/$/.test(a.url) ? 1 : 0); });   // homepage first
+            if (about.length) return { hits: about.slice(0, 3), notes: [] };
+        }
         let hits = [];
         if (model) {
             try { hits = await semanticSearch(q); } catch (e) { hits = []; }
@@ -533,7 +554,7 @@ const CHAT_ON = true;
             notes.push({ text: 'We don\'t list prices. The free instant quote gives you an estimate in seconds.', href: BASE + 'index.html#quote', link: 'Get a free quote' });
         if (/\b(call|calls|phone|meeting|meet|zoom)\b/i.test(q))
             notes.push({ text: 'We work by email and through this website, no calls needed: ' + EMAIL + '.' });
-        return { hits: hits.map(function (h) { return chunks[h.i]; }), notes: notes };
+        return { hits: hits.map(function (h) { return chunks[h.i]; }), notes: notes };   // chunk objects, best first
     }
 
     // ---------- chat window ----------
@@ -587,7 +608,7 @@ const CHAT_ON = true;
     }
 
     const phone = window.matchMedia('(max-width: 600px)');
-    const SUGGESTIONS = ['What do you do?', 'Club & nonprofit discount', 'How do refunds work?', 'How do I get a quote?'];
+    const SUGGESTIONS = ['What do you do?', 'Nonprofit discount', 'How do refunds work?', 'How do I get a quote?'];
 
     function openChat() {
         box.hidden = false;
