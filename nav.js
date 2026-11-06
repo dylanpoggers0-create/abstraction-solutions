@@ -349,7 +349,29 @@ const CHAT_ON = true;
         '.chat-lead{color:#9aa69c;font-size:.85rem}' +
         '.chat-quote{margin:0;padding:8px 12px;border-left:3px solid var(--green,#7ee96f);background:#0f1510;border-radius:0 10px 10px 0;white-space:pre-line}' +
         '.chat-msg.bot a{color:var(--green,#7ee96f)}' +
-        '.chat-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}';
+        '.chat-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}' +
+        '.chat-head .chat-title{display:flex;flex-direction:column;line-height:1.25}' +
+        '.chat-head .chat-sub{font-weight:normal;font-size:.75rem;color:#9aa69c}' +
+        '.chat-list{margin:4px 0 8px;padding-left:18px}.chat-list li{margin-bottom:6px}' +
+        '.chat-list strong{color:#fff}' +
+        '.chat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}' +
+        '.chat-chip{padding:8px 12px;border-radius:50px;border:1px solid var(--line,#1e2a20);background:#050805;color:#dfe7df;' +
+            'font:inherit;font-size:.85rem;cursor:pointer}' +
+        '.chat-chip:hover{border-color:var(--green,#7ee96f);color:#fff}' +
+        // PHONES: the chat opens as its own full screen (like a messaging app) instead of a small floating panel,
+        // and the button shrinks to a round icon so it doesn't cover the page
+        '@media(max-width:600px){' +
+            '.chat-btn{right:14px;bottom:14px;width:56px;height:56px;padding:0;justify-content:center;border-radius:50%}' +
+            '.chat-btn .chat-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}' +
+            '.chat-btn svg{width:24px;height:24px}' +
+            '.chat-box{inset:0;right:0;bottom:0;width:100%;max-width:none;height:100%;height:100dvh;max-height:none;' +
+                'border:0;border-radius:0;z-index:400}' +
+            '.chat-head{padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top))}' +
+            '.chat-head button{font-size:2rem;width:44px;height:44px}' +
+            '.chat-form{padding:10px 12px calc(10px + env(safe-area-inset-bottom))}' +
+            '.chat-form input{font-size:16px}' +          // 16px stops iPhones zooming in on the box
+            '.chat-msg{max-width:92%;font-size:1rem}' +
+        '}';
     document.head.appendChild(css);
 
     // ---------- search ----------
@@ -399,7 +421,13 @@ const CHAT_ON = true;
         bm = { docs: docs, idf: idf, avg: avg, tf: tf, heads: heads };
     }
 
+    // Terms, Privacy and Returns use everyday words too ("Our services", "data"), so they only come first when the
+    // question is actually about policies; otherwise their matches count for much less.
+    const LEGAL_PAGE = /\/(terms|privacy|returns)\.html$/;
+    const LEGAL_QUESTION = /\b(terms|privacy|polic(y|ies)|refunds?|returns?|cancel\w*|legal|liabilit\w*|warrant\w*|guarantee\w*|data|cookies?|personal|information|law|dispute|bug ?fix\w*|own\w*|rights?)\b/i;
+
     function keywordSearch(q) {
+        const legal = LEGAL_QUESTION.test(q);
         const qs = Array.from(new Set(words(q)));   // words not on the site count too, so off-topic questions don't match
         const total = qs.reduce(function (s, w) { return s + (bm.idf[w] || Math.log(1 + bm.docs.length)); }, 0);
         if (!total) return [];
@@ -412,17 +440,22 @@ const CHAT_ON = true;
                 score += bm.idf[w] * f * 2.2 / (f + 1.2 * (0.25 + 0.75 * bm.docs[i].length / bm.avg));
                 if (bm.heads[i].has(w)) score += bm.idf[w] * 1.5;   // the section is about this word
             });
+            if (LEGAL_PAGE.test(chunks[i].url)) score *= legal ? 1.6 : 0.35;
+            else if (legal) score *= 0.5;       // a policy question: policy pages first
             return { i: i, score: score, coverage: matched / total };
         }).filter(function (h) { return h.coverage >= MIN_COVERAGE; })
           .sort(function (a, b) { return b.score - a.score; }).slice(0, 3);
     }
 
     async function semanticSearch(q) {
+        const legal = LEGAL_QUESTION.test(q);
         const out = await model(q, { pooling: 'mean', normalize: true });
         const v = out.data;
         return vectors.map(function (row, i) {
             let s = 0;
             for (let j = 0; j < row.length; j++) s += row[j] * v[j];
+            if (LEGAL_PAGE.test(chunks[i].url)) s += legal ? 0.05 : -0.12;
+            else if (legal) s -= 0.05;
             return { i: i, score: s };
         }).filter(function (h) { return h.score >= MIN_SEMANTIC; })
           .sort(function (a, b) { return b.score - a.score; }).slice(0, 3);
@@ -450,6 +483,8 @@ const CHAT_ON = true;
 
     function passage(text) {
         let t = text.replace(/\s+\n/g, '\n').trim();
+        // drop small page labels at the top of a section ("LEGAL", "Effective November 4, 2026")
+        t = t.replace(/^(?:(?:[A-Z0-9&·' -]{2,40}|Effective [^\n]{0,40})\n)+/, '').trim();
         if (/^[a-z]/.test(t)) {                    // starts mid-sentence (chunk overlap): skip to the next line or sentence
             const cut = t.search(/\n|\. /);
             if (cut > -1 && cut < 120) t = t.slice(cut + 1).trim();
@@ -461,14 +496,39 @@ const CHAT_ON = true;
         return t;
     }
 
+    // "What do you do?", "What services do you offer?", "Who are you?": questions about the company as a whole.
+    // They have almost no searchable words, so they get the list of services straight from the Services page.
+    const ABOUT_US = /\b(you|your|y'?all|abstraction|company|business|team)\b/i;
+    const GENERAL = new Set(['servic', 'service', 'offer', 'product', 'help', 'build', 'make', 'sell', 'provide', 'company',
+                             'business', 'abstraction', 'solution', 'team', 'about', 'kind', 'type', 'thing', 'stuff']);
+    function isOverview(q) {
+        if (!/\b(what|who|tell|about|services?|offer\w*|do you do)\b/i.test(q)) return false;
+        if (!ABOUT_US.test(q) && !/\bservices?\b/i.test(q)) return false;
+        return words(q).filter(function (w) { return !GENERAL.has(w); }).length === 0;
+    }
+    function overview() {
+        const services = [];
+        chunks.forEach(function (c) {
+            if (!/\/services\.html$/.test(c.url) || !c.heading || /made simple|not sure|recipes/i.test(c.heading)) return;
+            if (services.some(function (s) { return s.heading === c.heading; })) return;
+            services.push(c);
+        });
+        return services;
+    }
+
     async function answer(q) {
         await load();
+        if (isOverview(q)) return { overview: overview(), hits: [], notes: [] };
         let hits = [];
         if (model) {
             try { hits = await semanticSearch(q); } catch (e) { hits = []; }
         }
         if (!hits.length) hits = keywordSearch(q);
         const notes = [];
+        if (/\b(quote|quotes|estimate|estimates)\b/i.test(q) && /\b(how|where|get|can i|want|need|request)\b/i.test(q))
+            return { hits: [], notes: [{ text: 'Describe your project in the free instant quote on our homepage and you get an ' +
+                'estimate in seconds. Like it? Tap "Accept this quote" to open the order form with everything filled in.',
+                href: BASE + 'index.html#quote', link: 'Get a free quote' }] };
         if (/\b(price|prices|pricing|cost|costs|how much|charge|rate|rates|fee|fees|expensive|cheap|budget)\b/i.test(q))
             notes.push({ text: 'We don\'t list prices. The free instant quote gives you an estimate in seconds.', href: BASE + 'index.html#quote', link: 'Get a free quote' });
         if (/\b(call|calls|phone|meeting|meet|zoom)\b/i.test(q))
@@ -480,7 +540,9 @@ const CHAT_ON = true;
     const btn = document.createElement('button');
     btn.className = 'chat-btn';
     btn.type = 'button';
-    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Ask our site';
+    btn.setAttribute('aria-label', 'Ask our site');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+                    '<span class="chat-label">Ask our site</span>';
 
     const box = document.createElement('div');
     box.className = 'chat-box';
@@ -488,10 +550,9 @@ const CHAT_ON = true;
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-label', 'Site assistant');
     box.innerHTML =
-        '<div class="chat-head">Site assistant <span class="demo">DEMO</span>' +
+        '<div class="chat-head"><span class="chat-title">Ask Abstraction Solutions' +
+            '<span class="chat-sub">Answers from our website, with the page they came from</span></span>' +
             '<button type="button" aria-label="Close chat">&times;</button></div>' +
-        '<p class="chat-note">Finds the answer on this website and shows you where it came from. It\'s a demo, so ' +
-            'check the linked page. Your questions stay in your browser.</p>' +
         '<div class="chat-log" aria-live="polite"></div>' +
         '<form class="chat-form">' +
             '<label class="chat-sr" for="chatInput">Your question</label>' +
@@ -525,21 +586,43 @@ const CHAT_ON = true;
         return m;
     }
 
-    btn.addEventListener('click', function () {
+    const phone = window.matchMedia('(max-width: 600px)');
+    const SUGGESTIONS = ['What do you do?', 'Club & nonprofit discount', 'How do refunds work?', 'How do I get a quote?'];
+
+    function openChat() {
         box.hidden = false;
         btn.hidden = true;
+        if (phone.matches) document.documentElement.style.overflow = 'hidden';   // the page behind stays still
         load().catch(function () {});
-        if (!log.children.length) say('bot', 'Hi! Ask me about our services, automation recipes, refunds, privacy or how to get started.');
-        input.focus();
-    });
-    box.querySelector('.chat-head button').addEventListener('click', function () {
+        if (!log.children.length) {
+            const hi = say('bot', 'Hi! Ask me anything about Abstraction Solutions, or tap a question:');
+            const chips = el('div', 'chat-chips');
+            SUGGESTIONS.forEach(function (text) {
+                const chip = el('button', 'chat-chip', text);
+                chip.type = 'button';
+                chip.addEventListener('click', function () { ask(text); });
+                chips.appendChild(chip);
+            });
+            hi.appendChild(chips);
+        }
+        if (!phone.matches) input.focus();   // on phones, don't pop the keyboard over the suggestions
+    }
+    function closeChat() {
         box.hidden = true;
         btn.hidden = false;
+        document.documentElement.style.overflow = '';
+        btn.focus();
+    }
+    btn.addEventListener('click', openChat);
+    box.querySelector('.chat-head button').addEventListener('click', closeChat);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.hidden) closeChat(); });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        ask(input.value.trim());
     });
 
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const q = input.value.trim();
+    async function ask(q) {
         if (q.length < 2) return;
         say('me', q);
         input.value = '';
@@ -548,6 +631,24 @@ const CHAT_ON = true;
         let res;
         try { res = await answer(q); } catch (err) {
             m.textContent = 'The search couldn\'t load. Please refresh the page and try again.';
+            return;
+        }
+        if (res.overview && res.overview.length) {
+            m.appendChild(el('p', 'chat-p', 'We help people and businesses put AI to work. What we do:'));
+            const list = el('ul', 'chat-list');
+            res.overview.forEach(function (s) {
+                const li = el('li');
+                li.appendChild(el('strong', '', s.heading + ': '));
+                const first = passage(s.text).split(/\.\s/)[0].replace(/\.$/, '');   // just the first sentence
+                li.appendChild(document.createTextNode(first + '.'));
+                list.appendChild(li);
+            });
+            m.appendChild(list);
+            const src = el('div', 'chat-src', 'From: ');
+            src.appendChild(link(BASE + 'services.html', 'Services'));
+            src.appendChild(link(BASE + 'index.html#quote', 'Get a free quote'));
+            m.appendChild(src);
+            log.scrollTop = log.scrollHeight;
             return;
         }
         res.notes.forEach(function (n) {
@@ -578,6 +679,6 @@ const CHAT_ON = true;
             m.appendChild(p);
         }
         log.scrollTop = log.scrollHeight;
-        input.focus();
-    });
+        if (!phone.matches) input.focus();
+    }
 })();

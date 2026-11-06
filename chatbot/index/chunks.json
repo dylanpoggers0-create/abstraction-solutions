@@ -141,13 +141,13 @@
 "url": "https://abstraction-solutions.com/clubs-nonprofits.html",
 "title": "Rotary Club & Nonprofit Websites in Memphis",
 "heading": "50% off for clubs and nonprofits",
-"text": "ded, and we always tell you about those up front.\nHow to get it: tick \"We're a club or nonprofit\" on the instant quote. Your estimate shows the discounted price, and the discount carries over to your order. We may ask you to confirm your club or nonprofit status before work starts."
+"text": "ded, and we always tell you about those up front.\nHow to get it: when you place your order, choose \"Club or nonprofit website\" or mention that you're a club or nonprofit in the details. The instant quote shows the regular estimate, and your final quote from us has the 50% off. We may ask you to confirm your club or nonprofit status before work starts."
 },
 {
 "url": "https://abstraction-solutions.com/clubs-nonprofits.html",
 "title": "Rotary Club & Nonprofit Websites in Memphis",
 "heading": "How a project starts",
-"text": "1. Describe it\nUse the instant quote and tick \"We're a club or nonprofit\". Write what you need in ordinary words.\n2. See an estimate\nThe quote tool reads your description and shows an estimate with your 50% discount applied. It is not a final bill.\n3. We reply by email\nAccept the estimate to open the order form, or email dylanpogue@abstraction-solutions.com . We confirm the work in writing.\nEverything happens on this site or by email. There is no call to schedule."
+"text": "1. Describe it\nUse the instant quote and write what you need in ordinary words.\n2. See an estimate\nThe quote tool reads your description and shows a regular estimate. Your final quote takes 50% off.\n3. We reply by email\nAccept the estimate to open the order form, or email dylanpogue@abstraction-solutions.com . We confirm the work in writing.\nEverything happens on this site or by email. There is no call to schedule."
 },
 {
 "url": "https://abstraction-solutions.com/clubs-nonprofits.html",
@@ -273,7 +273,7 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Start an AI Project or Check Your Order",
 "heading": "Start your project.",
-"text": "ORDER\nTell us what you need, and we'll get back to you with next steps and a final quote.\nNew order Live Tell us about your project\nCheck order Live See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote"
+"text": "ORDER\nTell us what you need, and we'll get back to you with next steps and a final quote.\nNew order Tell us about your project\nCheck order See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote"
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -758,19 +758,19 @@
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
 "title": "AI Automation & Custom Chatbots for Business",
-"heading": "Past projects › Email Response Cyberdeck Live",
+"heading": "Past projects › Email Response Cyberdeck",
 "text": "A small, self-contained device that takes care of your communications whenever you're busy .\nTurns on automatically and starts answering emails as soon as it's powered up\nSchedules meetings on your Google Calendar for you\nLets you confirm each email before it's sent\nCustomizable: replies match the tone and context you give it\nRaspberry Pi 4 Arduino Uno 16x2 LCD Google Calendar API"
 },
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
 "title": "AI Automation & Custom Chatbots for Business",
-"heading": "Past projects › CBHS Information Chatbot Live",
+"heading": "Past projects › CBHS Information Chatbot",
 "text": "A chatbot built to answer questions about Christian Brothers High School , using RAG to find answers in the school's own information instead of guessing.\nUsed by hundreds of students every day\nDeployed to all faculty\nRetrieves the right school information before it answers\nHow does RAG work? Watch our 2-minute explainer →\nRAG Chatbot Education"
 },
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
 "title": "AI Automation & Custom Chatbots for Business",
-"heading": "Past projects › Price Optimization Model Live",
+"heading": "Past projects › Price Optimization Model",
 "text": "A machine learning model that learns from historical pricing data and suggests price changes that increase profit .\nSuggests price adjustments based on past sales\nKeeps sales high while raising the price per unit\nFinds the price where profit is highest\nMachine Learning Pricing Sales Data"
 },
 {
@@ -782,50 +782,44 @@
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
+"heading": "Educational Sources and Explanations",
 "text": "Short videos that break down the ideas behind modern AI. New ones every week on Instagram: @abstraction.solutions\nYour browser does not support the video tag.\nVIDEO · 1:53 Math is Art: Backpropagation How AI models learn, explained through painting a picture: draft, step back, fix what's off, repeat.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
+"heading": "Educational Sources and Explanations",
 "text": "eat.\nYour browser does not support the video tag.\nVIDEO · 1:43 RAG Explained Simply Why AI sometimes makes things up, and how Retrieval-Augmented Generation makes it answer from real sources instead.\nYour browser does not support the video tag.\nVIDEO · 1:58 Math is Art, Part 2: Gradient Descent How AI knows which way to fix its mistakes, explained by mixing paint to match a color.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
-"text": "lor.\nYour browser does not support the video tag.\nVIDEO · 1:54 Decision Trees: How a Tutor Finds Where You're Stuck Yes or no questions, learned from examples, with a path you can trace to see exactly why it decided.\nYour browser does not support the video tag.\nVIDEO · 1:49 Random Forests: A Panel of Graders Hundreds of decision trees trained on different slices of data, voting so one tree's quirks get outvoted."
+"heading": "Educational Sources and Explanations",
+"text": "lor.\nYour browser does not support the video tag.\nVIDEO · 1:54 Decision Trees: How a Tutor Finds Where You're Stuck Yes or no questions, learned from examples, with a path you can trace to see exactly why it decided.\nYour browser does not support the video tag.\nVIDEO · 1:49 Random Forests: A Panel of Graders Hundreds of decision trees trained on different slices of data, voting so one tree's quirks get outvoted.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
-"text": "f data, voting so one tree's quirks get outvoted.\nYour browser does not support the video tag.\nVIDEO · 1:40 Clustering: The Lunchroom Nobody Assigned Finding natural groups in data with no labels, and why people still have to decide what they mean.\nYour browser does not support the video tag.\nVIDEO · 1:42 Anomaly Detection: The Teacher Who Notices Learning what normal looks like and flagging what doesn't fit. A flag is not a verdict."
+"heading": "Educational Sources and Explanations",
+"text": "ted.\nYour browser does not support the video tag.\nVIDEO · 1:40 Clustering: The Lunchroom Nobody Assigned Finding natural groups in data with no labels, and why people still have to decide what they mean.\nYour browser does not support the video tag.\nVIDEO · 1:42 Anomaly Detection: The Teacher Who Notices Learning what normal looks like and flagging what doesn't fit. A flag is not a verdict.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
-"text": "agging what doesn't fit. A flag is not a verdict.\nYour browser does not support the video tag.\nVIDEO · 1:49 Reinforcement Learning: How You Learned to Study Try something, get a score, adjust. Plus delayed rewards, explore vs. exploit, and rewarding the right thing.\nYour browser does not support the video tag.\nVIDEO · 1:54 Regression vs. Classification Same gradebook, two questions: how much, or which one? Pick the question first, then the model."
+"heading": "Educational Sources and Explanations",
+"text": "ict.\nYour browser does not support the video tag.\nVIDEO · 1:49 Reinforcement Learning: How You Learned to Study Try something, get a score, adjust. Plus delayed rewards, explore vs. exploit, and rewarding the right thing.\nYour browser does not support the video tag.\nVIDEO · 1:54 Regression vs. Classification Same gradebook, two questions: how much, or which one? Pick the question first, then the model.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
-"text": "ich one? Pick the question first, then the model.\nYour browser does not support the video tag.\nVIDEO · 1:48 Show Your Work: Trustworthy AI Three checks before you trust an AI tool: can it explain itself, does it use real sources, does a human sign off?\nYour browser does not support the video tag.\nVIDEO · 1:46 Edge AI: Pocket Calculator vs. Calling the Professor Cloud AI vs. AI that runs right on the device, and two questions to ask before you use either."
+"heading": "Educational Sources and Explanations",
+"text": "del.\nYour browser does not support the video tag.\nVIDEO · 1:48 Show Your Work: Trustworthy AI Three checks before you trust an AI tool: can it explain itself, does it use real sources, does a human sign off?\nYour browser does not support the video tag.\nVIDEO · 1:46 Edge AI: Pocket Calculator vs. Calling the Professor Cloud AI vs. AI that runs right on the device, and two questions to ask before you use either.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
-"text": ", and two questions to ask before you use either.\nYour browser does not support the video tag.\nVIDEO · 1:49 Meet the AI Staff Room, Part 1 Six AI specialists and their jobs: regression, classification, decision trees, random forests, clustering and forecasting.\nYour browser does not support the video tag."
-},
-{
-"url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations Live",
-"text": "ing.\nYour browser does not support the video tag.\nVIDEO · 1:56 Meet the AI Staff Room, Part 2 Six more: computer vision, RAG, recommendations, anomaly detection, reinforcement learning and edge AI. Plus a cheat sheet."
+"heading": "Educational Sources and Explanations",
+"text": "her.\nYour browser does not support the video tag.\nVIDEO · 1:49 Meet the AI Staff Room, Part 1 Six AI specialists and their jobs: regression, classification, decision trees, random forests, clustering and forecasting.\nYour browser does not support the video tag.\nVIDEO · 1:56 Meet the AI Staff Room, Part 2 Six more: computer vision, RAG, recommendations, anomaly detection, reinforcement learning and edge AI. Plus a cheat sheet."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
@@ -878,44 +872,44 @@
 {
 "url": "https://abstraction-solutions.com/services/models.html",
 "title": "Custom Machine Learning Models for Business",
-"heading": "Models we build Live",
+"heading": "Models we build",
 "text": "Tap a model to see what it does and where it's used.\nRegression Predicts a number\nLearns how inputs relate to a number, then predicts that number for new cases.\nUSED FOR\nSales and revenue forecasts\nPricing\nDelivery and wait-time estimates\nClassification Sorts things into categories\nLearns from labeled examples, then decides which group something new belongs to.\nUSED FOR\nSpam and fraud filters\nLead and customer scoring\nSorting support tickets"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
 "title": "Custom Machine Learning Models for Business",
-"heading": "Models we build Live",
+"heading": "Models we build",
 "text": "Lead and customer scoring\nSorting support tickets\nDecision Trees Makes choices with yes/no questions\nSplits data with a series of simple yes/no questions until it reaches an answer, like a flowchart. Easy to read and explain.\nUSED FOR\nLoan and credit approvals\nDiagnosing customer issues\nExplaining why a decision was made\nRandom Forests Many trees voting together"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
 "title": "Custom Machine Learning Models for Business",
-"heading": "Models we build Live",
+"heading": "Models we build",
 "text": "as made\nRandom Forests Many trees voting together\nBuilds hundreds of decision trees on different slices of the data and combines their votes, which makes it more accurate and stable than a single tree.\nUSED FOR\nPredicting customer churn\nFraud detection\nRanking which factors matter most\nClustering Finds natural groups\nGroups similar items together without needing any labels, revealing patterns you didn't know were there.\nUSED FOR\nCustomer segments\nGrouping similar products"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
 "title": "Custom Machine Learning Models for Business",
-"heading": "Models we build Live",
+"heading": "Models we build",
 "text": "D FOR\nCustomer segments\nGrouping similar products\nOrganizing large document sets\nTime-Series Forecasting Predicts what comes next\nStudies how data changes over time, including trends and seasons, to forecast future values.\nUSED FOR\nInventory demand\nStaffing schedules\nEnergy and resource use\nComputer Vision Understands images and video\nUses neural networks (usually CNNs) to recognize objects, read text and spot details in pictures.\nUSED FOR\nProduct defect detection"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
 "title": "Custom Machine Learning Models for Business",
-"heading": "Models we build Live",
+"heading": "Models we build",
 "text": "ls in pictures.\nUSED FOR\nProduct defect detection\nCounting and tracking items\nReading forms and receipts\nLanguage Models (NLP) Reads and writes text\nTransformer models that understand and generate language. Paired with RAG, they answer from your own documents.\nUSED FOR\nChatbots and assistants\nSummarizing documents\nDrafting email replies\nRecommendation Systems Suggests what people want next\nLearns from what people choose to predict what else they'll like.\nUSED FOR"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
 "title": "Custom Machine Learning Models for Business",
-"heading": "Models we build Live",
-"text": "hoose to predict what else they'll like.\nUSED FOR\nProduct recommendations\nPersonalized content\nSmarter upsells\nAnomaly Detection Spots what's unusual\nLearns what normal looks like and flags anything that doesn't fit.\nUSED FOR\nFraud alerts\nEarly warnings for failing equipment\nNetwork security\nReinforcement Learning Learns by trial and reward\nAn agent tries actions, gets rewarded for good results, and improves its strategy over time.\nUSED FOR\nRobotics and control"
+"heading": "Models we build",
+"text": "hoose to predict what else they'll like.\nUSED FOR\nProduct recommendations\nPersonalized content\nSmarter upsells\nAnomaly Detection Spots what's unusual\nLearns what normal looks like and flags anything that doesn't fit.\nUSED FOR\nFraud alerts\nEarly warnings for failing equipment\nNetwork security\nReinforcement Learning Learns by trial and reward\nAn agent tries actions, gets rewarded for good results, and improves its strategy over time.\nUSED FOR\nRobotics and control\nDynamic pricing"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
 "title": "Custom Machine Learning Models for Business",
-"heading": "Models we build Live",
-"text": "strategy over time.\nUSED FOR\nRobotics and control\nDynamic pricing\nScheduling and routing\nEdge AI Tiny models for low-power devices\nSmall, efficient models that run right on the device instead of in the cloud, using very little power.\nUSED FOR\nSensors and wearables\nDrones\nSmart farming"
+"heading": "Models we build",
+"text": "me.\nUSED FOR\nRobotics and control\nDynamic pricing\nScheduling and routing\nEdge AI Tiny models for low-power devices\nSmall, efficient models that run right on the device instead of in the cloud, using very little power.\nUSED FOR\nSensors and wearables\nDrones\nSmart farming"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
@@ -956,7 +950,7 @@
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
 "title": "Business Workflow Automation with AI",
-"heading": "How it works › Get your quote Live",
+"heading": "How it works › Get your quote",
 "text": "We send you a quote. Once you approve it, we build a workflow that frees up your time."
 },
 {
@@ -974,25 +968,25 @@
 {
 "url": "https://abstraction-solutions.com/services.html",
 "title": "AI Services: Automation, Chatbots, Workflows & ML Models",
-"heading": "AI Education Live",
+"heading": "AI Education",
 "text": "Plain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
 "title": "AI Services: Automation, Chatbots, Workflows & ML Models",
-"heading": "AI Automation Live",
+"heading": "AI Automation",
 "text": "Hand repetitive work to AI: reports, data entry, sorting and the everyday busywork that slows a team down."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
 "title": "AI Services: Automation, Chatbots, Workflows & ML Models",
-"heading": "Custom Workflows Live",
+"heading": "Custom Workflows",
 "text": "Workflows built around how you already work, connecting the tools you use every day instead of replacing them."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
 "title": "AI Services: Automation, Chatbots, Workflows & ML Models",
-"heading": "Models, Tools & Code Live",
+"heading": "Models, Tools & Code",
 "text": "Custom tools, machine learning models and code for people, researchers and companies, including efficient edge AI built on our SLGN + DPE research."
 },
 {
@@ -1119,12 +1113,18 @@
 "url": "https://abstraction-solutions.com/changelog.html",
 "title": "Changelog",
 "heading": "What's new",
-"text": "epage and in every page's footer. This changelog.\n2026-11-06: 50% off for clubs and nonprofits. A Clubs & Nonprofits page for Rotary clubs, civic clubs and nonprofits: websites, member updates, event signups, newsletters, dues and donation pages, and simple AI. Clubs and nonprofits get 50% off every project. Tick \"We're a club or nonprofit\" on the instant quote to see your discounted estimate."
+"text": "epage and in every page's footer. This changelog.\n2026-11-06: Check your order and pay online. Check an order with your email and confirmation number, see its status and quote, and pay securely online with Stripe."
 },
 {
 "url": "https://abstraction-solutions.com/changelog.html",
 "title": "Changelog",
 "heading": "What's new",
-"text": "he instant quote to see your discounted estimate.\n2026-11-06: Check your order and pay online. Check an order with your email and confirmation number, see its status and quote, and pay securely online with Stripe."
+"text": "s and quote, and pay securely online with Stripe.\n2026-11-06: 50% off for clubs and nonprofits. A Clubs & Nonprofits page for Rotary clubs, civic clubs and nonprofits: websites, member updates, event signups, newsletters, dues and donation pages, and simple AI. Clubs and nonprofits get 50% off every project. Mention it when you order and your final quote takes half off."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "en you order and your final quote takes half off.\n2026-11-06: A better site assistant. Ask \"What do you do?\" and get our services, with suggested questions to tap. On phones, the assistant opens as a full screen instead of a small window."
 }
 ]

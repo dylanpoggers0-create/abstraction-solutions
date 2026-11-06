@@ -65,6 +65,8 @@ def page_sections(html):
     title = title.split("|")[0].strip() or title
     for tag in soup(["script", "style", "noscript", "svg", "footer", "head", "form", "template", "button"]):
         tag.decompose()
+    for tag in soup.select(".badge"):            # status labels ("Live") aren't part of the heading
+        tag.decompose()
     body = soup.body or soup
     sections, heading, heading_el, lines, last_block = [], "", None, [], None
     for s in body.strings:
