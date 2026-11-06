@@ -309,7 +309,9 @@
     <section class="hero">
         <div class="eyebrow">ORDER</div>
         <h1>Start your project.</h1>
-        <p class="section-sub">Clubs, nonprofits, and small businesses: tell us what you need, and we'll email you next steps and a final quote.</p>
+        <p class="section-sub">Small businesses and nonprofits: tell us what you need. You get an instant estimate, then final scope and price by email.</p>
+        <!-- Promo line. Delete this paragraph to remove it. Hidden after Fri Nov 13, 2026, America/Chicago. -->
+        <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
     </section>
 
     <!-- TWO DROP-DOWN PANELS: opening one closes the other (see the script at the bottom) -->
@@ -338,13 +340,13 @@
                         <option>Custom Workflows</option>
                         <option>Custom ML Model</option>
                         <option>AI Education</option>
-                        <option>Club or nonprofit website</option>
+                        <option>Nonprofit website</option>
                         <option>Other</option>
                     </select>
 
                     <label for="details">PROJECT DETAILS</label>
                     <textarea id="details" name="details" required minlength="20" maxlength="3000"
-                        placeholder="Club website, event signups, newsletter, dues page, or a small-business project. What should it do, and is there a deadline?"></textarea>
+                        placeholder="What should we build? If you are a nonprofit, say so. Any deadline?"></textarea>
 
                     <p class="agree">By placing an order you agree to our <a href="terms.html">Terms &amp; Refund Policy</a>
                        and <a href="privacy.html">Privacy Policy</a>.</p>
@@ -361,14 +363,11 @@
         <details class="panel" id="lookup">
             <summary>
                 <span>
-                    <span class="panel-title">Check order <span class="badge soon">Coming soon</span></span>
+                    <span class="panel-title">Check order <span class="badge live">Live</span></span>
                     <span class="panel-sub">See the status and quote of an existing order</span>
                 </span>
             </summary>
             <div class="panel-body">
-                <p class="section-note"><strong>Online payment and project tracking are coming soon.</strong> Until then,
-                   email <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a>
-                   with your confirmation number for an update.</p>
                 <p class="section-note">Enter the email you ordered with and the 8-digit confirmation number from your email.</p>
 
                 <form class="order-form" id="lookupForm">
@@ -414,6 +413,25 @@
     <script>
         const API_BASE = 'https://abstraction-quote-engine.onrender.com';
 
+        // The free server sleeps when nobody uses it, and restarts after an update. While it's starting, Render
+        // answers with an error page the browser isn't allowed to read, which looks exactly like "no internet".
+        // So instead of giving up on the first try, keep trying for about 75 seconds before saying it's offline.
+        async function fetchWithWake(url, options) {
+            const giveUp = Date.now() + 75000;
+            let wait = 2000;
+            while (true) {
+                try {
+                    const response = await fetch(url, Object.assign({}, options, { signal: AbortSignal.timeout(60000) }));
+                    const starting = response.status === 502 || response.status === 503 || response.status === 504;
+                    if (!starting || Date.now() + wait >= giveUp) return response;
+                } catch (error) {
+                    if (Date.now() + wait >= giveUp) throw error;
+                }
+                await new Promise(function (done) { setTimeout(done, wait); });
+                wait = Math.min(wait * 1.5, 10000);
+            }
+        }
+
         const orderForm = document.getElementById('orderForm');
         const orderButton = document.getElementById('orderButton');
         const orderMsg = document.getElementById('orderMsg');
@@ -435,7 +453,7 @@
             }, 5000);
 
             try {
-                const response = await fetch(API_BASE + '/orders', {
+                const response = await fetchWithWake(API_BASE + '/orders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(order)
@@ -522,7 +540,7 @@
                 confirmation: document.getElementById('lookupCode').value.trim()
             };
             try {
-                const response = await fetch(API_BASE + '/orders/lookup', {
+                const response = await fetchWithWake(API_BASE + '/orders/lookup', {
                     method: 'POST',   // POST keeps the email out of the address bar and server logs
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(lastSearch)

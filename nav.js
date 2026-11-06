@@ -35,7 +35,7 @@ const ICONS = {
 const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
-    { id: 'clubs',    label: 'Clubs & Nonprofits', href: 'clubs-nonprofits.html', icon: 'clubs' },
+    { id: 'clubs',    label: 'Nonprofits', href: 'clubs-nonprofits.html', icon: 'clubs' },
     { id: 'cases',    label: 'Case Studies', href: 'case-studies.html', icon: 'cases' },
     { id: 'roi',      label: 'ROI Calculator', href: 'roi.html',        icon: 'roi' },
     { id: 'memphis',  label: 'Built in Memphis', href: 'memphis.html', icon: 'memphis' },
@@ -55,7 +55,12 @@ const PAGES = [
 
 // The folder nav.js lives in (your main site folder). Putting BASE in front of
 // links and images makes them work from pages inside subfolders too.
-const BASE = document.currentScript.src.replace(/nav\.js.*$/, '');
+// Where the site's files are, taken from this script's own address. It's checked before use, because the menu and
+// footer are built as HTML text: an address with quotes or angle brackets in it can never become markup.
+const BASE = (function () {
+    const base = document.currentScript.src.replace(/nav\.js.*$/, '');
+    return /^https?:\/\/[^\s"'<>`]+\/$/.test(base) ? base : '/';
+})();
 
 /* ---------------------------------------------------------
    FREE NEWSLETTER (email only, every 2 weeks)
@@ -207,6 +212,21 @@ document.querySelectorAll('.side-links a').forEach(function (a) {
    --------------------------------------------------------- */
 fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () {});
 
+/* Quote promo lines (<p class="promo-line" data-promo-until="...">).
+   Delete this function, or delete those paragraphs, to remove the promo early.
+   data-promo-until is the first moment it should disappear: start of Saturday,
+   November 14, 2026, America/Chicago (CST, UTC-6). */
+(function () {
+    function applyPromo() {
+        document.querySelectorAll('[data-promo-until]').forEach(function (el) {
+            var end = Date.parse(el.getAttribute('data-promo-until'));
+            if (!end || Date.now() >= end) el.remove();
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyPromo);
+    else applyPromo();
+})();
+
 /* ---------------------------------------------------------
    SITE FOOTER
    Fills in the <footer> on every page (or adds one if a page has none),
@@ -250,10 +270,10 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             signup() +
             '<div>' +
                 '<div class="f-brand"><img src="' + BASE + 'abstraction_solutions.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
-                '<p>Websites, AI automations, and AI education for Memphis clubs, nonprofits, and small businesses.</p>' +
+                '<p>Websites, AI automations, and AI education for Memphis small businesses and nonprofits.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul>' +
-                link('services.html', 'Services') + link('clubs-nonprofits.html', 'Clubs &amp; Nonprofits') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('memphis.html', 'Built in Memphis') + link('aboutus.html', 'About Us') +
+                link('services.html', 'Services') + link('clubs-nonprofits.html', 'Nonprofits') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('memphis.html', 'Built in Memphis') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
@@ -357,8 +377,9 @@ const CHAT_ON = true;
                     cancel: ['refund'], money: ['refund'], ml: ['machine', 'learning'], data: ['information', 'privacy'],
                     payment: ['pay', 'stripe'], payments: ['pay', 'stripe'], pay: ['payment'], founded: ['founder'],
                     owner: ['founder'], who: ['founder'], located: ['memphis', 'tennessee'], where: ['memphis'],
-                    rotary: ['club', 'nonprofit'], nonprofit: ['club'], nonprofits: ['club'], civic: ['club'],
-                    dues: ['club'], rsvp: ['event', 'signup'], volunteer: ['club'] };
+                    nonprofit: ['club'], nonprofits: ['club'],
+                    dues: ['club'], rsvp: ['event', 'signup'], volunteer: ['club'], discount: ['50', 'off', 'club'],
+                    discounts: ['50', 'off', 'club'], charity: ['nonprofit', 'club'] };
 
     function stem(w) {
         if (w.length <= 4) return w;

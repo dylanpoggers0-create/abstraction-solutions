@@ -80,6 +80,7 @@ class Store:
             self.db.execute("CREATE INDEX IF NOT EXISTS readings_ts ON readings(ts)")
             # every time a suggestion starts or clears, it's logged here ("stored states")
             self.db.execute("CREATE TABLE IF NOT EXISTS events (ts REAL, key TEXT, level TEXT, state TEXT, title TEXT)")
+            self.db.execute("CREATE TABLE IF NOT EXISTS anchors (boot INTEGER PRIMARY KEY, start_ts REAL)")
             self.db.commit()
 
     def add(self, ts, r):
@@ -97,6 +98,24 @@ class Store:
         with self.lock:
             cur = self.db.execute(f"SELECT ts, {', '.join(FIELDS)} FROM readings ORDER BY ts DESC LIMIT ?", (n,))
             return [dict(zip(["ts"] + FIELDS, row)) for row in cur.fetchall()]
+
+    def set_anchor(self, boot, start_ts):
+        """remembers when a run of the board started (first sighting wins: it's the most precise)"""
+        with self.lock:
+            self.db.execute("INSERT OR IGNORE INTO anchors VALUES (?, ?)", (boot, start_ts))
+            self.db.commit()
+
+    def anchors(self, current_boot):
+        """{boot & 7: start time} for the 7 runs before the current one (the board's records carry 3 bits of boot)"""
+        with self.lock:
+            rows = self.db.execute("SELECT boot, start_ts FROM anchors WHERE boot BETWEEN ? AND ?",
+                                   (current_boot - 7, current_boot - 1)).fetchall()
+        return {b & 7: t for b, t in rows}
+
+    def has_reading_near(self, ts, within_s):
+        with self.lock:
+            return self.db.execute("SELECT 1 FROM readings WHERE ts BETWEEN ? AND ? LIMIT 1",
+                                   (ts - within_s, ts + within_s)).fetchone() is not None
 
     def log_event(self, ts, key, level, state, title):
         with self.lock:
@@ -262,8 +281,119 @@ def find_port():
     return ports[0].device if ports else None
 
 
-def serial_reader(store, tracker, port_arg):
+# ------------------------------------------------------------------ the cart's own memory (logger mode)
+def decode_dump(records, end, now, anchors=None):
+    """Turns the Mega's saved readings into timestamped readings.
+    records: [[boot3, tick13, ph_mv, t_top2, h_top2, t_low2, h_low2, strip_w4, strip_n4], ...] oldest first
+    end:     {"boot": b, "up": seconds running, "int": seconds per reading, "prev_alive_s": how long the last run lasted}
+    anchors: {boot3: wall-clock start time} for recent runs the app saw live (from each live reading's boot + up)
+
+    Each run of the board (power-on to power-off) is dated like this:
+      - the current run, or any run the app saw live: exact
+      - the run just before the current one, never seen live: assumed to have ended ~15 s before this run began
+        (the cable moving from the charger to the laptop)
+      - anything else can't be placed in time, so it's dropped (never guessed)."""
+    I, up, boot = int(end["int"]), int(end["up"]), int(end["boot"]) & 7
+    anchors = dict(anchors or {})
+    anchors[boot] = now - up
+    sessions = []                                   # contiguous runs, newest first
+    for rec in reversed(records):
+        if not sessions or sessions[-1]["boot"] != rec[0]:
+            sessions.append({"boot": rec[0], "recs": []})
+        sessions[-1]["recs"].append(rec)
+    out, dropped = [], 0
+
+    def reading(rec):
+        _, _, mv, tt, ht, tl, hl, sw, sn = rec
+        r = {"ph_volts": None if mv < 0 else round(mv / 1000, 3),
+             "t_top": None if tt == -128 else tt / 2, "h_top": None if ht == 255 else ht / 2,
+             "t_low": None if tl == -128 else tl / 2, "h_low": None if hl == 255 else hl / 2,
+             "strip_water": None if sw == 255 else sw * 4, "strip_nutr": None if sn == 255 else sn * 4}
+        r["ph"] = volts_to_ph(r["ph_volts"])
+        return r
+
+    newer_start = now + 1                           # each run must end before the next one started
+    for idx, s in enumerate(sessions):
+        newest = (up // I - 1) if (idx == 0 and s["boot"] == boot) else s["recs"][0][1]
+        ks = [newest - ((newest - rec[1]) % 8192) for rec in s["recs"]]     # undo the 13-bit wrap
+        if s["boot"] in anchors and not (idx > 0 and s["boot"] == boot):
+            start, limit = anchors[s["boot"]], None
+        elif s["boot"] == ((boot - 1) & 7) and idx == (1 if sessions[0]["boot"] == boot else 0) \
+                and end.get("prev_alive_s", -1) >= 0:
+            limit = end["prev_alive_s"] + 30          # the previous run's length (marked every minute: within 30 s)
+            start = anchors[boot] - 15 - limit         # ~15 s to swap the cable
+        else:
+            dropped += len(s["recs"])
+            continue
+        for k, rec in zip(ks, s["recs"]):
+            ts = start + (k + 1) * I
+            if (limit is not None and (k + 1) * I > limit + 60) or ts >= newer_start:
+                dropped += 1
+            else:
+                out.append((ts, reading(rec)))
+        newer_start = start
+    out.sort(key=lambda x: x[0])
+    return out, dropped
+
+
+def sync_cart_memory(ser, store, tracker, bench, handle_live):
+    """asks the Mega for everything it saved, stores what's new, clears its memory, replays the benchmark"""
+    ser.reset_input_buffer()
+    ser.write(b"DUMP\n")
+    records, end, deadline = [], None, time.time() + 25
+    while time.time() < deadline:
+        line = ser.readline().decode("utf-8", "ignore").strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            msg = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if "r" in msg:
+            records.append(msg["r"])
+        elif msg.get("dump") == "end":
+            end = msg
+            break
+        elif "dump" not in msg:
+            handle_live(msg)
+    if end is None:
+        print("The cart didn't answer the memory download (old firmware?). Live readings still work.")
+        return
+    now = time.time()
+    readings, dropped = decode_dump(records, end, now, store.anchors(end["boot"]))
+    new = []
+    for ts, r in readings:
+        if not store.has_reading_near(ts, end["int"] / 2):   # already have it live
+            store.add(ts, r)
+            new.append(ts)
+    ser.write(b"CLEAR\n")
+    if new or dropped:
+        span = (new[-1] - new[0]) / 3600 if len(new) > 1 else 0
+        msg = f"Downloaded {len(new)} readings the cart saved on its own ({span:.1f} hours)"
+        if dropped:
+            msg += f"; {dropped} from before an earlier power cut couldn't be dated and were skipped"
+        print(msg + ".")
+        store.log_event(now, "cart_memory", "info", "sync", msg)
+    if new:
+        n = bench.replay(new)
+        print(f"Replayed the AI benchmark on {n} saved moments.")
+    tracker.update()
+
+
+def open_serial(port):
     import serial
+    ser = serial.Serial()
+    ser.port, ser.baudrate, ser.timeout = port, 115200, 2
+    ser.dtr = False          # don't restart the board on connect, so its clock (and saved readings' times) survive
+    ser.rts = False
+    try:
+        ser.open()
+    except (OSError, serial.SerialException):  # some adapters can't do that; connect normally instead
+        ser = serial.Serial(port, 115200, timeout=2)
+    return ser
+
+
+def serial_reader(store, tracker, port_arg, bench=None):
     while True:
         port = port_arg if port_arg != "auto" else find_port()
         if not port:
@@ -272,19 +402,37 @@ def serial_reader(store, tracker, port_arg):
             time.sleep(5)
             continue
         try:
-            with serial.Serial(port, 115200, timeout=10) as ser:
+            with open_serial(port) as ser:
                 print(f"Connected to {port}")
+
+                def handle_live(r):
+                    if "t_top" not in r and "ph_volts" not in r:
+                        return
+                    now = time.time()
+                    if isinstance(r.get("boot"), int) and isinstance(r.get("up"), int):
+                        store.set_anchor(r["boot"], now - r["up"])   # when this run of the board started
+                    r["ph"] = volts_to_ph(r.get("ph_volts"))
+                    store.add(now, r)
+                    tracker.update()
+
+                time.sleep(2.5)                       # in case the board restarted anyway
+                next_sync = 0
+                quiet_since = time.time()
                 while True:
+                    if bench is not None and time.time() >= next_sync:
+                        sync_cart_memory(ser, store, tracker, bench, handle_live)
+                        next_sync = time.time() + 30 * 60    # keep its memory empty while the laptop is here
                     line = ser.readline().decode("utf-8", "ignore").strip()
                     if not line.startswith("{"):
+                        if time.time() - quiet_since > 30:
+                            raise OSError("no data from the board for 30 s")
                         continue
+                    quiet_since = time.time()
                     try:
                         r = json.loads(line)
                     except json.JSONDecodeError:
                         continue
-                    r["ph"] = volts_to_ph(r.get("ph_volts"))
-                    store.add(time.time(), r)
-                    tracker.update()
+                    handle_live(r)
         except Exception as e:  # unplugged, port busy, ...
             print(f"Serial problem on {port}: {e}. Retrying in 5 s")
             tracker.update()
@@ -530,14 +678,14 @@ def main():
     ALLOWED_ORIGINS.update({f"http://localhost:{a.http_port}", f"http://127.0.0.1:{a.http_port}"})
     store = Store(a.db or str(HERE / ("demo.db" if a.demo else "hydro.db")))
     tracker = SuggestionTracker(store)
-    if a.demo:
-        threading.Thread(target=demo_feed, args=(store, tracker), daemon=True).start()
-    else:
-        threading.Thread(target=serial_reader, args=(store, tracker, a.port or CFG["serial_port"]),
-                         daemon=True).start()
     horizons = [a.horizon_min] if a.horizon_min else [float(x) for x in a.horizons.split(",") if x.strip()]
     bench = Benchmark(store, horizons_min=horizons, every_s=max(10, min(60, min(horizons) * 6)),
                       history_h=a.history_h, ph_calibrated=bool(CFG["ph_calibrated"]))
+    if a.demo:
+        threading.Thread(target=demo_feed, args=(store, tracker), daemon=True).start()
+    else:
+        threading.Thread(target=serial_reader, args=(store, tracker, a.port or CFG["serial_port"], bench),
+                         daemon=True).start()
     threading.Thread(target=bench.loop, daemon=True).start()
     threading.Thread(target=bench.analysis_loop, daemon=True).start()
     srv = ThreadingHTTPServer(("127.0.0.1", a.http_port), make_handler(store, tracker, bench))
