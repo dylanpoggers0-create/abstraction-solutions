@@ -1,3 +1,9 @@
+// Always use the secure address: the quote engine only answers https://abstraction-solutions.com,
+// so a page opened as http:// would say "offline" even when everything is up.
+if (location.protocol === 'http:' && /(^|\.)abstraction-solutions\.com$/.test(location.hostname)) {
+  location.replace('https://' + location.host + location.pathname + location.search + location.hash);
+}
+
 /* =========================================================
    nav.js — builds the header, Menu tab and side nav on EVERY page.
 
