@@ -26,8 +26,11 @@
     },
     {
         "date": "2026-11-05",
-        "title": "Clearer homepage and easier navigation",
+        "title": "Automation recipes, Built in Memphis and honest status labels",
         "items": [
+            "Automation recipes: one concrete automation for each of six trades, with a Quote this button that fills in the quote tool.",
+            "A Built in Memphis page for local businesses.",
+            "Live and Coming soon labels, so it's clear what works today.",
             "The homepage ROI estimate now states its assumption plainly: about 60% of the task gets automated.",
             "AI Education and Models links on the homepage and in every page's footer.",
             "This changelog."
