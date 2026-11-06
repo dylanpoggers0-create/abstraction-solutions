@@ -55,6 +55,68 @@ const PAGES = [
 // links and images makes them work from pages inside subfolders too.
 const BASE = document.currentScript.src.replace(/nav\.js.*$/, '');
 
+/* ---------------------------------------------------------
+   FREE NEWSLETTER (email only, every 2 weeks)
+   1. Make a free account at buttondown.com
+   2. Put your Buttondown username between the quotes below (it's public, not a secret).
+      Leave it empty and the signup forms stay hidden.
+   Any element with data-newsletter gets a signup form (the homepage has one, and so does the footer).
+   --------------------------------------------------------- */
+const NEWSLETTER_BUTTONDOWN = '';
+
+function fillNewsletters() {
+    if (!NEWSLETTER_BUTTONDOWN) return;
+    if (!document.getElementById('nl-css')) {
+        const css = document.createElement('style');
+        css.id = 'nl-css';
+        css.textContent =
+            '.nl{max-width:560px;margin:0 auto;text-align:center}' +
+            '.nl h3{margin:0 0 6px;color:#fff;font-size:1.1rem}' +
+            '.nl p{margin:0 auto 14px;color:var(--text-muted,#9aa69c);max-width:none}' +
+            '.nl form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}' +
+            '.nl input{flex:1 1 220px;max-width:320px;padding:12px 16px;border-radius:50px;border:1px solid var(--line,#1e2a20);' +
+                'background:var(--panel,#0b100c);color:#fff;font:inherit}' +
+            '.nl input:focus{outline:none;border-color:var(--green,#7ee96f)}' +
+            '.nl button{padding:12px 22px;border-radius:50px;border:1px solid var(--green,#7ee96f);background:var(--green,#7ee96f);' +
+                'color:#061006;font:inherit;font-weight:bold;cursor:pointer}' +
+            '.nl .nl-thanks{color:var(--green,#7ee96f);font-weight:bold;margin:0}' +
+            '.nl .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}';
+        document.head.appendChild(css);
+    }
+    document.querySelectorAll('[data-newsletter]').forEach(function (box, i) {
+        if (box.dataset.ready) return;
+        box.dataset.ready = '1';
+        box.hidden = false;
+        const user = encodeURIComponent(NEWSLETTER_BUTTONDOWN);
+        const id = 'nl-email-' + i;
+        const frame = 'nl-frame-' + i;
+        box.innerHTML =
+            '<div class="nl">' +
+                '<h3>Get our progress updates</h3>' +
+                '<p>A free email every 2 weeks with what Abstraction Solutions is building. Unsubscribe any time.</p>' +
+                '<form action="https://buttondown.com/api/emails/embed-subscribe/' + user + '" method="post" target="' + frame + '">' +
+                    '<label class="sr" for="' + id + '">Email address</label>' +
+                    '<input id="' + id + '" type="email" name="email" required maxlength="200" autocomplete="email" placeholder="you@example.com">' +
+                    '<button type="submit">Subscribe</button>' +
+                '</form>' +
+                '<iframe name="' + frame + '" title="Newsletter signup" hidden></iframe>' +
+            '</div>';
+        const form = box.querySelector('form');
+        let sent = false;
+        form.addEventListener('submit', function () {
+            sent = true;
+            window.trackEvent && trackEvent('newsletter-signup');
+        });
+        // Buttondown answers inside the hidden frame; when it loads after a submit, show the thank-you
+        box.querySelector('iframe').addEventListener('load', function () {
+            if (!sent) return;
+            form.outerHTML = '<p class="nl-thanks" role="status">Thanks! Check your inbox to confirm your subscription.</p>';
+        });
+    });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fillNewsletters);
+else fillNewsletters();
+
 function svg(name) {
     return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + ICONS[name] + '</svg>';
 }
@@ -162,11 +224,17 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
         '.site-footer a{color:#dfe7df;text-decoration:none}' +
         '.site-footer a:hover{color:var(--green,#7ee96f)}' +
         '.site-footer .f-copy{flex-basis:100%;padding-top:18px;border-top:1px solid var(--line,#1e2a20);font-size:.8rem}' +
+        '.site-footer .f-news{flex-basis:100%;padding-bottom:26px;border-bottom:1px solid var(--line,#1e2a20)}' +
         '@media(max-width:600px){.site-footer{padding-left:44px}}';
     document.head.appendChild(css);
 
     function link(href, text) {
         return '<li><a href="' + BASE + href + '">' + text + '</a></li>';
+    }
+
+    // newsletter signup at the top of the footer (only once NEWSLETTER_BUTTONDOWN is filled in below)
+    function signup() {
+        return NEWSLETTER_BUTTONDOWN ? '<div class="f-news" data-newsletter></div>' : '';
     }
 
     function build() {
@@ -177,6 +245,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
         }
         footer.className = 'site-footer';
         footer.innerHTML =
+            signup() +
             '<div>' +
                 '<div class="f-brand"><img src="' + BASE + 'abstraction_solutions.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
                 '<p>AI automations, workflows, machine learning models and AI education.</p>' +
@@ -196,6 +265,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 link('terms.html', 'Terms of Service') +
             '</ul></div>' +
             '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA</div>';
+        fillNewsletters();
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
