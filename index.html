@@ -745,44 +745,51 @@
         // loads, so it's usually awake by the time someone finishes typing.
         fetch(API_BASE + '/health').catch(function () {});
 
-        // ---- clubs and nonprofits: 50% off ----
-        const CLUB_DISCOUNT = 0.5;
+        // ---- clubs and nonprofits: the discount is worked out by the quote engine on Render ----
+        // Every estimate comes back with both prices (regular_low/high and club_low/high), so ticking or unticking
+        // the box after an estimate just switches which one is shown. Nothing about the price is calculated here.
         let lastQuote = null;            // the estimate on screen
         let quotedText = '';             // the exact description that estimate is for
+        let quotedClub = false;          // whether it was requested as a club (its breakdown uses those prices)
         const clubBox = document.getElementById('quoteClub');
         const SERVICE_FOR = {
             'Automation / workflow': 'AI Automation',
             'AI tool or chatbot': 'AI Automation',
             'Custom machine learning model': 'Custom ML Model'
         };
-        const half = n => Math.round(n * (1 - CLUB_DISCOUNT) / 10) * 10;   // rounded to the nearest $10
 
-        // Shows the discounted price (when the box is ticked) and rebuilds "Accept this quote" and the ROI link.
-        // Runs after every estimate and whenever the box changes, so the order always matches what's on screen.
         function applyClubPrice() {
             const q = lastQuote;
             if (!q) return;
-            const club = clubBox.checked;
-            const price = document.getElementById('quotePrice');
+            const hasClubPrices = typeof q.club_low === 'number' && typeof q.regular_low === 'number';
+            const club = clubBox.checked && hasClubPrices;
+            const low = hasClubPrices ? (club ? q.club_low : q.regular_low) : q.low;
+            const high = hasClubPrices ? (club ? q.club_high : q.regular_high) : q.high;
+            const pct = q.club_discount_percent || 50;
+            document.getElementById('quotePrice').textContent = dollars(low) + ' – ' + dollars(high);
             const note = document.getElementById('quoteDiscount');
-            price.textContent = club ? dollars(half(q.low)) + ' – ' + dollars(half(q.high))
-                                     : dollars(q.low) + ' – ' + dollars(q.high);
-            note.hidden = !club;
-            note.textContent = club ? '50% club & nonprofit discount applied. Regular estimate: ' + dollars(q.low) + ' – ' +
-                                      dollars(q.high) + ' (the breakdown below shows regular prices).' : '';
+            let text = club ? pct + '% club & nonprofit discount applied. Regular estimate: ' + dollars(q.regular_low) +
+                              ' – ' + dollars(q.regular_high) + '.' : '';
+            if (hasClubPrices && club !== quotedClub) {      // the breakdown is from the other price
+                text += (text ? ' ' : '') + 'The breakdown below shows ' + (quotedClub ? 'club' : 'regular') +
+                        ' prices; get a new quote to update it.';
+            }
+            note.textContent = text;
+            note.hidden = !text;
 
             // AI and ML projects keep their own service; other (website-type) projects from a club are a club website
             const service = SERVICE_FOR[q.project_type_label] || (club ? 'Club or nonprofit website' : 'Other');
-            const estimate = 'Instant estimate: ' + dollars(q.low) + ' – ' + dollars(q.high) + ' (' + q.project_type_label + ')';
+            const regular = 'Instant estimate: ' + dollars(hasClubPrices ? q.regular_low : q.low) + ' – ' +
+                            dollars(hasClubPrices ? q.regular_high : q.high) + ' (' + q.project_type_label + ')';
             const params = new URLSearchParams({
                 service: service,
-                details: (club ? 'Club or nonprofit: 50% discount requested.\n' + estimate + '\nWith 50% off: ' +
-                                 dollars(half(q.low)) + ' – ' + dollars(half(q.high)) : estimate) + '\n\n' + quotedText
+                details: (club ? 'Club or nonprofit (' + pct + '% off).\n' + regular + '\nClub & nonprofit price: ' +
+                                 dollars(low) + ' – ' + dollars(high) : regular) + '\n\n' + quotedText
             });
+            if (club) params.set('club', '1');               // ticks "We're a club or nonprofit" on the order form
             document.getElementById('acceptQuote').href = 'order.html?' + params.toString() + '#newOrder';
-            // ROI calculator starts with the middle of the (discounted) estimate as the project cost
-            const mid = (q.low + q.high) / 2;
-            document.getElementById('roiLink').href = 'roi.html?cost=' + Math.round(club ? mid * (1 - CLUB_DISCOUNT) : mid);
+            // ROI calculator starts with the middle of the price shown as the project cost
+            document.getElementById('roiLink').href = 'roi.html?cost=' + Math.round((low + high) / 2);
         }
         clubBox.addEventListener('change', applyClubPrice);
 
@@ -790,6 +797,7 @@
             event.preventDefault();               // don't reload the page
             errorBox.textContent = '';
             const sentText = document.getElementById('quoteText').value.trim();
+            const sentClub = clubBox.checked;
             button.disabled = true;
             button.textContent = 'Calculating...';
 
@@ -802,7 +810,7 @@
                 const response = await fetch(API_BASE + '/quote', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ description: sentText }),
+                    body: JSON.stringify({ description: sentText, club: sentClub }),
                     signal: AbortSignal.timeout(90000)   // give up after 90 seconds
                 });
                 if (response.status === 422) throw new Error('Please describe your project in at least 10 characters.');
@@ -810,6 +818,7 @@
                 if (!response.ok) throw new Error('The quote engine had a problem. Please try again.');
                 const q = await response.json();
                 quotedText = sentText;              // the estimate is for what was sent, even if the box changed since
+                quotedClub = sentClub;
                 showQuote(q);
             } catch (error) {
                 // fetch itself fails (TypeError / timeout) when the server can't be reached

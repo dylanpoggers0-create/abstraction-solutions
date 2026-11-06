@@ -173,6 +173,35 @@
             width: 120px;
         }
 
+        .club-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 10px;
+            border: 1px solid var(--green);
+            border-radius: 50px;
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .club-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #dfe7df;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .club-toggle input {
+            accent-color: var(--green);
+        }
+
+        .pays {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
         .paid-badge {
             display: inline-block;
             margin-left: 8px;
@@ -472,6 +501,9 @@
             const title = el('h3', '', order.name + ' · ');
             title.append(el('span', 'code', order.confirmation));
             if (order.paid_at) title.append(el('span', 'paid-badge', 'Paid ' + new Date(order.paid_at).toLocaleDateString()));
+            const clubBadge = el('span', 'club-badge', 'Club / nonprofit: 50% off');
+            clubBadge.hidden = !order.club;
+            title.append(clubBadge);
             top.append(title, el('span', 'when', new Date(order.created_at).toLocaleString()));
 
             const meta = el('p', 'meta', order.service + ' · ');
@@ -505,9 +537,17 @@
             quoteInput.type = 'number';
             quoteInput.min = '0';
             quoteInput.step = '0.01';
-            quoteInput.placeholder = 'Quote $';
-            quoteInput.setAttribute('aria-label', 'Quote in dollars');
-            if (order.quote_cents !== null) quoteInput.value = (order.quote_cents / 100).toFixed(2);
+            // always the REGULAR price: for club orders the server charges 50% less
+            quoteInput.placeholder = 'Regular price $';
+            quoteInput.setAttribute('aria-label', 'Regular price in dollars');
+            const regular = order.regular_cents !== null && order.regular_cents !== undefined ? order.regular_cents : order.quote_cents;
+            if (regular !== null && regular !== undefined) quoteInput.value = (regular / 100).toFixed(2);
+            const pays = el('span', 'pays');
+            function showPays() {   // what the customer will actually be charged, as worked out by the server
+                pays.textContent = order.club && order.quote_cents !== null
+                    ? 'Customer pays $' + (order.quote_cents / 100).toFixed(2) + ' (50% off)' : '';
+            }
+            showPays();
             const saveQuote = el('button', 'small-btn', order.quote_cents === null ? 'Save quote' : 'Update quote');
             saveQuote.type = 'button';
             const saved = el('span', 'saved');
@@ -518,18 +558,38 @@
                     return;
                 }
                 try {
-                    await patchOrder(order, { quote: dollars });
+                    Object.assign(order, await patchOrder(order, { quote: dollars }));
+                    showPays();
                     saveQuote.textContent = 'Update quote';
                     saved.textContent = '✓ Saved, customer emailed';
                 } catch (error) {
                     if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t save the quote: ' + error.message;
                 }
             });
-            quoteBox.append(el('span', '', '$'), quoteInput, saveQuote, saved);
+            // club or nonprofit: check their status, then turn the 50% discount on or off here
+            const clubToggle = el('label', 'club-toggle');
+            const clubInput = el('input');
+            clubInput.type = 'checkbox';
+            clubInput.checked = Boolean(order.club);
+            clubToggle.append(clubInput, document.createTextNode('Club / nonprofit (50% off)'));
+            clubInput.addEventListener('change', async function () {
+                try {
+                    Object.assign(order, await patchOrder(order, { club: clubInput.checked }));
+                    clubBadge.hidden = !order.club;
+                    showPays();
+                    if (order.quote_cents !== null) saved.textContent = '✓ Price updated, customer emailed';
+                } catch (error) {
+                    clubInput.checked = !clubInput.checked;
+                    if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t update ' + order.confirmation + ': ' + error.message;
+                }
+            });
+
+            quoteBox.append(el('span', '', '$'), quoteInput, saveQuote, saved, pays);
             if (order.paid_at) {   // a paid quote can't change (the server refuses too)
                 quoteInput.disabled = true;
                 saveQuote.disabled = true;
                 saveQuote.textContent = 'Paid';
+                clubInput.disabled = true;
             }
 
             // delete (for spam/tests): first click asks, second click deletes for good
@@ -557,7 +617,7 @@
             });
 
             const actions = el('div', 'order-actions');
-            actions.append(status, quoteBox, del);
+            actions.append(status, quoteBox, clubToggle, del);
 
             card.append(top, meta, details, actions);
             return card;

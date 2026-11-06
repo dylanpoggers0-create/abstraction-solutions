@@ -296,6 +296,10 @@
         }
         .agree { color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 0; }
         .agree a { color: var(--green); }
+        .club-check { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; color: #e8eee8; cursor: pointer; }
+        .club-check input { width: 18px; height: 18px; accent-color: var(--green); }
+        .club-check a { color: var(--green); font-weight: bold; }
+        .club-note { color: var(--text-muted); font-size: 0.85rem; font-weight: normal; }
     </style>
 </head>
 
@@ -345,6 +349,9 @@
                     <label for="details">PROJECT DETAILS</label>
                     <textarea id="details" name="details" required minlength="20" maxlength="3000"
                         placeholder="What do you want built or automated? What tools do you use now? Any deadline?"></textarea>
+
+                    <label class="club-check"><input type="checkbox" id="club" name="club"> We're a club or nonprofit
+                        (<a href="clubs-nonprofits.html#discount">50% off</a>; we may ask you to confirm)</label>
 
                     <p class="agree">By placing an order you agree to our <a href="terms.html">Terms &amp; Refund Policy</a>
                        and <a href="privacy.html">Privacy Policy</a>.</p>
@@ -425,7 +432,8 @@
             event.preventDefault();                    // stop the page from reloading
 
             const order = Object.fromEntries(new FormData(orderForm));
-            // order is now: { name: "...", email: "...", service: "...", details: "..." }
+            order.club = document.getElementById('club').checked;   // true/false; the server applies the discount
+            // order is now: { name: "...", email: "...", service: "...", details: "...", club: true/false }
 
             orderButton.disabled = true;               // stop double-clicks = double orders
             orderButton.textContent = 'Sending...';
@@ -496,6 +504,10 @@
             document.getElementById('lookupEmail').focus();
         }
 
+        document.getElementById('service').addEventListener('change', function () {
+            if (this.value === 'Club or nonprofit website') document.getElementById('club').checked = true;
+        });
+
         // "Accept this quote" on the home page sends ?service=...&details=... : fill in and open New order
         const fromQuote = new URLSearchParams(location.search);
         if (fromQuote.get('details') && !codeFromLink) {
@@ -503,6 +515,7 @@
             const wanted = fromQuote.get('service');
             if ([...serviceBox.options].some(function (o) { return o.value === wanted; })) serviceBox.value = wanted;
             document.getElementById('details').value = fromQuote.get('details').slice(0, 3000);
+            if (fromQuote.get('club') === '1') document.getElementById('club').checked = true;
             newOrderPanel.open = true;
             document.getElementById('name').focus();
         }
@@ -559,6 +572,12 @@
             const paid = Boolean(order.paid_at);
             const quote = document.getElementById('resQuote');
             quote.textContent = hasQuote ? dollars(order.quote_cents) : 'Being prepared';
+            if (hasQuote && order.club && order.regular_cents !== null && order.regular_cents !== undefined) {
+                const d = document.createElement('span');
+                d.className = 'club-note';
+                d.textContent = ' (50% club & nonprofit discount; regular price ' + dollars(order.regular_cents) + ')';
+                quote.append(d);
+            }
             if (paid) {
                 const p = document.createElement('span');
                 p.className = 'status-badge paid';
