@@ -1,0 +1,102 @@
+<!--
+    AUTOMATION RECIPE TEMPLATE (a .txt so it is never published as a page).
+    TO ADD A TRADE: copy everything below the TEMPLATE-NOTE-END line into a new recipes/<trade>.html
+    and replace each {{PLACEHOLDER}}:
+      {{SLUG}} file name without .html          {{TRADE}} e.g. "Dental offices"
+      {{TRADE_UPPER}} the same in capitals       {{TITLE}} the automation, e.g. "Vaccine reminders"
+      {{SUMMARY}} one sentence                   {{PROBLEM}} the problem today, in the owner's words
+      {{STEPS}} one <li><h3>Step</h3><p>What happens</p></li> per step
+      {{CONTROL}} one <li> per thing the owner stays in control of
+      {{OTHERS}} links to the other recipes      {{META}} the search description
+      {{QUOTE_URL}} ../index.html?describe=<the project, URL-encoded>#quote  (pre-fills the quote tool)
+    Then add the page to recipes/index.html and sitemap.xml.
+    Rules: no invented hours-saved numbers, no prices, no phone calls.
+-->
+<!-- TEMPLATE-NOTE-END -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{TITLE}} for {{TRADE}} | AI Automation Recipe | Abstraction Solutions</title>
+    <meta name="description" content="{{META}}">
+    <link rel="canonical" href="https://abstraction-solutions.com/recipes/{{SLUG}}.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="{{TITLE}} for {{TRADE}} | Abstraction Solutions">
+    <meta property="og:description" content="{{META}}">
+    <meta property="og:url" content="https://abstraction-solutions.com/recipes/{{SLUG}}.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/jpeg" href="../abstraction_solutions.jpg">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="recipes.css">
+</head>
+
+<body data-page="recipes">
+    <div id="site-nav"></div>
+    <script src="../nav.js"></script>
+
+    <main>
+        <a href="index.html" class="back-btn" aria-label="All automation recipes" title="All automation recipes">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </a>
+
+        <div class="eyebrow">AUTOMATION RECIPE · {{TRADE_UPPER}}</div>
+        <h1>{{TITLE}}</h1>
+        <p class="lead">{{SUMMARY}}</p>
+
+        <hr class="divider">
+
+        <section>
+            <h2>The problem today</h2>
+            <p>{{PROBLEM}}</p>
+        </section>
+
+        <section>
+            <h2>How the automation works</h2>
+            <ol class="steps">
+{{STEPS}}
+            </ol>
+        </section>
+
+        <section class="control">
+            <strong>You stay in control</strong>
+            <ul>
+{{CONTROL}}
+            </ul>
+        </section>
+
+        <section>
+            <h2>Get a quote for this</h2>
+            <p>Every business is different, so this recipe is a starting point. Click below and the quote tool fills in
+               this project for you. Change anything you like, then get your instant estimate.</p>
+            <div class="pill-container">
+                <a class="pill primary" href="{{QUOTE_URL}}" data-track="recipe-quote-{{SLUG}}">Quote this</a>
+                <a class="pill" href="../roi.html">Estimate your ROI</a>
+            </div>
+            <p class="muted">Questions? Email <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a>.</p>
+        </section>
+
+        <hr class="divider">
+
+        <section>
+            <h2>Other recipes</h2>
+            <ul class="recipe-list">
+{{OTHERS}}
+            </ul>
+        </section>
+    </main>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+    <script>
+        document.querySelectorAll('[data-track]').forEach(function (a) {
+            a.addEventListener('click', function () { window.trackEvent && trackEvent(a.dataset.track); });
+        });
+    </script>
+</body>
+</html>

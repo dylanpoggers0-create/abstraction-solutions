@@ -611,6 +611,14 @@
 
     <footer>© 2026 Abstraction Solutions</footer>
 
+    <!-- PRE-FILL THE QUOTE from a recipe page's "Quote this" button: index.html?describe=...#quote -->
+    <script>
+        (function () {
+            const text = new URLSearchParams(location.search).get('describe');
+            if (text) document.getElementById('quoteText').value = text.slice(0, 2000);
+        })();
+    </script>
+
     <!-- MINI ROI: same math as roi.html (60% automated, no project cost here) -->
     <script>
         (function () {

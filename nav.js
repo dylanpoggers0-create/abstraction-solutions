@@ -45,7 +45,8 @@ const PAGES = [
     { id: 'terms',    label: 'Terms of Service',  href: 'terms.html',   icon: 'terms',   group: 'legal' },
 
     // hidden: true = not in the menu (linked from the footer), but still named correctly as the current page
-    { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true }
+    { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true },
+    { id: 'recipes',   label: 'Automation Recipes', href: 'recipes/', icon: 'services', hidden: true }
 ];
 
 // The folder nav.js lives in (your main site folder). Putting BASE in front of
@@ -179,7 +180,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 '<p>AI automations, workflows, machine learning models and AI education.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul>' +
-                link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('aboutus.html', 'About Us') +
+                link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
