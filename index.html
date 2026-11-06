@@ -247,35 +247,6 @@
             margin: 6px 0;
         }
 
-        .quote-discount {
-            margin: 0 0 6px;
-            color: #e8eee8;
-            font-size: 0.9rem;
-        }
-
-        /* "We're a club or nonprofit" checkbox on the quote form */
-        .club-check {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 0 auto 14px;
-            color: #e8eee8;
-            cursor: pointer;
-        }
-
-        .club-check input {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--green);
-            cursor: pointer;
-        }
-
-        .club-check a {
-            color: var(--green);
-            font-weight: bold;
-        }
-
         .quote-meta {
             color: var(--text-muted);
             margin: 0 0 20px;
@@ -558,7 +529,6 @@
             <a class="pill" href="services/automation.html">AI Automation</a>
             <a class="pill" href="services/workflows.html">Custom Workflows</a>
             <a class="pill" href="services/models.html">Models, Tools &amp; Code</a>
-            <a class="pill" href="clubs-nonprofits.html">Clubs &amp; Nonprofits: 50% off</a>
             <a class="pill primary" href="#quote">Get Started</a>
         </div>
     </section>
@@ -594,8 +564,6 @@
         <p class="section-sub">Have a project for us, but scared to see the bill? Describe it below and get an instant estimate.</p>
 
         <form class="quote-form" id="quoteForm">
-            <label class="club-check"><input type="checkbox" id="quoteClub"> We're a club or nonprofit
-                (<a href="clubs-nonprofits.html#discount">50% off</a>)</label>
             <textarea id="quoteText" name="description" minlength="10" maxlength="2000" required
                 placeholder="Example: A website for my bakery with online ordering, Stripe payments and email receipts."></textarea>
             <div class="pill-container">
@@ -609,7 +577,6 @@
         <div class="quote-result" id="quoteResult" hidden aria-live="polite">
             <p class="quote-label">Estimated cost</p>
             <p class="quote-price" id="quotePrice"></p>
-            <p class="quote-discount" id="quoteDiscount" hidden></p>
             <p class="quote-meta" id="quoteMeta"></p>
             <p class="quote-summary" id="quoteSummary"></p>
             <ul class="quote-breakdown" id="quoteBreakdown"></ul>
@@ -654,11 +621,8 @@
     <!-- PRE-FILL THE QUOTE from a recipe page's "Quote this" button: index.html?describe=...#quote -->
     <script>
         (function () {
-            const params = new URLSearchParams(location.search);
-            const text = params.get('describe');
+            const text = new URLSearchParams(location.search).get('describe');
             if (text) document.getElementById('quoteText').value = text.slice(0, 2000);
-            // links from the clubs and nonprofits page tick the 50%-off box
-            if (params.get('audience') === 'club') document.getElementById('quoteClub').checked = true;
         })();
     </script>
 
@@ -745,59 +709,9 @@
         // loads, so it's usually awake by the time someone finishes typing.
         fetch(API_BASE + '/health').catch(function () {});
 
-        // ---- clubs and nonprofits: the discount is worked out by the quote engine on Render ----
-        // Every estimate comes back with both prices (regular_low/high and club_low/high), so ticking or unticking
-        // the box after an estimate just switches which one is shown. Nothing about the price is calculated here.
-        let lastQuote = null;            // the estimate on screen
-        let quotedText = '';             // the exact description that estimate is for
-        let quotedClub = false;          // whether it was requested as a club (its breakdown uses those prices)
-        const clubBox = document.getElementById('quoteClub');
-        const SERVICE_FOR = {
-            'Automation / workflow': 'AI Automation',
-            'AI tool or chatbot': 'AI Automation',
-            'Custom machine learning model': 'Custom ML Model'
-        };
-
-        function applyClubPrice() {
-            const q = lastQuote;
-            if (!q) return;
-            const hasClubPrices = typeof q.club_low === 'number' && typeof q.regular_low === 'number';
-            const club = clubBox.checked && hasClubPrices;
-            const low = hasClubPrices ? (club ? q.club_low : q.regular_low) : q.low;
-            const high = hasClubPrices ? (club ? q.club_high : q.regular_high) : q.high;
-            const pct = q.club_discount_percent || 50;
-            document.getElementById('quotePrice').textContent = dollars(low) + ' – ' + dollars(high);
-            const note = document.getElementById('quoteDiscount');
-            let text = club ? pct + '% club & nonprofit discount applied. Regular estimate: ' + dollars(q.regular_low) +
-                              ' – ' + dollars(q.regular_high) + '.' : '';
-            if (hasClubPrices && club !== quotedClub) {      // the breakdown is from the other price
-                text += (text ? ' ' : '') + 'The breakdown below shows ' + (quotedClub ? 'club' : 'regular') +
-                        ' prices; get a new quote to update it.';
-            }
-            note.textContent = text;
-            note.hidden = !text;
-
-            // AI and ML projects keep their own service; other (website-type) projects from a club are a club website
-            const service = SERVICE_FOR[q.project_type_label] || (club ? 'Club or nonprofit website' : 'Other');
-            const regular = 'Instant estimate: ' + dollars(hasClubPrices ? q.regular_low : q.low) + ' – ' +
-                            dollars(hasClubPrices ? q.regular_high : q.high) + ' (' + q.project_type_label + ')';
-            const params = new URLSearchParams({
-                service: service,
-                details: (club ? 'Club or nonprofit (' + pct + '% off).\n' + regular + '\nClub & nonprofit price: ' +
-                                 dollars(low) + ' – ' + dollars(high) : regular) + '\n\n' + quotedText
-            });
-            if (club) params.set('club', '1');               // ticks "We're a club or nonprofit" on the order form
-            document.getElementById('acceptQuote').href = 'order.html?' + params.toString() + '#newOrder';
-            // ROI calculator starts with the middle of the price shown as the project cost
-            document.getElementById('roiLink').href = 'roi.html?cost=' + Math.round((low + high) / 2);
-        }
-        clubBox.addEventListener('change', applyClubPrice);
-
         form.addEventListener('submit', async function (event) {
             event.preventDefault();               // don't reload the page
             errorBox.textContent = '';
-            const sentText = document.getElementById('quoteText').value.trim();
-            const sentClub = clubBox.checked;
             button.disabled = true;
             button.textContent = 'Calculating...';
 
@@ -810,16 +724,13 @@
                 const response = await fetch(API_BASE + '/quote', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ description: sentText, club: sentClub }),
+                    body: JSON.stringify({ description: document.getElementById('quoteText').value.trim() }),
                     signal: AbortSignal.timeout(90000)   // give up after 90 seconds
                 });
                 if (response.status === 422) throw new Error('Please describe your project in at least 10 characters.');
                 if (response.status === 429) throw new Error('You\'ve asked for a lot of quotes. Please try again later, or email us.');
                 if (!response.ok) throw new Error('The quote engine had a problem. Please try again.');
-                const q = await response.json();
-                quotedText = sentText;              // the estimate is for what was sent, even if the box changed since
-                quotedClub = sentClub;
-                showQuote(q);
+                showQuote(await response.json());
             } catch (error) {
                 // fetch itself fails (TypeError / timeout) when the server can't be reached
                 errorBox.textContent = (error instanceof TypeError || error.name === 'TimeoutError')
@@ -870,8 +781,20 @@
             });
             document.getElementById('quoteQuestionsBox').hidden = !q.questions.length;
 
-            lastQuote = q;
-            applyClubPrice();
+            // "Accept this quote": send the service, estimate and description to the order form
+            const SERVICE_FOR = {
+                'Automation / workflow': 'AI Automation',
+                'AI tool or chatbot': 'AI Automation',
+                'Custom machine learning model': 'Custom ML Model'
+            };
+            const params = new URLSearchParams({
+                service: SERVICE_FOR[q.project_type_label] || 'Other',
+                details: 'Instant estimate: ' + dollars(q.low) + ' – ' + dollars(q.high) +
+                         ' (' + q.project_type_label + ')\n\n' + document.getElementById('quoteText').value.trim()
+            });
+            document.getElementById('acceptQuote').href = 'order.html?' + params.toString() + '#newOrder';
+            // ROI calculator starts with the middle of this estimate as the project cost
+            document.getElementById('roiLink').href = 'roi.html?cost=' + Math.round((q.low + q.high) / 2);
             window.trackEvent && trackEvent('quote-requested');
 
             result.hidden = false;
