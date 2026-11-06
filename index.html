@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI Automation &amp; Custom AI for Small Businesses | Abstraction Solutions</title>
-    <meta name="description" content="Memphis-based AI company building AI automations, chatbots, workflows and custom machine learning models for small businesses. Get a free instant quote.">
+    <title>Rotary Club Website Memphis &amp; Nonprofit Website Memphis | Abstraction Solutions</title>
+    <meta name="description" content="Rotary club website Memphis and nonprofit website Memphis help: member updates, event RSVPs, newsletters, dues, donations, and simple AI. Small businesses welcome. Free instant quote.">
     <link rel="canonical" href="https://abstraction-solutions.com/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Abstraction Solutions">
-    <meta property="og:title" content="AI Automation &amp; Custom AI for Small Businesses | Abstraction Solutions">
-    <meta property="og:description" content="Memphis-based AI company building AI automations, chatbots, workflows and custom machine learning models for small businesses. Get a free instant quote.">
+    <meta property="og:title" content="Rotary Club Website Memphis &amp; Nonprofit Website Memphis | Abstraction Solutions">
+    <meta property="og:description" content="Websites and simple AI for Memphis Rotary clubs, civic clubs, and nonprofits. Member updates, event signups, newsletters, and dues. Small businesses welcome. Free instant quote.">
     <meta property="og:url" content="https://abstraction-solutions.com/">
     <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -396,6 +396,122 @@
             color: var(--green);
         }
 
+        /* CLUBS & NONPROFITS */
+        .civic-grid, .case-strip {
+            max-width: 1100px;
+            margin: 28px auto 10px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .case-strip {
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 0;
+        }
+
+        .civic-grid article, .case-strip article {
+            background-color: rgba(11, 16, 12, 0.85);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+        }
+
+        .civic-grid h3, .case-strip h3 {
+            margin: 0 0 8px;
+            font-size: 1.15rem;
+        }
+
+        .civic-grid p, .case-strip p {
+            margin: 0;
+            color: #d6ddd7;
+            line-height: 1.6;
+        }
+
+        .case-strip .kind {
+            color: var(--green);
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .section-sub a, .civic-note a, .civic-grid a {
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        .civic-note {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 20px;
+            line-height: 1.55;
+        }
+
+        /* QUOTE AUDIENCE PATH */
+        .audience {
+            border: 0;
+            margin: 0 auto 8px;
+            padding: 0 20px;
+            max-width: 720px;
+        }
+
+        .audience legend {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .audience-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .aud-opt {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .aud-opt input {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+        }
+
+        .aud-opt span {
+            display: inline-block;
+            border: 2px solid white;
+            border-radius: 50px;
+            padding: 10px 18px;
+            font-weight: bold;
+        }
+
+        .aud-opt.on span,
+        .aud-opt input:focus-visible + span {
+            border-color: var(--green);
+            color: var(--green);
+            box-shadow: 0 0 18px var(--green-dim);
+        }
+
+        @media (max-width: 900px) {
+            .civic-grid {
+                grid-template-columns: 1fr;
+                padding: 0 20px 0 40px;
+            }
+
+            .case-strip {
+                grid-template-columns: 1fr;
+                padding: 0 20px 0 40px;
+            }
+        }
+
         @media (max-width: 600px) {
             .quote-result {
                 margin: 0 16px 40px;
@@ -411,13 +527,14 @@
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
+  "@type": ["LocalBusiness", "ProfessionalService"],
+  "@id": "https://abstraction-solutions.com/#business",
   "name": "Abstraction Solutions",
   "url": "https://abstraction-solutions.com/",
   "logo": "https://abstraction-solutions.com/abstraction_solutions.jpg",
   "image": "https://abstraction-solutions.com/og-image.jpg",
   "email": "dylanpogue@abstraction-solutions.com",
-  "description": "AI automations, chatbots, workflows, custom machine learning models and AI education for small businesses.",
+  "description": "Rotary club websites, nonprofit websites, member communication, event signups, and simple AI for Memphis clubs, nonprofits, and small businesses.",
   "founder": {
     "@type": "Person",
     "name": "Dylan Pogue"
@@ -439,6 +556,8 @@
     "https://www.youtube.com/@abstractionsolutions"
   ],
   "knowsAbout": [
+    "Rotary club websites",
+    "Nonprofit websites",
     "AI automation",
     "Chatbots",
     "Machine learning",
@@ -477,6 +596,14 @@
         "name": "AI Education",
         "url": "https://abstraction-solutions.com/services/education.html"
       }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Club and nonprofit websites",
+        "url": "https://abstraction-solutions.com/clubs-nonprofits.html"
+      }
     }
   ]
 }
@@ -494,11 +621,12 @@
     <section class="hero-split" id="home">
         <div class="hero-text">
             <div class="eyebrow">AI MADE SIMPLE</div>
-            <h1>Put AI to work, <span>without the confusion.</span></h1>
-            <p>Custom automations, workflows and machine learning models for people, researchers and
-               small businesses, plus plain-language AI education.</p>
+            <h1>Websites and simple AI for <span>Memphis clubs and nonprofits.</span></h1>
+            <p>Rotary clubs, civic clubs, and nonprofit leaders get a clear site, member updates, event signups,
+               newsletters, and dues or donation pages. Small businesses are welcome too.</p>
             <div class="pill-container">
-                <a class="pill primary" href="#quote">Get a free quote</a>
+                <a class="pill primary" href="?audience=club#quote">Get a free quote</a>
+                <a class="pill" href="clubs-nonprofits.html">Clubs &amp; nonprofits</a>
                 <a class="pill" href="order.html">Start a project</a>
                 <a class="pill" href="services/education.html">Learn AI in 60 seconds</a>
             </div>
@@ -529,7 +657,68 @@
             <a class="pill" href="services/automation.html">AI Automation</a>
             <a class="pill" href="services/workflows.html">Custom Workflows</a>
             <a class="pill" href="services/models.html">Models, Tools &amp; Code</a>
-            <a class="pill primary" href="#quote">Get Started</a>
+            <a class="pill" href="clubs-nonprofits.html">Clubs &amp; Nonprofits</a>
+            <a class="pill primary" href="?audience=club#quote">Get Started</a>
+        </div>
+    </section>
+
+    <section id="clubs">
+        <h2 class="section-title">What we do for clubs and nonprofits</h2>
+        <p class="section-sub">For a club officer or a nonprofit director: a site members can use, plus the everyday
+           jobs around it. This is our <a href="clubs-nonprofits.html">Rotary club website Memphis</a> and
+           <a href="clubs-nonprofits.html">nonprofit website Memphis</a> offer.</p>
+        <div class="civic-grid">
+            <article>
+                <h3>Club and nonprofit websites</h3>
+                <p>Who you are, when you meet, your programs, and how to reach an officer. Built for Rotary clubs, civic clubs, and other nonprofits.</p>
+            </article>
+            <article>
+                <h3>Member and volunteer communication</h3>
+                <p>Announcements live in one place, so you are not copying the same note through a chain of emails.</p>
+            </article>
+            <article>
+                <h3>Event RSVPs and signups</h3>
+                <p>A form for a meeting, fundraiser, or volunteer shift. Responses go by email to the officer you choose.</p>
+            </article>
+            <article>
+                <h3>Newsletters</h3>
+                <p>A signup on the site and a simple way to email members who asked to hear from you.</p>
+            </article>
+            <article>
+                <h3>Dues and donation flows</h3>
+                <p>A page that explains dues or gifts and points to the payment link or instructions your treasurer already uses.</p>
+            </article>
+            <article>
+                <h3>Simple AI and member education</h3>
+                <p>Small automations you still approve, and a plain-language intro so members can learn what AI is. <a href="services/education.html">AI education</a>.</p>
+            </article>
+        </div>
+        <p class="civic-note">Run a small business instead? You are in the right place.
+            <a href="?audience=business#quote">Get a quote as a small business</a>.</p>
+        <div class="pill-container">
+            <a class="pill primary" href="clubs-nonprofits.html">Clubs &amp; nonprofits</a>
+            <a class="pill" href="?audience=club#quote">Quote a club project</a>
+        </div>
+    </section>
+
+    <section id="club-work" aria-label="Club websites">
+        <h2 class="section-title">Club websites, in general terms</h2>
+        <p class="section-sub">Two sites we have built. No club names. <a href="case-studies.html#clubs">Read the case studies</a>.</p>
+        <div class="case-strip">
+            <article>
+                <div class="kind">CLUB WEBSITE</div>
+                <h3>A Memphis-area Rotary club website</h3>
+                <p>Member information, events, and program pages, so officers and members can find the basics in one place.</p>
+            </article>
+            <article>
+                <div class="kind">YOUTH EXCHANGE</div>
+                <h3>A Rotary district youth exchange site</h3>
+                <p>Program pages for a district youth exchange: what the program is and the events that go with it.</p>
+            </article>
+        </div>
+        <div class="pill-container">
+            <a class="pill" href="case-studies.html#rotary-club">Memphis-area club site</a>
+            <a class="pill" href="case-studies.html#youth-exchange">Youth exchange site</a>
         </div>
     </section>
 
@@ -560,12 +749,20 @@
 
     <!-- QUOTE: the form sends the description to the Python quote engine (quote-engine/main.py) -->
     <section class="quote" id="quote">
-        <h2 class="section-title">Get a quote today!</h2>
-        <p class="section-sub">Have a project for us, but scared to see the bill? Describe it below and get an instant estimate.</p>
+        <h2 class="section-title" id="quoteTitle">Get a quote for your club or nonprofit</h2>
+        <p class="section-sub" id="quoteSub">Describe the website, member updates, event signups, newsletter, dues, donations, or simple AI help you need. The estimate uses the same quote tool as always. We do not list prices.</p>
 
         <form class="quote-form" id="quoteForm">
+            <fieldset class="audience">
+                <legend>Who is this for?</legend>
+                <div class="audience-options">
+                    <label class="aud-opt on"><input type="radio" name="audience" value="club" checked><span>Club or nonprofit</span></label>
+                    <label class="aud-opt"><input type="radio" name="audience" value="business"><span>Small business</span></label>
+                    <label class="aud-opt"><input type="radio" name="audience" value="other"><span>Something else</span></label>
+                </div>
+            </fieldset>
             <textarea id="quoteText" name="description" minlength="10" maxlength="2000" required
-                placeholder="Example: A website for my bakery with online ordering, Stripe payments and email receipts."></textarea>
+                placeholder="Example: A website for our Rotary club with meeting times, event RSVPs, a newsletter signup, and a page that explains dues."></textarea>
             <div class="pill-container">
                 <button class="pill primary" id="quoteButton" type="submit">Get a quote</button>
             </div>
@@ -621,8 +818,13 @@
     <!-- PRE-FILL THE QUOTE from a recipe page's "Quote this" button: index.html?describe=...#quote -->
     <script>
         (function () {
-            const text = new URLSearchParams(location.search).get('describe');
+            const params = new URLSearchParams(location.search);
+            const text = params.get('describe');
             if (text) document.getElementById('quoteText').value = text.slice(0, 2000);
+            const audience = params.get('audience');
+            if (audience === 'club' || audience === 'business' || audience === 'other') {
+                document.querySelector('input[name="audience"][value="' + audience + '"]').checked = true;
+            }
         })();
     </script>
 
@@ -705,6 +907,41 @@
 
         const dollars = n => '$' + n.toLocaleString('en-US');
 
+        // Club / business / other only changes the wording. The estimate request stays the same.
+        const QUOTE_COPY = {
+            club: {
+                title: 'Get a quote for your club or nonprofit',
+                sub: 'Describe the website, member updates, event signups, newsletter, dues, donations, or simple AI help you need. The estimate uses the same quote tool as always. We do not list prices.',
+                placeholder: 'Example: A website for our Rotary club with meeting times, event RSVPs, a newsletter signup, and a page that explains dues.'
+            },
+            business: {
+                title: 'Get a quote for your small business',
+                sub: 'Describe the website, automation, or other project. You get an instant estimate from the same quote tool. We do not list prices.',
+                placeholder: 'Example: A website for my bakery with online ordering and email receipts.'
+            },
+            other: {
+                title: 'Get a quote today',
+                sub: 'Describe the project in plain language. You get an instant estimate from the same quote tool. We do not list prices.',
+                placeholder: 'Example: A simple site with a contact form, plus a short AI lesson for our team.'
+            }
+        };
+
+        function applyAudience() {
+            const checked = document.querySelector('input[name="audience"]:checked');
+            const key = checked ? checked.value : 'club';
+            const copy = QUOTE_COPY[key] || QUOTE_COPY.other;
+            document.getElementById('quoteTitle').textContent = copy.title;
+            document.getElementById('quoteSub').textContent = copy.sub;
+            document.getElementById('quoteText').placeholder = copy.placeholder;
+            document.querySelectorAll('.aud-opt').forEach(function (label) {
+                label.classList.toggle('on', label.contains(checked));
+            });
+        }
+        document.querySelectorAll('input[name="audience"]').forEach(function (radio) {
+            radio.addEventListener('change', applyAudience);
+        });
+        applyAudience();
+
         // The free server falls asleep when nobody uses it. Poke it as soon as the page
         // loads, so it's usually awake by the time someone finishes typing.
         fetch(API_BASE + '/health').catch(function () {});
@@ -724,6 +961,7 @@
                 const response = await fetch(API_BASE + '/quote', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    // Same request as before: only the description. The club/business choice is framing.
                     body: JSON.stringify({ description: document.getElementById('quoteText').value.trim() }),
                     signal: AbortSignal.timeout(90000)   // give up after 90 seconds
                 });
@@ -787,9 +1025,15 @@
                 'AI tool or chatbot': 'AI Automation',
                 'Custom machine learning model': 'Custom ML Model'
             };
+            const audience = (document.querySelector('input[name="audience"]:checked') || {}).value || 'other';
+            const AUDIENCE_LINE = {
+                club: 'Audience: club or nonprofit.',
+                business: 'Audience: small business.',
+                other: 'Audience: other.'
+            };
             const params = new URLSearchParams({
-                service: SERVICE_FOR[q.project_type_label] || 'Other',
-                details: 'Instant estimate: ' + dollars(q.low) + ' – ' + dollars(q.high) +
+                service: audience === 'club' ? 'Club or nonprofit website' : (SERVICE_FOR[q.project_type_label] || 'Other'),
+                details: (AUDIENCE_LINE[audience] || AUDIENCE_LINE.other) + '\n\nInstant estimate: ' + dollars(q.low) + ' – ' + dollars(q.high) +
                          ' (' + q.project_type_label + ')\n\n' + document.getElementById('quoteText').value.trim()
             });
             document.getElementById('acceptQuote').href = 'order.html?' + params.toString() + '#newOrder';
