@@ -35,5 +35,13 @@
             "AI Education and Models links on the homepage and in every page's footer.",
             "This changelog."
         ]
+    },
+    {
+        "date": "2026-11-06",
+        "title": "50% off for clubs and nonprofits",
+        "items": [
+            "A Clubs & Nonprofits page for Rotary clubs, civic clubs and nonprofits: websites, member updates, event signups, newsletters, dues and donation pages, and simple AI.",
+            "Clubs and nonprofits get 50% off every project. Tick \"We're a club or nonprofit\" on the instant quote to see your discounted estimate."
+        ]
     }
 ]
