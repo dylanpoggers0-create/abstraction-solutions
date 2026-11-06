@@ -296,3 +296,147 @@ window.trackEvent = function (name) {
     gc.dataset.goatcounter = 'https://' + GOATCOUNTER_CODE + '.goatcounter.com/count';
     document.head.appendChild(gc);
 })();
+
+/* ---------------------------------------------------------
+   DEMO ASSISTANT (chat bubble, bottom right)
+   Answers questions from this website's own pages (the chatbot folder, hosted on Render).
+   Put the Render address between the quotes once it's deployed. Empty = no chat bubble.
+   --------------------------------------------------------- */
+const CHAT_API = '';
+
+(function () {
+    if (!CHAT_API) return;
+    const css = document.createElement('style');
+    css.textContent =
+        '.chat-btn{position:fixed;right:18px;bottom:18px;z-index:250;display:flex;align-items:center;gap:8px;padding:12px 18px;' +
+            'border-radius:50px;border:1px solid var(--green,#7ee96f);background:#0b100c;color:#fff;font:inherit;font-weight:bold;' +
+            'cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,.6)}' +
+        '.chat-btn svg{width:20px;height:20px;stroke:var(--green,#7ee96f);fill:none;stroke-width:2}' +
+        '.chat-box{position:fixed;right:18px;bottom:18px;z-index:260;width:360px;max-width:calc(100vw - 36px);height:520px;' +
+            'max-height:calc(100vh - 36px);display:flex;flex-direction:column;background:#0b100c;border:1px solid var(--line,#1e2a20);' +
+            'border-radius:18px;box-shadow:0 10px 40px rgba(0,0,0,.7);overflow:hidden}' +
+        '.chat-box[hidden]{display:none}' +
+        '.chat-head{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line,#1e2a20);font-weight:bold}' +
+        '.chat-head .demo{font-size:.65rem;letter-spacing:1.5px;color:#f5c451;border:1px solid #f5c451;border-radius:50px;padding:2px 8px}' +
+        '.chat-head button{margin-left:auto;background:none;border:0;color:#9aa69c;font-size:1.4rem;cursor:pointer;line-height:1}' +
+        '.chat-note{margin:0;padding:10px 16px;font-size:.78rem;color:#9aa69c;border-bottom:1px solid var(--line,#1e2a20)}' +
+        '.chat-log{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}' +
+        '.chat-msg{max-width:88%;padding:10px 13px;border-radius:14px;line-height:1.5;font-size:.92rem;white-space:pre-wrap;word-wrap:break-word}' +
+        '.chat-msg.me{align-self:flex-end;background:var(--green-soft,rgba(126,233,111,.12));border:1px solid var(--green-dim,rgba(126,233,111,.35))}' +
+        '.chat-msg.bot{align-self:flex-start;background:#141a15;border:1px solid var(--line,#1e2a20)}' +
+        '.chat-msg.wait{color:#9aa69c;font-style:italic}' +
+        '.chat-src{margin-top:8px;font-size:.78rem;color:#9aa69c}' +
+        '.chat-src a{color:var(--green,#7ee96f);margin-right:10px}' +
+        '.chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line,#1e2a20)}' +
+        '.chat-form input{flex:1;min-width:0;padding:11px 14px;border-radius:50px;border:1px solid var(--line,#1e2a20);background:#050805;color:#fff;font:inherit}' +
+        '.chat-form input:focus{outline:none;border-color:var(--green,#7ee96f)}' +
+        '.chat-form button{padding:10px 16px;border-radius:50px;border:0;background:var(--green,#7ee96f);color:#061006;font:inherit;font-weight:bold;cursor:pointer}' +
+        '.chat-form button:disabled{opacity:.5;cursor:default}' +
+        '.chat-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}';
+    document.head.appendChild(css);
+
+    const btn = document.createElement('button');
+    btn.className = 'chat-btn';
+    btn.type = 'button';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Ask our demo bot';
+
+    const box = document.createElement('div');
+    box.className = 'chat-box';
+    box.hidden = true;
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-label', 'Demo assistant');
+    box.innerHTML =
+        '<div class="chat-head">Demo assistant <span class="demo">DEMO</span>' +
+            '<button type="button" aria-label="Close chat">&times;</button></div>' +
+        '<p class="chat-note">Answers only from this website and links the page it used. It\'s a demo and can be wrong, ' +
+            'so check the linked page. For prices, use the free instant quote.</p>' +
+        '<div class="chat-log" aria-live="polite"></div>' +
+        '<form class="chat-form">' +
+            '<label class="chat-sr" for="chatInput">Your question</label>' +
+            '<input id="chatInput" type="text" maxlength="500" autocomplete="off" placeholder="Ask about our services…" required>' +
+            '<button type="submit">Send</button>' +
+        '</form>';
+
+    function ready() {
+        document.body.append(btn, box);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
+    else ready();
+
+    const log = box.querySelector('.chat-log');
+    const form = box.querySelector('form');
+    const input = box.querySelector('input');
+    const send = box.querySelector('.chat-form button');
+    let awake = false;
+
+    function msg(cls, text) {
+        const m = document.createElement('div');
+        m.className = 'chat-msg ' + cls;
+        m.textContent = text;
+        log.appendChild(m);
+        log.scrollTop = log.scrollHeight;
+        return m;
+    }
+
+    function wake() {   // the free server sleeps when nobody uses it; start waking it as soon as the chat opens
+        if (awake) return;
+        awake = fetch(CHAT_API + '/health').catch(function () { awake = false; });
+    }
+
+    btn.addEventListener('click', function () {
+        box.hidden = false;
+        btn.hidden = true;
+        wake();
+        if (!log.children.length) msg('bot', 'Hi! Ask me anything about Abstraction Solutions: our services, automation recipes, refunds or how to get started.');
+        input.focus();
+    });
+    box.querySelector('.chat-head button').addEventListener('click', function () {
+        box.hidden = true;
+        btn.hidden = false;
+    });
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const question = input.value.trim();
+        if (question.length < 2) return;
+        msg('me', question);
+        input.value = '';
+        send.disabled = true;
+        const wait = msg('bot wait', 'Thinking…');
+        const slow = setTimeout(function () { wait.textContent = 'Waking up the demo server. The first answer can take up to a minute…'; }, 4000);
+        window.trackEvent && trackEvent('chat-question');
+        try {
+            const r = await fetch(CHAT_API + '/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: question })
+            });
+            let data = {};
+            try { data = await r.json(); } catch (err) {}
+            if (!r.ok) throw new Error(r.status === 429 ? 'You\'ve asked a lot of questions! Please wait a bit, or email us.'
+                                                        : (typeof data.detail === 'string' ? data.detail : 'Something went wrong. Please try again.'));
+            wait.className = 'chat-msg bot';
+            wait.textContent = data.answer;
+            const sources = (data.sources || []).filter(function (s) { return /^https:\/\/abstraction-solutions\.com\//.test(s.url); });
+            if (sources.length) {
+                const src = document.createElement('div');
+                src.className = 'chat-src';
+                src.textContent = 'From: ';
+                sources.forEach(function (s) {
+                    const a = document.createElement('a');
+                    a.href = s.url;
+                    a.textContent = s.title;
+                    src.appendChild(a);
+                });
+                wait.appendChild(src);
+            }
+        } catch (err) {
+            wait.className = 'chat-msg bot';
+            wait.textContent = err.message || 'The demo couldn\'t be reached. Please try again in a minute.';
+        }
+        clearTimeout(slow);
+        send.disabled = false;
+        log.scrollTop = log.scrollHeight;
+        input.focus();
+    });
+})();
