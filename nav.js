@@ -43,7 +43,6 @@ const PAGES = [
     { id: 'returns',  label: 'Returns & Refunds', href: 'returns.html', icon: 'returns', group: 'legal' },
     { id: 'terms',    label: 'Terms of Service',  href: 'terms.html',   icon: 'terms',   group: 'legal' }
 ];
-// Admin isn't listed on purpose: go to abstraction-solutions.com/admin.html directly.
 
 // The folder nav.js lives in (your main site folder). Putting BASE in front of
 // links and images makes them work from pages inside subfolders too.
