@@ -162,6 +162,8 @@ body {
     top: 0;
     left: 0;
     bottom: 0;
+    overflow-y: auto;                 /* scroll when the links are taller than the screen */
+    overscroll-behavior: contain;     /* scrolling the menu never scrolls the page behind it */
     width: 290px;
     max-width: 85vw;
     z-index: 300;
@@ -184,6 +186,10 @@ body {
 .nav-check:checked ~ .side-tab {
     opacity: 0;
     pointer-events: none;
+}
+
+.side-nav > * {
+    flex-shrink: 0;                   /* keep every section full size so the menu scrolls instead of squishing */
 }
 
 .side-nav-top {
