@@ -172,7 +172,8 @@ def ingest_knowledge_base(site_dir, with_vectors=True):
     np.save(INDEX_DIR / "vectors.npy", vectors)
     # for the browser: 4 decimals is plenty for cosine similarity and keeps the file small
     (INDEX_DIR / "vectors.json").write_text(json.dumps(
-        {"model": MODEL_NAME, "dim": int(vectors.shape[1]), "vectors": np.round(vectors, 4).tolist()},
+        {"model": MODEL_NAME, "dim": int(vectors.shape[1]),
+         "vectors": [[round(float(x), 4) for x in row] for row in vectors]},
         separators=(",", ":")), encoding="utf-8")
     return msg + f" with {vectors.shape[1]}-number MiniLM vectors."
 
