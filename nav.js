@@ -175,7 +175,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 '<p>AI automations, workflows, machine learning models and AI education.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul>' +
-                link('services.html', 'Services') + link('aboutus.html', 'About Us') +
+                link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') +
             '</ul></div>' +
