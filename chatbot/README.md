@@ -1,30 +1,24 @@
-# Demo assistant (RAG chatbot)
+# Site assistant (the chat bubble)
 
-Answers visitors' questions using only the pages of abstraction-solutions.com, and cites the page it used.
+Answers visitors' questions from the website's own pages and shows the passage and page it came from.
+It runs entirely in the visitor's browser, so there's no server to sleep or pay for, answers are instant,
+and questions never leave the visitor's device.
 
-- `rag.py`: Dylan's RAG pipeline. Reads the site's pages, splits them into 500-character chunks (50 overlap), embeds
-  them with all-MiniLM-L6-v2 and finds the top 3 matches for a question. Weak matches are dropped, which is how it
-  knows to say "I don't know".
-- `app.py`: the web API (`POST /chat`). Asks Gemini to answer only from those chunks, with the business rules built in
-  (no prices, no calls, nothing that isn't live). Rate limited per visitor, with a daily cap.
-- `build_index.py`: builds the index from the site. Runs on every deploy, so the bot always matches the live site.
+## How it works
+1. `rag.py` (Dylan's retrieval design) reads every public page, splits each one by its headings into chunks of
+   up to 500 characters, and embeds them with **all-MiniLM-L6-v2**.
+2. It writes `index/chunks.json` (the text) and `index/vectors.json` (the MiniLM vectors).
+3. The chat bubble in `nav.js` loads those files when someone opens it:
+   - **Keyword search (BM25)** works instantly.
+   - When `vectors.json` is there, the browser also loads MiniLM (via transformers.js) and switches to
+     meaning-based search: the same model and the same 0.35 "I don't know" cutoff as `rag.py`.
+4. It shows the best passage, the page it came from and related pages. Questions about prices point to the
+   instant quote, and questions about calls point to email.
 
-## Render settings (New > Web Service > this repo)
-| Setting | Value |
-|---|---|
-| Root Directory | `chatbot` |
-| Runtime | Python |
-| Build Command | `pip install -r requirements.txt && python build_index.py` |
-| Start Command | `uvicorn app:app --host 0.0.0.0 --port $PORT` |
-| Instance Type | Free |
-| Environment | `GEMINI_API_KEY` = your Gemini key (never put it in the code) |
+## Keeping it up to date
+The GitHub Action `.github/workflows/chat-index.yml` rebuilds the index automatically whenever a page changes.
+To build it yourself: `pip install -r requirements.txt` then `python build_index.py`
+(or `python build_index.py --no-vectors` for keyword search only, no model download).
 
-Optional environment: `GEMINI_MODEL` (default `gemini-2.5-flash-lite`), `DAILY_LIMIT` (default 500 questions a day).
-
-## Try it locally
-```
-pip install -r requirements.txt
-python build_index.py
-set GEMINI_API_KEY=your-key        (Mac: export GEMINI_API_KEY=your-key)
-uvicorn app:app --port 8000
-```
+## Turning it off
+Set `CHAT_ON = false` in `nav.js`.

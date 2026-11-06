@@ -1,0 +1,47 @@
+# Rebuilds the site assistant's search index (chatbot/index/) whenever the website's pages change,
+# using the MiniLM model, then republishes the site so the chat bubble uses the new index.
+name: Chat search index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.html'
+      - 'changelog.json'
+      - 'chatbot/rag.py'
+      - 'chatbot/build_index.py'
+      - 'chatbot/requirements.txt'
+      - '.github/workflows/chat-index.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # to commit the new index
+  pages: write      # to republish the site afterwards
+
+concurrency:
+  group: chat-index
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: chatbot/requirements.txt
+      - run: pip install -r chatbot/requirements.txt
+      - run: python chatbot/build_index.py
+      - name: Commit the new index and republish the site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add chatbot/index/chunks.json chatbot/index/vectors.json
+          if git diff --cached --quiet; then echo "Index unchanged"; exit 0; fi
+          git commit -m "Update chat search index"
+          git push
+          gh api -X POST "repos/${{ github.repository }}/pages/builds"

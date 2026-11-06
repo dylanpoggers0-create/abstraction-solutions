@@ -89,8 +89,9 @@
         <h2>What we collect</h2>
         <ul>
             <li><strong>Quote requests:</strong> the project description you type into the free quote tool.</li>
-            <li><strong>Demo assistant:</strong> the questions you type into the chat. They aren't saved to our
-                database; your IP address is kept briefly in server memory for rate limiting.</li>
+            <li><strong>Site assistant:</strong> nothing. The chat searches our pages inside your own browser, so your
+                questions never leave your device. To search smarter, your browser may download a small public search
+                model from Hugging Face and jsDelivr, like loading any other file.</li>
             <li><strong>Orders:</strong> your name, email address, the service you pick and your project details.
                 We also store your confirmation number, order status, quote and whether it has been paid.</li>
             <li><strong>Payments:</strong> handled entirely by Stripe. Your card number never touches our servers. We only
@@ -118,8 +119,7 @@
         <p>We rely on a few trusted providers to run the site. Each only gets the information it needs:</p>
         <ul>
             <li><strong>Google Gemini</strong>: reads the project description you type into the quote tool to estimate
-                its size, and the questions you ask the demo assistant so it can answer them. Please don't include
-                passwords or sensitive personal information in either.</li>
+                its size. Please don't include passwords or sensitive personal information there.</li>
             <li><strong>Neon</strong>: the database where orders are stored.</li>
             <li><strong>Render</strong> and <strong>GitHub Pages</strong>: host our server and website.</li>
             <li><strong>Resend</strong>: sends our emails.</li>

@@ -1,11 +1,12 @@
 """
-RAG for the Abstraction Solutions demo assistant (Dylan's design: chunk 500 / overlap 50, all-MiniLM-L6-v2, top 3).
+Retrieval for the Abstraction Solutions site assistant (Dylan's design: chunk 500 / overlap 50, all-MiniLM-L6-v2, top 3).
 
   ingest_knowledge_base(site_dir)  reads the website's pages, splits them into chunks, embeds them, saves the index
   retrieve_context(query, k=3)     finds the chunks that best match a question (an empty list = "I don't know")
 
-Runs on Render's free plan: embeddings come from fastembed (the same MiniLM model, run with ONNX instead of
-PyTorch, so it fits in a few hundred MB), and the vectors are a plain numpy array instead of a Chroma database.
+The website's chat bubble (nav.js) does the same search in the visitor's browser using the files this writes to
+chatbot/index/: chunks.json (always) and vectors.json (the MiniLM embeddings, built by the GitHub Action).
+No server, so it's always on and answers instantly.
 """
 import json
 import re
@@ -53,15 +54,60 @@ def page_url(rel):
     return SITE_URL + rel
 
 
-def page_text(html):
+HEADINGS = ["h1", "h2", "h3", "h4"]
+BLOCKS = ["p", "li", "dt", "dd", "td", "th", "blockquote", "figcaption", "summary", "label", "div", "section", "main"]
+
+
+def page_sections(html):
+    """splits a page by its headings: [(heading, text), ...], so each chunk is about one thing"""
     soup = BeautifulSoup(html, "html.parser")
     title = soup.title.get_text(" ", strip=True) if soup.title else ""
     title = title.split("|")[0].strip() or title
-    for tag in soup(["script", "style", "noscript", "svg", "footer", "head", "form", "template"]):
+    for tag in soup(["script", "style", "noscript", "svg", "footer", "head", "form", "template", "button"]):
         tag.decompose()
-    text = soup.get_text("\n")
-    lines = [re.sub(r"\s+", " ", ln).strip() for ln in text.splitlines()]
-    return title, "\n".join(ln for ln in lines if ln)
+    body = soup.body or soup
+    sections, heading, heading_el, lines, last_block = [], "", None, [], None
+    for s in body.strings:
+        text = re.sub(r"\s+", " ", s).strip()
+        if not text:
+            continue
+        h = s.find_parent(HEADINGS)
+        if h is not None:
+            if h is not heading_el:              # a new heading starts a new section
+                sections.append((heading, "\n".join(lines)))
+                heading, heading_el, lines, last_block = h.get_text(" ", strip=True), h, [], None
+            continue
+        block = s.find_parent(BLOCKS)
+        if lines and block is last_block:
+            lines[-1] += " " + text              # same paragraph: keep it on one line
+        else:
+            lines.append(text)
+        last_block = block
+    sections.append((heading, "\n".join(lines)))
+    merged, carry, parent = [], "", ""          # fold tiny sections (like a lone label) into the next one
+    for head, text in sections:
+        text = (carry + "\n" + text).strip() if carry else text
+        if len(text) < 60 and not head:
+            carry = text
+            continue
+        carry = ""
+        if head and not text:                    # a heading with nothing under it (e.g. a project name): keep it
+            parent = head                        # as context for the sections below it
+            continue
+        if parent and head:
+            head = f"{parent} › {head}"
+        elif parent and not head:
+            head = parent
+        if len(text) >= 40:                      # skip button rows like "Get a free quote Start a project"
+            merged.append((head, text))
+        if head and parent and not head.startswith(parent):
+            parent = ""
+    return title, merged
+
+
+def page_text(html):
+    title, sections = page_sections(html)
+    return title, "\n".join(f"{h}\n{t}" if h else t for h, t in sections)
 
 
 def load_pages(site_dir):
@@ -71,14 +117,14 @@ def load_pages(site_dir):
         rel = path.relative_to(site_dir).as_posix()
         if rel in SKIP or any(part in SKIP_DIRS for part in path.relative_to(site_dir).parts):
             continue
-        title, text = page_text(path.read_text(encoding="utf-8", errors="replace"))
-        if text:
-            pages.append({"url": page_url(rel), "title": title, "text": text})
+        title, sections = page_sections(path.read_text(encoding="utf-8", errors="replace"))
+        if sections:
+            pages.append({"url": page_url(rel), "title": title, "sections": sections})
     log = site_dir / "changelog.json"            # the changelog page is filled in by JavaScript, so read its data
     if log.exists():
         entries = json.loads(log.read_text(encoding="utf-8"))
         text = "\n".join(f"{e['date']}: {e['title']}. " + " ".join(e.get("items", [])) for e in entries)
-        pages.append({"url": SITE_URL + "changelog.html", "title": "Changelog", "text": text})
+        pages.append({"url": SITE_URL + "changelog.html", "title": "Changelog", "sections": [("What's new", text)]})
     return pages
 
 
@@ -110,16 +156,25 @@ def split_text(text, size=CHUNK_SIZE, overlap=CHUNK_OVERLAP, seps=("\n\n", "\n",
 
 
 # ---------------------------------------------------------------- Dylan's two functions
-def ingest_knowledge_base(site_dir):
+def ingest_knowledge_base(site_dir, with_vectors=True):
     chunks = []
     for page in load_pages(site_dir):
-        for piece in split_text(page["text"]):
-            chunks.append({"url": page["url"], "title": page["title"], "text": piece})
-    vectors = embed(f"{c['title']}: {c['text']}" for c in chunks)
+        for heading, text in page["sections"]:
+            body = text if len(text) >= 20 else f"{heading}. {text}".strip(". ")
+            for piece in split_text(body, CHUNK_SIZE - len(heading)):
+                chunks.append({"url": page["url"], "title": page["title"], "heading": heading, "text": piece})
     INDEX_DIR.mkdir(exist_ok=True)
+    (INDEX_DIR / "chunks.json").write_text(json.dumps(chunks, ensure_ascii=False, indent=0), encoding="utf-8")
+    msg = f"Ingested {len(chunks)} chunks from {len({c['url'] for c in chunks})} pages"
+    if not with_vectors:
+        return msg + " (keyword search only, no vectors)."
+    vectors = embed(f"{c['title']}. {c['heading']}: {c['text']}" for c in chunks)
     np.save(INDEX_DIR / "vectors.npy", vectors)
-    (INDEX_DIR / "chunks.json").write_text(json.dumps(chunks, ensure_ascii=False), encoding="utf-8")
-    return f"Ingested {len(chunks)} chunks from {len({c['url'] for c in chunks})} pages into the index."
+    # for the browser: 4 decimals is plenty for cosine similarity and keeps the file small
+    (INDEX_DIR / "vectors.json").write_text(json.dumps(
+        {"model": MODEL_NAME, "dim": int(vectors.shape[1]), "vectors": np.round(vectors, 4).tolist()},
+        separators=(",", ":")), encoding="utf-8")
+    return msg + f" with {vectors.shape[1]}-number MiniLM vectors."
 
 
 _index = None

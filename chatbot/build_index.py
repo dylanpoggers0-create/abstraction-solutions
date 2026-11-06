@@ -1,8 +1,12 @@
-"""Run during the Render build: reads the website (the folder above this one) and builds the search index."""
+"""Builds the chat search index from the website (the folder above this one).
+    python build_index.py              chunks + MiniLM vectors (what the GitHub Action runs)
+    python build_index.py --no-vectors chunks only (keyword search), no model download needed
+"""
 import sys
 from pathlib import Path
 
 import rag
 
-site = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
-print(rag.ingest_knowledge_base(site))
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+site = Path(args[0]) if args else Path(__file__).resolve().parent.parent
+print(rag.ingest_knowledge_base(site, with_vectors="--no-vectors" not in sys.argv))

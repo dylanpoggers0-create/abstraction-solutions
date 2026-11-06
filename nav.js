@@ -298,14 +298,22 @@ window.trackEvent = function (name) {
 })();
 
 /* ---------------------------------------------------------
-   DEMO ASSISTANT (chat bubble, bottom right)
-   Answers questions from this website's own pages (the chatbot folder, hosted on Render).
-   Put the Render address between the quotes once it's deployed. Empty = no chat bubble.
+   SITE ASSISTANT (chat bubble, bottom right)
+   Searches this website's own pages right in the visitor's browser: no server, so it's always on and instant.
+   The search index lives in chatbot/index/ and is rebuilt from the pages by a GitHub Action on every push.
+     - keyword search (BM25) works immediately
+     - when chatbot/index/vectors.json exists, it also loads the MiniLM model in the browser for smarter matching
+   Set CHAT_ON to false to hide the bubble.
    --------------------------------------------------------- */
-const CHAT_API = '';
+const CHAT_ON = true;
 
 (function () {
-    if (!CHAT_API) return;
+    if (!CHAT_ON) return;
+    const INDEX = BASE + 'chatbot/index/';
+    const EMAIL = 'dylanpogue@abstraction-solutions.com';
+    const MIN_SEMANTIC = 0.35;   // same cutoff as chatbot/rag.py
+    const MIN_COVERAGE = 0.34;   // keyword search: about a third of the question's important words must match
+
     const css = document.createElement('style');
     css.textContent =
         '.chat-btn{position:fixed;right:18px;bottom:18px;z-index:250;display:flex;align-items:center;gap:8px;padding:12px 18px;' +
@@ -321,73 +329,197 @@ const CHAT_API = '';
         '.chat-head button{margin-left:auto;background:none;border:0;color:#9aa69c;font-size:1.4rem;cursor:pointer;line-height:1}' +
         '.chat-note{margin:0;padding:10px 16px;font-size:.78rem;color:#9aa69c;border-bottom:1px solid var(--line,#1e2a20)}' +
         '.chat-log{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}' +
-        '.chat-msg{max-width:88%;padding:10px 13px;border-radius:14px;line-height:1.5;font-size:.92rem;white-space:pre-wrap;word-wrap:break-word}' +
+        '.chat-msg{max-width:88%;padding:10px 13px;border-radius:14px;line-height:1.5;font-size:.92rem;word-wrap:break-word}' +
         '.chat-msg.me{align-self:flex-end;background:var(--green-soft,rgba(126,233,111,.12));border:1px solid var(--green-dim,rgba(126,233,111,.35))}' +
         '.chat-msg.bot{align-self:flex-start;background:#141a15;border:1px solid var(--line,#1e2a20)}' +
-        '.chat-msg.wait{color:#9aa69c;font-style:italic}' +
         '.chat-src{margin-top:8px;font-size:.78rem;color:#9aa69c}' +
         '.chat-src a{color:var(--green,#7ee96f);margin-right:10px}' +
         '.chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line,#1e2a20)}' +
         '.chat-form input{flex:1;min-width:0;padding:11px 14px;border-radius:50px;border:1px solid var(--line,#1e2a20);background:#050805;color:#fff;font:inherit}' +
         '.chat-form input:focus{outline:none;border-color:var(--green,#7ee96f)}' +
         '.chat-form button{padding:10px 16px;border-radius:50px;border:0;background:var(--green,#7ee96f);color:#061006;font:inherit;font-weight:bold;cursor:pointer}' +
-        '.chat-form button:disabled{opacity:.5;cursor:default}' +
+        '.chat-p{margin:0 0 8px}' +
+        '.chat-lead{color:#9aa69c;font-size:.85rem}' +
+        '.chat-quote{margin:0;padding:8px 12px;border-left:3px solid var(--green,#7ee96f);background:#0f1510;border-radius:0 10px 10px 0;white-space:pre-line}' +
+        '.chat-msg.bot a{color:var(--green,#7ee96f)}' +
         '.chat-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}';
     document.head.appendChild(css);
 
+    // ---------- search ----------
+    const STOP = new Set(('a an the and or but of to in on for with at by from is are was were be been being do does did ' +
+        'can could you your yours we our ours us i me my it its this that these those what how who whom when where which ' +
+        'why about have has had will would should shall may might must any some there their they them as if so not no ' +
+        'yes just also into than then too very get got make made want need tell know please hi hello thanks thank ' +
+        'offer offers offered provide provides available use using used work works anything something').split(' '));
+    const ALIAS = { contact: ['email'], reach: ['email'], phone: ['email'], call: ['email'], calls: ['email'],
+                    cancel: ['refund'], money: ['refund'], ml: ['machine', 'learning'], data: ['information', 'privacy'],
+                    payment: ['pay', 'stripe'], payments: ['pay', 'stripe'], pay: ['payment'], founded: ['founder'],
+                    owner: ['founder'], who: ['founder'], located: ['memphis', 'tennessee'], where: ['memphis'] };
+
+    function stem(w) {
+        if (w.length <= 4) return w;
+        if (/ies$/.test(w)) return w.slice(0, -3) + 'y';
+        return w.replace(/(ing|ed|es|s)$/, '');
+    }
+    function words(text) {
+        const out = [];
+        (text.toLowerCase().match(/[a-z0-9]+/g) || []).forEach(function (w) {
+            (ALIAS[w] || []).forEach(function (a) { if (a !== w) out.push(stem(a)); });
+            if (STOP.has(w) || w.length < 2) return;
+            out.push(stem(w));
+        });
+        return out;
+    }
+
+    let chunks = null, bm = null, vectors = null, model = null, loading = null;
+
+    function buildBM25() {
+        const docs = chunks.map(function (c) {   // the page title and section heading count double
+            const t = words(c.title + ' ' + (c.heading || ''));
+            return t.concat(t, words(c.text));
+        });
+        const df = {};
+        docs.forEach(function (d) { new Set(d).forEach(function (w) { df[w] = (df[w] || 0) + 1; }); });
+        const N = docs.length;
+        const idf = {};
+        Object.keys(df).forEach(function (w) { idf[w] = Math.log(1 + (N - df[w] + 0.5) / (df[w] + 0.5)); });
+        const avg = docs.reduce(function (s, d) { return s + d.length; }, 0) / N;
+        const tf = docs.map(function (d) { const m = {}; d.forEach(function (w) { m[w] = (m[w] || 0) + 1; }); return m; });
+        const heads = chunks.map(function (c) { return new Set(words(c.heading || '')); });
+        bm = { docs: docs, idf: idf, avg: avg, tf: tf, heads: heads };
+    }
+
+    function keywordSearch(q) {
+        const qs = Array.from(new Set(words(q)));   // words not on the site count too, so off-topic questions don't match
+        const total = qs.reduce(function (s, w) { return s + (bm.idf[w] || Math.log(1 + bm.docs.length)); }, 0);
+        if (!total) return [];
+        return chunks.map(function (c, i) {
+            let score = 0, matched = 0;
+            qs.forEach(function (w) {
+                const f = bm.tf[i][w];
+                if (!f) return;
+                matched += bm.idf[w];
+                score += bm.idf[w] * f * 2.2 / (f + 1.2 * (0.25 + 0.75 * bm.docs[i].length / bm.avg));
+                if (bm.heads[i].has(w)) score += bm.idf[w] * 1.5;   // the section is about this word
+            });
+            return { i: i, score: score, coverage: matched / total };
+        }).filter(function (h) { return h.coverage >= MIN_COVERAGE; })
+          .sort(function (a, b) { return b.score - a.score; }).slice(0, 3);
+    }
+
+    async function semanticSearch(q) {
+        const out = await model(q, { pooling: 'mean', normalize: true });
+        const v = out.data;
+        return vectors.map(function (row, i) {
+            let s = 0;
+            for (let j = 0; j < row.length; j++) s += row[j] * v[j];
+            return { i: i, score: s };
+        }).filter(function (h) { return h.score >= MIN_SEMANTIC; })
+          .sort(function (a, b) { return b.score - a.score; }).slice(0, 3);
+    }
+
+    function load() {   // the index is small; the MiniLM model (~23 MB) only loads if vectors exist and data saver is off
+        if (loading) return loading;
+        loading = fetch(INDEX + 'chunks.json').then(function (r) {
+            if (!r.ok) throw new Error('index');
+            return r.json();
+        }).then(function (data) {
+            chunks = data;
+            buildBM25();
+            if (navigator.connection && navigator.connection.saveData) return;
+            fetch(INDEX + 'vectors.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (vj) {
+                if (!vj || vj.vectors.length !== chunks.length) return;
+                return import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2').then(function (t) {
+                    return t.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+                }).then(function (m) { model = m; vectors = vj.vectors; });
+            }).catch(function () { model = null; });   // keyword search keeps working without it
+        });
+        loading.catch(function () { loading = null; });
+        return loading;
+    }
+
+    function passage(text) {
+        let t = text.replace(/\s+\n/g, '\n').trim();
+        if (/^[a-z]/.test(t)) {                    // starts mid-sentence (chunk overlap): skip to the next line or sentence
+            const cut = t.search(/\n|\. /);
+            if (cut > -1 && cut < 120) t = t.slice(cut + 1).trim();
+        }
+        if (t.length > 420) {
+            const end = t.lastIndexOf('. ', 420);
+            t = t.slice(0, end > 200 ? end + 1 : 420).trim() + (end > 200 ? '' : '…');
+        }
+        return t;
+    }
+
+    async function answer(q) {
+        await load();
+        let hits = [];
+        if (model) {
+            try { hits = await semanticSearch(q); } catch (e) { hits = []; }
+        }
+        if (!hits.length) hits = keywordSearch(q);
+        const notes = [];
+        if (/\b(price|prices|pricing|cost|costs|how much|charge|rate|rates|fee|fees|expensive|cheap|budget)\b/i.test(q))
+            notes.push({ text: 'We don\'t list prices. The free instant quote gives you an estimate in seconds.', href: BASE + 'index.html#quote', link: 'Get a free quote' });
+        if (/\b(call|calls|phone|meeting|meet|zoom)\b/i.test(q))
+            notes.push({ text: 'We work by email and through this website, no calls needed: ' + EMAIL + '.' });
+        return { hits: hits.map(function (h) { return chunks[h.i]; }), notes: notes };
+    }
+
+    // ---------- chat window ----------
     const btn = document.createElement('button');
     btn.className = 'chat-btn';
     btn.type = 'button';
-    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Ask our demo bot';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Ask our site';
 
     const box = document.createElement('div');
     box.className = 'chat-box';
     box.hidden = true;
     box.setAttribute('role', 'dialog');
-    box.setAttribute('aria-label', 'Demo assistant');
+    box.setAttribute('aria-label', 'Site assistant');
     box.innerHTML =
-        '<div class="chat-head">Demo assistant <span class="demo">DEMO</span>' +
+        '<div class="chat-head">Site assistant <span class="demo">DEMO</span>' +
             '<button type="button" aria-label="Close chat">&times;</button></div>' +
-        '<p class="chat-note">Answers only from this website and links the page it used. It\'s a demo and can be wrong, ' +
-            'so check the linked page. For prices, use the free instant quote.</p>' +
+        '<p class="chat-note">Finds the answer on this website and shows you where it came from. It\'s a demo, so ' +
+            'check the linked page. Your questions stay in your browser.</p>' +
         '<div class="chat-log" aria-live="polite"></div>' +
         '<form class="chat-form">' +
             '<label class="chat-sr" for="chatInput">Your question</label>' +
-            '<input id="chatInput" type="text" maxlength="500" autocomplete="off" placeholder="Ask about our services…" required>' +
+            '<input id="chatInput" type="text" maxlength="300" autocomplete="off" placeholder="Ask about our services…" required>' +
             '<button type="submit">Send</button>' +
         '</form>';
 
-    function ready() {
-        document.body.append(btn, box);
-    }
+    function ready() { document.body.append(btn, box); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
     else ready();
 
     const log = box.querySelector('.chat-log');
     const form = box.querySelector('form');
     const input = box.querySelector('input');
-    const send = box.querySelector('.chat-form button');
-    let awake = false;
 
-    function msg(cls, text) {
-        const m = document.createElement('div');
-        m.className = 'chat-msg ' + cls;
-        m.textContent = text;
+    function el(tag, cls, text) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text) e.textContent = text;
+        return e;
+    }
+    function link(href, text) {
+        const a = el('a', '', text);
+        a.href = href;
+        return a;
+    }
+    function say(cls, text) {
+        const m = el('div', 'chat-msg ' + cls, text);
         log.appendChild(m);
         log.scrollTop = log.scrollHeight;
         return m;
     }
 
-    function wake() {   // the free server sleeps when nobody uses it; start waking it as soon as the chat opens
-        if (awake) return;
-        awake = fetch(CHAT_API + '/health').catch(function () { awake = false; });
-    }
-
     btn.addEventListener('click', function () {
         box.hidden = false;
         btn.hidden = true;
-        wake();
-        if (!log.children.length) msg('bot', 'Hi! Ask me anything about Abstraction Solutions: our services, automation recipes, refunds or how to get started.');
+        load().catch(function () {});
+        if (!log.children.length) say('bot', 'Hi! Ask me about our services, automation recipes, refunds, privacy or how to get started.');
         input.focus();
     });
     box.querySelector('.chat-head button').addEventListener('click', function () {
@@ -397,45 +529,44 @@ const CHAT_API = '';
 
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const question = input.value.trim();
-        if (question.length < 2) return;
-        msg('me', question);
+        const q = input.value.trim();
+        if (q.length < 2) return;
+        say('me', q);
         input.value = '';
-        send.disabled = true;
-        const wait = msg('bot wait', 'Thinking…');
-        const slow = setTimeout(function () { wait.textContent = 'Waking up the demo server. The first answer can take up to a minute…'; }, 4000);
         window.trackEvent && trackEvent('chat-question');
-        try {
-            const r = await fetch(CHAT_API + '/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ question: question })
-            });
-            let data = {};
-            try { data = await r.json(); } catch (err) {}
-            if (!r.ok) throw new Error(r.status === 429 ? 'You\'ve asked a lot of questions! Please wait a bit, or email us.'
-                                                        : (typeof data.detail === 'string' ? data.detail : 'Something went wrong. Please try again.'));
-            wait.className = 'chat-msg bot';
-            wait.textContent = data.answer;
-            const sources = (data.sources || []).filter(function (s) { return /^https:\/\/abstraction-solutions\.com\//.test(s.url); });
-            if (sources.length) {
-                const src = document.createElement('div');
-                src.className = 'chat-src';
-                src.textContent = 'From: ';
-                sources.forEach(function (s) {
-                    const a = document.createElement('a');
-                    a.href = s.url;
-                    a.textContent = s.title;
-                    src.appendChild(a);
-                });
-                wait.appendChild(src);
-            }
-        } catch (err) {
-            wait.className = 'chat-msg bot';
-            wait.textContent = err.message || 'The demo couldn\'t be reached. Please try again in a minute.';
+        const m = say('bot', '');
+        let res;
+        try { res = await answer(q); } catch (err) {
+            m.textContent = 'The search couldn\'t load. Please refresh the page and try again.';
+            return;
         }
-        clearTimeout(slow);
-        send.disabled = false;
+        res.notes.forEach(function (n) {
+            const p = el('p', 'chat-p', n.text + ' ');
+            if (n.href) p.appendChild(link(n.href, n.link));
+            m.appendChild(p);
+        });
+        if (res.hits.length) {
+            const top = res.hits[0];
+            m.appendChild(el('p', 'chat-p chat-lead', 'Here\'s what our site says:'));
+            m.appendChild(el('blockquote', 'chat-quote', passage(top.text)));
+            const src = el('div', 'chat-src', 'From: ');
+            src.appendChild(link(top.url, top.title + (top.heading && top.heading !== top.title ? ' › ' + top.heading : '')));
+            m.appendChild(src);
+            const more = [];
+            res.hits.slice(1).forEach(function (h) {
+                if (h.url !== top.url && more.every(function (x) { return x.url !== h.url; })) more.push(h);
+            });
+            if (more.length) {
+                const rel = el('div', 'chat-src', 'Related: ');
+                more.forEach(function (h) { rel.appendChild(link(h.url, h.title)); });
+                m.appendChild(rel);
+            }
+        } else if (!res.notes.length) {
+            const p = el('p', 'chat-p', 'I couldn\'t find that on our website. For a project estimate, try the ');
+            p.appendChild(link(BASE + 'index.html#quote', 'free instant quote'));
+            p.appendChild(document.createTextNode(', or email ' + EMAIL + '.'));
+            m.appendChild(p);
+        }
         log.scrollTop = log.scrollHeight;
         input.focus();
     });
