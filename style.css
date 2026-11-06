@@ -473,3 +473,26 @@ body:has(.bg-loop) {
 html {
     background-color: black;
 }
+/* ---------------------------------------------------------
+   FEATURE STATUS BADGES: say honestly what works today.
+   <span class="badge live">Live</span>
+   <span class="badge testing">In testing</span>
+   <span class="badge soon">Coming soon</span>
+   --------------------------------------------------------- */
+.badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 3px 10px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.badge.live    { color: var(--green); background: var(--green-soft); }
+.badge.testing { color: #f5c451; background: rgba(245, 196, 81, 0.1); }
+.badge.soon    { color: #9aa69c; background: rgba(154, 166, 156, 0.1); }
