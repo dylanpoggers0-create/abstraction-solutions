@@ -413,6 +413,25 @@
     <script>
         const API_BASE = 'https://abstraction-quote-engine.onrender.com';
 
+        // The free server sleeps when nobody uses it, and restarts after an update. While it's starting, Render
+        // answers with an error page the browser isn't allowed to read, which looks exactly like "no internet".
+        // So instead of giving up on the first try, keep trying for about 75 seconds before saying it's offline.
+        async function fetchWithWake(url, options) {
+            const giveUp = Date.now() + 75000;
+            let wait = 2000;
+            while (true) {
+                try {
+                    const response = await fetch(url, Object.assign({}, options, { signal: AbortSignal.timeout(60000) }));
+                    const starting = response.status === 502 || response.status === 503 || response.status === 504;
+                    if (!starting || Date.now() + wait >= giveUp) return response;
+                } catch (error) {
+                    if (Date.now() + wait >= giveUp) throw error;
+                }
+                await new Promise(function (done) { setTimeout(done, wait); });
+                wait = Math.min(wait * 1.5, 10000);
+            }
+        }
+
         const orderForm = document.getElementById('orderForm');
         const orderButton = document.getElementById('orderButton');
         const orderMsg = document.getElementById('orderMsg');
@@ -434,7 +453,7 @@
             }, 5000);
 
             try {
-                const response = await fetch(API_BASE + '/orders', {
+                const response = await fetchWithWake(API_BASE + '/orders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(order)
@@ -521,7 +540,7 @@
                 confirmation: document.getElementById('lookupCode').value.trim()
             };
             try {
-                const response = await fetch(API_BASE + '/orders/lookup', {
+                const response = await fetchWithWake(API_BASE + '/orders/lookup', {
                     method: 'POST',   // POST keeps the email out of the address bar and server logs
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(lastSearch)
