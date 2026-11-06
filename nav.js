@@ -25,7 +25,8 @@ const ICONS = {
     privacy:  '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
     returns:  '<polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/>',
     terms:    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>',
-    changelog: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
+    changelog: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    memphis:  '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>'
 };
 
 // The menu. "id" must match data-page="..." on that page's <body>.
@@ -35,6 +36,7 @@ const PAGES = [
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
     { id: 'cases',    label: 'Case Studies', href: 'case-studies.html', icon: 'cases' },
     { id: 'roi',      label: 'ROI Calculator', href: 'roi.html',        icon: 'roi' },
+    { id: 'memphis',  label: 'Built in Memphis', href: 'memphis.html', icon: 'memphis' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
     { id: 'order',    label: 'Order',    href: 'order.html',         icon: 'order' },
     { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' },  // = abstraction-solutions.com/#contact
@@ -180,7 +182,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 '<p>AI automations, workflows, machine learning models and AI education.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul>' +
-                link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('aboutus.html', 'About Us') +
+                link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('memphis.html', 'Built in Memphis') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
