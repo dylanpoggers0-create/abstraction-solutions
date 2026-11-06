@@ -24,7 +24,8 @@ const ICONS = {
     cases:    '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="13" x2="22" y2="13"/>',
     privacy:  '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
     returns:  '<polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/>',
-    terms:    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>'
+    terms:    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>',
+    changelog: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
 };
 
 // The menu. "id" must match data-page="..." on that page's <body>.
@@ -41,7 +42,10 @@ const PAGES = [
     // group: 'legal' puts these under their own small LEGAL heading in the menu
     { id: 'privacy',  label: 'Privacy Policy',    href: 'privacy.html', icon: 'privacy', group: 'legal' },
     { id: 'returns',  label: 'Returns & Refunds', href: 'returns.html', icon: 'returns', group: 'legal' },
-    { id: 'terms',    label: 'Terms of Service',  href: 'terms.html',   icon: 'terms',   group: 'legal' }
+    { id: 'terms',    label: 'Terms of Service',  href: 'terms.html',   icon: 'terms',   group: 'legal' },
+
+    // hidden: true = not in the menu (linked from the footer), but still named correctly as the current page
+    { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true }
 ];
 
 // The folder nav.js lives in (your main site folder). Putting BASE in front of
@@ -61,7 +65,7 @@ function navLink(p) {
     const active = p.id === current.id ? ' class="active" aria-current="page"' : '';
     return '<a href="' + BASE + p.href + '"' + active + '>' + svg(p.icon) + p.label + '</a>';
 }
-const links = PAGES.filter(function (p) { return !p.group; }).map(navLink).join('') +
+const links = PAGES.filter(function (p) { return !p.group && !p.hidden; }).map(navLink).join('') +
     '<small style="margin-top:14px">LEGAL</small>' +
     PAGES.filter(function (p) { return p.group === 'legal'; }).map(navLink).join('');
 
@@ -177,7 +181,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '<div><h4>EXPLORE</h4><ul>' +
                 link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
-                link('order.html#lookup', 'Check an order') +
+                link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
             '<div><h4>CONTACT</h4><ul>' +
                 '<li><a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></li>' +

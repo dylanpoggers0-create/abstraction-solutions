@@ -1,0 +1,36 @@
+[
+    {
+        "date": "2026-10-25",
+        "title": "abstraction-solutions.com goes live",
+        "items": [
+            "The Abstraction Solutions website launched on its own domain."
+        ]
+    },
+    {
+        "date": "2026-10-27",
+        "title": "Service pages",
+        "items": [
+            "Pages for AI Education, AI Automation, Custom Workflows and Models, Tools & Code."
+        ]
+    },
+    {
+        "date": "2026-11-04",
+        "title": "Legal pages, case studies, ROI calculator and new videos",
+        "items": [
+            "Privacy Policy, Terms of Service and Returns & Refunds pages.",
+            "Case studies of real projects, including the CBHS information chatbot.",
+            "An ROI calculator, plus a link to it right after every instant quote.",
+            "11 new AI education videos on the AI Education page.",
+            "Find us on YouTube and Instagram (@abstraction.solutions)."
+        ]
+    },
+    {
+        "date": "2026-11-05",
+        "title": "Clearer homepage and easier navigation",
+        "items": [
+            "The homepage ROI estimate now states its assumption plainly: about 60% of the task gets automated.",
+            "AI Education and Models links on the homepage and in every page's footer.",
+            "This changelog."
+        ]
+    }
+]

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Changelog | Abstraction Solutions</title>
+    <meta name="description" content="What's new at Abstraction Solutions: dated release notes for our website, tools and AI education content.">
+    <link rel="canonical" href="https://abstraction-solutions.com/changelog.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="Changelog | Abstraction Solutions">
+    <meta property="og:description" content="What's new at Abstraction Solutions: dated release notes for our website, tools and AI education content.">
+    <meta property="og:url" content="https://abstraction-solutions.com/changelog.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Styles only this page uses -->
+    <style>
+        .hero { padding: 150px 24px 10px; text-align: center; }
+        .eyebrow { color: var(--green); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; }
+        .hero h1 { font-size: 2.8rem; margin: 14px 0 10px; }
+
+        .log { max-width: 760px; margin: 30px auto 60px; padding: 0 24px; }
+        .entry {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 24px;
+            padding: 26px 0;
+            border-bottom: 1px solid var(--line);
+        }
+        .entry time { color: var(--green); font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; padding-top: 4px; }
+        .entry h2 { margin: 0 0 10px; font-size: 1.3rem; }
+        .entry ul { margin: 0; padding-left: 20px; }
+        .entry li { color: #e8eee8; line-height: 1.7; margin-bottom: 4px; }
+        .log-note { color: var(--text-muted); text-align: center; }
+
+        @media (max-width: 600px) {
+            .hero { padding-top: 120px; }
+            .hero h1 { font-size: 2.1rem; }
+            .log { padding: 0 20px 0 40px; }   /* room for the Menu tab */
+            .entry { grid-template-columns: 1fr; gap: 8px; }
+        }
+    </style>
+</head>
+
+<body data-page="changelog">
+
+    <div id="site-nav"></div>
+    <script src="nav.js"></script>
+
+    <section class="hero">
+        <div class="eyebrow">CHANGELOG</div>
+        <h1>What's new</h1>
+        <p class="section-sub">Dated notes on everything we ship, newest first.</p>
+    </section>
+
+    <main class="log" id="log">
+        <noscript><p class="log-note">Turn on JavaScript to see the changelog.</p></noscript>
+    </main>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+    <!-- TO ADD AN ENTRY: add one { "date", "title", "items" } block to changelog.json. Newest shows first automatically. -->
+    <script>
+        (function () {
+            const log = document.getElementById('log');
+
+            function show(entries) {
+                entries.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+                entries.forEach(function (e) {
+                    const row = document.createElement('article');
+                    row.className = 'entry';
+
+                    const time = document.createElement('time');
+                    time.dateTime = e.date;
+                    // noon, so the date never shifts a day because of time zones
+                    time.textContent = new Date(e.date + 'T12:00:00').toLocaleDateString('en-US',
+                        { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    const body = document.createElement('div');
+                    const h = document.createElement('h2');
+                    h.textContent = e.title;
+                    const ul = document.createElement('ul');
+                    (e.items || []).forEach(function (item) {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        ul.appendChild(li);
+                    });
+                    body.append(h, ul);
+                    row.append(time, body);
+                    log.appendChild(row);
+                });
+            }
+
+            fetch('changelog.json', { cache: 'no-cache' })
+                .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+                .then(show)
+                .catch(function () {
+                    const p = document.createElement('p');
+                    p.className = 'log-note';
+                    p.textContent = "The changelog couldn't load. Please refresh the page.";
+                    log.appendChild(p);
+                });
+        })();
+    </script>
+</body>
+</html>
