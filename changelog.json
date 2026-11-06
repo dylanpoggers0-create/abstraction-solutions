@@ -30,7 +30,7 @@
         "items": [
             "Automation recipes: one concrete automation for each of six trades, with a Quote this button that fills in the quote tool.",
             "A Built in Memphis page for local businesses.",
-            "Live and Coming soon labels, so it's clear what works today.",
+            "Live labels, so it's clear what works today.",
             "The homepage ROI estimate now states its assumption plainly: about 60% of the task gets automated.",
             "AI Education and Models links on the homepage and in every page's footer.",
             "This changelog."
@@ -42,6 +42,13 @@
         "items": [
             "A Clubs & Nonprofits page for Rotary clubs, civic clubs and nonprofits: websites, member updates, event signups, newsletters, dues and donation pages, and simple AI.",
             "Clubs and nonprofits get 50% off every project. Tick \"We're a club or nonprofit\" on the instant quote to see your discounted estimate."
+        ]
+    },
+    {
+        "date": "2026-11-06",
+        "title": "Check your order and pay online",
+        "items": [
+            "Check an order with your email and confirmation number, see its status and quote, and pay securely online with Stripe."
         ]
     }
 ]
