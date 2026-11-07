@@ -45,8 +45,9 @@ const ICONS = {
 const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
-    { id: 'cases',    label: 'Case Studies', href: 'case-studies.html', icon: 'cases' },
-    { id: 'roi',      label: 'ROI Calculator', href: 'roi.html',        icon: 'roi' },
+    // hidden: Case Studies now lives at the bottom of the Order page, ROI on the homepage
+    { id: 'cases',    label: 'Case Studies', href: 'order.html#case-studies', icon: 'cases', hidden: true },
+    { id: 'roi',      label: 'ROI Calculator', href: 'roi.html',        icon: 'roi', hidden: true },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
     { id: 'order',    label: 'Order',    href: 'order.html',         icon: 'order' },
     { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' },  // = abstraction-solutions.com/#contact
@@ -286,7 +287,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '</div>' +
             '<div><h4>EXPLORE</h4><ul class="f-explore">' +
                 link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('aboutus.html', 'About Us') +
-                link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
+                link('order.html#case-studies', 'Case Studies') + link('index.html#roi', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
             '<div class="f-side"><h4>CONTACT</h4><ul>' +

@@ -26,10 +26,10 @@
         /* HERO: headline + buttons on the left, video on the right (stacked on phones) */
         .hero-split {
             display: grid;
-            grid-template-columns: 1fr 1.25fr;
-            gap: 48px;
+            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.55fr);
+            gap: 44px;
             align-items: center;
-            max-width: 1280px;
+            max-width: 1440px;
             margin: 0 auto;
             min-height: 100vh;
             padding: 130px 40px 60px 72px;
@@ -62,8 +62,12 @@
 
         .hero-text .pill-container {
             justify-content: flex-start;
+            gap: 14px;
             margin: 30px 0 0;
         }
+
+        /* hero buttons are rectangles (rounded corners) so they stand apart from the pills elsewhere */
+        .hero-text .pill { border-radius: 10px; padding: 14px 26px; }
 
         .video-container {
             position: relative;
@@ -83,15 +87,21 @@
             display: block;
         }
 
-        /* PROJECT NOTES: no daily-use or hours-saved claims */
+        /* PROJECT NOTES: one card that flips between facts (no daily-use claims) */
         .proof {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 1100px;
+            max-width: 760px;
             margin: 40px auto 10px;
             padding: 0 24px;
         }
+
+        .stat-carousel .stat { transition: opacity 0.45s ease, transform 0.45s ease; }
+        .stat-carousel .stat.out { opacity: 0; transform: translateY(8px); }
+        .stat-dots { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+        .stat-dots button {
+            width: 9px; height: 9px; padding: 0; border-radius: 50%;
+            border: 1px solid var(--green); background: transparent; cursor: pointer;
+        }
+        .stat-dots button[aria-current="true"] { background: var(--green); }
 
         .stat {
             text-align: center;
@@ -126,7 +136,6 @@
             }
 
             .proof {
-                grid-template-columns: 1fr;
                 padding: 0 20px 0 40px;
             }
         }
@@ -239,7 +248,14 @@
         .service-card h3 { margin: 0 0 6px; font-size: 1.15rem; color: white; }
         .service-card p { margin: 0; color: var(--text-muted); line-height: 1.5; font-size: 0.95rem; }
         .wwd-signup .signup-card { padding: 26px; }
-        .wwd-cta { margin-top: 26px; }
+        /* Get Started: a full-width rectangle right under the cards */
+        .wwd-cta {
+            display: block; margin-top: 16px; padding: 16px; text-align: center;
+            border: 2px solid var(--green); border-radius: 12px; color: var(--green);
+            font-weight: bold; font-size: 1.1rem; text-decoration: none;
+            box-shadow: 0 0 24px var(--green-dim); transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .wwd-cta:hover { background-color: var(--green); color: black; }
 
         @media (max-width: 900px) {
             .wwd-row { grid-template-columns: 1fr; max-width: 640px; }
@@ -604,15 +620,52 @@
 
 
     <section class="proof" aria-label="Projects">
-        <div class="stat"><strong>Hundreds</strong><span>of students attend the school our chatbot was built for</span></div>
-        <div class="stat"><strong>Weekly</strong><span>our price-optimization model guides real pricing decisions</span></div>
+        <div class="stat-carousel" id="statCarousel" aria-live="polite">
+            <div class="stat"><strong id="statBig">Hundreds</strong><span id="statSmall">of students attend the school our chatbot was built for</span></div>
+            <div class="stat-dots" id="statDots"></div>
+        </div>
     </section>
+    <script>
+        // flips between project facts every few seconds; pauses on hover, stays still for reduced-motion users
+        (function () {
+            const facts = [
+                ['Hundreds', 'of students attend the school our chatbot was built for'],
+                ['Weekly', 'hours saved on repetitive data prep with our cleanup automation']
+            ];
+            const box = document.getElementById('statCarousel');
+            const card = box.querySelector('.stat');
+            const big = document.getElementById('statBig'), small = document.getElementById('statSmall');
+            const dots = document.getElementById('statDots');
+            let i = 0, timer = null, paused = false;
+            facts.forEach(function (f, n) {
+                const b = document.createElement('button');
+                b.type = 'button'; b.setAttribute('aria-label', 'Show fact ' + (n + 1));
+                b.addEventListener('click', function () { show(n); restart(); });
+                dots.appendChild(b);
+            });
+            function mark() { Array.from(dots.children).forEach(function (b, n) { b.setAttribute('aria-current', n === i ? 'true' : 'false'); }); }
+            function show(n) {
+                if (n === i) return;
+                card.classList.add('out');
+                setTimeout(function () { i = n; big.textContent = facts[i][0]; small.textContent = facts[i][1]; mark(); card.classList.remove('out'); }, 450);
+            }
+            function restart() {
+                clearInterval(timer);
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                timer = setInterval(function () { if (!paused) show((i + 1) % facts.length); }, 4000);
+            }
+            box.addEventListener('mouseenter', function () { paused = true; });
+            box.addEventListener('mouseleave', function () { paused = false; });
+            mark(); restart();
+        })();
+    </script>
 
     <!-- WHAT WE DO: the 4 services (left) share the row with the mailing-list signup (right) -->
     <section id="services">
         <h2 class="section-title">What we do</h2>
         <p class="section-sub">AI education, ethical AI, and custom tools for people, researchers and companies.</p>
         <div class="wwd-row">
+            <div class="wwd-left">
             <div class="wwd-cards">
                 <a class="service-card" href="services/education.html">
                     <div class="icon-badge"><svg class="icon" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg></div>
@@ -634,6 +687,8 @@
                     <h3>Models, Tools &amp; Code</h3>
                     <p>Custom models, tools and code built for you.</p>
                 </a>
+            </div>
+            <a class="wwd-cta" href="#quote">Get Started</a>
             </div>
 
             <!-- NEWSLETTER SIGNUP: saved to our database by the quote engine (POST /newsletter) -->
@@ -707,9 +762,6 @@
                 <p class="signup-status" id="signupStatus" role="status" aria-live="polite"></p>
             </form>
             </div>
-        </div>
-        <div class="pill-container wwd-cta">
-            <a class="pill primary" href="#quote">Get Started</a>
         </div>
     </section>
 

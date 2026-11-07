@@ -18,66 +18,6 @@
 "text": "We're growing from a one-person company into a team, and we're looking for college students in:\nComputer Science Electrical Engineering Marketing Advertising\nInterested? Email us at dylanpogue@abstraction-solutions.com .\nOur services Get in touch"
 },
 {
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "Real projects. Real results.",
-"text": "CASE STUDIES\nA few things we've built, and what they do for the people who use them.\nAI CHATBOT · EDUCATION"
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "CBHS Information Chatbot › The challenge",
-"text": "Students and faculty at Christian Brothers High School needed fast, accurate answers to questions about the school, and a normal chatbot would just guess."
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "CBHS Information Chatbot › What we built",
-"text": "A chatbot that uses RAG (retrieval-augmented generation): before it answers, it finds the right facts in the school's own information, so its answers come from real sources."
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "CBHS Information Chatbot › The results",
-"text": "Hundreds of students attend the school it was built for\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "Price Optimization Model & Data Cleanup › The challenge",
-"text": "A business wanted to raise profit without losing sales, and preparing its sales data by hand took hours every week."
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "Price Optimization Model & Data Cleanup › What we built",
-"text": "A data cleanup algorithm that gets the sales data ready automatically, and a machine learning model that learns from historical pricing to suggest price changes that keep sales high while raising the price per unit."
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "Price Optimization Model & Data Cleanup › The results",
-"text": "Weekly used in real pricing decisions\nAUTOMATION · CLIENT PROJECT"
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "Email Response Cyberdeck › The challenge",
-"text": "A client needed emails answered and meetings scheduled while they were busy, without losing control of what got sent."
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "Email Response Cyberdeck › What we built",
-"text": "A small, self-contained device (Raspberry Pi 4 + Arduino Uno with a screen) that starts answering emails as soon as it's turned on, in the tone and context the client sets."
-},
-{
-"url": "https://abstraction-solutions.com/case-studies.html",
-"title": "Case Studies: AI Chatbot, Price Optimization & Automation",
-"heading": "Email Response Cyberdeck › The results",
-"text": "Automatic email replies and Google Calendar scheduling\nIn control every email is confirmed before it's sent"
-},
-{
 "url": "https://abstraction-solutions.com/changelog.html",
 "title": "Changelog",
 "heading": "What's new",
@@ -87,7 +27,7 @@
 "url": "https://abstraction-solutions.com/",
 "title": "AI Made Simple: AI Education & Custom AI Tools",
 "heading": "AI Made Simple.",
-"text": "AI EDUCATION & CUSTOM AI TOOLS\nGet an instant quote in seconds, handle everything by email, and keep full control of what we build.\nGet a free quote Start a project Learn AI in 60 seconds\nYour browser does not support the video tag.\nHundreds of students attend the school our chatbot was built for\nWeekly our price-optimization model guides real pricing decisions"
+"text": "AI EDUCATION & CUSTOM AI TOOLS\nGet an instant quote in seconds, handle everything by email, and keep full control of what we build.\nGet a free quote Start a project Learn AI in 60 seconds\nYour browser does not support the video tag.\nHundreds of students attend the school our chatbot was built for"
 },
 {
 "url": "https://abstraction-solutions.com/",
@@ -148,6 +88,66 @@
 "title": "Start an AI Project or Check Your Order",
 "heading": "Start your project.",
 "text": "ORDER\nSmall businesses and nonprofits: tell us what you need. You get an instant estimate, then final scope and price by email.\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nNew order Tell us about your project\nCheck order See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "Case studies",
+"text": "A few things we've built, and what they do for the people who use them.\nAI CHATBOT · EDUCATION"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "CBHS Information Chatbot › The challenge",
+"text": "Students and faculty at Christian Brothers High School needed fast, accurate answers to questions about the school, and a normal chatbot would just guess."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "CBHS Information Chatbot › What we built",
+"text": "A chatbot that uses RAG (retrieval-augmented generation): before it answers, it finds the right facts in the school's own information, so its answers come from real sources."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "CBHS Information Chatbot › The results",
+"text": "Hundreds of students attend the school it was built for\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "Price Optimization Model & Data Cleanup › The challenge",
+"text": "A business wanted to raise profit without losing sales, and preparing its sales data by hand took hours every week."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "Price Optimization Model & Data Cleanup › What we built",
+"text": "A data cleanup algorithm that gets the sales data ready automatically, and a machine learning model that learns from historical pricing to suggest price changes that keep sales high while raising the price per unit."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "Price Optimization Model & Data Cleanup › The results",
+"text": "Weekly used in real pricing decisions\nAUTOMATION · CLIENT PROJECT"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "Email Response Cyberdeck › The challenge",
+"text": "A client needed emails answered and meetings scheduled while they were busy, without losing control of what got sent."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "Email Response Cyberdeck › What we built",
+"text": "A small, self-contained device (Raspberry Pi 4 + Arduino Uno with a screen) that starts answering emails as soon as it's turned on, in the tone and context the client sets."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Start an AI Project or Check Your Order",
+"heading": "Email Response Cyberdeck › The results",
+"text": "Automatic email replies and Google Calendar scheduling\nIn control every email is confirmed before it's sent"
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
