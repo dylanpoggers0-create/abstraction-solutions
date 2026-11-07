@@ -249,6 +249,9 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
         '.site-footer h4{margin:0 0 10px;color:var(--green,#7ee96f);font-size:.75rem;letter-spacing:2px}' +
         '.site-footer ul{list-style:none;margin:0;padding:0}' +
         '.site-footer li{margin:0 0 8px}' +
+        '.site-footer .f-explore{columns:2;column-gap:32px}' +
+        '.site-footer .f-explore li{break-inside:avoid}' +
+        '.site-footer .f-legal{margin-top:22px}' +
         '.site-footer a{color:#dfe7df;text-decoration:none}' +
         '.site-footer a:hover{color:var(--green,#7ee96f)}' +
         '.site-footer .f-copy{flex-basis:100%;padding-top:18px;border-top:1px solid var(--line,#1e2a20);font-size:.8rem}' +
@@ -278,17 +281,17 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 '<div class="f-brand"><img src="' + BASE + 'abstraction_solutions.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
                 '<p>Websites, AI automations, and AI education for Memphis small businesses and nonprofits.</p>' +
             '</div>' +
-            '<div><h4>EXPLORE</h4><ul>' +
+            '<div><h4>EXPLORE</h4><ul class="f-explore">' +
                 link('services.html', 'Services') + link('clubs-nonprofits.html', 'Nonprofits') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('memphis.html', 'Built in Memphis') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
-            '<div><h4>CONTACT</h4><ul>' +
+            '<div class="f-side"><h4>CONTACT</h4><ul>' +
                 '<li><a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></li>' +
                 '<li><a href="https://www.youtube.com/@abstractionsolutions" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:8px"><rect x="2" y="5" width="20" height="14" rx="4"/><polygon points="10,9 15.5,12 10,15" fill="currentColor" stroke="none"/></svg>@abstractionsolutions</a></li>' +
                 '<li><a href="https://www.instagram.com/abstraction.solutions/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:8px"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1" fill="currentColor" stroke="none"/></svg>@abstraction.solutions</a></li>' +
-            '</ul></div>' +
-            '<div><h4>LEGAL</h4><ul>' +
+            '</ul>' +
+            '<h4 class="f-legal">LEGAL</h4><ul>' +
                 link('privacy.html', 'Privacy Policy') + link('returns.html', 'Returns &amp; Refunds') +
                 link('terms.html', 'Terms of Service') +
             '</ul></div>' +
