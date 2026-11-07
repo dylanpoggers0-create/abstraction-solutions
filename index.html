@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nonprofit Websites &amp; AI for Small Businesses in Memphis | Abstraction Solutions</title>
-    <meta name="description" content="AI for Memphis small businesses and websites for Memphis nonprofits: websites, automations, and plain-language AI education. Instant estimate, then final scope and price by email.">
+    <title>AI Made Simple: AI Education &amp; Custom AI Tools | Abstraction Solutions</title>
+    <meta name="description" content="AI made simple: plain-language AI education, automations, custom workflows and AI tools, built in Memphis. Get a free instant quote.">
     <link rel="canonical" href="https://abstraction-solutions.com/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Abstraction Solutions">
-    <meta property="og:title" content="Nonprofit Websites &amp; AI for Small Businesses in Memphis | Abstraction Solutions">
-    <meta property="og:description" content="Websites and simple AI for Memphis small businesses and nonprofits. Instant estimate, then final scope and price by email.">
+    <meta property="og:title" content="AI Made Simple | Abstraction Solutions">
+    <meta property="og:description" content="Plain-language AI education, automations, custom workflows and AI tools. Get a free instant quote.">
     <meta property="og:url" content="https://abstraction-solutions.com/">
     <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -204,6 +204,60 @@
         .quote-form .pill-container {
             margin: 24px 0 30px;
         }
+
+        /* What we do: cards left, signup right; stacks on phones */
+        .wwd-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+            gap: 22px;
+            align-items: start;
+            max-width: 1100px;
+            margin: 30px auto 0;
+            padding: 0 24px;
+        }
+
+        .wwd-cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .service-card {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            background-color: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+            transition: border-color 0.25s ease, transform 0.25s ease;
+        }
+
+        .service-card:hover { border-color: var(--green); transform: translateY(-4px); }
+        .service-card .icon-badge { width: 44px; height: 44px; border-radius: 12px; margin-bottom: 14px; }
+        .service-card .icon { width: 22px; height: 22px; }
+        .service-card h3 { margin: 0 0 6px; font-size: 1.15rem; color: white; }
+        .service-card p { margin: 0; color: var(--text-muted); line-height: 1.5; font-size: 0.95rem; }
+        .wwd-signup .signup-card { padding: 26px; }
+        .wwd-cta { margin-top: 26px; }
+
+        @media (max-width: 900px) {
+            .wwd-row { grid-template-columns: 1fr; max-width: 640px; }
+        }
+
+        @media (max-width: 520px) {
+            .wwd-row { padding: 0 20px; }
+            .wwd-cards { grid-template-columns: 1fr; }
+        }
+
+        /* Homepage only: the name + logo header stays at the top, without the white border */
+        .header-container {
+            border: none;
+            box-shadow: none;
+            background-color: rgba(0, 0, 0, 0.55);
+        }
+
+        .header-container:hover { border: none; box-shadow: none; }
 
         .np-check {
             display: flex;
@@ -529,12 +583,11 @@
     <!-- HERO: what we do + the two main buttons, next to the video -->
     <section class="hero-split" id="home">
         <div class="hero-text">
-            <div class="eyebrow">AI MADE SIMPLE</div>
-            <h1>Websites and simple AI for <span>Memphis businesses and nonprofits.</span></h1>
+            <div class="eyebrow">AI EDUCATION &amp; CUSTOM AI TOOLS</div>
+            <h1>AI Made <span>Simple.</span></h1>
             <p>Get an instant quote in seconds, handle everything by email, and keep full control of what we build.</p>
             <div class="pill-container">
                 <a class="pill primary" href="#quote">Get a free quote</a>
-                <a class="pill" href="services/workflows.html#nonprofits">Nonprofits</a>
                 <a class="pill" href="order.html">Start a project</a>
                 <a class="pill" href="services/education.html">Learn AI in 60 seconds</a>
             </div>
@@ -549,104 +602,114 @@
         </div>
     </section>
 
-    <!-- NEWSLETTER SIGNUP: saved to our database by the quote engine (POST /newsletter) -->
-    <section class="signup-section" id="newsletter">
-        <style>
-            /* Everything here is scoped to .signup-card so it can't change the rest of the page */
-            .signup-section { display: flex; justify-content: center; padding: 10px 20px 40px; }
-            .signup-card {
-                width: 100%; max-width: 480px; background-color: #111111; padding: 32px;
-                border-radius: 16px; border: 1px solid #1a331a; box-shadow: 0 10px 30px rgba(0, 255, 102, 0.05);
-                text-align: center; box-sizing: border-box; color: #ffffff;
-            }
-            .signup-card h4 { margin: 0 0 8px; color: #ffffff; font-size: 1.1rem; line-height: 1.5; font-weight: 500; }
-            .signup-card .signup-note { margin: 0 0 24px; color: #00ff66; font-size: 0.9rem; }
-            .signup-card .form-group { margin-bottom: 18px; text-align: left; }
-            .signup-card .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #e0e0e0; font-weight: 500; }
-            .signup-card .form-group input {
-                width: 100%; padding: 12px; background-color: #1a1a1a; color: #ffffff; border: 1px solid #333333;
-                border-radius: 8px; box-sizing: border-box; outline: none; font-size: 16px; /* 16px stops iPhones zooming in */
-                transition: border-color 0.2s, box-shadow 0.2s;
-            }
-            .signup-card .form-group input:focus { border-color: #00ff66; box-shadow: 0 0 8px rgba(0, 255, 102, 0.2); }
-            .signup-card .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0 24px; text-align: left; }
-            .signup-card .checkbox-group input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: #00ff66; cursor: pointer; }
-            .signup-card .checkbox-group label { font-size: 0.85rem; color: #cccccc; line-height: 1.4; cursor: pointer; }
-            .signup-card .submit-btn {
-                width: 100%; padding: 14px; background-color: #00ff66; color: #000000; border: none; border-radius: 8px;
-                font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, transform 0.1s;
-            }
-            .signup-card .submit-btn:hover { background-color: #00cc52; }
-            .signup-card .submit-btn:active { transform: scale(0.98); }
-            .signup-card .submit-btn:disabled { opacity: 0.6; cursor: wait; }
-            .signup-card .signup-status { min-height: 1.4em; margin: 14px 0 0; font-size: 0.9rem; }
-            .signup-card .signup-status.ok { color: #00ff66; }
-            .signup-card .signup-status.err { color: #ff8080; }
-            .signup-card .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-        </style>
-
-        <form class="signup-card" id="signupForm" novalidate>
-            <h4>Join our mailing list for special offers, early access to videos and products, newsletters, and giveaways!</h4>
-            <p class="signup-note">No cost or commitment, just join. Unsubscribe anytime.</p>
-
-            <div class="form-group">
-                <label for="su_first">First Name</label>
-                <input type="text" id="su_first" name="first_name" placeholder="First Name" autocomplete="given-name" maxlength="60" required>
-            </div>
-
-            <div class="form-group">
-                <label for="su_last">Last Name</label>
-                <input type="text" id="su_last" name="last_name" placeholder="Last Name" autocomplete="family-name" maxlength="60" required>
-            </div>
-
-            <div class="form-group">
-                <label for="su_email">Email Address</label>
-                <input type="email" id="su_email" name="email" placeholder="name@example.com" autocomplete="email" maxlength="200" required>
-            </div>
-
-            <!-- hidden from people; spam bots fill it in, and the server ignores those signups -->
-            <div class="hp" aria-hidden="true">
-                <label for="su_website">Website</label>
-                <input type="text" id="su_website" name="website" tabindex="-1" autocomplete="off">
-            </div>
-
-            <!-- Required opt-in checkbox -->
-            <div class="checkbox-group">
-                <input type="checkbox" id="su_opt_in" name="opt_in" required>
-                <label for="su_opt_in">I agree to receive promotional emails, newsletters, and updates. You can unsubscribe at any time.
-                    See our <a href="privacy.html" style="color:#00ff66">Privacy Policy</a>.</label>
-            </div>
-
-            <button type="submit" class="submit-btn" id="signupButton">Subscribe</button>
-            <p class="signup-status" id="signupStatus" role="status" aria-live="polite"></p>
-        </form>
-    </section>
 
     <section class="proof" aria-label="Projects">
         <div class="stat"><strong>Hundreds</strong><span>of students attend the school our chatbot was built for</span></div>
         <div class="stat"><strong>Weekly</strong><span>our price-optimization model guides real pricing decisions</span></div>
     </section>
 
-    <!-- WHAT WE DO -->
+    <!-- WHAT WE DO: the 4 services (left) share the row with the mailing-list signup (right) -->
     <section id="services">
         <h2 class="section-title">What we do</h2>
         <p class="section-sub">AI education, ethical AI, and custom tools for people, researchers and companies.</p>
-        <div class="pill-container">
-            <a class="pill" href="services/education.html">AI Education</a>
-            <a class="pill" href="services/automation.html">AI Automation</a>
-            <a class="pill" href="services/workflows.html">Custom Workflows</a>
-            <a class="pill" href="services/models.html">Models, Tools &amp; Code</a>
-            <a class="pill" href="services/workflows.html#nonprofits">Nonprofits</a>
-            <a class="pill primary" href="#quote">Get Started</a>
-        </div>
-    </section>
+        <div class="wwd-row">
+            <div class="wwd-cards">
+                <a class="service-card" href="services/education.html">
+                    <div class="icon-badge"><svg class="icon" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg></div>
+                    <h3>AI Education</h3>
+                    <p>How AI works and what's new, in plain language.</p>
+                </a>
+                <a class="service-card" href="services/automation.html">
+                    <div class="icon-badge"><svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                    <h3>AI Automation</h3>
+                    <p>Hand reports, data entry and busywork to AI.</p>
+                </a>
+                <a class="service-card" href="services/workflows.html">
+                    <div class="icon-badge"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M6.5 10v4a3 3 0 0 0 3 3H14"/></svg></div>
+                    <h3>Custom Workflows</h3>
+                    <p>Connect the tools you already use, step to step.</p>
+                </a>
+                <a class="service-card" href="services/models.html">
+                    <div class="icon-badge"><svg class="icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                    <h3>Models, Tools &amp; Code</h3>
+                    <p>Custom models, tools and code built for you.</p>
+                </a>
+            </div>
 
-    <section id="nonprofits">
-        <h2 class="section-title">For Memphis nonprofits</h2>
-        <p class="section-sub">A <a href="services/workflows.html#nonprofits">nonprofit website</a> that supporters can actually use, plus volunteer updates, event signups, newsletters, donation pages, and simple AI.</p>
-        <div class="pill-container">
-            <a class="pill primary" href="services/workflows.html#nonprofits">See nonprofit work</a>
-            <a class="pill" href="?nonprofit=1#quote">Get a free quote</a>
+            <!-- NEWSLETTER SIGNUP: saved to our database by the quote engine (POST /newsletter) -->
+            <div class="wwd-signup" id="newsletter">
+    <style>
+                /* Everything here is scoped to .signup-card so it can't change the rest of the page */
+                .signup-card {
+                    width: 100%; background-color: #111111; padding: 32px;
+                    border-radius: 16px; border: 1px solid #1a331a; box-shadow: 0 10px 30px rgba(0, 255, 102, 0.05);
+                    text-align: center; box-sizing: border-box; color: #ffffff;
+                }
+                .signup-card h4 { margin: 0 0 8px; color: #ffffff; font-size: 1.1rem; line-height: 1.5; font-weight: 500; }
+                .signup-card .signup-note { margin: 0 0 24px; color: #00ff66; font-size: 0.9rem; }
+                .signup-card .form-group { margin-bottom: 18px; text-align: left; }
+                .signup-card .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #e0e0e0; font-weight: 500; }
+                .signup-card .form-group input {
+                    width: 100%; padding: 12px; background-color: #1a1a1a; color: #ffffff; border: 1px solid #333333;
+                    border-radius: 8px; box-sizing: border-box; outline: none; font-size: 16px; /* 16px stops iPhones zooming in */
+                    transition: border-color 0.2s, box-shadow 0.2s;
+                }
+                .signup-card .form-group input:focus { border-color: #00ff66; box-shadow: 0 0 8px rgba(0, 255, 102, 0.2); }
+                .signup-card .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0 24px; text-align: left; }
+                .signup-card .checkbox-group input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: #00ff66; cursor: pointer; }
+                .signup-card .checkbox-group label { font-size: 0.85rem; color: #cccccc; line-height: 1.4; cursor: pointer; }
+                .signup-card .submit-btn {
+                    width: 100%; padding: 14px; background-color: #00ff66; color: #000000; border: none; border-radius: 8px;
+                    font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, transform 0.1s;
+                }
+                .signup-card .submit-btn:hover { background-color: #00cc52; }
+                .signup-card .submit-btn:active { transform: scale(0.98); }
+                .signup-card .submit-btn:disabled { opacity: 0.6; cursor: wait; }
+                .signup-card .signup-status { min-height: 1.4em; margin: 14px 0 0; font-size: 0.9rem; }
+                .signup-card .signup-status.ok { color: #00ff66; }
+                .signup-card .signup-status.err { color: #ff8080; }
+                .signup-card .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+            </style>
+
+            <form class="signup-card" id="signupForm" novalidate>
+                <h4>Join our mailing list for special offers, early access to videos and products, newsletters, and giveaways!</h4>
+                <p class="signup-note">No cost or commitment, just join. Unsubscribe anytime.</p>
+
+                <div class="form-group">
+                    <label for="su_first">First Name</label>
+                    <input type="text" id="su_first" name="first_name" placeholder="First Name" autocomplete="given-name" maxlength="60" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="su_last">Last Name</label>
+                    <input type="text" id="su_last" name="last_name" placeholder="Last Name" autocomplete="family-name" maxlength="60" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="su_email">Email Address</label>
+                    <input type="email" id="su_email" name="email" placeholder="name@example.com" autocomplete="email" maxlength="200" required>
+                </div>
+
+                <!-- hidden from people; spam bots fill it in, and the server ignores those signups -->
+                <div class="hp" aria-hidden="true">
+                    <label for="su_website">Website</label>
+                    <input type="text" id="su_website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <!-- Required opt-in checkbox -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="su_opt_in" name="opt_in" required>
+                    <label for="su_opt_in">I agree to receive promotional emails, newsletters, and updates. You can unsubscribe at any time.
+                        See our <a href="privacy.html" style="color:#00ff66">Privacy Policy</a>.</label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="signupButton">Subscribe</button>
+                <p class="signup-status" id="signupStatus" role="status" aria-live="polite"></p>
+            </form>
+            </div>
+        </div>
+        <div class="pill-container wwd-cta">
+            <a class="pill primary" href="#quote">Get Started</a>
         </div>
     </section>
 
@@ -678,8 +741,7 @@
     <!-- QUOTE: the form sends the description to the Python quote engine (quote-engine/main.py) -->
     <section class="quote" id="quote">
         <h2 class="section-title">Get a quote today</h2>
-        <p class="section-sub">Describe the project below. You get an instant estimate, then final scope and price by email.
-            Nonprofits: check the box to see your 50% price.</p>
+        <p class="section-sub">Describe the project below. You get an instant estimate, then final scope and price by email.</p>
         <!-- Promo line. Delete this paragraph to remove it. Hidden after Fri Nov 13, 2026, America/Chicago. -->
         <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
 

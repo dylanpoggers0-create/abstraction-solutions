@@ -282,7 +282,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             signup() +
             '<div>' +
                 '<div class="f-brand"><img src="' + BASE + 'abstraction_solutions.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
-                '<p>Websites, AI automations, and AI education for Memphis small businesses and nonprofits.</p>' +
+                '<p>AI made simple: plain-language AI education, automations and custom AI tools.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul class="f-explore">' +
                 link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('aboutus.html', 'About Us') +
