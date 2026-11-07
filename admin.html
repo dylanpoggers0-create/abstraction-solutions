@@ -104,6 +104,28 @@
         .nl-table th { color: var(--text-muted); font-weight: bold; }
         .nl-table tr.gone td { color: var(--text-muted); text-decoration: line-through; }
 
+        /* ---------- AI NEWS EDITOR ---------- */
+        .an-status { display: inline-block; border-radius: 50px; padding: 2px 10px; font-size: 0.75rem; font-weight: bold;
+                     letter-spacing: 1px; border: 1px solid var(--line); color: var(--text-muted); }
+        .an-status.published { border-color: var(--green); color: var(--green); }
+        .an-row { display: flex; flex-wrap: wrap; gap: 12px; }
+        .an-row > div { flex: 1 1 180px; }
+        .an-art { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+        .an-art-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .an-art-top strong { margin-right: auto; color: var(--green); }
+        .an-art textarea { min-height: 70px; }
+        .an-errors { color: #ff8a80; margin: 0 0 12px; padding-left: 18px; }
+        .an-preview { border: 1px dashed var(--green-dim); border-radius: 16px; padding: 18px; margin-top: 18px; }
+        .an-preview h3 { margin: 0 0 4px; }
+        .an-preview .pv-item { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-top: 12px; }
+        .an-preview .pv-item a { color: white; font-weight: bold; overflow-wrap: anywhere; }
+        .an-preview .pv-src { color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 8px; }
+        .an-preview .pv-why { color: var(--text-muted); margin-top: 8px; }
+        .an-history { color: var(--text-muted); font-size: 0.85rem; margin: 0; padding-left: 18px; }
+        .an-template { white-space: pre-wrap; overflow-wrap: anywhere; background: rgba(0,0,0,0.5); border: 1px solid var(--line);
+                       border-radius: 12px; padding: 12px; font-size: 0.8rem; margin: 10px 0; }
+        #anList td button { white-space: nowrap; }
+
         /* ---------- LOGIN ---------- */
         #loginForm {
             max-width: 420px;
@@ -331,6 +353,7 @@
             <div class="tabs" role="tablist">
                 <button class="tab active" id="tabOrders" type="button" role="tab">Orders</button>
                 <button class="tab" id="tabNews" type="button" role="tab">Newsletter</button>
+                <button class="tab" id="tabAiNews" type="button" role="tab">AI News</button>
                 <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
                 <button class="small-btn" id="logoutButton" type="button">Log out</button>
             </div>
@@ -380,6 +403,95 @@
                         <thead><tr><th>Name</th><th>Email</th><th>Joined</th></tr></thead>
                         <tbody id="nlRows"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <div id="aiNewsPanel" hidden>
+                <!-- list of editions -->
+                <div id="anListView">
+                    <div class="toolbar">
+                        <span class="count" id="anCount"></span>
+                        <button class="small-btn" id="anImportButton" type="button">Import JSON</button>
+                        <button class="small-btn" id="anNewButton" type="button">New edition</button>
+                        <button class="small-btn" id="anRefreshButton" type="button">Refresh</button>
+                    </div>
+                    <p class="msg" id="anListMsg" role="alert"></p>
+                    <div class="nl-box">
+                        <table class="nl-table">
+                            <thead><tr><th>Week</th><th>Status</th><th>Articles</th><th>Last change</th><th></th></tr></thead>
+                            <tbody id="anList"></tbody>
+                        </table>
+                    </div>
+                    <p class="nl-help">Only <strong>published</strong> editions appear on the AI Education page. The newest published
+                        week is shown first; older ones move to its "Past editions" list. Nothing publishes or emails automatically.</p>
+                </div>
+
+                <!-- import Kai's JSON -->
+                <div id="anImportView" class="nl-box" hidden>
+                    <h2>Import a week from JSON</h2>
+                    <p class="nl-help">Paste the JSON Kai sends. It's checked on the server and previewed here; nothing is saved
+                        until you load it into the editor and click Save draft.</p>
+                    <textarea id="anImportText" spellcheck="false" placeholder="Paste JSON here"></textarea>
+                    <details><summary>Import format (copy this template)</summary>
+                        <pre class="an-template" id="anTemplate">{
+  "week_start": "2026-11-02",
+  "week_end": "2026-11-08",
+  "title": "Optional short title for the week",
+  "articles": [
+    {
+      "headline": "Exact headline as the publisher wrote it",
+      "publisher": "Publisher name, e.g. Reuters",
+      "published_on": "2026-11-05",
+      "url": "https://www.example.com/full-link-to-the-original-article",
+      "summary": "2-3 sentences in our own words (20-600 characters). Never paste the article.",
+      "why_it_matters": "Optional: one sentence on why it matters to small businesses or learners."
+    }
+  ]
+}</pre>
+                        <p class="nl-help">Rules: dates are YYYY-MM-DD; the week is at most 14 days; 1&ndash;20 articles; links must start
+                            with https://; plain text only (no HTML); "why_it_matters" can be left out.</p>
+                    </details>
+                    <ul class="an-errors" id="anImportErrors"></ul>
+                    <div class="nl-actions">
+                        <button class="small-btn" id="anImportCheck" type="button">Check &amp; preview</button>
+                        <button class="small-btn danger" id="anImportLoad" type="button" hidden>Load into editor</button>
+                        <button class="small-btn" id="anImportCancel" type="button">Cancel</button>
+                    </div>
+                    <div id="anImportPreview"></div>
+                </div>
+
+                <!-- edit one edition -->
+                <div id="anEditView" hidden>
+                    <div class="nl-box">
+                        <div class="toolbar">
+                            <span class="count" id="anEditLabel"></span>
+                            <button class="small-btn" id="anBackButton" type="button">&larr; All editions</button>
+                        </div>
+                        <div class="an-row">
+                            <div><label for="anStart">WEEK START</label><input id="anStart" type="date"></div>
+                            <div><label for="anEnd">WEEK END</label><input id="anEnd" type="date"></div>
+                        </div>
+                        <label for="anTitle">TITLE (OPTIONAL)</label>
+                        <input id="anTitle" type="text" maxlength="120" placeholder="e.g. Chips, chatbots and new rules">
+                        <div id="anArticles"></div>
+                        <button class="small-btn" id="anAddArticle" type="button">+ Add article</button>
+                    </div>
+                    <div class="nl-box">
+                        <ul class="an-errors" id="anErrors"></ul>
+                        <div class="nl-actions">
+                            <button class="small-btn" id="anPreviewButton" type="button">Preview</button>
+                            <button class="small-btn" id="anSaveButton" type="button">Save draft</button>
+                            <button class="small-btn danger" id="anPublishButton" type="button">Publish</button>
+                            <button class="small-btn" id="anUnpublishButton" type="button" hidden>Unpublish</button>
+                            <button class="small-btn" id="anDeleteButton" type="button" hidden>Delete draft</button>
+                        </div>
+                        <p class="nl-ok" id="anOk" role="status"></p>
+                        <div id="anPreview"></div>
+                    </div>
+                    <div class="nl-box" id="anHistoryBox" hidden>
+                        <h2>History</h2>
+                        <ul class="an-history" id="anHistory"></ul>
+                    </div>
                 </div>
             </div>
 
@@ -471,22 +583,23 @@
 
         // ---------- tabs ----------
         function showTab(name) {
-            const hydro = name === 'hydro', news = name === 'news';
-            document.getElementById('tabOrders').classList.toggle('active', name === 'orders');
-            document.getElementById('tabNews').classList.toggle('active', news);
-            document.getElementById('tabHydro').classList.toggle('active', hydro);
-            document.getElementById('ordersPanel').hidden = name !== 'orders';
-            document.getElementById('newsPanel').hidden = !news;
-            document.getElementById('hydroPanel').hidden = !hydro;
-            document.getElementById('adminTitle').textContent = hydro ? 'Hydro Cart' : news ? 'Newsletter' : 'Orders';
-            if (news) loadSubscribers();
-            document.querySelector('main').classList.toggle('wide', hydro);
-            if (hydro) window.HydroAdmin.start();
+            const panels = { orders: ['tabOrders', 'ordersPanel', 'Orders'], news: ['tabNews', 'newsPanel', 'Newsletter'],
+                             ainews: ['tabAiNews', 'aiNewsPanel', 'AI News'], hydro: ['tabHydro', 'hydroPanel', 'Hydro Cart'] };
+            Object.keys(panels).forEach(function (k) {
+                document.getElementById(panels[k][0]).classList.toggle('active', k === name);
+                document.getElementById(panels[k][1]).hidden = k !== name;
+            });
+            document.getElementById('adminTitle').textContent = panels[name][2];
+            if (name === 'news') loadSubscribers();
+            if (name === 'ainews') anShowList();
+            document.querySelector('main').classList.toggle('wide', name === 'hydro');
+            if (name === 'hydro') window.HydroAdmin.start();
             else if (window.HydroAdmin) window.HydroAdmin.stop();
         }
         document.getElementById('tabOrders').addEventListener('click', function () { showTab('orders'); });
         document.getElementById('tabHydro').addEventListener('click', function () { showTab('hydro'); });
         document.getElementById('tabNews').addEventListener('click', function () { showTab('news'); });
+        document.getElementById('tabAiNews').addEventListener('click', function () { showTab('ainews'); });
         document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
         function showDashboard() {
@@ -622,6 +735,267 @@
             nlSend.classList.remove('armed'); nlSend.textContent = nlSend.dataset.label;
             nlSend.disabled = true;
             sendNewsletter(null).finally(function () { nlSend.disabled = false; });
+        });
+
+        // ---------- AI NEWS editor ----------
+        // Everything typed here is plain text: it's shown with textContent, and the server rejects HTML/scripts.
+        const AN = { id: null, status: 'draft' };
+        const $ = function (id) { return document.getElementById(id); };
+
+        async function anRequest(method, path, body) {
+            const response = await fetch(API_BASE + path, {
+                method: method,
+                headers: Object.assign({ 'Authorization': 'Bearer ' + memoryToken },
+                                       body ? { 'Content-Type': 'application/json' } : {}),
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (response.status === 401 || response.status === 403) { logout('Your login expired. Please log in again.'); throw new Error('logged out'); }
+            const data = await response.json().catch(function () { return {}; });
+            if (!response.ok) {
+                const err = new Error('Server error (' + response.status + ')');
+                err.list = anErrorList(data.detail);
+                throw err;
+            }
+            return data;
+        }
+
+        // turn the server's validation details into readable lines like "Article 2 url: must start with https://"
+        function anErrorList(detail) {
+            if (typeof detail === 'string') return [detail];
+            if (!Array.isArray(detail)) return ['Something went wrong.'];
+            return detail.map(function (d) {
+                const loc = (d.loc || []).filter(function (x) { return x !== 'body'; });
+                let where = '';
+                if (loc[0] === 'articles' && typeof loc[1] === 'number') where = 'Article ' + (loc[1] + 1) + (loc[2] ? ' ' + loc[2] : '');
+                else where = loc.join(' ');
+                return (where ? where + ': ' : '') + String(d.msg || '').replace(/^Value error, /, '');
+            });
+        }
+
+        function anShowErrors(listId, lines) {
+            const ul = $(listId); ul.textContent = '';
+            (lines || []).forEach(function (t) { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+        }
+
+        function anFmtDay(iso) { const p = String(iso).split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); }
+        function anFmtStamp(ts) { return ts ? new Date(ts).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : ''; }
+
+        function anView(which) {
+            $('anListView').hidden = which !== 'list';
+            $('anImportView').hidden = which !== 'import';
+            $('anEditView').hidden = which !== 'edit';
+        }
+
+        // ----- list
+        async function anShowList() {
+            anView('list'); $('anListMsg').textContent = '';
+            let rows;
+            try { rows = await anRequest('GET', '/admin/news'); }
+            catch (e) { if (e.message !== 'logged out') $('anListMsg').textContent = 'Couldn\'t load editions: ' + (e.list || [e.message]).join(' '); return; }
+            $('anCount').textContent = rows.length + ' edition' + (rows.length === 1 ? '' : 's') + ' · ' +
+                rows.filter(function (r) { return r.status === 'published'; }).length + ' published';
+            const tb = $('anList'); tb.textContent = '';
+            if (!rows.length) {
+                const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = 5;
+                td.textContent = 'No editions yet. Click "New edition" or "Import JSON".'; tr.appendChild(td); tb.appendChild(tr);
+            }
+            rows.forEach(function (r) {
+                const tr = document.createElement('tr');
+                const week = document.createElement('td');
+                week.textContent = anFmtDay(r.week_start) + ' – ' + anFmtDay(r.week_end) + (r.title ? ' · ' + r.title : '');
+                const st = document.createElement('td'); const badge = document.createElement('span');
+                badge.className = 'an-status ' + r.status; badge.textContent = r.status.toUpperCase(); st.appendChild(badge);
+                const n = document.createElement('td'); n.textContent = r.article_count;
+                const who = document.createElement('td');
+                who.textContent = (r.status === 'published' && r.published_by ? 'Published by ' + r.published_by + ' · ' : '') +
+                                  'Edited by ' + r.updated_by + ', ' + anFmtStamp(r.updated_at);
+                const act = document.createElement('td'); const b = document.createElement('button');
+                b.className = 'small-btn'; b.type = 'button'; b.textContent = 'Edit';
+                b.addEventListener('click', function () { anOpen(r.id); });
+                act.appendChild(b);
+                [week, st, n, who, act].forEach(function (x) { tr.appendChild(x); });
+                tb.appendChild(tr);
+            });
+        }
+        $('anRefreshButton').addEventListener('click', anShowList);
+        $('anBackButton').addEventListener('click', anShowList);
+
+        // ----- editor
+        function anArticleCard(a) {
+            a = a || {};
+            const box = document.createElement('div'); box.className = 'an-art';
+            const top = document.createElement('div'); top.className = 'an-art-top';
+            const label = document.createElement('strong'); top.appendChild(label);
+            [['↑', -1, 'Move up'], ['↓', 1, 'Move down']].forEach(function (m) {
+                const b = document.createElement('button'); b.type = 'button'; b.className = 'small-btn'; b.textContent = m[0];
+                b.setAttribute('aria-label', m[2]);
+                b.addEventListener('click', function () {
+                    const sib = m[1] < 0 ? box.previousElementSibling : box.nextElementSibling;
+                    if (sib) { m[1] < 0 ? box.parentNode.insertBefore(box, sib) : box.parentNode.insertBefore(sib, box); anNumber(); }
+                });
+                top.appendChild(b);
+            });
+            const del = document.createElement('button'); del.type = 'button'; del.className = 'small-btn'; del.textContent = 'Remove';
+            del.addEventListener('click', function () { box.remove(); anNumber(); });
+            top.appendChild(del);
+            box.appendChild(top);
+            const fields = [['headline', 'HEADLINE', 'input', 200], ['publisher', 'PUBLISHER', 'input', 100],
+                            ['published_on', 'PUBLISHED ON', 'date', 0], ['url', 'LINK TO THE ORIGINAL (https://)', 'url', 2000],
+                            ['summary', 'SHORT SUMMARY IN OUR OWN WORDS', 'textarea', 600],
+                            ['why_it_matters', 'WHY IT MATTERS (OPTIONAL)', 'textarea', 300]];
+            fields.forEach(function (f) {
+                const lab = document.createElement('label'); lab.textContent = f[1];
+                const inp = document.createElement(f[2] === 'textarea' ? 'textarea' : 'input');
+                if (f[2] === 'date') inp.type = 'date'; else if (f[2] === 'url') inp.type = 'url'; else if (f[2] === 'input') inp.type = 'text';
+                if (f[3]) inp.maxLength = f[3];
+                inp.dataset.field = f[0]; inp.value = a[f[0]] || '';
+                const id = 'an_' + f[0] + '_' + Math.random().toString(36).slice(2); inp.id = id; lab.htmlFor = id;
+                box.appendChild(lab); box.appendChild(inp);
+            });
+            return box;
+        }
+        function anNumber() {
+            Array.prototype.forEach.call($('anArticles').children, function (box, i) {
+                box.querySelector('.an-art-top strong').textContent = 'Article ' + (i + 1);
+            });
+        }
+        $('anAddArticle').addEventListener('click', function () { $('anArticles').appendChild(anArticleCard()); anNumber(); });
+
+        function anFill(ed) {
+            AN.id = ed.id || null; AN.status = ed.status || 'draft';
+            $('anStart').value = ed.week_start || ''; $('anEnd').value = ed.week_end || ''; $('anTitle').value = ed.title || '';
+            const list = $('anArticles'); list.textContent = '';
+            (ed.articles || []).forEach(function (a) { list.appendChild(anArticleCard(a)); });
+            if (!list.children.length) list.appendChild(anArticleCard());
+            anNumber();
+            $('anPreview').textContent = ''; $('anOk').textContent = ''; anShowErrors('anErrors', []);
+            anButtons();
+            const hist = $('anHistory'); hist.textContent = '';
+            (ed.history || []).forEach(function (h) {
+                const li = document.createElement('li');
+                li.textContent = anFmtStamp(h.at) + ': ' + h.action + ' by ' + h.admin + (h.detail ? ' (' + h.detail + ')' : '');
+                hist.appendChild(li);
+            });
+            $('anHistoryBox').hidden = !(ed.history && ed.history.length);
+            anView('edit');
+        }
+
+        function anButtons() {
+            const pub = AN.status === 'published';
+            $('anEditLabel').textContent = AN.id ? 'Edition #' + AN.id + ' · ' + (pub ? 'PUBLISHED (changes go live when saved)' : 'DRAFT (not public)') : 'New edition · not saved yet';
+            $('anSaveButton').textContent = pub ? 'Save changes (live)' : 'Save draft';
+            $('anPublishButton').hidden = pub;
+            $('anUnpublishButton').hidden = !pub;
+            $('anDeleteButton').hidden = pub || !AN.id;
+        }
+
+        function anCollect() {
+            const articles = Array.prototype.map.call($('anArticles').children, function (box) {
+                const a = {};
+                box.querySelectorAll('[data-field]').forEach(function (inp) { a[inp.dataset.field] = inp.value.trim(); });
+                if (!a.why_it_matters) delete a.why_it_matters;
+                return a;
+            }).filter(function (a) { return Object.keys(a).some(function (k) { return a[k]; }); });   // skip blank cards
+            const ed = { week_start: $('anStart').value, week_end: $('anEnd').value, articles: articles };
+            const title = $('anTitle').value.trim(); if (title) ed.title = title;
+            return ed;
+        }
+
+        function anPreviewInto(target, ed) {
+            target.textContent = '';
+            const wrap = document.createElement('div'); wrap.className = 'an-preview';
+            const h = document.createElement('h3'); h.textContent = 'Preview: This Week’s AI News'; wrap.appendChild(h);
+            const meta = document.createElement('p'); meta.className = 'pv-src';
+            meta.textContent = 'Week of ' + anFmtDay(ed.week_start) + ' – ' + anFmtDay(ed.week_end) + (ed.title ? ' · ' + ed.title : '');
+            wrap.appendChild(meta);
+            (ed.articles || []).forEach(function (a) {
+                const item = document.createElement('div'); item.className = 'pv-item';
+                const link = document.createElement('a'); link.textContent = a.headline + ' ↗';
+                link.href = a.url; link.target = '_blank'; link.rel = 'noopener noreferrer'; item.appendChild(link);
+                const src = document.createElement('p'); src.className = 'pv-src'; src.textContent = a.publisher + ' · ' + anFmtDay(a.published_on); item.appendChild(src);
+                const sum = document.createElement('p'); sum.textContent = a.summary; item.appendChild(sum);
+                if (a.why_it_matters) { const w = document.createElement('p'); w.className = 'pv-why'; w.textContent = 'Why it matters: ' + a.why_it_matters; item.appendChild(w); }
+                wrap.appendChild(item);
+            });
+            target.appendChild(wrap);
+        }
+
+        // every action checks the edition on the server first, so the preview shows exactly what would be saved
+        async function anValidate() {
+            anShowErrors('anErrors', []); $('anOk').textContent = '';
+            try { return await anRequest('POST', '/admin/news/validate', anCollect()); }
+            catch (e) { if (e.message !== 'logged out') anShowErrors('anErrors', e.list || [e.message]); return null; }
+        }
+
+        $('anPreviewButton').addEventListener('click', async function () {
+            const ed = await anValidate(); if (ed) { anPreviewInto($('anPreview'), ed); $('anOk').textContent = 'Looks good. This is how it will appear.'; }
+        });
+
+        async function anSave() {
+            const ed = await anValidate(); if (!ed) return false;
+            try {
+                const r = AN.id ? await anRequest('PUT', '/admin/news/' + AN.id, ed) : await anRequest('POST', '/admin/news', ed);
+                AN.id = r.id; AN.status = r.status;
+                return true;
+            } catch (e) { if (e.message !== 'logged out') anShowErrors('anErrors', e.list || [e.message]); return false; }
+        }
+
+        async function anOpen(id, note) {
+            try { const ed = await anRequest('GET', '/admin/news/' + id); anFill(ed); if (note) $('anOk').textContent = note; }
+            catch (e) { if (e.message !== 'logged out') $('anListMsg').textContent = (e.list || [e.message]).join(' '); }
+        }
+
+        $('anSaveButton').addEventListener('click', async function () {
+            if (await anSave()) anOpen(AN.id, AN.status === 'published' ? 'Saved. The live page now shows these changes.' : 'Draft saved. It is not public.');
+        });
+        $('anPublishButton').addEventListener('click', async function () {
+            if (!(await anSave())) return;
+            try { await anRequest('POST', '/admin/news/' + AN.id + '/publish'); anOpen(AN.id, 'Published! It’s now on the AI Education page.'); }
+            catch (e) { if (e.message !== 'logged out') anShowErrors('anErrors', e.list || [e.message]); }
+        });
+        $('anUnpublishButton').addEventListener('click', async function () {
+            try { await anRequest('POST', '/admin/news/' + AN.id + '/unpublish'); anOpen(AN.id, 'Unpublished. It’s a draft again and no longer public.'); }
+            catch (e) { if (e.message !== 'logged out') anShowErrors('anErrors', e.list || [e.message]); }
+        });
+        let anDelArmed = null;
+        $('anDeleteButton').addEventListener('click', async function () {
+            const b = $('anDeleteButton');
+            if (!anDelArmed) { b.textContent = 'Click again to delete'; anDelArmed = setTimeout(function () { b.textContent = 'Delete draft'; anDelArmed = null; }, 5000); return; }
+            clearTimeout(anDelArmed); anDelArmed = null; b.textContent = 'Delete draft';
+            try { await anRequest('DELETE', '/admin/news/' + AN.id); anShowList(); }
+            catch (e) { if (e.message !== 'logged out') anShowErrors('anErrors', e.list || [e.message]); }
+        });
+
+        $('anNewButton').addEventListener('click', function () {
+            // default to this Monday-Sunday
+            const t = new Date(), mon = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7));
+            const iso = function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+            anFill({ week_start: iso(mon), week_end: iso(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6)), articles: [] });
+        });
+
+        // ----- import
+        let anImported = null;
+        $('anImportButton').addEventListener('click', function () {
+            anImported = null; $('anImportLoad').hidden = true; $('anImportPreview').textContent = ''; anShowErrors('anImportErrors', []);
+            anView('import');
+        });
+        $('anImportCancel').addEventListener('click', anShowList);
+        $('anImportCheck').addEventListener('click', async function () {
+            anImported = null; $('anImportLoad').hidden = true; $('anImportPreview').textContent = ''; anShowErrors('anImportErrors', []);
+            let parsed;
+            try { parsed = JSON.parse($('anImportText').value); }
+            catch (e) { anShowErrors('anImportErrors', ['That isn’t valid JSON: ' + e.message + '. Compare it with the template below.']); return; }
+            try {
+                anImported = await anRequest('POST', '/admin/news/validate', parsed);
+                if (!anImported.articles.length) { anShowErrors('anImportErrors', ['The JSON has no articles.']); anImported = null; return; }
+                anPreviewInto($('anImportPreview'), anImported);
+                $('anImportLoad').hidden = false;
+            } catch (e) { if (e.message !== 'logged out') anShowErrors('anImportErrors', e.list || [e.message]); }
+        });
+        $('anImportLoad').addEventListener('click', function () {
+            if (!anImported) return;
+            anFill(anImported);   // a NEW, unsaved edition: review it, then Save draft or Publish
+            $('anOk').textContent = 'Imported. Review it, then Save draft or Publish.';
         });
 
         // ---------- show the orders ----------
