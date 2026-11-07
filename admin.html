@@ -95,6 +95,9 @@
         .nl-actions .danger { border-color: var(--green); color: var(--green); }
         .nl-actions .danger.armed { background: var(--green); color: black; }
         .nl-ok { color: var(--green); min-height: 1.4em; }
+        .nl-pdf { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .nl-pdf input[type=file] { width: auto; flex: 1 1 260px; margin: 0; padding: 9px; }
+        .nl-pdf .nl-file { color: var(--text-muted); font-size: 0.9rem; }
         .nl-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         .nl-table th, .nl-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line);
                                      overflow-wrap: anywhere; }
@@ -344,10 +347,17 @@
             <div id="newsPanel" hidden>
                 <div class="nl-box">
                     <h2>Write a newsletter</h2>
+                    <label for="nlPdf">NEWSLETTER PDF (OPTIONAL)</label>
+                    <div class="nl-pdf">
+                        <input id="nlPdf" type="file" accept="application/pdf,.pdf">
+                        <button class="small-btn" id="nlPdfRemove" type="button" hidden>Remove PDF</button>
+                    </div>
+                    <p class="nl-help" id="nlPdfInfo">With a PDF, the email says "Here's our newsletter for (today's date).
+                        The full issue is attached as a PDF" and attaches it. Max 8 MB. It's never stored: it's sent, then gone.</p>
                     <label for="nlSubject">SUBJECT</label>
-                    <input id="nlSubject" type="text" maxlength="150" placeholder="November update: new videos and a giveaway">
+                    <input id="nlSubject" type="text" maxlength="150" placeholder="Leave blank for &quot;Abstraction Solutions Newsletter: (today's date)&quot;">
                     <label for="nlBody">MESSAGE</label>
-                    <textarea id="nlBody" maxlength="20000" placeholder="Write it like a normal email. Leave a blank line between paragraphs. Links like https://abstraction-solutions.com become clickable."></textarea>
+                    <textarea id="nlBody" maxlength="20000" placeholder="Optional with a PDF (added under the standard message). Without a PDF, write the whole newsletter here. Leave a blank line between paragraphs; links become clickable."></textarea>
                     <p class="nl-help">Every email starts with "Hi (their first name)," and ends with your signature, your
                         business address and a one-click unsubscribe link. You don't need to add those.</p>
                     <label for="nlTestTo">SEND A TEST TO</label>
@@ -530,15 +540,43 @@
             URL.revokeObjectURL(link.href);
         });
 
+        // ---------- the PDF: read in this browser tab only, sent with the request, then forgotten ----------
+        const nlPdf = document.getElementById('nlPdf'), nlPdfRemove = document.getElementById('nlPdfRemove');
+        const nlPdfInfo = document.getElementById('nlPdfInfo'), pdfHelp = nlPdfInfo.textContent;
+        let pdfFile = null;
+        nlPdf.addEventListener('change', function () {
+            nlMsg.textContent = '';
+            const f = nlPdf.files[0] || null;
+            if (f && !/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') { clearPdf(); nlMsg.textContent = 'That file isn\'t a PDF.'; return; }
+            if (f && f.size > 8 * 1024 * 1024) { clearPdf(); nlMsg.textContent = 'That PDF is over 8 MB. Export a smaller one.'; return; }
+            pdfFile = f;
+            nlPdfRemove.hidden = !f;
+            nlPdfInfo.textContent = f ? 'Attached: ' + f.name + ' (' + (f.size / 1048576).toFixed(1) + ' MB). It will be sent, then removed from this page.' : pdfHelp;
+        });
+        function clearPdf() { pdfFile = null; nlPdf.value = ''; nlPdfRemove.hidden = true; nlPdfInfo.textContent = pdfHelp; }
+        nlPdfRemove.addEventListener('click', clearPdf);
+        function readBase64(file) {
+            return new Promise(function (resolve, reject) {
+                const reader = new FileReader();
+                reader.onload = function () { resolve(String(reader.result).split(',')[1]); };   // drop "data:...;base64,"
+                reader.onerror = function () { reject(new Error('Couldn\'t read that PDF. Choose it again.')); };
+                reader.readAsDataURL(file);
+            });
+        }
+
         async function sendNewsletter(testTo) {
             nlMsg.textContent = ''; nlOk.textContent = '';
             const subject = document.getElementById('nlSubject').value.trim();
             const body = document.getElementById('nlBody').value;
-            if (subject.length < 3) { nlMsg.textContent = 'Add a subject first.'; return; }
-            if (body.trim().length < 10) { nlMsg.textContent = 'Write the message first.'; return; }
+            if (!pdfFile && body.trim().length < 10) { nlMsg.textContent = 'Write the message or attach a PDF first.'; return; }
             const payload = { subject: subject, body: body };
             if (testTo) payload.test_to = testTo;
-            nlOk.textContent = testTo ? 'Sending test...' : 'Sending...';
+            if (pdfFile) {
+                try { payload.pdf_base64 = await readBase64(pdfFile); payload.pdf_name = pdfFile.name; }
+                catch (error) { nlMsg.textContent = error.message; return; }
+            }
+            nlOk.textContent = testTo ? 'Sending test...' :
+                pdfFile ? 'Sending with the PDF, one email at a time (about 2 a second). Keep this tab open...' : 'Sending...';
             try {
                 const response = await fetch(API_BASE + '/admin/newsletter', {
                     method: 'POST',
@@ -551,6 +589,13 @@
                 nlOk.textContent = (data.test ? 'Test sent to ' + testTo + '. Check your inbox.' :
                     'Sent to ' + data.sent + ' subscriber' + (data.sent === 1 ? '' : 's') + '.') +
                     (data.failed ? ' ' + data.failed + ' failed (see Render logs).' : '');
+                if (!data.test) {               // done: clear everything so it's ready for next time
+                    const hadPdf = !!pdfFile;
+                    clearPdf();
+                    document.getElementById('nlSubject').value = '';
+                    document.getElementById('nlBody').value = '';
+                    if (hadPdf) nlOk.textContent += ' The PDF has been removed. Ready for next time.';
+                }
             } catch (error) {
                 nlOk.textContent = '';
                 nlMsg.textContent = error instanceof TypeError ? 'Can\'t reach the server. Try again in a minute.' : error.message;
