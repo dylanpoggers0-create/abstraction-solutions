@@ -33,7 +33,8 @@
 
         /* ---------- shared box style ---------- */
         input,
-        select {
+        select,
+        textarea {
             background-color: rgba(11, 16, 12, 0.92);
             color: white;
             border: 1px solid var(--line);
@@ -43,7 +44,8 @@
         }
 
         input:focus,
-        select:focus {
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--green);
             box-shadow: 0 0 14px var(--green-dim);
@@ -79,6 +81,25 @@
         }
 
         .tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+        /* ---------- NEWSLETTER ---------- */
+        .nl-box { border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 24px;
+                  background-color: rgba(11, 16, 12, 0.6); }
+        .nl-box h2 { margin: 0 0 14px; font-size: 1.15rem; }
+        .nl-box label { display: block; margin: 0 0 6px; color: var(--green); font-size: 0.75rem;
+                        font-weight: bold; letter-spacing: 2px; }
+        .nl-box input, .nl-box textarea { width: 100%; box-sizing: border-box; margin-bottom: 14px; }
+        .nl-box textarea { min-height: 220px; resize: vertical; line-height: 1.5; }
+        .nl-help { color: var(--text-muted); font-size: 0.85rem; margin: -6px 0 14px; }
+        .nl-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .nl-actions .danger { border-color: var(--green); color: var(--green); }
+        .nl-actions .danger.armed { background: var(--green); color: black; }
+        .nl-ok { color: var(--green); min-height: 1.4em; }
+        .nl-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .nl-table th, .nl-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line);
+                                     overflow-wrap: anywhere; }
+        .nl-table th { color: var(--text-muted); font-weight: bold; }
+        .nl-table tr.gone td { color: var(--text-muted); text-decoration: line-through; }
 
         /* ---------- LOGIN ---------- */
         #loginForm {
@@ -306,6 +327,7 @@
             <!-- TABS: Orders (from the server) and Hydro Cart (from the cart app on this computer) -->
             <div class="tabs" role="tablist">
                 <button class="tab active" id="tabOrders" type="button" role="tab">Orders</button>
+                <button class="tab" id="tabNews" type="button" role="tab">Newsletter</button>
                 <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
                 <button class="small-btn" id="logoutButton" type="button">Log out</button>
             </div>
@@ -317,6 +339,38 @@
                 </div>
                 <p class="msg" id="dashMsg" role="alert"></p>
                 <div id="orderList"></div>
+            </div>
+
+            <div id="newsPanel" hidden>
+                <div class="nl-box">
+                    <h2>Write a newsletter</h2>
+                    <label for="nlSubject">SUBJECT</label>
+                    <input id="nlSubject" type="text" maxlength="150" placeholder="November update: new videos and a giveaway">
+                    <label for="nlBody">MESSAGE</label>
+                    <textarea id="nlBody" maxlength="20000" placeholder="Write it like a normal email. Leave a blank line between paragraphs. Links like https://abstraction-solutions.com become clickable."></textarea>
+                    <p class="nl-help">Every email starts with "Hi (their first name)," and ends with your signature, your
+                        business address and a one-click unsubscribe link. You don't need to add those.</p>
+                    <label for="nlTestTo">SEND A TEST TO</label>
+                    <input id="nlTestTo" type="email" placeholder="your email">
+                    <div class="nl-actions">
+                        <button class="small-btn" id="nlTestButton" type="button">Send test</button>
+                        <button class="small-btn danger" id="nlSendButton" type="button">Send to all subscribers</button>
+                    </div>
+                    <p class="nl-ok" id="nlOk" role="status"></p>
+                    <p class="msg" id="nlMsg" role="alert"></p>
+                </div>
+
+                <div class="nl-box">
+                    <div class="toolbar">
+                        <span class="count" id="nlCount"></span>
+                        <button class="small-btn" id="nlCsvButton" type="button">Download CSV</button>
+                        <button class="small-btn" id="nlRefreshButton" type="button">Refresh</button>
+                    </div>
+                    <table class="nl-table">
+                        <thead><tr><th>Name</th><th>Email</th><th>Joined</th></tr></thead>
+                        <tbody id="nlRows"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- filled in by hydro-admin.js -->
@@ -407,18 +461,22 @@
 
         // ---------- tabs ----------
         function showTab(name) {
-            const hydro = name === 'hydro';
-            document.getElementById('tabOrders').classList.toggle('active', !hydro);
+            const hydro = name === 'hydro', news = name === 'news';
+            document.getElementById('tabOrders').classList.toggle('active', name === 'orders');
+            document.getElementById('tabNews').classList.toggle('active', news);
             document.getElementById('tabHydro').classList.toggle('active', hydro);
-            document.getElementById('ordersPanel').hidden = hydro;
+            document.getElementById('ordersPanel').hidden = name !== 'orders';
+            document.getElementById('newsPanel').hidden = !news;
             document.getElementById('hydroPanel').hidden = !hydro;
-            document.getElementById('adminTitle').textContent = hydro ? 'Hydro Cart' : 'Orders';
+            document.getElementById('adminTitle').textContent = hydro ? 'Hydro Cart' : news ? 'Newsletter' : 'Orders';
+            if (news) loadSubscribers();
             document.querySelector('main').classList.toggle('wide', hydro);
             if (hydro) window.HydroAdmin.start();
             else if (window.HydroAdmin) window.HydroAdmin.stop();
         }
         document.getElementById('tabOrders').addEventListener('click', function () { showTab('orders'); });
         document.getElementById('tabHydro').addEventListener('click', function () { showTab('hydro'); });
+        document.getElementById('tabNews').addEventListener('click', function () { showTab('news'); });
         document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
         function showDashboard() {
@@ -426,6 +484,100 @@
             dashboard.hidden = false;
             loadOrders();
         }
+
+        // ---------- newsletter: subscribers + sending ----------
+        let subscribers = [];
+        const nlMsg = document.getElementById('nlMsg'), nlOk = document.getElementById('nlOk');
+        const nlSend = document.getElementById('nlSendButton');
+
+        async function loadSubscribers() {
+            nlMsg.textContent = '';
+            try {
+                subscribers = await api('/admin/subscribers');
+            } catch (error) {
+                if (error.message !== 'logged out') nlMsg.textContent = 'Couldn\'t load subscribers: ' + error.message;
+                return;
+            }
+            const active = subscribers.filter(function (x) { return !x.unsubscribed_at; });
+            document.getElementById('nlCount').textContent = active.length + ' subscribed' +
+                (subscribers.length > active.length ? ' · ' + (subscribers.length - active.length) + ' unsubscribed' : '');
+            nlSend.textContent = 'Send to all ' + active.length + ' subscribers';
+            const rows = document.getElementById('nlRows');
+            rows.textContent = '';
+            subscribers.forEach(function (x) {
+                const tr = document.createElement('tr');
+                if (x.unsubscribed_at) tr.className = 'gone';
+                [x.first_name + ' ' + x.last_name, x.email, new Date(x.opted_in_at).toLocaleDateString()].forEach(function (v) {
+                    const td = document.createElement('td'); td.textContent = v; tr.appendChild(td);   // textContent = safe
+                });
+                rows.appendChild(tr);
+            });
+        }
+
+        document.getElementById('nlRefreshButton').addEventListener('click', loadSubscribers);
+
+        document.getElementById('nlCsvButton').addEventListener('click', function () {
+            const cell = function (v) { v = String(v == null ? '' : v); if (/^[=+\-@]/.test(v)) v = "'" + v;   // stop spreadsheet formulas
+                                         return '"' + v.replace(/"/g, '""') + '"'; };
+            const lines = [['First name', 'Last name', 'Email', 'Joined', 'Unsubscribed'].map(cell).join(',')];
+            subscribers.forEach(function (x) {
+                lines.push([x.first_name, x.last_name, x.email, x.opted_in_at, x.unsubscribed_at || ''].map(cell).join(','));
+            });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/csv' }));
+            link.download = 'subscribers-' + new Date().toISOString().slice(0, 10) + '.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        });
+
+        async function sendNewsletter(testTo) {
+            nlMsg.textContent = ''; nlOk.textContent = '';
+            const subject = document.getElementById('nlSubject').value.trim();
+            const body = document.getElementById('nlBody').value;
+            if (subject.length < 3) { nlMsg.textContent = 'Add a subject first.'; return; }
+            if (body.trim().length < 10) { nlMsg.textContent = 'Write the message first.'; return; }
+            const payload = { subject: subject, body: body };
+            if (testTo) payload.test_to = testTo;
+            nlOk.textContent = testTo ? 'Sending test...' : 'Sending...';
+            try {
+                const response = await fetch(API_BASE + '/admin/newsletter', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + memoryToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (response.status === 401 || response.status === 403) { logout('Your login expired. Please log in again.'); return; }
+                const data = await response.json().catch(function () { return {}; });
+                if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Server error (' + response.status + ')');
+                nlOk.textContent = (data.test ? 'Test sent to ' + testTo + '. Check your inbox.' :
+                    'Sent to ' + data.sent + ' subscriber' + (data.sent === 1 ? '' : 's') + '.') +
+                    (data.failed ? ' ' + data.failed + ' failed (see Render logs).' : '');
+            } catch (error) {
+                nlOk.textContent = '';
+                nlMsg.textContent = error instanceof TypeError ? 'Can\'t reach the server. Try again in a minute.' : error.message;
+            }
+        }
+
+        document.getElementById('nlTestButton').addEventListener('click', function () {
+            const to = document.getElementById('nlTestTo').value.trim();
+            if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) { nlMsg.textContent = 'Enter the email to send the test to.'; return; }
+            sendNewsletter(to);
+        });
+
+        // sending to everyone takes two clicks, so it can't happen by accident
+        let armTimer = null;
+        nlSend.addEventListener('click', function () {
+            if (!nlSend.classList.contains('armed')) {
+                nlSend.classList.add('armed');
+                nlSend.dataset.label = nlSend.textContent;
+                nlSend.textContent = 'Click again to send for real';
+                armTimer = setTimeout(function () { nlSend.classList.remove('armed'); nlSend.textContent = nlSend.dataset.label; }, 5000);
+                return;
+            }
+            clearTimeout(armTimer);
+            nlSend.classList.remove('armed'); nlSend.textContent = nlSend.dataset.label;
+            nlSend.disabled = true;
+            sendNewsletter(null).finally(function () { nlSend.disabled = false; });
+        });
 
         // ---------- show the orders ----------
         async function loadOrders() {
