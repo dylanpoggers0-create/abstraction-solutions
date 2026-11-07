@@ -626,8 +626,76 @@
     <hr>
 
     <!-- CONTACT -->
-    <!-- NEWSLETTER: filled in by nav.js once NEWSLETTER_BUTTONDOWN is set there (hidden until then) -->
-    <section class="newsletter" data-newsletter hidden></section>
+    <!-- NEWSLETTER SIGNUP: saved to our database by the quote engine (POST /newsletter) -->
+    <section class="signup-section" id="newsletter">
+        <style>
+            /* Everything here is scoped to .signup-card so it can't change the rest of the page */
+            .signup-section { display: flex; justify-content: center; padding: 10px 20px 40px; }
+            .signup-card {
+                width: 100%; max-width: 480px; background-color: #111111; padding: 32px;
+                border-radius: 16px; border: 1px solid #1a331a; box-shadow: 0 10px 30px rgba(0, 255, 102, 0.05);
+                text-align: center; box-sizing: border-box; color: #ffffff;
+            }
+            .signup-card h4 { margin: 0 0 24px; color: #ffffff; font-size: 1.1rem; line-height: 1.5; font-weight: 500; }
+            .signup-card .form-group { margin-bottom: 18px; text-align: left; }
+            .signup-card .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #e0e0e0; font-weight: 500; }
+            .signup-card .form-group input {
+                width: 100%; padding: 12px; background-color: #1a1a1a; color: #ffffff; border: 1px solid #333333;
+                border-radius: 8px; box-sizing: border-box; outline: none; font-size: 16px; /* 16px stops iPhones zooming in */
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            .signup-card .form-group input:focus { border-color: #00ff66; box-shadow: 0 0 8px rgba(0, 255, 102, 0.2); }
+            .signup-card .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0 24px; text-align: left; }
+            .signup-card .checkbox-group input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: #00ff66; cursor: pointer; }
+            .signup-card .checkbox-group label { font-size: 0.85rem; color: #cccccc; line-height: 1.4; cursor: pointer; }
+            .signup-card .submit-btn {
+                width: 100%; padding: 14px; background-color: #00ff66; color: #000000; border: none; border-radius: 8px;
+                font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, transform 0.1s;
+            }
+            .signup-card .submit-btn:hover { background-color: #00cc52; }
+            .signup-card .submit-btn:active { transform: scale(0.98); }
+            .signup-card .submit-btn:disabled { opacity: 0.6; cursor: wait; }
+            .signup-card .signup-status { min-height: 1.4em; margin: 14px 0 0; font-size: 0.9rem; }
+            .signup-card .signup-status.ok { color: #00ff66; }
+            .signup-card .signup-status.err { color: #ff8080; }
+            .signup-card .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+        </style>
+
+        <form class="signup-card" id="signupForm" novalidate>
+            <h4>Join our mailing list for special offers, early access to videos and products, newsletters, and raffles.</h4>
+
+            <div class="form-group">
+                <label for="su_first">First Name</label>
+                <input type="text" id="su_first" name="first_name" placeholder="First Name" autocomplete="given-name" maxlength="60" required>
+            </div>
+
+            <div class="form-group">
+                <label for="su_last">Last Name</label>
+                <input type="text" id="su_last" name="last_name" placeholder="Last Name" autocomplete="family-name" maxlength="60" required>
+            </div>
+
+            <div class="form-group">
+                <label for="su_email">Email Address</label>
+                <input type="email" id="su_email" name="email" placeholder="name@example.com" autocomplete="email" maxlength="200" required>
+            </div>
+
+            <!-- hidden from people; spam bots fill it in, and the server ignores those signups -->
+            <div class="hp" aria-hidden="true">
+                <label for="su_website">Website</label>
+                <input type="text" id="su_website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- Required opt-in checkbox -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="su_opt_in" name="opt_in" required>
+                <label for="su_opt_in">I agree to receive promotional emails, newsletters, and updates. You can unsubscribe at any time.
+                    See our <a href="privacy.html" style="color:#00ff66">Privacy Policy</a>.</label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="signupButton">Subscribe</button>
+            <p class="signup-status" id="signupStatus" role="status" aria-live="polite"></p>
+        </form>
+    </section>
 
     <section class="contact" id="contact">
         <h2 class="section-title">Let's build something</h2>
@@ -842,6 +910,44 @@
             result.hidden = false;
             result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+    </script>
+    <script>
+        // Newsletter signup -> quote engine (POST /newsletter), which saves it to the database
+        (function () {
+            const form = document.getElementById('signupForm');
+            if (!form) return;
+            const button = document.getElementById('signupButton');
+            const status = document.getElementById('signupStatus');
+            function say(text, kind) { status.textContent = text; status.className = 'signup-status ' + (kind || ''); }
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const first = form.first_name.value.trim(), last = form.last_name.value.trim(), email = form.email.value.trim();
+                if (!first || !last) return say('Please enter your first and last name.', 'err');
+                if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return say('Please enter a valid email address.', 'err');
+                if (!form.opt_in.checked) return say('Please check the box to agree to receive emails.', 'err');
+
+                button.disabled = true; button.textContent = 'Subscribing...'; say('');
+                try {
+                    const response = await fetchWithWake(API_BASE + '/newsletter', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ first_name: first, last_name: last, email: email,
+                                               opt_in: true, website: form.website.value })
+                    });
+                    if (response.status === 429) throw new Error('Too many signups from here. Please try again later.');
+                    if (!response.ok) throw new Error('Something went wrong. Please try again.');
+                    form.reset();
+                    say("You're on the list, " + first + '! Watch your inbox for updates.', 'ok');
+                } catch (error) {
+                    say(error.name === 'TypeError' || error.name === 'TimeoutError'
+                        ? 'Our signup system is offline right now. Please try again in a minute.'
+                        : error.message, 'err');
+                } finally {
+                    button.disabled = false; button.textContent = 'Subscribe';
+                }
+            });
+        })();
     </script>
 
 </body>
