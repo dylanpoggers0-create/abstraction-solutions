@@ -304,19 +304,19 @@
             padding: 0 24px;
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 18px;
         }
 
         /* one case study: picture on the left, story on the right */
         .case {
             display: grid;
-            grid-template-columns: 340px 1fr;
-            gap: 32px;
-            align-items: start;
+            grid-template-columns: 240px 1fr;
+            gap: 26px;
+            align-items: center;
             background-color: rgba(11, 16, 12, 0.9);
             border: 1px solid var(--line);
-            border-radius: 24px;
-            padding: 28px;
+            border-radius: 20px;
+            padding: 22px;
         }
 
         .case img {
@@ -333,8 +333,8 @@
         }
 
         .case .case-title {
-            margin: 6px 0 16px;
-            font-size: 1.6rem;
+            margin: 6px 0 8px;
+            font-size: 1.3rem;
             color: white;
             letter-spacing: normal;
             text-transform: none;
@@ -358,22 +358,22 @@
         .results {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 8px;
+            gap: 10px;
+            margin-top: 14px;
         }
 
         .result {
             flex: 1 1 150px;
             background-color: var(--green-soft);
             border: 1px solid var(--green-dim);
-            border-radius: 14px;
-            padding: 12px 14px;
+            border-radius: 12px;
+            padding: 8px 12px;
         }
 
         .result strong {
             display: block;
             color: var(--green);
-            font-size: 1.35rem;
+            font-size: 1.1rem;
         }
 
         .result span {
@@ -382,7 +382,8 @@
         }
 
         @media (max-width: 760px) {
-            .case { grid-template-columns: 1fr; padding: 22px; }
+            .case { grid-template-columns: 1fr; padding: 20px; }
+            .case img { max-height: 170px; object-fit: cover; }
         }
         @media (max-width: 600px) {
             .cases { padding: 0 16px 0 36px; }
@@ -504,69 +505,45 @@
         <p class="section-sub">A few things we've built, and what they do for the people who use them.</p>
     </section>
     <div class="cases">
-
         <article class="case">
             <img src="videos/cbhs-chatbot.svg"
                  alt="Drawing of the CBHS chatbot: school documents are searched for the right facts, and the chatbot answers a student's question with its source">
             <div>
                 <div class="kind">AI CHATBOT · EDUCATION</div>
                 <h3 class="case-title">CBHS Information Chatbot</h3>
-                <h3>The challenge</h3>
-                <p>Students and faculty at Christian Brothers High School needed fast, accurate answers to questions
-                   about the school, and a normal chatbot would just guess.</p>
-                <h3>What we built</h3>
-                <p>A chatbot that uses <strong>RAG</strong> (retrieval-augmented generation): before it answers, it
-                   finds the right facts in the school's own information, so its answers come from real sources.</p>
-                <h3>The results</h3>
+                <p>A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.</p>
                 <div class="results">
-                    <div class="result"><strong>Hundreds</strong><span>of students attend the school it was built for</span></div>
+                    <div class="result"><strong>Hundreds</strong><span>of students at the school</span></div>
                     <div class="result"><strong>All faculty</strong><span>have it deployed</span></div>
                 </div>
             </div>
         </article>
-
         <article class="case">
             <img src="videos/price-model.svg"
                  alt="Drawing of the price optimization model: past sales data feeds a machine learning model, which points to the price at the top of the profit curve">
             <div>
                 <div class="kind">MACHINE LEARNING · RETAIL</div>
-                <h3 class="case-title">Price Optimization Model &amp; Data Cleanup</h3>
-                <h3>The challenge</h3>
-                <p>A business wanted to raise profit without losing sales, and preparing its sales data by hand took
-                   hours every week.</p>
-                <h3>What we built</h3>
-                <p>A <strong>data cleanup algorithm</strong> that gets the sales data ready automatically, and a
-                   <strong>machine learning model</strong> that learns from historical pricing to suggest price changes
-                   that keep sales high while raising the price per unit.</p>
-                <h3>The results</h3>
+                <h3 class="case-title">Price Optimization &amp; Data Cleanup</h3>
+                <p>Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.</p>
                 <div class="results">
                     <div class="result"><strong>Weekly</strong><span>used in real pricing decisions</span></div>
                 </div>
             </div>
         </article>
-
         <article class="case">
             <img src="videos/cyberdeck.svg"
                  alt="Drawing of the Email Response Cyberdeck: a small case with a 16x2 LCD screen, send and edit buttons, and a Raspberry Pi 4 and Arduino Uno inside">
             <div>
                 <div class="kind">AUTOMATION · CLIENT PROJECT</div>
                 <h3 class="case-title">Email Response Cyberdeck</h3>
-                <h3>The challenge</h3>
-                <p>A client needed emails answered and meetings scheduled while they were busy, without losing
-                   control of what got sent.</p>
-                <h3>What we built</h3>
-                <p>A small, self-contained device (Raspberry Pi 4 + Arduino Uno with a screen) that starts answering
-                   emails as soon as it's turned on, in the tone and context the client sets.</p>
-                <h3>The results</h3>
+                <p>A small device that drafts email replies and schedules meetings, and waits for your OK before anything is sent.</p>
                 <div class="results">
-                    <div class="result"><strong>Automatic</strong><span>email replies and Google Calendar scheduling</span></div>
-                    <div class="result"><strong>In control</strong><span>every email is confirmed before it's sent</span></div>
+                    <div class="result"><strong>Automatic</strong><span>replies and scheduling</span></div>
+                    <div class="result"><strong>In control</strong><span>you confirm every email</span></div>
                 </div>
             </div>
         </article>
-
     </div>
-
 
     <footer>© 2026 Abstraction Solutions</footer>
 

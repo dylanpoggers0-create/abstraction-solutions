@@ -98,56 +98,20 @@
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Start an AI Project or Check Your Order",
-"heading": "CBHS Information Chatbot › The challenge",
-"text": "Students and faculty at Christian Brothers High School needed fast, accurate answers to questions about the school, and a normal chatbot would just guess."
+"heading": "CBHS Information Chatbot",
+"text": "A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.\nHundreds of students at the school\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Start an AI Project or Check Your Order",
-"heading": "CBHS Information Chatbot › What we built",
-"text": "A chatbot that uses RAG (retrieval-augmented generation): before it answers, it finds the right facts in the school's own information, so its answers come from real sources."
+"heading": "Price Optimization & Data Cleanup",
+"text": "Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.\nWeekly used in real pricing decisions\nAUTOMATION · CLIENT PROJECT"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Start an AI Project or Check Your Order",
-"heading": "CBHS Information Chatbot › The results",
-"text": "Hundreds of students attend the school it was built for\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
-"heading": "Price Optimization Model & Data Cleanup › The challenge",
-"text": "A business wanted to raise profit without losing sales, and preparing its sales data by hand took hours every week."
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
-"heading": "Price Optimization Model & Data Cleanup › What we built",
-"text": "A data cleanup algorithm that gets the sales data ready automatically, and a machine learning model that learns from historical pricing to suggest price changes that keep sales high while raising the price per unit."
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
-"heading": "Price Optimization Model & Data Cleanup › The results",
-"text": "Weekly used in real pricing decisions\nAUTOMATION · CLIENT PROJECT"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
-"heading": "Email Response Cyberdeck › The challenge",
-"text": "A client needed emails answered and meetings scheduled while they were busy, without losing control of what got sent."
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
-"heading": "Email Response Cyberdeck › What we built",
-"text": "A small, self-contained device (Raspberry Pi 4 + Arduino Uno with a screen) that starts answering emails as soon as it's turned on, in the tone and context the client sets."
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
-"heading": "Email Response Cyberdeck › The results",
-"text": "Automatic email replies and Google Calendar scheduling\nIn control every email is confirmed before it's sent"
+"heading": "Email Response Cyberdeck",
+"text": "A small device that drafts email replies and schedules meetings, and waits for your OK before anything is sent.\nAutomatic replies and scheduling\nIn control you confirm every email"
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
