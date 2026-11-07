@@ -205,6 +205,31 @@
             margin: 24px 0 30px;
         }
 
+        .np-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 14px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.45;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .np-check input {
+            width: 20px;
+            height: 20px;
+            margin: 1px 0 0;
+            flex-shrink: 0;
+            accent-color: var(--green);
+            cursor: pointer;
+        }
+
+        .np-check strong { color: var(--green); }
+
+        .quote-price s { color: var(--text-muted); font-size: 0.55em; font-weight: normal; margin-left: 8px; }
+
         .quote-form .pill:disabled {
             opacity: 0.5;
             cursor: wait;
@@ -506,8 +531,7 @@
         <div class="hero-text">
             <div class="eyebrow">AI MADE SIMPLE</div>
             <h1>Websites and simple AI for <span>Memphis businesses and nonprofits.</span></h1>
-            <p>Small businesses get automations, websites, and plain-language AI education.
-               Nonprofits get that same kind of help.</p>
+            <p>Get an instant quote in seconds, handle everything by email, and keep full control of what we build.</p>
             <div class="pill-container">
                 <a class="pill primary" href="#quote">Get a free quote</a>
                 <a class="pill" href="services/workflows.html#nonprofits">Nonprofits</a>
@@ -622,7 +646,7 @@
         <p class="section-sub">A <a href="services/workflows.html#nonprofits">nonprofit website</a> that supporters can actually use, plus volunteer updates, event signups, newsletters, donation pages, and simple AI.</p>
         <div class="pill-container">
             <a class="pill primary" href="services/workflows.html#nonprofits">See nonprofit work</a>
-            <a class="pill" href="#quote">Get a free quote</a>
+            <a class="pill" href="?nonprofit=1#quote">Get a free quote</a>
         </div>
     </section>
 
@@ -654,13 +678,18 @@
     <!-- QUOTE: the form sends the description to the Python quote engine (quote-engine/main.py) -->
     <section class="quote" id="quote">
         <h2 class="section-title">Get a quote today</h2>
-        <p class="section-sub">Describe the project below. You get an instant estimate, then final scope and price by email. This form sends the description only. The number you see is the quote tool's estimate. It does not subtract a discount, and we do not list prices.</p>
+        <p class="section-sub">Describe the project below. You get an instant estimate, then final scope and price by email.
+            Nonprofits: check the box to see your 50% price.</p>
         <!-- Promo line. Delete this paragraph to remove it. Hidden after Fri Nov 13, 2026, America/Chicago. -->
         <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
 
         <form class="quote-form" id="quoteForm">
             <textarea id="quoteText" name="description" minlength="10" maxlength="2000" required
                 placeholder="Example: A website for my bakery with online ordering, Stripe payments and email receipts."></textarea>
+            <label class="np-check" for="quoteNonprofit">
+                <input type="checkbox" id="quoteNonprofit" name="nonprofit">
+                <span>We're a nonprofit <strong>(50% off)</strong>. We may ask you to confirm your nonprofit status before work starts.</span>
+            </label>
             <div class="pill-container">
                 <button class="pill primary" id="quoteButton" type="submit">Get a quote</button>
             </div>
@@ -670,8 +699,9 @@
 
         <!-- Filled in by the script at the bottom of the page -->
         <div class="quote-result" id="quoteResult" hidden aria-live="polite">
-            <p class="quote-label">Estimated cost</p>
+            <p class="quote-label" id="quoteLabel">Estimated cost</p>
             <p class="quote-price" id="quotePrice"></p>
+            <p class="quote-meta" id="quoteDiscount" hidden></p>
             <p class="quote-meta" id="quoteMeta"></p>
             <p class="quote-summary" id="quoteSummary"></p>
             <ul class="quote-breakdown" id="quoteBreakdown"></ul>
@@ -690,8 +720,8 @@
         </div>
 
         <p class="quote-note">
-            Note: This is an instant estimate from our Abstraction Solutions Computational Engine v1.0, not a discounted price.
-            You get an instant estimate, then final scope and price by email:
+            Note: This is an instant estimate from our Abstraction Solutions Computational Engine v1.0. The nonprofit price
+            is the same estimate at 50% off. You get an instant estimate, then final scope and price by email:
             <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a>.
         </p>
     </section>
@@ -716,8 +746,10 @@
     <!-- PRE-FILL THE QUOTE from a recipe page's "Quote this" button: index.html?describe=...#quote -->
     <script>
         (function () {
-            const text = new URLSearchParams(location.search).get('describe');
+            const query = new URLSearchParams(location.search);
+            const text = query.get('describe');
             if (text) document.getElementById('quoteText').value = text.slice(0, 2000);
+            if (query.get('nonprofit') === '1') document.getElementById('quoteNonprofit').checked = true;
         })();
     </script>
 
@@ -858,7 +890,21 @@
 
         // textContent (not innerHTML) so nothing in the answer can run as code
         function showQuote(q) {
-            document.getElementById('quotePrice').textContent = dollars(q.low) + ' – ' + dollars(q.high);
+            // Nonprofits: show the same estimate at 50% off (the regular range is shown crossed out next to it)
+            const nonprofit = document.getElementById('quoteNonprofit').checked;
+            const half = function (n) { return Math.round(n / 2); };
+            const price = document.getElementById('quotePrice');
+            price.textContent = nonprofit ? dollars(half(q.low)) + ' – ' + dollars(half(q.high)) : dollars(q.low) + ' – ' + dollars(q.high);
+            if (nonprofit) {
+                const was = document.createElement('s');
+                was.textContent = dollars(q.low) + ' – ' + dollars(q.high);
+                price.append(was);
+            }
+            document.getElementById('quoteLabel').textContent = nonprofit ? 'Nonprofit estimate (50% off)' : 'Estimated cost';
+            const disc = document.getElementById('quoteDiscount');
+            disc.hidden = !nonprofit;
+            disc.textContent = nonprofit ? '50% nonprofit discount applied to the estimate. The breakdown below shows regular prices. ' +
+                'We confirm the final price by email and may ask you to confirm nonprofit status.' : '';
 
             const [w1, w2] = q.timeline_weeks;
             document.getElementById('quoteMeta').textContent =
@@ -902,7 +948,9 @@
             };
             const params = new URLSearchParams({
                 service: SERVICE_FOR[q.project_type_label] || 'Other',
-                details: 'Instant estimate: ' + dollars(q.low) + ' – ' + dollars(q.high) +
+                details: (nonprofit ? 'NONPROFIT (50% off requested). Nonprofit estimate: ' + dollars(half(q.low)) + ' – ' +
+                                      dollars(half(q.high)) + ', regular ' : 'Instant estimate: ') +
+                         dollars(q.low) + ' – ' + dollars(q.high) +
                          ' (' + q.project_type_label + ')\n\n' + document.getElementById('quoteText').value.trim()
             });
             document.getElementById('acceptQuote').href = 'order.html?' + params.toString() + '#newOrder';

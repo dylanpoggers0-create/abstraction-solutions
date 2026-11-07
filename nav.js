@@ -1,7 +1,11 @@
 // Always use the secure address: the quote engine only answers https://abstraction-solutions.com,
 // so a page opened as http:// would say "offline" even when everything is up.
+// Tries once per visit, so if the https address ever sends people back to http (a hosting setting),
+// visitors stay on the page instead of bouncing back and forth.
 if (location.protocol === 'http:' && /(^|\.)abstraction-solutions\.com$/.test(location.hostname)) {
-  location.replace('https://' + location.host + location.pathname + location.search + location.hash);
+  let triedHttps = false;
+  try { triedHttps = sessionStorage.getItem('triedHttps') === '1'; sessionStorage.setItem('triedHttps', '1'); } catch (e) {}
+  if (!triedHttps) location.replace('https://' + location.host + location.pathname + location.search + location.hash);
 }
 
 /* =========================================================
