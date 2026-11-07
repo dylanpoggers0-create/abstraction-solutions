@@ -23,7 +23,8 @@ MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 MIN_RELEVANCE = 0.35            # cosine similarity below this = the chunk isn't really about the question
-SKIP = {"admin.html"}           # private pages never go in the knowledge base
+SKIP = {"admin.html",            # private pages never go in the knowledge base
+        "memphis.html", "clubs-nonprofits.html"}   # moved to services/workflows.html (these just forward there)
 SKIP_DIRS = {"hydro-cart", "chatbot", "videos", ".git"}
 
 _model = None

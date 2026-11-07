@@ -486,7 +486,7 @@
       "itemOffered": {
         "@type": "Service",
         "name": "Nonprofit websites in Memphis",
-        "url": "https://abstraction-solutions.com/clubs-nonprofits.html"
+        "url": "https://abstraction-solutions.com/services/workflows.html#nonprofits"
       }
     }
   ]
@@ -510,7 +510,7 @@
                Nonprofits get that same kind of help.</p>
             <div class="pill-container">
                 <a class="pill primary" href="#quote">Get a free quote</a>
-                <a class="pill" href="clubs-nonprofits.html">Nonprofits</a>
+                <a class="pill" href="services/workflows.html#nonprofits">Nonprofits</a>
                 <a class="pill" href="order.html">Start a project</a>
                 <a class="pill" href="services/education.html">Learn AI in 60 seconds</a>
             </div>
@@ -523,6 +523,79 @@
             </video>
             <button id="audioToggle" class="audio-btn" type="button">🔇 Unmute</button>
         </div>
+    </section>
+
+    <!-- NEWSLETTER SIGNUP: saved to our database by the quote engine (POST /newsletter) -->
+    <section class="signup-section" id="newsletter">
+        <style>
+            /* Everything here is scoped to .signup-card so it can't change the rest of the page */
+            .signup-section { display: flex; justify-content: center; padding: 10px 20px 40px; }
+            .signup-card {
+                width: 100%; max-width: 480px; background-color: #111111; padding: 32px;
+                border-radius: 16px; border: 1px solid #1a331a; box-shadow: 0 10px 30px rgba(0, 255, 102, 0.05);
+                text-align: center; box-sizing: border-box; color: #ffffff;
+            }
+            .signup-card h4 { margin: 0 0 8px; color: #ffffff; font-size: 1.1rem; line-height: 1.5; font-weight: 500; }
+            .signup-card .signup-note { margin: 0 0 24px; color: #00ff66; font-size: 0.9rem; }
+            .signup-card .form-group { margin-bottom: 18px; text-align: left; }
+            .signup-card .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #e0e0e0; font-weight: 500; }
+            .signup-card .form-group input {
+                width: 100%; padding: 12px; background-color: #1a1a1a; color: #ffffff; border: 1px solid #333333;
+                border-radius: 8px; box-sizing: border-box; outline: none; font-size: 16px; /* 16px stops iPhones zooming in */
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            .signup-card .form-group input:focus { border-color: #00ff66; box-shadow: 0 0 8px rgba(0, 255, 102, 0.2); }
+            .signup-card .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0 24px; text-align: left; }
+            .signup-card .checkbox-group input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: #00ff66; cursor: pointer; }
+            .signup-card .checkbox-group label { font-size: 0.85rem; color: #cccccc; line-height: 1.4; cursor: pointer; }
+            .signup-card .submit-btn {
+                width: 100%; padding: 14px; background-color: #00ff66; color: #000000; border: none; border-radius: 8px;
+                font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, transform 0.1s;
+            }
+            .signup-card .submit-btn:hover { background-color: #00cc52; }
+            .signup-card .submit-btn:active { transform: scale(0.98); }
+            .signup-card .submit-btn:disabled { opacity: 0.6; cursor: wait; }
+            .signup-card .signup-status { min-height: 1.4em; margin: 14px 0 0; font-size: 0.9rem; }
+            .signup-card .signup-status.ok { color: #00ff66; }
+            .signup-card .signup-status.err { color: #ff8080; }
+            .signup-card .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+        </style>
+
+        <form class="signup-card" id="signupForm" novalidate>
+            <h4>Join our mailing list for special offers, early access to videos and products, newsletters, and giveaways!</h4>
+            <p class="signup-note">No cost or commitment, just join. Unsubscribe anytime.</p>
+
+            <div class="form-group">
+                <label for="su_first">First Name</label>
+                <input type="text" id="su_first" name="first_name" placeholder="First Name" autocomplete="given-name" maxlength="60" required>
+            </div>
+
+            <div class="form-group">
+                <label for="su_last">Last Name</label>
+                <input type="text" id="su_last" name="last_name" placeholder="Last Name" autocomplete="family-name" maxlength="60" required>
+            </div>
+
+            <div class="form-group">
+                <label for="su_email">Email Address</label>
+                <input type="email" id="su_email" name="email" placeholder="name@example.com" autocomplete="email" maxlength="200" required>
+            </div>
+
+            <!-- hidden from people; spam bots fill it in, and the server ignores those signups -->
+            <div class="hp" aria-hidden="true">
+                <label for="su_website">Website</label>
+                <input type="text" id="su_website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- Required opt-in checkbox -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="su_opt_in" name="opt_in" required>
+                <label for="su_opt_in">I agree to receive promotional emails, newsletters, and updates. You can unsubscribe at any time.
+                    See our <a href="privacy.html" style="color:#00ff66">Privacy Policy</a>.</label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="signupButton">Subscribe</button>
+            <p class="signup-status" id="signupStatus" role="status" aria-live="polite"></p>
+        </form>
     </section>
 
     <section class="proof" aria-label="Projects">
@@ -539,16 +612,16 @@
             <a class="pill" href="services/automation.html">AI Automation</a>
             <a class="pill" href="services/workflows.html">Custom Workflows</a>
             <a class="pill" href="services/models.html">Models, Tools &amp; Code</a>
-            <a class="pill" href="clubs-nonprofits.html">Nonprofits</a>
+            <a class="pill" href="services/workflows.html#nonprofits">Nonprofits</a>
             <a class="pill primary" href="#quote">Get Started</a>
         </div>
     </section>
 
     <section id="nonprofits">
         <h2 class="section-title">For Memphis nonprofits</h2>
-        <p class="section-sub">A <a href="clubs-nonprofits.html">nonprofit website</a> that supporters can actually use, plus volunteer updates, event signups, newsletters, donation pages, and simple AI.</p>
+        <p class="section-sub">A <a href="services/workflows.html#nonprofits">nonprofit website</a> that supporters can actually use, plus volunteer updates, event signups, newsletters, donation pages, and simple AI.</p>
         <div class="pill-container">
-            <a class="pill primary" href="clubs-nonprofits.html">See nonprofit work</a>
+            <a class="pill primary" href="services/workflows.html#nonprofits">See nonprofit work</a>
             <a class="pill" href="#quote">Get a free quote</a>
         </div>
     </section>
@@ -626,78 +699,6 @@
     <hr>
 
     <!-- CONTACT -->
-    <!-- NEWSLETTER SIGNUP: saved to our database by the quote engine (POST /newsletter) -->
-    <section class="signup-section" id="newsletter">
-        <style>
-            /* Everything here is scoped to .signup-card so it can't change the rest of the page */
-            .signup-section { display: flex; justify-content: center; padding: 10px 20px 40px; }
-            .signup-card {
-                width: 100%; max-width: 480px; background-color: #111111; padding: 32px;
-                border-radius: 16px; border: 1px solid #1a331a; box-shadow: 0 10px 30px rgba(0, 255, 102, 0.05);
-                text-align: center; box-sizing: border-box; color: #ffffff;
-            }
-            .signup-card h4 { margin: 0 0 8px; color: #ffffff; font-size: 1.1rem; line-height: 1.5; font-weight: 500; }
-            .signup-card .signup-note { margin: 0 0 24px; color: #00ff66; font-size: 0.9rem; }
-            .signup-card .form-group { margin-bottom: 18px; text-align: left; }
-            .signup-card .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #e0e0e0; font-weight: 500; }
-            .signup-card .form-group input {
-                width: 100%; padding: 12px; background-color: #1a1a1a; color: #ffffff; border: 1px solid #333333;
-                border-radius: 8px; box-sizing: border-box; outline: none; font-size: 16px; /* 16px stops iPhones zooming in */
-                transition: border-color 0.2s, box-shadow 0.2s;
-            }
-            .signup-card .form-group input:focus { border-color: #00ff66; box-shadow: 0 0 8px rgba(0, 255, 102, 0.2); }
-            .signup-card .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0 24px; text-align: left; }
-            .signup-card .checkbox-group input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: #00ff66; cursor: pointer; }
-            .signup-card .checkbox-group label { font-size: 0.85rem; color: #cccccc; line-height: 1.4; cursor: pointer; }
-            .signup-card .submit-btn {
-                width: 100%; padding: 14px; background-color: #00ff66; color: #000000; border: none; border-radius: 8px;
-                font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, transform 0.1s;
-            }
-            .signup-card .submit-btn:hover { background-color: #00cc52; }
-            .signup-card .submit-btn:active { transform: scale(0.98); }
-            .signup-card .submit-btn:disabled { opacity: 0.6; cursor: wait; }
-            .signup-card .signup-status { min-height: 1.4em; margin: 14px 0 0; font-size: 0.9rem; }
-            .signup-card .signup-status.ok { color: #00ff66; }
-            .signup-card .signup-status.err { color: #ff8080; }
-            .signup-card .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-        </style>
-
-        <form class="signup-card" id="signupForm" novalidate>
-            <h4>Join our mailing list for special offers, early access to videos and products, newsletters, and giveaways!</h4>
-            <p class="signup-note">No cost or commitment, just join. Unsubscribe anytime.</p>
-
-            <div class="form-group">
-                <label for="su_first">First Name</label>
-                <input type="text" id="su_first" name="first_name" placeholder="First Name" autocomplete="given-name" maxlength="60" required>
-            </div>
-
-            <div class="form-group">
-                <label for="su_last">Last Name</label>
-                <input type="text" id="su_last" name="last_name" placeholder="Last Name" autocomplete="family-name" maxlength="60" required>
-            </div>
-
-            <div class="form-group">
-                <label for="su_email">Email Address</label>
-                <input type="email" id="su_email" name="email" placeholder="name@example.com" autocomplete="email" maxlength="200" required>
-            </div>
-
-            <!-- hidden from people; spam bots fill it in, and the server ignores those signups -->
-            <div class="hp" aria-hidden="true">
-                <label for="su_website">Website</label>
-                <input type="text" id="su_website" name="website" tabindex="-1" autocomplete="off">
-            </div>
-
-            <!-- Required opt-in checkbox -->
-            <div class="checkbox-group">
-                <input type="checkbox" id="su_opt_in" name="opt_in" required>
-                <label for="su_opt_in">I agree to receive promotional emails, newsletters, and updates. You can unsubscribe at any time.
-                    See our <a href="privacy.html" style="color:#00ff66">Privacy Policy</a>.</label>
-            </div>
-
-            <button type="submit" class="submit-btn" id="signupButton">Subscribe</button>
-            <p class="signup-status" id="signupStatus" role="status" aria-live="polite"></p>
-        </form>
-    </section>
 
     <section class="contact" id="contact">
         <h2 class="section-title">Let's build something</h2>

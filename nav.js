@@ -41,10 +41,8 @@ const ICONS = {
 const PAGES = [
     { id: 'home',     label: 'Home',     href: '',                   icon: 'home' },     // '' = the main page (abstraction-solutions.com/)
     { id: 'services', label: 'Services', href: 'services.html',      icon: 'services' },
-    { id: 'clubs',    label: 'Nonprofits', href: 'clubs-nonprofits.html', icon: 'clubs' },
     { id: 'cases',    label: 'Case Studies', href: 'case-studies.html', icon: 'cases' },
     { id: 'roi',      label: 'ROI Calculator', href: 'roi.html',        icon: 'roi' },
-    { id: 'memphis',  label: 'Built in Memphis', href: 'memphis.html', icon: 'memphis' },
     { id: 'about',    label: 'About Us', href: 'aboutus.html',       icon: 'about' },
     { id: 'order',    label: 'Order',    href: 'order.html',         icon: 'order' },
     { id: 'contact',  label: 'Contact',  href: '#contact',           icon: 'contact' },  // = abstraction-solutions.com/#contact
@@ -254,7 +252,8 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
         '.site-footer .f-legal{margin-top:22px}' +
         '.site-footer a{color:#dfe7df;text-decoration:none}' +
         '.site-footer a:hover{color:var(--green,#7ee96f)}' +
-        '.site-footer .f-copy{flex-basis:100%;padding-top:18px;border-top:1px solid var(--line,#1e2a20);font-size:.8rem}' +
+        '.site-footer .f-copy{flex-basis:100%;padding-top:18px;border-top:1px solid var(--line,#1e2a20);font-size:.8rem;display:flex;flex-wrap:wrap;gap:8px 18px}' +
+        '.site-footer .f-admin{color:var(--text-muted,#9aa69c);font-size:.8rem}' +
         '.site-footer .f-news{flex-basis:100%;padding-bottom:26px;border-bottom:1px solid var(--line,#1e2a20)}' +
         '@media(max-width:600px){.site-footer{padding-left:44px}}';
     document.head.appendChild(css);
@@ -282,7 +281,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 '<p>Websites, AI automations, and AI education for Memphis small businesses and nonprofits.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul class="f-explore">' +
-                link('services.html', 'Services') + link('clubs-nonprofits.html', 'Nonprofits') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('memphis.html', 'Built in Memphis') + link('aboutus.html', 'About Us') +
+                link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('aboutus.html', 'About Us') +
                 link('case-studies.html', 'Case Studies') + link('roi.html', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
                 link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
@@ -296,7 +295,8 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 link('privacy.html', 'Privacy Policy') + link('returns.html', 'Returns &amp; Refunds') +
                 link('terms.html', 'Terms of Service') +
             '</ul></div>' +
-            '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA</div>';
+            '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA' +
+                '<a class="f-admin" href="' + BASE + 'admin.html">Admin</a></div>';
         fillNewsletters();
     }
 

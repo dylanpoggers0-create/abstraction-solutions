@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Business Workflow Automation with AI | Abstraction Solutions</title>
-    <meta name="description" content="Connect your tools and automate your business workflows with AI, so work moves from step to step without copy-pasting. Free instant quote.">
+    <title>Workflow Automation for Memphis Businesses and Nonprofits | Abstraction Solutions</title>
+    <meta name="description" content="Custom workflows that connect the tools you already use, built in Memphis for small businesses and nonprofits: volunteer updates, signups, newsletters and more. Free instant quote.">
     <link rel="canonical" href="https://abstraction-solutions.com/services/workflows.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Abstraction Solutions">
-    <meta property="og:title" content="Business Workflow Automation with AI | Abstraction Solutions">
-    <meta property="og:description" content="Connect your tools and automate your business workflows with AI, so work moves from step to step without copy-pasting. Free instant quote.">
+    <meta property="og:title" content="Workflow Automation for Memphis Businesses and Nonprofits | Abstraction Solutions">
+    <meta property="og:description" content="Custom workflows that connect the tools you already use, built in Memphis for small businesses and nonprofits: volunteer updates, signups, newsletters and more. Free instant quote.">
     <meta property="og:url" content="https://abstraction-solutions.com/services/workflows.html">
     <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -111,6 +111,56 @@
             margin: 44px auto;
             background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
         }
+
+        /* ---------- nonprofit + Memphis cards (moved here from their own pages) ---------- */
+        .wf-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin: 0 0 22px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .wf-cards li {
+            background-color: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 16px 18px;
+        }
+
+        .wf-cards h3 {
+            margin: 0 0 6px;
+            font-size: 1.05rem;
+            color: white;
+        }
+
+        main .wf-cards p {
+            margin: 0 0 10px;
+            font-size: 0.98rem;
+            line-height: 1.55;
+            color: var(--text-muted);
+        }
+
+        main .wf-cards p:last-child { margin-bottom: 0; }
+
+        .wf-cards a.more {
+            color: var(--green);
+            font-weight: bold;
+            font-size: 0.92rem;
+            text-decoration: none;
+        }
+
+        .wf-details {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin: 0 0 22px;
+        }
+
+        .wf-details summary { cursor: pointer; color: var(--green); font-weight: bold; }
+        .wf-details ul { margin: 12px 0 0; padding-left: 20px; color: var(--text-muted); line-height: 1.6; }
+        .wf-details li { margin-bottom: 8px; }
 
         main .pill-container {
             justify-content: flex-start;
@@ -329,6 +379,63 @@
             <div class="pill-container">
                 <a class="pill" href="../services.html">Get a quote</a>
                 <a class="pill primary" href="../index.html#quote">Free quote in seconds</a>
+            </div>
+        </section>
+
+        <hr class="divider">
+
+        <!-- NONPROFITS (this used to be its own page, clubs-nonprofits.html, which now forwards here) -->
+        <section id="nonprofits">
+            <h2>For Memphis nonprofits</h2>
+            <p>A plain website and simple tools for nonprofits: volunteer updates, event signups, newsletters,
+                donation pages, and AI your supporters can follow. Written for a director or volunteer lead. No technical background needed.</p>
+            <!-- Promo line. Delete this paragraph to remove it. Hidden after Fri Nov 13, 2026, America/Chicago. -->
+            <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
+            <ul class="wf-cards">
+                <li><h3>Nonprofit websites</h3><p>Who you are, what you do, when things happen, and how to reach someone.</p></li>
+                <li><h3>Volunteer communication</h3><p>One place for announcements, so the same update isn't copied across email threads.</p></li>
+                <li><h3>Event RSVPs and signups</h3><p>A form for a meeting, fundraiser or volunteer shift. Responses go to the person you name.</p></li>
+                <li><h3>Newsletters</h3><p>A signup on your site and a simple way to send news to people who asked for it.</p></li>
+                <li><h3>Donation pages</h3><p>Explains where a gift goes and uses the payment link you already have. You stay in charge of the money.</p></li>
+                <li><h3>Simple AI and AI education</h3><p>Small helpers, like sorting incoming messages or drafting reminders you approve.
+                    <a class="more" href="education.html">See AI education</a></p></li>
+            </ul>
+            <details class="wf-details" id="discount">
+                <summary>How the nonprofit discount works</summary>
+                <ul>
+                    <li><strong>Who gets 50%:</strong> nonprofits. Everyone else gets 25% off a quote ordered by Friday, November 13, 2026.</li>
+                    <li><strong>No stacking:</strong> a nonprofit receives 50% off, not 50% plus 25%.</li>
+                    <li><strong>What it covers:</strong> our price for the project. Outside costs like hosting, domain names, software subscriptions or payment fees are separate, and we tell you about those up front.</li>
+                    <li><strong>How to get it:</strong> the instant quote shows the regular estimate. Mention you're a nonprofit in your description, and the discount is applied to your final price by email. We may ask you to confirm nonprofit status before work starts.</li>
+                </ul>
+            </details>
+            <div class="pill-container">
+                <a class="pill primary" href="../index.html#quote">Get a free instant quote</a>
+                <a class="pill" href="mailto:dylanpogue@abstraction-solutions.com">Email us</a>
+            </div>
+        </section>
+
+        <hr class="divider">
+
+        <!-- BUILT IN MEMPHIS (this used to be its own page, memphis.html, which now forwards here) -->
+        <section id="memphis">
+            <h2>Built in Memphis</h2>
+            <p>Abstraction Solutions was founded by Memphian Dylan Pogue. We build AI tools and websites for the small businesses
+                and nonprofits that keep Memphis running, with no calls needed and everything explained in plain English.</p>
+            <p class="muted">One concrete automation for each trade we serve. Every business is different, so your quote reflects what you actually need.</p>
+            <ul class="wf-cards">
+                <li><h3>Dental offices</h3><p>Sort and answer after-hours patient requests, and send recall reminders.</p><p><a class="more" href="../recipes/dental.html">See the recipe &rarr;</a></p></li>
+                <li><h3>Property management</h3><p>Triage maintenance requests and route them to the right vendor.</p><p><a class="more" href="../recipes/property-management.html">See the recipe &rarr;</a></p></li>
+                <li><h3>Plumbing and HVAC</h3><p>Turn every request into a complete job ticket and flag emergencies first.</p><p><a class="more" href="../recipes/plumbing-hvac.html">See the recipe &rarr;</a></p></li>
+                <li><h3>Roofing and landscaping</h3><p>Collect project details and photos up front, and follow up on open estimates.</p><p><a class="more" href="../index.html?describe=Roofing%2Flandscaping%20automation%3A%20collect%20project%20details%20and%20photos%20with%20an%20online%20intake%20form%2C%20summarize%20each%20job%20for%20estimating%2C%20and%20send%20follow-ups%20on%20open%20estimates.#quote">Quote this &rarr;</a></p></li>
+                <li><h3>Veterinary clinics</h3><p>Send vaccine reminders with each pet&#x27;s name and a booking link.</p><p><a class="more" href="../recipes/vet.html">See the recipe &rarr;</a></p></li>
+                <li><h3>Salons</h3><p>Nudge regulars to rebook when they&#x27;re due for their next visit.</p><p><a class="more" href="../recipes/salon.html">See the recipe &rarr;</a></p></li>
+                <li><h3>Cleaning services</h3><p>Handle quote requests, booking confirmations and recurring-visit reminders.</p><p><a class="more" href="../index.html?describe=Cleaning%20service%20automation%3A%20online%20quote%20intake%2C%20booking%20confirmation%20emails%2C%20and%20reminders%20for%20recurring%20visits.#quote">Quote this &rarr;</a></p></li>
+                <li><h3>CPA and accounting firms</h3><p>Send each client a document checklist and chase what&#x27;s missing.</p><p><a class="more" href="../recipes/cpa.html">See the recipe &rarr;</a></p></li>
+            </ul>
+            <div class="pill-container">
+                <a class="pill primary" href="../index.html#quote">Get a free instant quote</a>
+                <a class="pill" href="../recipes/">All automation recipes</a>
             </div>
         </section>
 
