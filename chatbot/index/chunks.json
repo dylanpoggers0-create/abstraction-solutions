@@ -291,7 +291,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Privacy Policy",
-"text": "LEGAL\nEffective November 4, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Email us any time to see or delete your data."
+"text": "LEGAL\nEffective November 7, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Email us any time to see or delete your data."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -315,31 +315,31 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "only receive a record that the payment succeeded.\nNewsletter: if you subscribe, your email address, so we can send our free progress update every 2 weeks. Every newsletter has an unsubscribe link, or email us and we'll remove you.\nEmails you send us: whatever you choose to include.\nTechnical data: your IP address is kept briefly in server memory to stop spam and abuse (rate limiting). It is not saved to our database."
+"text": "only receive a record that the payment succeeded.\nMailing list: if you sign up on our homepage, your first and last name, email address, and the date you agreed, so we can send special offers, early access to videos and products, newsletters, announcements and updates. You can unsubscribe at any time: every email has an unsubscribe link, or email us and we'll remove you.\nEmails you send us: whatever you choose to include."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "(rate limiting). It is not saved to our database.\nWe don't use advertising trackers, and we don't sell or rent your information to anyone.\nVisit counts: we use GoatCounter to count page visits and how many quotes and orders are started. It uses no cookies and doesn't collect personal information, so we can see totals but not who you are."
+"text": "ails you send us: whatever you choose to include.\nTechnical data: your IP address is kept briefly in server memory to stop spam and abuse (rate limiting). It is not saved to our database.\nWe don't use advertising trackers, and we don't sell or rent your information to anyone.\nVisit counts: we use GoatCounter to count page visits and how many quotes and orders are started. It uses no cookies and doesn't collect personal information, so we can see totals but not who you are."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "How we use it",
-"text": "To generate your instant estimate and prepare your final quote.\nTo send you your confirmation, quote, payment receipt and project updates by email.\nTo build and support the project you ordered.\nTo keep the site secure and prevent abuse."
+"text": "To generate your instant estimate and prepare your final quote.\nTo send you your confirmation, quote, payment receipt and project updates by email.\nIf you joined our mailing list, to send you offers, newsletters and announcements until you unsubscribe.\nTo build and support the project you ordered.\nTo keep the site secure and prevent abuse."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": "We rely on a few trusted providers to run the site. Each only gets the information it needs:\nGoogle Gemini : reads the project description you type into the quote tool to estimate its size. Please don't include passwords or sensitive personal information there.\nNeon : the database where orders are stored.\nRender and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data."
+"text": "We rely on a few trusted providers to run the site. Each only gets the information it needs:\nGoogle Gemini : reads the project description you type into the quote tool to estimate its size. Please don't include passwords or sensitive personal information there.\nNeon : the database where orders and mailing-list signups are stored.\nRender and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": ": counts visits without cookies or personal data.\nButtondown : stores newsletter subscribers' email addresses and sends the newsletter.\nStripe : processes payments (see Stripe's privacy policy )."
+"text": ": counts visits without cookies or personal data.\nStripe : processes payments (see Stripe's privacy policy )."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
