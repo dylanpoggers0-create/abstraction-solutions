@@ -311,6 +311,16 @@
         .plan li.paid .st { color: var(--green); }
         .plan li.due { border-color: rgba(245, 196, 81, 0.6); background-color: rgba(245, 196, 81, 0.08); }
         .plan li.due .st { color: #f5c451; font-weight: bold; }
+        .plan li .refund { grid-column: 1 / -1; color: var(--text-muted); font-size: 0.85rem; }
+        .status-badge.cancelled { color: #ff8a80; border-color: rgba(255, 138, 128, 0.5); background-color: rgba(255, 138, 128, 0.1); }
+        #changeBox[hidden] { display: none; }
+        #changeForm .pill-container { margin: 16px 0 0; justify-content: flex-start; }
+        #changeForm textarea { min-height: 100px; }
+        .change-list { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+        .change-list:empty { display: none; }
+        .change-list li { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; overflow-wrap: anywhere; }
+        .change-list .msg { margin: 0 0 4px; white-space: pre-wrap; }
+        .change-list .meta { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
 
         /* ---------- SIGN IN TO CHECKOUT ---------- */
         #googleButton { display: flex; justify-content: center; min-height: 44px; margin-top: 4px; }
@@ -581,6 +591,21 @@
                     <p class="note" id="payMsg" role="status"></p>
                     <!-- Stripe's embedded payment form appears here after "Pay" is clicked -->
                     <div id="checkout-form"></div>
+
+                    <!-- change requests: allowed until Testing begins -->
+                    <div id="changeBox" hidden>
+                        <div class="label plan-label">CHANGE REQUESTS</div>
+                        <ul class="change-list" id="changeList"></ul>
+                        <form class="order-form" id="changeForm">
+                            <label for="changeText">REQUEST A CHANGE</label>
+                            <textarea id="changeText" required minlength="10" maxlength="2000"
+                                placeholder="What would you like to add or change? We'll reply by email, including any price change."></textarea>
+                            <div class="pill-container">
+                                <button class="pill" id="changeButton" type="submit">Send request</button>
+                            </div>
+                        </form>
+                        <p class="note" id="changeNote"></p>
+                    </div>
                 </div>
             </div>
         </details>
@@ -719,7 +744,7 @@
         const lookupMsg = document.getElementById('lookupMsg');
         const lookupResult = document.getElementById('lookupResult');
 
-        const STATUS_TEXT = { new: 'Received', in_progress: 'In progress', complete: 'Complete' };
+        const STATUS_TEXT = { new: 'Received', in_progress: 'In progress', complete: 'Complete', cancelled: 'Cancelled' };
         let lastSearch = null;   // the email + number from the last search (used by Pay now)
         const dollars = function (cents) {
             return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
@@ -835,7 +860,8 @@
                     const meta = document.createElement('span');
                     meta.className = 'meta';
                     const stageName = { planning: 'Planning', coding: 'Coding', testing: 'Testing', done: 'Done' }[o.stage];
-                    meta.textContent = (o.paid_at ? 'Paid in full' : (o.status !== 'complete' && stageName) || STATUS_TEXT[o.status] || o.status) +
+                    meta.textContent = (o.status === 'cancelled' ? 'Cancelled' : o.paid_at ? 'Paid in full'
+                        : (o.status === 'in_progress' && stageName) || STATUS_TEXT[o.status] || o.status) +
                         (o.amount_due_cents ? ' · Payment due ' + dollars(o.amount_due_cents)
                          : o.quote_cents ? ' · ' + dollars(o.quote_cents) : ' · Quote coming') +
                         ' · ' + new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -996,7 +1022,7 @@
             document.getElementById('resDate').textContent = new Date(order.created_at).toLocaleDateString();
 
             const badge = document.getElementById('resStatus');
-            badge.textContent = order.status !== 'complete' && order.stage_name ? order.stage_name : (STATUS_TEXT[order.status] || order.status);
+            badge.textContent = order.status === 'in_progress' && order.stage_name ? order.stage_name : (STATUS_TEXT[order.status] || order.status);
             badge.className = 'status-badge ' + order.status;
 
             const hasQuote = order.quote_cents !== null;
@@ -1027,18 +1053,27 @@
                 sub.textContent = p.percent + '% of the quote';
                 const st = document.createElement('span');
                 st.className = 'st';
-                st.textContent = p.state === 'paid' ? '✓ Paid' : p.state === 'due' ? 'Due now' : 'Later';
+                st.textContent = p.state === 'paid' ? '✓ Paid' : p.state === 'due' ? (p.due_at ? 'Due ' + shortDate(p.due_at) : 'Due now')
+                    : p.state === 'no_charge' ? 'No charge' : order.status === 'cancelled' ? 'Cancelled' : 'Later';
                 li.append(name, amt, sub, st);
+                if (p.refunded_cents) {
+                    const refund = document.createElement('span');
+                    refund.className = 'refund';
+                    refund.textContent = 'Refunded ' + dollars(p.refunded_cents);
+                    li.append(refund);
+                }
                 planList.appendChild(li);
             });
             document.getElementById('resPlanBox').hidden = !plan.length;
             const due = plan.find(function (p) { return p.state === 'due'; });
-            const first = plan[0];
+            const first = plan.find(function (p) { return p.amount_cents > 0; }) || plan[0];   // first stage that costs something
 
             document.getElementById('resNote').textContent =
-                paid ? 'Paid in full on ' + new Date(order.paid_at).toLocaleDateString() + '. Thank you!'
+                order.status === 'cancelled' ? 'This project was cancelled, so nothing more is due. Questions? Reply to any of our emails.'
+                : paid ? 'Paid in full on ' + new Date(order.paid_at).toLocaleDateString() + '. Thank you!'
                 : order.status === 'complete' ? 'This project is complete. Thank you for working with us!'
-                : due ? due.name + ' is ready to start. Pay ' + dollars(due.amount_cents) + ' to begin it; we\'ll start as soon as it\'s paid.'
+                : due ? due.name + ' is ready to start. Pay ' + dollars(due.amount_cents) + (due.due_at ? ' by ' + shortDate(due.due_at) : '') +
+                        ' to begin it; we\'ll start as soon as it\'s paid.'
                 : order.stage ? 'Nothing is due right now. We\'ll email you when the next stage starts.'
                 : hasQuote ? 'Your quote is ready. You don\'t pay it all at once: the first ' + first.percent + '% (' +
                              dollars(first.amount_cents) + ') is due when ' + first.name + ' begins, and we\'ll email you then.'
@@ -1049,6 +1084,7 @@
             payBox.hidden = !due;
             document.getElementById('payButton').textContent = due ? 'Pay ' + dollars(due.amount_cents) + ' for ' + due.name : 'Pay now';
             paidStagesShown = plan.filter(function (p) { return p.state === 'paid'; }).length;
+            showChanges(order);
             document.getElementById('payMsg').textContent = '';
             document.getElementById('checkout-form').replaceChildren();   // clear any earlier payment form
 
@@ -1140,7 +1176,64 @@
         }
 
         // Stripe tells OUR server (webhook) a moment after paying, so ask a few times until it shows Paid
-        let paidStagesShown = 0;   // how many stages showed as paid before paying (to spot the new one)
+        let paidStagesShown = 0;
+
+        function shortDate(iso) {
+            return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        // ---------- CHANGE REQUESTS (until Testing begins) ----------
+        const CHANGE_STATUS = { pending: 'Waiting for our reply', accepted: 'Accepted', declined: 'Not included' };
+        function showChanges(order) {
+            const box = document.getElementById('changeBox');
+            const list = document.getElementById('changeList');
+            const changes = order.changes || [];
+            list.replaceChildren();
+            changes.forEach(function (ch) {
+                const li = document.createElement('li');
+                const msg = document.createElement('p');
+                msg.className = 'msg';
+                msg.textContent = ch.message;
+                const meta = document.createElement('p');
+                meta.className = 'meta';
+                meta.textContent = shortDate(ch.created_at) + ' · ' + (CHANGE_STATUS[ch.status] || ch.status) + (ch.admin_note ? ' · ' + ch.admin_note : '');
+                li.append(msg, meta);
+                list.appendChild(li);
+            });
+            const form = document.getElementById('changeForm');
+            form.hidden = !order.can_request_change;
+            document.getElementById('changeNote').textContent = order.can_request_change
+                ? 'You can request changes until Testing begins. If a change affects the price, we\'ll email you the new payment plan before going ahead.'
+                : order.status === 'cancelled' || order.status === 'complete' ? ''
+                : 'Testing has started, so new change requests are closed. For anything else, reply to any of our emails.';
+            box.hidden = !order.can_request_change && !changes.length;
+        }
+
+        document.getElementById('changeForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const button = document.getElementById('changeButton');
+            const note = document.getElementById('changeNote');
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            try {
+                const response = await fetchWithWake(API_BASE + '/orders/change-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.assign({ message: document.getElementById('changeText').value.trim() }, lastSearch))
+                });
+                const data = await response.json().catch(function () { return {}; });
+                if (response.status === 422) throw new Error('Please describe the change in at least 10 characters.');
+                if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Something went wrong. Please try again.');
+                document.getElementById('changeText').value = '';
+                document.getElementById('lookupForm').requestSubmit();   // reload the order to show it
+                setTimeout(function () { note.textContent = 'Request sent. We\'ll reply by email, usually within 2 business days.'; }, 1500);
+            } catch (error) {
+                note.textContent = error instanceof TypeError ? 'Our system is offline right now. Please try again in a minute.' : error.message;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Send request';
+            }
+        });   // how many stages showed as paid before paying (to spot the new one)
 
         function checkPaid(tries) {
             setTimeout(async function () {

@@ -93,7 +93,7 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Start an AI Project or Check Your Order",
 "heading": "Your orders",
-"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS"
+"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nCHANGE REQUESTS"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -543,13 +543,19 @@
 "url": "https://abstraction-solutions.com/returns.html",
 "title": "Returns & Refunds",
 "heading": "Returns & Refunds",
-"text": "LEGAL\nEffective November 4, 2026\nThe short version: cancel before we start and you get all your money back . Cancel after we've started and you get back the part we haven't worked on yet. After delivery, every project comes with one month of free bug fixes ."
+"text": "LEGAL\nEffective November 4, 2026 · Updated November 9, 2026\nThe short version: you pay one stage at a time, so you're never far ahead of the work. Cancel anytime and nothing more is due. A stage you've paid for that we haven't started comes back to you in full. After delivery, every project comes with one month of free bug fixes ."
 },
 {
 "url": "https://abstraction-solutions.com/returns.html",
 "title": "Returns & Refunds",
 "heading": "Refunds",
-"text": "Before work begins: full refund.\nAfter work has started: partial refund, based on the work completed up to the time you cancel. We'll explain how we worked it out.\nAfter delivery: no refund. Instead, you're covered by the free bug-fix period below."
+"text": "Projects are paid in stages (Planning, Coding, Testing, Done), each when it begins. If you cancel, any payment that's waiting is withdrawn and nothing more is due. For stages you've already paid:\nPaid, but we haven't started it: full refund of that stage.\nIn progress: partial refund of that stage, based on the work completed in it when you cancel. We'll explain how we worked it out.\nFinished stages: not refundable, because that work has been done."
+},
+{
+"url": "https://abstraction-solutions.com/returns.html",
+"title": "Returns & Refunds",
+"heading": "Refunds",
+"text": "not refundable, because that work has been done.\nAfter delivery: no refund. Instead, you're covered by the free bug-fix period below."
 },
 {
 "url": "https://abstraction-solutions.com/returns.html",
@@ -963,13 +969,13 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Terms of Service",
-"text": "LEGAL\nEffective November 4, 2026 · Updated November 6, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You get a full refund if you cancel before we start, a partial refund once work has started, and one month of free bug fixes after we deliver."
+"text": "LEGAL\nEffective November 4, 2026 · Updated November 9, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You pay in stages (Planning, Coding, Testing, Done) as each one begins, never all up front. You can request changes until Testing begins and cancel anytime. A stage you've paid for but we haven't started is fully refundable, and every project comes with one month of free bug fixes ."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Agreement",
-"text": "These terms apply when you use abstraction-solutions.com or order a project from Abstraction Solutions (\"we\", \"us\"). By placing an order or paying a quote, you agree to these terms. See also our Privacy Policy ."
+"text": "These terms apply when you use abstraction-solutions.com or order a project from Abstraction Solutions (\"we\", \"us\"). By placing an order or paying for any stage of a project, you agree to these terms. See also our Privacy Policy ."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
@@ -993,19 +999,55 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Estimates and quotes",
-"text": "The free quote tool gives an automatic estimate only . It is not a binding price.\nAfter you place an order, we review your project and send you a final quote by email. Work starts once you pay it.\nIf the project's requirements change after the quote is paid, we may send an updated quote for the extra work. We won't charge you for anything you haven't approved."
+"text": "The free quote tool gives an automatic estimate only . It is not a binding price.\nAfter you place an order, we review your project and send you a final quote by email, with a payment plan showing what each stage costs."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
-"heading": "Payment",
-"text": "Quotes are paid online by card through Stripe, in US dollars. Prices don't include any third-party costs your project might need (for example, software subscriptions, API usage or hosting), unless the quote says so. We'll tell you about those costs up front."
+"heading": "Payment in stages",
+"text": "Every project moves through four stages: Planning, Coding, Testing and Done . Your payment plan splits the quote across them. Some stages can be $0.\nWhen a stage is ready to begin, we email you a request for that stage's payment. It's due within 7 days unless the email gives another date. We begin each stage once its payment is received , and the project stays paused while a payment is outstanding."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Payment in stages",
+"text": "ject stays paused while a payment is outstanding.\nYou'll only ever be asked for one stage at a time. You never pay for a stage before it's ready to begin.\nWe send reminders while a payment is due or overdue. If a payment stays overdue, we may cancel the project under the cancellation terms below."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Payment in stages",
+"text": "l the project under the cancellation terms below.\nPayments are made online by card through Stripe, in US dollars. Prices don't include third-party costs your project might need (for example, software subscriptions, API usage or hosting) unless the quote says so. We'll tell you about those costs up front."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Changes to your project",
+"text": "You can request changes on your order page (abstraction-solutions.com/order.html) until the Testing stage begins . After that, reply to any of our emails and we'll quote larger changes as a separate project.\nWe'll reply to each request by email. If a change affects the price, we'll send you an updated payment plan before doing the extra work. You're never charged for changes you haven't approved, and stages you've already paid for don't change."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Changes to your project",
+"text": "and stages you've already paid for don't change.\nWe may also adjust the payment plan for stages you haven't paid yet, for example to change a due date or the split between stages. We'll always email you the new plan."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Cancellations and refunds",
-"text": "Before work begins: full refund.\nAfter work has started: partial refund, based on the work completed up to the time you cancel. We'll explain how we worked it out.\nAfter delivery: no refund. Instead, you're covered by the free bug-fix period below.\nTo cancel or request a refund, email dylanpogue@abstraction-solutions.com with your confirmation number. Approved refunds go back to your original payment method."
+"text": "You can cancel at any time. When a project is cancelled, any payment that's waiting is withdrawn and nothing more is due . For stages you've already paid:\nPaid, but we haven't started it: full refund of that stage.\nIn progress: partial refund of that stage, based on the work completed in it when you cancel. We'll explain how we worked it out.\nFinished stages: not refundable, because that work has been done."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Cancellations and refunds",
+"text": "not refundable, because that work has been done.\nAfter delivery: no refund. Instead, you're covered by the free bug-fix period below."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Cancellations and refunds",
+"text": "you're covered by the free bug-fix period below.\nTo cancel or request a refund, email dylanpogue@abstraction-solutions.com with your confirmation number. Approved refunds go back to the card you paid with through Stripe, usually within 5 to 10 business days. We may also cancel a project, for example if a payment stays overdue or we can't complete the work; any refund then follows the same rules."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",

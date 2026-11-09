@@ -251,6 +251,33 @@
         .small-btn.go.confirm { background-color: var(--green); color: black; }
         .small-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         @media (max-width: 600px) { .stage-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .stage-chip .refunded, .stage-chip .due-date { display: block; color: var(--text-muted); font-size: 0.8rem; }
+        .order.cancelled { border-left-color: #ff8a80; opacity: 0.8; }
+        .stage-chip.no_charge .state { color: var(--text-muted); }
+        .stage-tools, .split-box { margin-top: 12px; }
+        .stage-tools summary, .split-box summary { cursor: pointer; color: var(--green); font-weight: bold; }
+        .split-box { background-color: rgba(11, 16, 12, 0.92); border: 1px solid var(--line); border-radius: 16px; padding: 14px 18px; margin-bottom: 16px; }
+        .split-fields { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 10px 0; }
+        .tool { margin-top: 14px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
+        .tool h4, .changes h4 { margin: 0 0 10px; font-size: 1rem; }
+        .plan-edit { display: flex; flex-direction: column; gap: 8px; }
+        .plan-line { display: grid; grid-template-columns: 110px 90px 1fr 1fr; gap: 8px; align-items: center; }
+        .plan-name { font-weight: bold; }
+        .state-small, .fixed { color: var(--text-muted); font-size: 0.9rem; }
+        .unit { display: inline-flex; align-items: center; gap: 6px; }
+        .unit input { width: 110px; padding: 8px 10px; }
+        .tool input.wide, .changes input.wide { width: 100%; box-sizing: border-box; margin-top: 10px; padding: 9px 12px; }
+        .tool .inline, .stage-row .inline { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--text-muted); }
+        .tool .inline input[type=date] { padding: 6px 10px; }
+        .small-btn.danger { border-color: rgba(255, 138, 128, 0.5); color: #ff8a80; }
+        .small-btn.danger.confirm { background-color: #ff8a80; color: black; }
+        .hint.warn { color: #f5c451; }
+        .changes:not(:empty) { margin-top: 14px; }
+        .change { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-top: 8px; }
+        .change.pending { border-color: rgba(245, 196, 81, 0.6); }
+        .change-msg { margin: 0 0 4px; white-space: pre-wrap; }
+        .change .hint { margin: 0; font-size: 0.85rem; }
+        @media (max-width: 600px) { .plan-line { grid-template-columns: 1fr 1fr; } .unit input { width: 90px; } }
 
         .order-top {
             display: flex;
@@ -381,6 +408,15 @@
                     <button class="small-btn" id="refreshButton" type="button">Refresh</button>
                 </div>
                 <p class="msg" id="dashMsg" role="alert"></p>
+                <details class="split-box" id="splitBox" hidden>
+                    <summary>Default payment split for new quotes</summary>
+                    <p class="hint">Each new quote is split across the stages like this. You can still change any order's own plan.</p>
+                    <div class="split-fields" id="splitFields"></div>
+                    <div class="stage-row">
+                        <button class="small-btn go" id="splitSave" type="button">Save default split</button>
+                        <span class="hint" id="splitMsg"></span>
+                    </div>
+                </details>
                 <div id="orderList"></div>
             </div>
 
@@ -1021,11 +1057,12 @@
         // ---------- show the orders ----------
         async function loadOrders() {
             dashMsg.textContent = '';
+            if (document.getElementById('splitBox').hidden) loadDefaultSplit();
             try {
                 const orders = await api('/admin/orders');
                 document.getElementById('orderCount').textContent =
                     orders.length + ' order' + (orders.length === 1 ? '' : 's') + ' · ' +
-                    orders.filter(function (o) { return o.status !== 'complete'; }).length + ' open';
+                    orders.filter(function (o) { return o.status !== 'complete' && o.status !== 'cancelled'; }).length + ' open';
                 orderList.replaceChildren();
                 if (!orders.length) {
                     const p = document.createElement('p');
@@ -1075,12 +1112,14 @@
             // status dropdown: new -> in progress -> complete
             const status = el('select');
             status.setAttribute('aria-label', 'Status');
-            [['new', 'New'], ['in_progress', 'In progress'], ['complete', 'Complete']].forEach(function (pair) {
+            [['new', 'New'], ['in_progress', 'In progress'], ['complete', 'Complete'], ['cancelled', 'Cancelled']].forEach(function (pair) {
                 const option = el('option', '', pair[1]);
                 option.value = pair[0];
                 option.selected = order.status === pair[0];
+                option.disabled = pair[0] === 'cancelled';   // use the Cancel project button instead
                 status.append(option);
             });
+            status.disabled = order.status === 'cancelled';
             status.addEventListener('change', async function () {
                 try {
                     await patchOrder(order, { status: status.value });
@@ -1112,6 +1151,7 @@
                     await patchOrder(order, { quote: dollars });
                     saveQuote.textContent = 'Update quote';
                     saved.textContent = '✓ Saved, customer emailed';
+                    loadOrders();   // show the new plan
                 } catch (error) {
                     if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t save the quote: ' + error.message;
                 }
@@ -1150,20 +1190,50 @@
             const actions = el('div', 'order-actions');
             actions.append(status, quoteBox, del);
 
-            // once billing starts, the quote is locked (the server refuses too)
-            if ((order.plan || []).some(function (p) { return p.state !== 'upcoming'; })) {
+            // a cancelled order's quote can't change (the server refuses too)
+            if (order.status === 'cancelled') {
                 quoteInput.disabled = true;
                 saveQuote.disabled = true;
-                saveQuote.textContent = 'Locked';
-                saveQuote.title = 'Billing has started, so the quote can\'t change.';
+                saveQuote.textContent = 'Cancelled';
             }
 
             card.append(top, meta, details, actions, stagesBox(order));
             return card;
         }
 
-        // ---------- payment stages: each stage bills its share when you move the project into it ----------
+        // ---------- payment stages: each stage bills its part when you move the project into it ----------
         const money = function (cents) { return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 }); };
+        const STATE_TEXT = { paid: '✓ Paid', due: '● Due', no_charge: 'No charge', upcoming: 'Upcoming' };
+
+        // a button that needs a second click: the first click says exactly what will happen
+        function confirmButton(label, confirmText, className, action) {
+            const button = el('button', 'small-btn ' + (className || ''), label);
+            button.type = 'button';
+            let timer;
+            button.addEventListener('click', async function () {
+                if (!button.classList.contains('confirm')) {
+                    button.classList.add('confirm');
+                    button.textContent = typeof confirmText === 'function' ? confirmText() : confirmText;
+                    timer = setTimeout(function () { button.classList.remove('confirm'); button.textContent = label; }, 5000);
+                    return;
+                }
+                clearTimeout(timer);
+                button.disabled = true;
+                try {
+                    await action();
+                } catch (error) {
+                    button.disabled = false;
+                    button.classList.remove('confirm');
+                    button.textContent = label;
+                    if (error.message !== 'logged out') dashMsg.textContent = error.message;
+                }
+            });
+            return button;
+        }
+
+        const postJson = function (path, body, method) {
+            return api(path, { method: method || 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+        };
 
         function stagesBox(order) {
             const box = el('div', 'stages');
@@ -1171,22 +1241,28 @@
             const row = el('div', 'stage-row');
             if (!plan.length) {
                 row.append(el('span', 'hint', 'Set a quote to see the payment stages.'));
-                box.append(row);
+                box.append(row, changesBox(order));
                 return box;
             }
             const chips = el('div', 'stage-chips');
             plan.forEach(function (p) {
                 const chip = el('div', 'stage-chip ' + p.state);
                 chip.append(el('strong', '', p.name + ' · ' + p.percent + '%'), el('span', '', money(p.amount_cents) + ' '),
-                            el('span', 'state', p.state === 'paid' ? '✓ Paid' : p.state === 'due' ? '● Due' : 'Upcoming'));
+                            el('span', 'state', STATE_TEXT[p.state]));
+                if (p.refunded_cents) chip.append(el('span', 'refunded', 'Refunded ' + money(p.refunded_cents)));
+                if (p.due_at) chip.append(el('span', 'due-date', 'Due ' + new Date(p.due_at).toLocaleDateString()));
                 chips.append(chip);
             });
             box.append(chips);
 
+            const cancelled = order.status === 'cancelled';
             const due = plan.find(function (p) { return p.state === 'due'; });
             const next = plan.find(function (p) { return p.state === 'upcoming'; });
             const msg = el('span', 'hint');
-            if (due) {
+            if (cancelled) {
+                msg.textContent = 'Cancelled ' + new Date(order.cancelled_at).toLocaleDateString() + '. Paid stages can still be refunded.';
+                row.append(msg);
+            } else if (due) {
                 msg.textContent = 'Waiting on the ' + due.name + ' payment (' + money(due.amount_cents) + ').';
                 const remind = el('button', 'small-btn', 'Send payment reminder');
                 remind.type = 'button';
@@ -1202,32 +1278,16 @@
                 });
                 row.append(msg, remind);
             } else if (next) {
-                // first click shows exactly what will happen, second click does it
-                const billing = !order.paid_at;
-                const label = (order.stage ? 'Move to ' : 'Start ') + next.name + (billing ? ' & bill ' + money(next.amount_cents) : '');
-                const go = el('button', 'small-btn go', label);
-                go.type = 'button';
-                let timer;
-                go.addEventListener('click', async function () {
-                    if (!go.classList.contains('confirm')) {
-                        go.classList.add('confirm');
-                        go.textContent = billing ? 'Click again: emails ' + order.name + ' a ' + money(next.amount_cents) + ' bill'
-                                                 : 'Click again: already paid, no email sent';
-                        timer = setTimeout(function () { go.classList.remove('confirm'); go.textContent = label; }, 5000);
-                        return;
-                    }
-                    clearTimeout(timer);
-                    go.disabled = true;
-                    try {
+                const nextAmount = order.paid_at ? 0 : next.amount_cents;
+                const label = (order.stage ? 'Move to ' : 'Start ') + next.name + (nextAmount ? ' & bill ' + money(nextAmount) : '');
+                const go = confirmButton(label,
+                    order.paid_at ? 'Click again: already paid, no email sent'
+                    : nextAmount ? 'Click again: emails ' + order.name + ' a ' + money(nextAmount) + ' bill'
+                    : 'Click again: emails ' + order.name + ' an update (no charge)',
+                    'go', async function () {
                         await api('/admin/orders/' + order.id + '/advance', { method: 'POST' });
                         loadOrders();
-                    } catch (error) {
-                        go.disabled = false;
-                        go.classList.remove('confirm');
-                        go.textContent = label;
-                        if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t move ' + order.confirmation + ': ' + error.message;
-                    }
-                });
+                    });
                 msg.textContent = order.stage ? 'Now in ' + order.stage_name + '.' : 'Not started.';
                 row.append(msg, go);
             } else {
@@ -1235,8 +1295,226 @@
                 row.append(msg);
             }
             box.append(row);
+
+            // the tools: edit plan, refunds, cancel (closed until you open them)
+            const tools = el('details', 'stage-tools');
+            tools.append(el('summary', '', cancelled ? 'Refunds' : 'Edit payments, refunds, cancel'));
+            if (!cancelled && plan.some(function (p) { return p.state === 'due' || p.state === 'upcoming'; })) {
+                tools.append(planEditor(order));   // only unpaid stages can change
+            }
+            tools.append(refundTools(order));
+            if (!cancelled) tools.append(cancelTools(order));
+            box.append(tools, changesBox(order));
             return box;
         }
+
+        // orders paid in full before stages existed show every stage "paid" without a payment date
+        function paidBeforeStages(order) {
+            return (order.plan || []).some(function (p) { return p.state === 'paid' && !p.paid_at; });
+        }
+
+        // ----- edit what each unpaid stage costs, by percent or by dollars -----
+        function planEditor(order) {
+            const wrap = el('div', 'tool');
+            wrap.append(el('h4', '', 'Payment plan'));
+            const base = order.quote_cents;                     // percents are worked out from the total
+            const table = el('div', 'plan-edit');
+            const inputs = {};
+            const totalLine = el('p', 'hint');
+            function total() {
+                return order.plan.reduce(function (sum, p) {
+                    return sum + (inputs[p.stage] ? Math.round(parseFloat(inputs[p.stage].dollars.value || '0') * 100) : p.amount_cents);
+                }, 0);
+            }
+            function refresh() {
+                const t = total();
+                Object.keys(inputs).forEach(function (key) {
+                    const cents = Math.round(parseFloat(inputs[key].dollars.value || '0') * 100);
+                    if (document.activeElement !== inputs[key].pct) inputs[key].pct.value = t ? (cents * 100 / t).toFixed(1) : '0';
+                });
+                totalLine.textContent = 'New total: ' + money(t) + (t !== base ? ' (was ' + money(base) + ')' : '');
+            }
+            order.plan.forEach(function (p) {
+                const line = el('div', 'plan-line');
+                line.append(el('span', 'plan-name', p.name), el('span', 'state-small', STATE_TEXT[p.state]));
+                const editable = p.state === 'due' || p.state === 'upcoming';
+                if (editable) {
+                    const pct = el('input'); pct.type = 'number'; pct.min = '0'; pct.max = '100'; pct.step = '0.1';
+                    pct.setAttribute('aria-label', p.name + ' percent'); pct.value = p.percent;
+                    const dollars = el('input'); dollars.type = 'number'; dollars.min = '0'; dollars.step = '0.01';
+                    dollars.setAttribute('aria-label', p.name + ' dollars'); dollars.value = (p.amount_cents / 100).toFixed(2);
+                    pct.addEventListener('input', function () {   // percent of the current total -> dollars
+                        dollars.value = (base * (parseFloat(pct.value) || 0) / 10000).toFixed(2);
+                        refresh();
+                    });
+                    dollars.addEventListener('input', refresh);
+                    inputs[p.stage] = { pct: pct, dollars: dollars };
+                    const pctBox = el('label', 'unit'); pctBox.append(pct, el('span', '', '%'));
+                    const dolBox = el('label', 'unit'); dolBox.append(el('span', '', '$'), dollars);
+                    line.append(pctBox, dolBox);
+                } else {
+                    line.append(el('span', 'fixed', p.percent + '%'), el('span', 'fixed', money(p.amount_cents)));
+                }
+                table.append(line);
+            });
+            wrap.append(table, totalLine);
+            const due = order.plan.find(function (p) { return p.state === 'due'; });
+            let dueInput = null;
+            if (due) {
+                const label = el('label', 'inline', 'Due date for ' + due.name + ' ');
+                dueInput = el('input'); dueInput.type = 'date';
+                if (due.due_at) dueInput.value = new Date(due.due_at).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+                label.append(dueInput);
+                wrap.append(label);
+            }
+            const note = el('input'); note.type = 'text'; note.maxLength = 1000; note.placeholder = 'Note for the customer (optional)';
+            note.className = 'wide';
+            const notify = el('input'); notify.type = 'checkbox'; notify.checked = true;
+            const notifyLabel = el('label', 'inline'); notifyLabel.append(notify, ' Email the customer the new plan');
+            const saveMsg = el('span', 'saved');
+            const save = el('button', 'small-btn go', 'Save plan');
+            save.type = 'button';
+            save.addEventListener('click', async function () {
+                const amounts = {};
+                for (const key of Object.keys(inputs)) {
+                    const cents = Math.round(parseFloat(inputs[key].dollars.value || '0') * 100);
+                    if (cents < 0 || (cents > 0 && cents < 50)) { saveMsg.textContent = 'Each stage must be $0 or at least $0.50.'; return; }
+                    amounts[key] = cents;
+                }
+                save.disabled = true;
+                try {
+                    await postJson('/admin/orders/' + order.id + '/plan', {
+                        amounts: amounts, due_date: dueInput && dueInput.value ? dueInput.value : null,
+                        notify: notify.checked, note: note.value.trim() || null
+                    }, 'PUT');
+                    loadOrders();
+                } catch (error) {
+                    save.disabled = false;
+                    if (error.message !== 'logged out') saveMsg.textContent = error.message;
+                }
+            });
+            const actions = el('div', 'stage-row');
+            actions.append(save, notifyLabel, saveMsg);
+            wrap.append(note, actions);
+            refresh();
+            return wrap;
+        }
+
+        // ----- refunds: any amount up to what was paid for that stage -----
+        function refundTools(order) {
+            const wrap = el('div', 'tool');
+            wrap.append(el('h4', '', 'Refunds'));
+            const paid = (order.plan || []).filter(function (p) { return p.state === 'paid' && p.paid_at && p.amount_cents > p.refunded_cents; });
+            if (!paid.length) {
+                wrap.append(el('p', 'hint', paidBeforeStages(order)
+                    ? 'This order was paid in full before stages existed. Refund it in your Stripe dashboard.'
+                    : 'Nothing to refund yet.'));
+                return wrap;
+            }
+            paid.forEach(function (p) {
+                const line = el('div', 'stage-row');
+                const left = p.amount_cents - p.refunded_cents;
+                const amount = el('input'); amount.type = 'number'; amount.min = '0.01'; amount.step = '0.01';
+                amount.max = (left / 100).toFixed(2); amount.value = (left / 100).toFixed(2);
+                amount.setAttribute('aria-label', 'Refund amount for ' + p.name);
+                const dol = el('label', 'unit'); dol.append(el('span', '', '$'), amount);
+                const button = confirmButton('Refund', function () { return 'Click again: refund $' + parseFloat(amount.value || 0).toFixed(2) + ' to the card'; },
+                    'danger', async function () {
+                        const cents = Math.round(parseFloat(amount.value || '0') * 100);
+                        if (!(cents > 0 && cents <= left)) throw new Error('Refund between $0.01 and ' + money(left) + '.');
+                        await postJson('/admin/orders/' + order.id + '/refund', { stage: p.stage, amount_cents: cents });
+                        loadOrders();
+                    });
+                line.append(el('span', 'plan-name', p.name + ' (paid ' + money(p.amount_cents) + ')'), dol, button);
+                wrap.append(line);
+            });
+            return wrap;
+        }
+
+        // ----- cancel: withdraws the payment that's due; paid stages stay paid until refunded -----
+        function cancelTools(order) {
+            const wrap = el('div', 'tool');
+            wrap.append(el('h4', '', 'Cancel project'));
+            const note = el('input'); note.type = 'text'; note.maxLength = 1000; note.className = 'wide';
+            note.placeholder = 'Reason for the customer (optional, included in the email)';
+            const button = confirmButton('Cancel project', 'Click again: cancel and email ' + order.name, 'danger', async function () {
+                await postJson('/admin/orders/' + order.id + '/cancel', { note: note.value.trim() || null });
+                loadOrders();
+            });
+            wrap.append(note, button);
+            return wrap;
+        }
+
+        // ----- change requests from the customer -----
+        function changesBox(order) {
+            const box = el('div', 'changes');
+            const changes = order.changes || [];
+            if (!changes.length) return box;
+            box.append(el('h4', '', 'Change requests'));
+            changes.forEach(function (ch) {
+                const item = el('div', 'change ' + ch.status);
+                item.append(el('p', 'change-msg', '“' + ch.message + '”'));
+                const meta = el('p', 'hint', new Date(ch.created_at).toLocaleString() + ' · ' +
+                    (ch.status === 'pending' ? 'Waiting for your answer' : ch.status === 'accepted' ? 'Accepted' : 'Declined') +
+                    (ch.admin_note ? ' · Your note: ' + ch.admin_note : ''));
+                item.append(meta);
+                if (ch.status === 'pending') {
+                    const note = el('input'); note.type = 'text'; note.maxLength = 1000; note.className = 'wide';
+                    note.placeholder = 'Note for the customer (optional). Update the plan first if the price changes.';
+                    const actions = el('div', 'stage-row');
+                    ['accepted', 'declined'].forEach(function (decision) {
+                        const b = confirmButton(decision === 'accepted' ? 'Accept' : 'Decline',
+                            'Click again: email ' + order.name, decision === 'accepted' ? 'go' : 'danger', async function () {
+                                await postJson('/admin/orders/' + order.id + '/changes/' + ch.id, { decision: decision, note: note.value.trim() || null });
+                                loadOrders();
+                            });
+                        actions.append(b);
+                    });
+                    item.append(note, actions);
+                }
+                box.append(item);
+            });
+            return box;
+        }
+
+        // ----- your default split for new quotes -----
+        async function loadDefaultSplit() {
+            const box = document.getElementById('splitBox');
+            try {
+                const data = await api('/admin/settings/stages');
+                const fields = document.getElementById('splitFields');
+                fields.replaceChildren();
+                data.stages.forEach(function (s) {
+                    const label = el('label', 'unit');
+                    const input = el('input'); input.type = 'number'; input.min = '0'; input.max = '100'; input.step = '1';
+                    input.value = data.percents[s.stage]; input.dataset.stage = s.stage;
+                    input.setAttribute('aria-label', s.name + ' percent');
+                    input.addEventListener('input', splitSum);
+                    label.append(el('span', 'plan-name', s.name), input, el('span', '', '%'));
+                    fields.append(label);
+                });
+                splitSum();
+                box.hidden = false;
+            } catch (error) { /* older server: hide the box */ }
+        }
+        function splitSum() {
+            const inputs = document.querySelectorAll('#splitFields input');
+            const sum = Array.from(inputs).reduce(function (s, i) { return s + (parseInt(i.value, 10) || 0); }, 0);
+            const msg = document.getElementById('splitMsg');
+            msg.textContent = sum === 100 ? 'Adds up to 100%.' : 'Adds up to ' + sum + '%. It needs to be 100%.';
+            msg.className = 'hint' + (sum === 100 ? '' : ' warn');
+            document.getElementById('splitSave').disabled = sum !== 100;
+        }
+        document.getElementById('splitSave').addEventListener('click', async function () {
+            const percents = {};
+            document.querySelectorAll('#splitFields input').forEach(function (i) { percents[i.dataset.stage] = parseInt(i.value, 10) || 0; });
+            try {
+                await postJson('/admin/settings/stages', { percents: percents }, 'PUT');
+                document.getElementById('splitMsg').textContent = '✓ Saved. New quotes use this split.';
+            } catch (error) {
+                if (error.message !== 'logged out') document.getElementById('splitMsg').textContent = error.message;
+            }
+        });
 
         // already logged in this tab? go straight to the orders
         if (memoryToken) showDashboard();
