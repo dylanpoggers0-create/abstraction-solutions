@@ -235,6 +235,23 @@
             font-size: 0.9rem;
         }
 
+        /* ---------- PAYMENT STAGES (planning -> coding -> testing -> done) ---------- */
+        .stages { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+        .stage-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+        .stage-chip { border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font-size: 0.85rem; line-height: 1.4; }
+        .stage-chip strong { display: block; font-size: 0.95rem; }
+        .stage-chip .state { color: var(--text-muted); }
+        .stage-chip.paid { border-color: var(--green-dim); background-color: var(--green-soft); }
+        .stage-chip.paid .state { color: var(--green); }
+        .stage-chip.due { border-color: rgba(245, 196, 81, 0.6); background-color: rgba(245, 196, 81, 0.08); }
+        .stage-chip.due .state { color: #f5c451; }
+        .stage-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+        .stage-row .hint { color: var(--text-muted); font-size: 0.9rem; }
+        .small-btn.go { border-color: var(--green); color: var(--green); }
+        .small-btn.go.confirm { background-color: var(--green); color: black; }
+        .small-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        @media (max-width: 600px) { .stage-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
         .order-top {
             display: flex;
             flex-wrap: wrap;
@@ -536,7 +553,10 @@
                 logout('Your login expired. Please log in again.');
                 throw new Error('logged out');
             }
-            if (!response.ok) throw new Error('Server error (' + response.status + ')');
+            if (!response.ok) {   // show the server's own explanation when it gives one (e.g. "Waiting on the Planning payment")
+                const body = await response.json().catch(function () { return {}; });
+                throw new Error(typeof body.detail === 'string' ? body.detail : 'Server error (' + response.status + ')');
+            }
             return response.json();
         }
 
@@ -1130,8 +1150,92 @@
             const actions = el('div', 'order-actions');
             actions.append(status, quoteBox, del);
 
-            card.append(top, meta, details, actions);
+            // once billing starts, the quote is locked (the server refuses too)
+            if ((order.plan || []).some(function (p) { return p.state !== 'upcoming'; })) {
+                quoteInput.disabled = true;
+                saveQuote.disabled = true;
+                saveQuote.textContent = 'Locked';
+                saveQuote.title = 'Billing has started, so the quote can\'t change.';
+            }
+
+            card.append(top, meta, details, actions, stagesBox(order));
             return card;
+        }
+
+        // ---------- payment stages: each stage bills its share when you move the project into it ----------
+        const money = function (cents) { return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 }); };
+
+        function stagesBox(order) {
+            const box = el('div', 'stages');
+            const plan = order.plan || [];
+            const row = el('div', 'stage-row');
+            if (!plan.length) {
+                row.append(el('span', 'hint', 'Set a quote to see the payment stages.'));
+                box.append(row);
+                return box;
+            }
+            const chips = el('div', 'stage-chips');
+            plan.forEach(function (p) {
+                const chip = el('div', 'stage-chip ' + p.state);
+                chip.append(el('strong', '', p.name + ' · ' + p.percent + '%'), el('span', '', money(p.amount_cents) + ' '),
+                            el('span', 'state', p.state === 'paid' ? '✓ Paid' : p.state === 'due' ? '● Due' : 'Upcoming'));
+                chips.append(chip);
+            });
+            box.append(chips);
+
+            const due = plan.find(function (p) { return p.state === 'due'; });
+            const next = plan.find(function (p) { return p.state === 'upcoming'; });
+            const msg = el('span', 'hint');
+            if (due) {
+                msg.textContent = 'Waiting on the ' + due.name + ' payment (' + money(due.amount_cents) + ').';
+                const remind = el('button', 'small-btn', 'Send payment reminder');
+                remind.type = 'button';
+                remind.addEventListener('click', async function () {
+                    remind.disabled = true;
+                    try {
+                        await api('/admin/orders/' + order.id + '/remind', { method: 'POST' });
+                        remind.textContent = '✓ Reminder sent';
+                    } catch (error) {
+                        remind.disabled = false;
+                        if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t send the reminder: ' + error.message;
+                    }
+                });
+                row.append(msg, remind);
+            } else if (next) {
+                // first click shows exactly what will happen, second click does it
+                const billing = !order.paid_at;
+                const label = (order.stage ? 'Move to ' : 'Start ') + next.name + (billing ? ' & bill ' + money(next.amount_cents) : '');
+                const go = el('button', 'small-btn go', label);
+                go.type = 'button';
+                let timer;
+                go.addEventListener('click', async function () {
+                    if (!go.classList.contains('confirm')) {
+                        go.classList.add('confirm');
+                        go.textContent = billing ? 'Click again: emails ' + order.name + ' a ' + money(next.amount_cents) + ' bill'
+                                                 : 'Click again: emails ' + order.name + ' an update';
+                        timer = setTimeout(function () { go.classList.remove('confirm'); go.textContent = label; }, 5000);
+                        return;
+                    }
+                    clearTimeout(timer);
+                    go.disabled = true;
+                    try {
+                        await api('/admin/orders/' + order.id + '/advance', { method: 'POST' });
+                        loadOrders();
+                    } catch (error) {
+                        go.disabled = false;
+                        go.classList.remove('confirm');
+                        go.textContent = label;
+                        if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t move ' + order.confirmation + ': ' + error.message;
+                    }
+                });
+                msg.textContent = order.stage ? 'Now in ' + order.stage_name + '.' : 'Not started.';
+                row.append(msg, go);
+            } else {
+                msg.textContent = order.paid_at ? 'All stages done and paid in full. ✓' : 'All stages done.';
+                row.append(msg);
+            }
+            box.append(row);
+            return box;
         }
 
         // already logged in this tab? go straight to the orders

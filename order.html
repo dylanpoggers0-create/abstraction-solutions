@@ -296,6 +296,22 @@
         }
         .agree { color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 0; }
 
+        /* ---------- PAYMENT STAGES on an order ---------- */
+        #resPlanBox[hidden] { display: none; }
+        .plan-label { margin-top: 18px; }
+        .plan { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+        .plan li {
+            display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center;
+            padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px;
+        }
+        .plan li .sub { color: var(--text-muted); font-size: 0.85rem; }
+        .plan li .amt { font-weight: bold; text-align: right; }
+        .plan li .st { grid-column: 2; text-align: right; font-size: 0.85rem; color: var(--text-muted); }
+        .plan li.paid { border-color: var(--green-dim); background-color: var(--green-soft); }
+        .plan li.paid .st { color: var(--green); }
+        .plan li.due { border-color: rgba(245, 196, 81, 0.6); background-color: rgba(245, 196, 81, 0.08); }
+        .plan li.due .st { color: #f5c451; font-weight: bold; }
+
         /* ---------- SIGN IN TO CHECKOUT ---------- */
         #googleButton { display: flex; justify-content: center; min-height: 44px; margin-top: 4px; }
         .or-line { display: flex; align-items: center; gap: 12px; color: var(--text-muted); margin: 18px 0 0; font-size: 0.9rem; }
@@ -553,6 +569,11 @@
                         <dt>Status</dt>  <dd><span class="status-badge" id="resStatus"></span></dd>
                         <dt>Quote</dt>   <dd id="resQuote"></dd>
                     </dl>
+                    <!-- payment stages: you pay each part as that stage begins -->
+                    <div id="resPlanBox" hidden>
+                        <div class="label plan-label">PAYMENTS</div>
+                        <ol class="plan" id="resPlan"></ol>
+                    </div>
                     <p class="note" id="resNote"></p>
                     <div class="pill-container" id="payBox" hidden>
                         <button class="pill primary" id="payButton" type="button">Pay now</button>
@@ -809,12 +830,14 @@
                     const open = document.createElement('button');
                     open.className = 'link-button open-order';
                     open.type = 'button';
-                    open.textContent = o.quote_cents && !o.paid_at ? 'View & pay' : 'View';
+                    open.textContent = o.amount_due_cents ? 'View & pay' : 'View';
                     open.addEventListener('click', function () { openOrder(o.confirmation); });
                     const meta = document.createElement('span');
                     meta.className = 'meta';
-                    meta.textContent = (o.paid_at ? 'Paid' : (STATUS_TEXT[o.status] || o.status)) +
-                        (o.quote_cents ? ' · ' + dollars(o.quote_cents) : ' · Quote coming') +
+                    const stageName = { planning: 'Planning', coding: 'Coding', testing: 'Testing', done: 'Done' }[o.stage];
+                    meta.textContent = (o.paid_at ? 'Paid in full' : (o.status !== 'complete' && stageName) || STATUS_TEXT[o.status] || o.status) +
+                        (o.amount_due_cents ? ' · Payment due ' + dollars(o.amount_due_cents)
+                         : o.quote_cents ? ' · ' + dollars(o.quote_cents) : ' · Quote coming') +
                         ' · ' + new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                     li.append(title, open, meta);
                     list.appendChild(li);
@@ -973,7 +996,7 @@
             document.getElementById('resDate').textContent = new Date(order.created_at).toLocaleDateString();
 
             const badge = document.getElementById('resStatus');
-            badge.textContent = STATUS_TEXT[order.status] || order.status;
+            badge.textContent = order.status !== 'complete' && order.stage_name ? order.stage_name : (STATUS_TEXT[order.status] || order.status);
             badge.className = 'status-badge ' + order.status;
 
             const hasQuote = order.quote_cents !== null;
@@ -987,16 +1010,45 @@
                 quote.append(' ', p);
             }
 
+            // the payment stages: paid / due / upcoming
+            const plan = order.plan || [];
+            const planList = document.getElementById('resPlan');
+            planList.replaceChildren();
+            plan.forEach(function (p) {
+                const li = document.createElement('li');
+                li.className = p.state;
+                const name = document.createElement('strong');
+                name.textContent = p.number + '. ' + p.name;
+                const amt = document.createElement('span');
+                amt.className = 'amt';
+                amt.textContent = dollars(p.amount_cents);
+                const sub = document.createElement('span');
+                sub.className = 'sub';
+                sub.textContent = p.percent + '% of the quote';
+                const st = document.createElement('span');
+                st.className = 'st';
+                st.textContent = p.state === 'paid' ? '✓ Paid' : p.state === 'due' ? 'Due now' : 'Later';
+                li.append(name, amt, sub, st);
+                planList.appendChild(li);
+            });
+            document.getElementById('resPlanBox').hidden = !plan.length;
+            const due = plan.find(function (p) { return p.state === 'due'; });
+            const first = plan[0];
+
             document.getElementById('resNote').textContent =
-                paid ? 'Payment received on ' + new Date(order.paid_at).toLocaleDateString() + '. Thank you!'
+                paid ? 'Paid in full on ' + new Date(order.paid_at).toLocaleDateString() + '. Thank you!'
                 : order.status === 'complete' ? 'This project is complete. Thank you for working with us!'
-                : hasQuote ? 'Your final quote is ready. You can pay securely online with Stripe.'
+                : due ? due.name + ' is ready to start. Pay ' + dollars(due.amount_cents) + ' to begin it; we\'ll start as soon as it\'s paid.'
+                : order.stage ? 'Nothing is due right now. We\'ll email you when the next stage starts.'
+                : hasQuote ? 'Your quote is ready. You don\'t pay it all at once: the first ' + first.percent + '% (' +
+                             dollars(first.amount_cents) + ') is due when ' + first.name + ' begins, and we\'ll email you then.'
                 : 'We\'re reviewing your project and will email you a final quote soon.';
 
-            // show "Pay $X" only when there's a quote and it isn't paid yet
+            // "Pay $X for Coding" only when a stage payment is due
             const payBox = document.getElementById('payBox');
-            payBox.hidden = !(hasQuote && !paid);
-            document.getElementById('payButton').textContent = hasQuote ? 'Pay ' + dollars(order.quote_cents) : 'Pay now';
+            payBox.hidden = !due;
+            document.getElementById('payButton').textContent = due ? 'Pay ' + dollars(due.amount_cents) + ' for ' + due.name : 'Pay now';
+            paidStagesShown = plan.filter(function (p) { return p.state === 'paid'; }).length;
             document.getElementById('payMsg').textContent = '';
             document.getElementById('checkout-form').replaceChildren();   // clear any earlier payment form
 
@@ -1088,6 +1140,8 @@
         }
 
         // Stripe tells OUR server (webhook) a moment after paying, so ask a few times until it shows Paid
+        let paidStagesShown = 0;   // how many stages showed as paid before paying (to spot the new one)
+
         function checkPaid(tries) {
             setTimeout(async function () {
                 try {
@@ -1098,7 +1152,8 @@
                     });
                     if (response.ok) {
                         const order = await response.json();
-                        if (order.paid_at) { showOrder(order); return; }   // the order card now says Paid
+                        const paidNow = (order.plan || []).filter(function (p) { return p.state === 'paid'; }).length;
+                        if (paidNow > paidStagesShown) { showOrder(order); return; }   // the stage now shows Paid
                     }
                 } catch (e) {}
                 if (tries < 2) checkPaid(tries + 1);
