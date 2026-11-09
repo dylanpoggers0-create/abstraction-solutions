@@ -295,6 +295,30 @@
             }
         }
         .agree { color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 0; }
+
+        /* ---------- SIGN IN TO CHECKOUT ---------- */
+        #googleButton { display: flex; justify-content: center; min-height: 44px; margin-top: 4px; }
+        .or-line { display: flex; align-items: center; gap: 12px; color: var(--text-muted); margin: 18px 0 0; font-size: 0.9rem; }
+        .or-line::before, .or-line::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+        .panel .section-note.small { font-size: 0.85rem; text-align: center; margin: 0; }
+        #signInMsg { min-height: 1.4em; margin: 10px 0 0; text-align: center; line-height: 1.5; }
+        #signInMsg:empty { min-height: 0; margin: 0; }
+        .account-bar {
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px;
+            padding: 12px 16px; border: 1px solid var(--green-dim); border-radius: 12px; background-color: var(--green-soft);
+            overflow-wrap: anywhere;
+        }
+        .link-button { background: none; border: none; color: var(--green); font: inherit; font-weight: bold; cursor: pointer; padding: 0; }
+        .link-button:hover { text-decoration: underline; }
+        .order-form input[readonly] { color: var(--text-muted); cursor: not-allowed; }
+        .orders-heading { margin: 30px 0 8px; font-size: 1.1rem; }
+        .my-orders { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+        .my-orders li {
+            display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center;
+            padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; background-color: rgba(11, 16, 12, 0.92);
+        }
+        .my-orders .meta { color: var(--text-muted); font-size: 0.9rem; }
+        .my-orders .open-order { grid-row: span 2; }
         .agree a { color: var(--green); }
 
         /* CASE STUDIES (moved here from case-studies.html) */
@@ -406,18 +430,60 @@
         <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
     </section>
 
-    <!-- TWO DROP-DOWN PANELS: opening one closes the other (see the script at the bottom) -->
+    <!-- THREE DROP-DOWN PANELS: opening one closes the others (see the script at the bottom) -->
     <div class="panels">
+
+        <!-- SIGN IN TO CHECKOUT: Google or an emailed sign-in link. Once signed in, the order form moves in here -->
+        <details class="panel" id="signIn">
+            <summary>
+                <span>
+                    <span class="panel-title">Sign in to checkout</span>
+                    <span class="panel-sub">Keep your orders and quotes in one place</span>
+                </span>
+            </summary>
+            <div class="panel-body">
+                <!-- shown while signed out -->
+                <div id="signedOut">
+                    <div id="googleBox" hidden>
+                        <div id="googleButton"></div>
+                        <p class="or-line"><span>or</span></p>
+                    </div>
+                    <form class="order-form" id="emailSignInForm">
+                        <label for="signInEmail">EMAIL</label>
+                        <input id="signInEmail" type="email" required maxlength="200" autocomplete="email"
+                            placeholder="name@example.com">
+                        <div class="pill-container">
+                            <button class="pill primary" id="emailSignInButton" type="submit">Email me a sign-in link</button>
+                        </div>
+                    </form>
+                    <p class="section-note small">No password needed. The link works once and expires in 15 minutes.</p>
+                </div>
+                <p id="signInMsg" role="status"></p>
+
+                <!-- shown while signed in -->
+                <div id="signedInBox" hidden>
+                    <div class="account-bar">
+                        <span>Signed in as <strong id="accountEmail"></strong></span>
+                        <button class="link-button" id="signOutButton" type="button">Sign out</button>
+                    </div>
+                    <div id="accountFormSlot"></div>
+                    <h3 class="orders-heading">Your orders</h3>
+                    <p class="section-note" id="myOrdersMsg"></p>
+                    <ul class="my-orders" id="myOrders"></ul>
+                </div>
+            </div>
+        </details>
 
         <!-- NEW ORDER. Each name="..." must match a field in the Order model in main.py -->
         <details class="panel" id="newOrder">
             <summary>
                 <span>
-                    <span class="panel-title">New order <span class="badge live">Live</span></span>
-                    <span class="panel-sub">Tell us about your project</span>
+                    <span class="panel-title">Checkout as guest</span>
+                    <span class="panel-sub">Tell us about your project, no account needed</span>
                 </span>
             </summary>
-            <div class="panel-body">
+            <div class="panel-body" id="guestFormSlot">
+                <div id="orderBlock">
                 <form class="order-form" id="orderForm">
                     <label for="name">YOUR NAME</label>
                     <input id="name" name="name" type="text" required maxlength="100" autocomplete="name">
@@ -448,6 +514,7 @@
                     </div>
                 </form>
                 <p id="orderMsg" role="status"></p>
+                </div>
             </div>
         </details>
 
@@ -455,7 +522,7 @@
         <details class="panel" id="lookup">
             <summary>
                 <span>
-                    <span class="panel-title">Check order <span class="badge live">Live</span></span>
+                    <span class="panel-title">Find an order you placed</span>
                     <span class="panel-sub">See the status and quote of an existing order</span>
                 </span>
             </summary>
@@ -591,11 +658,18 @@
             }, 5000);
 
             try {
+                const headers = { 'Content-Type': 'application/json' };
+                const account = orderForm.closest('#signIn') ? currentAccount() : null;
+                if (account) headers.Authorization = 'Bearer ' + account.token;   // saves the order to their account
                 const response = await fetchWithWake(API_BASE + '/orders', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: headers,
                     body: JSON.stringify(order)
                 });
+                if (response.status === 401 && account) {
+                    signOut();
+                    throw new Error('Your sign-in expired. Please sign in again (your order was not sent).');
+                }
 
                 if (response.status === 422) throw new Error('Please check your email and give at least 20 characters of detail.');
                 if (response.status === 429) throw new Error('Too many orders from you today. Please email us instead.');
@@ -606,6 +680,7 @@
                 orderForm.hidden = true;               // hide the form
                 orderMsg.textContent = 'Order received! Your confirmation number is ' + result.confirmation +
                     '. We\'ve emailed it to you, and we\'ll be in touch within 2 business days.';
+                if (account) loadMyOrders();
             } catch (error) {
                 orderMsg.textContent = error instanceof TypeError
                     ? 'Our order system is offline right now. Please email dylanpogue@abstraction-solutions.com.'
@@ -629,16 +704,19 @@
             return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
         };
 
-        // ---------- THE TWO PANELS ----------
+        // ---------- THE THREE PANELS ----------
+        const signInPanel = document.getElementById('signIn');
         const newOrderPanel = document.getElementById('newOrder');
         const lookupPanel = document.getElementById('lookup');
+        const allPanels = [signInPanel, newOrderPanel, lookupPanel];
 
-        // opening one panel closes the other
-        newOrderPanel.addEventListener('toggle', function () {
-            if (newOrderPanel.open) lookupPanel.open = false;
-        });
-        lookupPanel.addEventListener('toggle', function () {
-            if (lookupPanel.open) newOrderPanel.open = false;
+        // opening one panel closes the others
+        allPanels.forEach(function (panel) {
+            panel.addEventListener('toggle', function () {
+                if (!panel.open) return;
+                allPanels.forEach(function (other) { if (other !== panel) other.open = false; });
+                placeOrderForm();
+            });
         });
 
         // The email link fills in the number and opens Check order: order.html?c=12345678#lookup
@@ -652,15 +730,202 @@
             document.getElementById('lookupEmail').focus();
         }
 
-        // "Accept this quote" on the home page sends ?service=...&details=... : fill in and open New order
+        // ---------- CUSTOMER ACCOUNTS: Google or an emailed link, then a signed token from our server ----------
+        // The token is kept in this browser until it expires (3 days) or they sign out.
+        const ACCOUNT_KEY = 'asAccount';
+        const signInMsg = document.getElementById('signInMsg');
+
+        function currentAccount() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(ACCOUNT_KEY) || 'null');
+                if (saved && saved.token && saved.expires * 1000 > Date.now()) return saved;
+                localStorage.removeItem(ACCOUNT_KEY);
+            } catch (e) {}
+            return null;
+        }
+
+        function saveAccount(result) {   // result = { token: "42.1731200000.sig", customer: { email, name } }
+            const account = { token: result.token, email: result.customer.email, name: result.customer.name || '',
+                              expires: Number(result.token.split('.')[1]) };
+            try { localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account)); } catch (e) {}
+            return account;
+        }
+
+        function signOut() {
+            try { localStorage.removeItem(ACCOUNT_KEY); } catch (e) {}
+            if (window.google && google.accounts) google.accounts.id.disableAutoSelect();
+            renderAccount();
+        }
+
+        // The order form lives in one place at a time: inside "Sign in to checkout" when signed in, else "Checkout as guest"
+        function placeOrderForm() {
+            const account = currentAccount();
+            const block = document.getElementById('orderBlock');
+            const emailBox = document.getElementById('email');
+            const nameBox = document.getElementById('name');
+            if (account && !newOrderPanel.open) {
+                document.getElementById('accountFormSlot').appendChild(block);
+                emailBox.value = account.email;
+                emailBox.readOnly = true;            // signed-in orders always use the account's email
+                if (!nameBox.value) nameBox.value = account.name;
+            } else {
+                document.getElementById('guestFormSlot').appendChild(block);
+                if (emailBox.readOnly) { emailBox.readOnly = false; emailBox.value = ''; }
+            }
+        }
+
+        function renderAccount() {
+            const account = currentAccount();
+            document.getElementById('signedOut').hidden = !!account;
+            document.getElementById('signedInBox').hidden = !account;
+            signInPanel.querySelector('.panel-sub').textContent = account
+                ? 'Signed in as ' + account.email : 'Keep your orders and quotes in one place';
+            if (account) {
+                document.getElementById('accountEmail').textContent = account.email;
+                loadMyOrders();
+            }
+            placeOrderForm();
+        }
+
+        async function loadMyOrders() {
+            const account = currentAccount();
+            const list = document.getElementById('myOrders');
+            const msg = document.getElementById('myOrdersMsg');
+            if (!account) return;
+            msg.textContent = 'Loading your orders...';
+            try {
+                const response = await fetchWithWake(API_BASE + '/me/orders', {
+                    headers: { Authorization: 'Bearer ' + account.token }
+                });
+                if (response.status === 401) { signOut(); signInMsg.textContent = 'Your sign-in expired. Please sign in again.'; return; }
+                if (!response.ok) throw new Error();
+                const orders = await response.json();
+                list.replaceChildren();
+                msg.textContent = orders.length ? '' : 'No orders yet. Your first one will show up here.';
+                orders.forEach(function (o) {
+                    const li = document.createElement('li');
+                    const title = document.createElement('strong');
+                    title.textContent = '#' + o.confirmation + ' · ' + o.service;
+                    const open = document.createElement('button');
+                    open.className = 'link-button open-order';
+                    open.type = 'button';
+                    open.textContent = o.quote_cents && !o.paid_at ? 'View & pay' : 'View';
+                    open.addEventListener('click', function () { openOrder(o.confirmation); });
+                    const meta = document.createElement('span');
+                    meta.className = 'meta';
+                    meta.textContent = (o.paid_at ? 'Paid' : (STATUS_TEXT[o.status] || o.status)) +
+                        (o.quote_cents ? ' · ' + dollars(o.quote_cents) : ' · Quote coming') +
+                        ' · ' + new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    li.append(title, open, meta);
+                    list.appendChild(li);
+                });
+            } catch (e) {
+                msg.textContent = 'Couldn\'t load your orders right now. Please try again in a minute.';
+            }
+        }
+
+        // "View" on one of their orders: reuse the Find an order panel (status, quote, Pay now)
+        function openOrder(confirmation) {
+            document.getElementById('lookupEmail').value = currentAccount().email;
+            document.getElementById('lookupCode').value = confirmation;
+            lookupPanel.open = true;
+            lookupPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('lookupForm').requestSubmit();
+        }
+
+        async function finishSignIn(path, body) {   // shared by Google and the email link
+            signInMsg.textContent = 'Signing you in...';
+            try {
+                const response = await fetchWithWake(API_BASE + path, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const result = await response.json().catch(function () { return {}; });
+                if (response.status === 503) throw new Error('Sign-in isn\'t available yet. Please checkout as guest for now.');
+                if (!response.ok) throw new Error(result.detail || 'Sign-in failed. Please try again.');
+                saveAccount(result);
+                signInMsg.textContent = '';
+                window.trackEvent && trackEvent('customer-signin');
+                renderAccount();
+            } catch (error) {
+                signInMsg.textContent = error instanceof TypeError
+                    ? 'Our sign-in system is offline right now. Please checkout as guest.' : error.message;
+            }
+        }
+
+        // 1. Email: ask for a link
+        document.getElementById('emailSignInForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const button = document.getElementById('emailSignInButton');
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            signInMsg.textContent = '';
+            try {
+                const response = await fetchWithWake(API_BASE + '/auth/email/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: document.getElementById('signInEmail').value.trim() })
+                });
+                if (response.status === 422) throw new Error('Please enter a valid email address.');
+                if (response.status === 429) throw new Error('Too many sign-in emails. Please wait a minute and try again.');
+                if (response.status === 503) throw new Error('Sign-in isn\'t available yet. Please checkout as guest for now.');
+                if (!response.ok) throw new Error('Something went wrong on our end. Please try again.');
+                signInMsg.textContent = 'Check your email for a sign-in link. It works once and expires in 15 minutes.';
+            } catch (error) {
+                signInMsg.textContent = error instanceof TypeError
+                    ? 'Our sign-in system is offline right now. Please checkout as guest.' : error.message;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Email me a sign-in link';
+            }
+        });
+
+        // 2. Email: they clicked the link (order.html#signin=CODE). The code after # never reaches any server log.
+        function signInFromLink() {
+            const linkCode = location.hash.startsWith('#signin=') ? location.hash.slice(8) : '';
+            if (!linkCode) return;
+            history.replaceState(null, '', location.pathname + location.search);   // take the code out of the address bar
+            signInPanel.open = true;
+            finishSignIn('/auth/email/verify', { token: linkCode });
+        }
+        signInFromLink();
+        window.addEventListener('hashchange', signInFromLink);   // link opened in a tab that already had this page
+
+        // 3. Google: only shown once the server says a Client ID is set (GOOGLE_CLIENT_ID on Render)
+        fetchWithWake(API_BASE + '/auth/config').then(function (r) { return r.ok ? r.json() : {}; }).then(function (config) {
+            if (!config.google_client_id) return;
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = true;
+            script.onload = function () {
+                google.accounts.id.initialize({
+                    client_id: config.google_client_id,
+                    callback: function (reply) { finishSignIn('/auth/google', { credential: reply.credential }); }
+                });
+                const box = document.getElementById('googleButton');
+                google.accounts.id.renderButton(box, {
+                    theme: 'filled_black', size: 'large', shape: 'rectangular', text: 'continue_with',
+                    width: Math.min(320, box.clientWidth || 320)
+                });
+                document.getElementById('googleBox').hidden = false;
+            };
+            document.head.appendChild(script);
+        }).catch(function () {});
+
+        document.getElementById('signOutButton').addEventListener('click', signOut);
+
+        renderAccount();
+
+        // "Accept this quote" on the home page sends ?service=...&details=... : fill in and open an order panel
         const fromQuote = new URLSearchParams(location.search);
         if (fromQuote.get('details') && !codeFromLink) {
             const serviceBox = document.getElementById('service');
             const wanted = fromQuote.get('service');
             if ([...serviceBox.options].some(function (o) { return o.value === wanted; })) serviceBox.value = wanted;
             document.getElementById('details').value = fromQuote.get('details').slice(0, 3000);
-            newOrderPanel.open = true;
-            document.getElementById('name').focus();
+            (currentAccount() ? signInPanel : newOrderPanel).open = true;
+            document.getElementById(currentAccount() ? 'service' : 'name').focus();
         }
 
         lookupForm.addEventListener('submit', async function (event) {
