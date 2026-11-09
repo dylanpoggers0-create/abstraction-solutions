@@ -1212,7 +1212,7 @@
                     if (!go.classList.contains('confirm')) {
                         go.classList.add('confirm');
                         go.textContent = billing ? 'Click again: emails ' + order.name + ' a ' + money(next.amount_cents) + ' bill'
-                                                 : 'Click again: emails ' + order.name + ' an update';
+                                                 : 'Click again: already paid, no email sent';
                         timer = setTimeout(function () { go.classList.remove('confirm'); go.textContent = label; }, 5000);
                         return;
                     }
