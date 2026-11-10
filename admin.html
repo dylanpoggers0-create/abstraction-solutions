@@ -9,8 +9,10 @@
     <meta name="robots" content="noindex, nofollow">
 
     <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
+    <!-- Security policy: which outside sites this page may load from (Stripe, Google sign-in, our API). -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://*.js.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/client https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.stripe.com https://*.goatcounter.com; font-src 'self' data:; media-src 'self'; connect-src 'self' https://abstraction-quote-engine.onrender.com https://api.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/ https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="hydro-admin.css">
 
     <style>
         main {
@@ -402,13 +404,12 @@
 
         <!-- DASHBOARD (hidden until you log in) -->
         <section id="dashboard" hidden>
-            <!-- TABS: Orders (from the server) and Hydro Cart (from the cart app on this computer) -->
+            <!-- TABS -->
             <div class="tabs" role="tablist">
                 <button class="tab active" id="tabOrders" type="button" role="tab">Orders</button>
                 <button class="tab" id="tabCustomers" type="button" role="tab">Customers</button>
                 <button class="tab" id="tabNews" type="button" role="tab">Newsletter</button>
                 <button class="tab" id="tabAiNews" type="button" role="tab">AI News</button>
-                <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
                 <button class="small-btn" id="logoutButton" type="button">Log out</button>
             </div>
 
@@ -567,12 +568,9 @@
                 </div>
             </div>
 
-            <!-- filled in by hydro-admin.js -->
-            <div id="hydroPanel" hidden></div>
         </section>
     </main>
 
-    <script src="hydro-admin.js"></script>
     <script>
         const API_BASE = 'https://abstraction-quote-engine.onrender.com';
 
@@ -660,7 +658,7 @@
         function showTab(name) {
             const panels = { orders: ['tabOrders', 'ordersPanel', 'Orders'], customers: ['tabCustomers', 'customersPanel', 'Customers'],
                              news: ['tabNews', 'newsPanel', 'Newsletter'],
-                             ainews: ['tabAiNews', 'aiNewsPanel', 'AI News'], hydro: ['tabHydro', 'hydroPanel', 'Hydro Cart'] };
+                             ainews: ['tabAiNews', 'aiNewsPanel', 'AI News'] };
             Object.keys(panels).forEach(function (k) {
                 document.getElementById(panels[k][0]).classList.toggle('active', k === name);
                 document.getElementById(panels[k][1]).hidden = k !== name;
@@ -669,12 +667,8 @@
             if (name === 'news') loadSubscribers();
             if (name === 'customers') loadCustomers();
             if (name === 'ainews') anShowList();
-            document.querySelector('main').classList.toggle('wide', name === 'hydro');
-            if (name === 'hydro') window.HydroAdmin.start();
-            else if (window.HydroAdmin) window.HydroAdmin.stop();
         }
         document.getElementById('tabOrders').addEventListener('click', function () { showTab('orders'); });
-        document.getElementById('tabHydro').addEventListener('click', function () { showTab('hydro'); });
         document.getElementById('tabCustomers').addEventListener('click', function () { showTab('customers'); });
         document.getElementById('tabNews').addEventListener('click', function () { showTab('news'); });
         document.getElementById('tabAiNews').addEventListener('click', function () { showTab('ainews'); });
