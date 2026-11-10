@@ -2,8 +2,10 @@
    hydro-admin.js: the "Hydro Cart" tab on admin.html
 
    Shows live data from the hydroponic cart. The data comes from the Python app
-   (hydro-cart/app/hydro_app.py) running on the SAME computer as this browser, with the
-   Arduino Mega plugged into it by USB. Nothing about the cart is stored on the website.
+   (hydro-cart/app/hydro_app.py) on the Raspberry Pi the Arduino Mega is plugged into.
+     - On the Pi itself: read straight from the app (http://127.0.0.1:8000).
+     - Anywhere else: the Pi's cloud_sync.py sends a copy to the website's server every 15 s,
+       and this tab reads that copy with your admin login. The readings stay on the Pi.
 
    admin.html calls HydroAdmin.start() when the tab opens and HydroAdmin.stop() when it closes.
    ========================================================= */
@@ -13,6 +15,28 @@
     const DEFAULT_APP = LOCAL ? window.HYDRO_APP_BASE : 'http://127.0.0.1:8000';
     let appBase = DEFAULT_APP;
     if (!LOCAL) { try { appBase = localStorage.getItem('hydroApp') || DEFAULT_APP; } catch (e) {} }
+    const CLOUD = 'https://abstraction-quote-engine.onrender.com/hydro';
+    let remote = false;      // true = reading the copy on the website's server
+    let picked = false;      // has the data source been chosen yet
+
+    function adminToken() { try { return sessionStorage.getItem('adminToken'); } catch (e) { return null; } }
+
+    // the cart app on this computer if it answers quickly, otherwise the website's copy
+    async function pickSource() {
+        picked = true;
+        remote = false;
+        if (LOCAL) return;
+        const ctl = new AbortController();
+        const t = setTimeout(function () { ctl.abort(); }, 1500);
+        try {
+            const r = await fetch(appBase + '/api/config', { cache: 'no-store', signal: ctl.signal });
+            if (r.ok) return;
+        } catch (e) {
+        } finally {
+            clearTimeout(t);
+        }
+        remote = !!adminToken();
+    }
 
     let cfg = null;          // the app's settings (healthy ranges etc.)
     let hours = 24;          // chart range
@@ -34,6 +58,7 @@
     function $(id) { return document.getElementById(id); }
 
     async function post(path) {
+        if (remote) throw new Error('only works on the Pi');
         const r = await fetch(appBase + path, { method: 'POST', cache: 'no-store',
                                                 headers: { 'X-Hydro-Action': 'yes' } });
         let j = {};
@@ -68,8 +93,10 @@
     }
 
     async function getJSON(path) {
-        const r = await fetch(appBase + path, { cache: 'no-store' });
-        if (!r.ok) throw new Error('app error ' + r.status);
+        const r = remote
+            ? await fetch(CLOUD + path, { cache: 'no-store', headers: { 'Authorization': 'Bearer ' + adminToken() } })
+            : await fetch(appBase + path, { cache: 'no-store' });
+        if (!r.ok) throw new Error((remote ? 'cloud ' : 'app error ') + r.status);
         return r.json();
     }
 
@@ -93,7 +120,7 @@
         const status = el('div', 'hy-status');
         status.append(el('span', 'hy-dot', ''), el('span', '', 'Connecting...'));
         status.id = 'hyStatus';
-        const conn = el('label', 'hy-conn', 'App address ');
+        const conn = el('label', 'hy-conn hy-pionly', 'App address ');
         const input = el('input');
         input.id = 'hyApp';
         input.value = appBase;
@@ -147,7 +174,7 @@
             });
             range.append(b);
         });
-        const exp = el('a', 'small-btn', 'Download all data (CSV)');
+        const exp = el('a', 'small-btn hy-pionly', 'Download all data (CSV)');
         exp.id = 'hyExport';
         exp.href = appBase + '/api/export.csv';
         const reset = confirmButton('Reset readings', 'Click again to erase all readings', async function () {
@@ -161,6 +188,7 @@
             return 'Reset done (old data backed up)';
         });
         reset.id = 'hyReset';
+        reset.classList.add('hy-pionly');
         const actions = el('div', 'hy-range');
         actions.append(exp, reset);
         top.append(range, actions);
@@ -489,7 +517,7 @@
             }));
         }
         const link = function (text, path) {
-            const a = el('a', 'small-btn', text);
+            const a = el('a', 'small-btn hy-pionly', text);
             a.href = appBase + path;
             return a;
         };
@@ -544,12 +572,18 @@
 
     async function refresh(full) {
         try {
+            if (!picked) { await pickSource(); cfg = null; full = true; }
+            document.querySelectorAll('#hydroPanel .hy-pionly').forEach(function (b) { b.hidden = remote; });
             if (!cfg) cfg = await getJSON('/api/config');
             const latest = await getJSON('/api/latest');
             $('hyHelp').hidden = true;
+            const at = function (ts) { return new Date(ts * 1000).toLocaleTimeString(); };
             setStatus(latest.online ? 'on' : 'off', latest.online
-                ? 'Live · updated ' + new Date(latest.reading.ts * 1000).toLocaleTimeString()
-                : 'App running, but no readings from the Arduino');
+                ? (remote ? 'Live from the Pi at home · updated ' : 'Live · updated ') + at(latest.reading.ts)
+                : remote
+                    ? (latest.reading ? 'The cart stopped reporting · last reading ' + at(latest.reading.ts)
+                                      : 'The Pi is connected, but no readings from the Arduino')
+                    : 'App running, but no readings from the Arduino');
             showCards(latest.reading);
             showSuggestions(await getJSON('/api/suggestions'));
             showEvents(await getJSON('/api/events?limit=40'));
@@ -560,8 +594,16 @@
                 showBenchmark(await getJSON('/api/benchmark?phase=' + benchPhase));
             }
         } catch (e) {
-            setStatus('off', 'Can\'t reach the cart app at ' + appBase);
-            $('hyHelp').hidden = false;
+            if (remote) {
+                setStatus('off', e.message === 'cloud 404' ? 'Waiting for the Pi to send its first update'
+                    : e.message === 'cloud 401' ? 'Log in again to see the cart'
+                    : 'Can\'t reach the website\'s server right now');
+                $('hyHelp').hidden = true;
+            } else {
+                setStatus('off', 'Can\'t reach the cart app at ' + appBase);
+                $('hyHelp').hidden = false;
+            }
+            picked = false;          // look again next time (e.g. the Pi app just started)
         }
     }
 

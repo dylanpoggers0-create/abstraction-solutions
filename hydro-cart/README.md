@@ -53,6 +53,21 @@ or `--port /dev/cu.usbmodem1101` (Mac). Want to try it without the cart? `python
   The first time, Chrome asks to let the site access apps/devices on this computer: click **Allow**.
 - **Or directly:** open http://localhost:8000. This always works while the app runs.
 
+## Raspberry Pi: always on, see it from anywhere
+The Pi runs the app 24/7 with the Mega plugged into it, and `app/cloud_sync.py` sends the dashboard's current data
+to the website's server every 15 seconds. Then admin.html → **Hydro Cart** works from any phone or laptop
+("Live from the Pi at home"). All readings stay on the Pi; the server only keeps the newest copy, in memory.
+On the Pi itself the tab still reads the app directly. Downloads, reset and the test-window buttons only appear on the Pi.
+
+1. Render → quote engine → Environment: add `HYDRO_DEVICE_KEY` (a long random string:
+   `python3 -c "import secrets;print(secrets.token_urlsafe(32))"`).
+2. On the Pi, in `hydro-cart/app`, make `cloud.json` (not uploaded to GitHub):
+   `{"url": "https://abstraction-quote-engine.onrender.com", "key": "<the same key>"}`
+3. Two services start everything on boot: `hydro-cart` (runs `hydro_app.py`) and `hydro-cloud` (runs `cloud_sync.py`).
+   Logs: `journalctl -u hydro-cart -f` and `journalctl -u hydro-cloud -f`.
+
+If the Pi loses power or internet, the tab says "The cart stopped reporting" with the time of the last reading.
+
 ## What it does
 - **Live readings:** pH, the plant tank and the backup tank, and temperature and humidity at the tower top (D26) and room air up top (D27).
 - **Suggestions:** pH low/high, pH drifting out of range soon, plant tank low ("More water!"), backup tank empty, too hot or humid,
@@ -87,4 +102,5 @@ Restart the app after changing settings.
 - `app/hydro_app.py`: the app (USB reader, database, suggestions, web server)
 - `app/models.py`: built-in models and the benchmark
 - `app/my_model.py`: **your model goes here**
+- `app/cloud_sync.py`: sends the dashboard data to the website so admin.html works from anywhere (Pi)
 - `app/static/`: dashboard page. `hydro-admin.js` and `hydro-admin.css` are copies of the website's files of the same name.
