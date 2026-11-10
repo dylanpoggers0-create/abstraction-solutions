@@ -2,3 +2,4 @@
 *.db
 app/config.json
 __pycache__/
+app/cloud.json
