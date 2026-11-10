@@ -163,6 +163,24 @@
             text-align: center;
         }
 
+        /* ---------- TWO-FACTOR ---------- */
+        .twofa-box { max-width: 460px; margin: 0 auto; text-align: center; }
+        .twofa-box h2 { margin-top: 0; }
+        .twofa-steps { text-align: left; color: var(--text-muted); line-height: 1.6; padding-left: 22px; }
+        #twofaQr { display: block; margin: 10px auto; background: white; border-radius: 12px; padding: 8px; image-rendering: pixelated; }
+        .hint-center { color: var(--text-muted); font-size: 0.9rem; overflow-wrap: anywhere; }
+        .hint-center code, .backup-codes code { color: var(--green); font-size: 0.95rem; letter-spacing: 1px; }
+        #twofaCode { font-size: 1.4rem; text-align: center; letter-spacing: 6px; max-width: 220px; margin: 0 auto; display: block; }
+        .backup-codes { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 18px 0; }
+        .backup-codes li { border: 1px solid var(--line); border-radius: 10px; padding: 8px; font-family: monospace; font-size: 1.05rem; }
+        .sec-card { background-color: rgba(11, 16, 12, 0.92); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin-bottom: 16px; }
+        .sec-card h3 { margin: 0 0 8px; }
+        .sec-list { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-direction: column; gap: 8px; }
+        .sec-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+        .sec-list .who { font-weight: bold; min-width: 90px; }
+        .sec-on { color: var(--green); } .sec-off { color: #f5c451; }
+        .sec-card input[type=password], .sec-list input { padding: 8px 12px; }
+
         /* ---------- DASHBOARD ---------- */
         .toolbar {
             display: flex;
@@ -398,11 +416,46 @@
 
             <label for="password">PASSWORD</label>
             <input id="password" type="password" required autocomplete="current-password">
+            <!-- two-factor: appears after the password when your account has it on -->
+            <div id="codeWrap" hidden>
+                <label for="loginCode">CODE FROM YOUR AUTHENTICATOR APP</label>
+                <input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="20"
+                       placeholder="123456 (or a backup code)">
+            </div>
             <div class="pill-container">
                 <button class="pill primary" id="loginButton" type="submit">Log in</button>
             </div>
             <p class="msg" id="loginMsg" role="alert"></p>
         </form>
+
+        <!-- TWO-FACTOR SETUP: scan the QR code, type the first code, save the backup codes -->
+        <section id="twofaSetup" class="twofa-box" hidden>
+            <h2>Set up two-factor</h2>
+            <ol class="twofa-steps">
+                <li>Open <b>Google Authenticator</b>, tap <b>+</b>, then <b>Scan a QR code</b>.</li>
+                <li>Scan this code:</li>
+            </ol>
+            <img id="twofaQr" alt="QR code for your authenticator app" width="240" height="240">
+            <p class="hint-center">Can't scan? Choose "Enter a setup key" and type: <code id="twofaSecret"></code></p>
+            <ol class="twofa-steps" start="3"><li>Type the 6-digit code the app shows:</li></ol>
+            <input id="twofaCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456">
+            <div class="pill-container">
+                <button class="pill primary" id="twofaConfirm" type="button">Turn on two-factor</button>
+                <button class="pill" id="twofaCancel" type="button">Cancel</button>
+            </div>
+            <p class="msg" id="twofaMsg" role="alert"></p>
+        </section>
+
+        <section id="twofaBackup" class="twofa-box" hidden>
+            <h2>Save your backup codes</h2>
+            <p>Two-factor is on. If you lose your phone, each of these codes lets you log in <b>once</b>.
+               Save them somewhere safe (print them or put them in a password manager). They won't be shown again.</p>
+            <ul class="backup-codes" id="backupList"></ul>
+            <div class="pill-container">
+                <button class="pill" id="backupCopy" type="button">Copy codes</button>
+                <button class="pill primary" id="backupDone" type="button">I've saved them</button>
+            </div>
+        </section>
 
         <!-- DASHBOARD (hidden until you log in) -->
         <section id="dashboard" hidden>
@@ -413,6 +466,7 @@
                 <button class="tab" id="tabNews" type="button" role="tab">Newsletter</button>
                 <button class="tab" id="tabAiNews" type="button" role="tab">AI News</button>
                 <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
+                <button class="tab" id="tabSecurity" type="button" role="tab">Security</button>
                 <button class="small-btn" id="logoutButton" type="button">Log out</button>
             </div>
 
@@ -432,6 +486,21 @@
                     </div>
                 </details>
                 <div id="orderList"></div>
+            </div>
+
+            <div id="securityPanel" hidden>
+                <p class="msg" id="secMsg" role="alert"></p>
+                <div class="sec-card">
+                    <h3>Two-factor login</h3>
+                    <p class="hint" id="secRequired"></p>
+                    <ul class="sec-list" id="secList"></ul>
+                </div>
+                <div class="sec-card" id="secSetupBox" hidden>
+                    <h3>Turn on two-factor for your account</h3>
+                    <p class="hint">Enter your password to start. You'll scan a QR code with Google Authenticator.</p>
+                    <input id="secPassword" type="password" autocomplete="current-password" placeholder="Your password">
+                    <div class="stage-row"><button class="small-btn go" id="secStart" type="button">Set up two-factor</button></div>
+                </div>
             </div>
 
             <div id="customersPanel" hidden>
@@ -620,26 +689,48 @@
         }
 
         // ---------- log in / log out ----------
+        // the server answers {detail: "..."} or, for two-factor steps, {detail: {message, code_required | setup_required}}
+        async function readError(response) {
+            const body = await response.json().catch(function () { return {}; });
+            return typeof body.detail === 'object' && body.detail ? body.detail : { message: body.detail };
+        }
+
+        const codeWrap = document.getElementById('codeWrap');
+        const loginCode = document.getElementById('loginCode');
+
         loginForm.addEventListener('submit', async function (event) {
             event.preventDefault();
             loginButton.disabled = true;
             loginButton.textContent = 'Checking...';
             loginMsg.textContent = '';
+            const creds = { username: document.getElementById('username').value, password: document.getElementById('password').value };
             try {
+                const body = Object.assign({}, creds);
+                if (!codeWrap.hidden && loginCode.value.trim()) body.code = loginCode.value.trim();
                 const response = await fetch(API_BASE + '/admin/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: document.getElementById('username').value,
-                        password: document.getElementById('password').value
-                    })
+                    body: JSON.stringify(body)
                 });
+                if (response.ok) {
+                    finishLogin((await response.json()).token);
+                    return;
+                }
+                const error = await readError(response);
+                if (response.status === 401 && error.code_required) {        // right password: ask for the code
+                    codeWrap.hidden = false;
+                    loginCode.value = '';
+                    loginCode.focus();
+                    throw new Error(error.message);
+                }
+                if (response.status === 403 && error.setup_required) {       // two-factor is required: set it up now
+                    await startTwofaSetup(creds, true);
+                    loginMsg.textContent = '';
+                    return;
+                }
                 if (response.status === 401) throw new Error('Wrong username or password.');
-                if (response.status === 429) throw new Error('Too many attempts. Wait a minute and try again.');
-                if (!response.ok) throw new Error('Server error (' + response.status + ').');
-                setToken((await response.json()).token);
-                document.getElementById('password').value = '';
-                showDashboard();
+                if (response.status === 429) throw new Error(error.message || 'Too many attempts. Wait a minute and try again.');
+                throw new Error(error.message || 'Server error (' + response.status + ').');
             } catch (error) {
                 loginMsg.textContent = error instanceof TypeError
                     ? 'Can\'t reach the server. It may be waking up: try again in a minute.'
@@ -650,8 +741,135 @@
             }
         });
 
+        function finishLogin(token) {
+            setToken(token);
+            document.getElementById('password').value = '';
+            loginCode.value = '';
+            codeWrap.hidden = true;
+            showDashboard();
+        }
+
+        // ---------- two-factor setup (from the login screen, or from the Security tab) ----------
+        let setupCreds = null, setupFromLogin = false, pendingToken = null;
+        const twofaSetup = document.getElementById('twofaSetup'), twofaBackup = document.getElementById('twofaBackup');
+        const twofaMsg = document.getElementById('twofaMsg');
+
+        async function startTwofaSetup(creds, fromLogin) {
+            const response = await fetch(API_BASE + '/admin/2fa/setup', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(creds)
+            });
+            if (!response.ok) throw new Error((await readError(response)).message || 'Couldn\'t start setup.');
+            const data = await response.json();
+            setupCreds = creds;
+            setupFromLogin = fromLogin;
+            document.getElementById('twofaQr').src = data.qr;
+            document.getElementById('twofaSecret').textContent = data.secret;
+            document.getElementById('twofaCode').value = '';
+            twofaMsg.textContent = '';
+            loginForm.hidden = true;
+            dashboard.hidden = true;
+            twofaSetup.hidden = false;
+            document.getElementById('twofaCode').focus();
+        }
+
+        document.getElementById('twofaConfirm').addEventListener('click', async function () {
+            const button = this;
+            button.disabled = true;
+            twofaMsg.textContent = '';
+            try {
+                const response = await fetch(API_BASE + '/admin/2fa/confirm', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.assign({ code: document.getElementById('twofaCode').value.trim() }, setupCreds))
+                });
+                if (!response.ok) throw new Error((await readError(response)).message || 'That didn\'t work. Try again.');
+                const data = await response.json();
+                pendingToken = data.token;
+                setupCreds = null;
+                const list = document.getElementById('backupList');
+                list.replaceChildren();
+                data.backup_codes.forEach(function (c) { list.append(el('li', '', c)); });
+                twofaSetup.hidden = true;
+                twofaBackup.hidden = false;
+            } catch (error) {
+                twofaMsg.textContent = error instanceof TypeError ? 'Can\'t reach the server. Try again in a minute.' : error.message;
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        document.getElementById('twofaCancel').addEventListener('click', function () {
+            setupCreds = null;
+            twofaSetup.hidden = true;
+            if (setupFromLogin || !getToken()) { loginForm.hidden = false; } else { dashboard.hidden = false; showTab('security'); }
+        });
+
+        document.getElementById('backupCopy').addEventListener('click', async function () {
+            const text = Array.from(document.querySelectorAll('#backupList li')).map(function (li) { return li.textContent; }).join('\n');
+            try { await navigator.clipboard.writeText(text); this.textContent = '✓ Copied'; } catch (e) { this.textContent = 'Select and copy them by hand'; }
+        });
+
+        document.getElementById('backupDone').addEventListener('click', function () {
+            twofaBackup.hidden = true;
+            document.getElementById('backupList').replaceChildren();   // don't leave the codes on screen
+            document.getElementById('backupCopy').textContent = 'Copy codes';
+            finishLogin(pendingToken);
+            pendingToken = null;
+            if (!setupFromLogin) showTab('security');
+        });
+
+        // ---------- Security tab: who has two-factor, set up your own, owner can reset ----------
+        async function loadSecurity() {
+            const msg = document.getElementById('secMsg');
+            msg.textContent = '';
+            try {
+                const st = await api('/admin/2fa/status');
+                document.getElementById('secRequired').textContent = st.required
+                    ? 'Required: every admin must use a code from their authenticator app to log in.'
+                    : 'Optional for now. Once everyone has it on, set ADMIN_2FA_REQUIRED=true on Render to make it required.';
+                const list = document.getElementById('secList');
+                list.replaceChildren();
+                st.admins.forEach(function (a) {
+                    const li = el('li');
+                    li.append(el('span', 'who', a.username + (a.username === st.you ? ' (you)' : '')),
+                              el('span', a.on ? 'sec-on' : 'sec-off', a.on ? '✓ On · ' + a.backup_codes_left + ' backup codes left' : 'Off'));
+                    if (st.owner && a.on) {
+                        let codeBox = null;
+                        if (a.username === st.you) {
+                            codeBox = el('input'); codeBox.type = 'text'; codeBox.inputMode = 'numeric'; codeBox.placeholder = 'Current code';
+                            codeBox.maxLength = 20; codeBox.setAttribute('aria-label', 'Current code to reset your own two-factor');
+                            li.append(codeBox);
+                        }
+                        li.append(confirmButton('Reset', 'Click again: ' + a.username + ' sets it up again at next login', 'danger', async function () {
+                            await postJson('/admin/2fa/reset/' + encodeURIComponent(a.username), { code: codeBox ? codeBox.value.trim() : null });
+                            if (a.username === st.you) { logout('Your two-factor was reset. Log in to set it up again.'); return; }
+                            loadSecurity();
+                        }));
+                    }
+                    list.append(li);
+                });
+                const me = st.admins.find(function (a) { return a.username === st.you; });
+                document.getElementById('secSetupBox').hidden = !me || me.on;
+            } catch (error) {
+                if (error.message !== 'logged out') msg.textContent = 'Couldn\'t load security settings: ' + error.message;
+            }
+        }
+
+        document.getElementById('secStart').addEventListener('click', async function () {
+            const msg = document.getElementById('secMsg');
+            msg.textContent = '';
+            try {
+                const st = await api('/admin/2fa/status');
+                await startTwofaSetup({ username: st.you, password: document.getElementById('secPassword').value }, false);
+                document.getElementById('secPassword').value = '';
+            } catch (error) {
+                if (error.message !== 'logged out') msg.textContent = error instanceof TypeError ? 'Can\'t reach the server.' : error.message;
+            }
+        });
+
         function logout(message) {
             setToken(null);
+            codeWrap.hidden = true;
+            loginCode.value = '';
             showTab('orders');
             dashboard.hidden = true;
             loginForm.hidden = false;
@@ -664,7 +882,8 @@
         function showTab(name) {
             const panels = { orders: ['tabOrders', 'ordersPanel', 'Orders'], customers: ['tabCustomers', 'customersPanel', 'Customers'],
                              news: ['tabNews', 'newsPanel', 'Newsletter'],
-                             ainews: ['tabAiNews', 'aiNewsPanel', 'AI News'], hydro: ['tabHydro', 'hydroPanel', 'Hydro Cart'] };
+                             ainews: ['tabAiNews', 'aiNewsPanel', 'AI News'], hydro: ['tabHydro', 'hydroPanel', 'Hydro Cart'],
+                             security: ['tabSecurity', 'securityPanel', 'Security'] };
             Object.keys(panels).forEach(function (k) {
                 document.getElementById(panels[k][0]).classList.toggle('active', k === name);
                 document.getElementById(panels[k][1]).hidden = k !== name;
@@ -673,6 +892,7 @@
             if (name === 'news') loadSubscribers();
             if (name === 'customers') loadCustomers();
             if (name === 'ainews') anShowList();
+            if (name === 'security') loadSecurity();
             document.querySelector('main').classList.toggle('wide', name === 'hydro');
             if (name === 'hydro') window.HydroAdmin.start();
             else if (window.HydroAdmin) window.HydroAdmin.stop();
@@ -682,6 +902,7 @@
         document.getElementById('tabCustomers').addEventListener('click', function () { showTab('customers'); });
         document.getElementById('tabNews').addEventListener('click', function () { showTab('news'); });
         document.getElementById('tabAiNews').addEventListener('click', function () { showTab('ainews'); });
+        document.getElementById('tabSecurity').addEventListener('click', function () { showTab('security'); });
         document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
         function showDashboard() {
