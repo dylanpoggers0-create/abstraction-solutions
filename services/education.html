@@ -107,10 +107,27 @@
         /* ---------- VIDEO GALLERY ---------- */
         .gallery {
             display: grid;
-            /* as many columns as fit, each at least 320px (2 videos = 2 columns on a laptop) */
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 22px;
+            /* as many columns as fit, each at least 260px (3 videos side by side on a laptop) */
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
         }
+
+        /* the rest of the videos, behind "Show all" */
+        .more-videos { margin-top: 20px; }
+        .more-videos summary {
+            cursor: pointer;
+            display: inline-block;
+            padding: 10px 18px;
+            border: 1px solid var(--green-dim);
+            border-radius: 50px;
+            color: var(--green);
+            font-weight: bold;
+            list-style: none;
+        }
+        .more-videos summary::-webkit-details-marker { display: none; }
+        .more-videos summary::after { content: " \25BE"; }
+        .more-videos[open] summary::after { content: " \25B4"; }
+        .more-videos[open] summary { margin-bottom: 18px; }
 
         .gallery-item {
             margin: 0;                         /* <figure> has a default margin */
@@ -134,7 +151,7 @@
         }
 
         .gallery-item figcaption {
-            padding: 18px 20px 20px;
+            padding: 14px 16px 16px;
         }
 
         .gallery-item figcaption strong {
@@ -160,6 +177,81 @@
             font-weight: bold;
             letter-spacing: 1.5px;
         }
+
+        /* ---------- CERTIFICATIONS: recommender + browse ---------- */
+        .cert-tool {
+            background-color: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 26px;
+        }
+        .cert-tool h3 { margin: 0 0 6px; font-size: 1.2rem; }
+        .cert-tool label { display: block; font-weight: bold; margin: 16px 0 6px; }
+        .cert-tool input[type=text], .cert-tool input[type=search], .cert-tool textarea, .cert-tool select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background-color: #050805;
+            color: inherit;
+            font: inherit;
+        }
+        .cert-tool textarea { min-height: 170px; resize: vertical; line-height: 1.45; }
+        .cert-tool input:focus, .cert-tool textarea:focus, .cert-tool select:focus { outline: 2px solid var(--green); border-color: transparent; }
+        .cert-hint { color: var(--text-muted); font-size: 0.88rem; margin: 6px 0 0; line-height: 1.45; }
+        .cert-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 16px; }
+        .cert-btn {
+            padding: 11px 22px;
+            border-radius: 50px;
+            border: 1px solid var(--green);
+            background-color: var(--green);
+            color: #041004;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .cert-btn:disabled { opacity: 0.55; cursor: wait; }
+        .cert-file { color: var(--green); cursor: pointer; text-decoration: underline; font-size: 0.92rem; }
+        .cert-file input { display: none; }
+        .cert-status { color: var(--text-muted); font-size: 0.92rem; }
+        .cert-status.error { color: #ff8f8f; }
+        .cert-summary { margin: 18px 0 4px; line-height: 1.5; }
+
+        .cert-filters { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; }
+        .cert-filters label { margin: 0 0 4px; font-size: 0.82rem; color: var(--text-muted); font-weight: normal; }
+        @media (max-width: 700px) { .cert-filters { grid-template-columns: 1fr 1fr; } .cert-filters .wide { grid-column: 1 / -1; } }
+        .cert-count { color: var(--text-muted); font-size: 0.88rem; margin: 14px 0 10px; }
+
+        .cert-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+        .cert-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 6px 16px;
+            min-width: 0;
+            padding: 16px 18px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background-color: rgba(0, 0, 0, 0.35);
+        }
+        .cert-card:hover { border-color: var(--green-dim); }
+        .cert-card h4 { margin: 0; font-size: 1.05rem; line-height: 1.35; overflow-wrap: anywhere; }
+        .cert-card p, .cert-meta { overflow-wrap: anywhere; }
+        @media (max-width: 520px) { .cert-tool { padding: 16px; } .cert-price small { max-width: 120px; } }
+        .cert-card h4 a { color: inherit; text-decoration: none; }
+        .cert-card h4 a:hover { color: var(--green); text-decoration: underline; }
+        .cert-meta { color: var(--text-muted); font-size: 0.86rem; grid-column: 1 / -1; }
+        .cert-card p { margin: 0; grid-column: 1 / -1; line-height: 1.5; }
+        .cert-price { font-weight: bold; color: var(--green); white-space: nowrap; text-align: right; }
+        .cert-price small { display: block; font-weight: normal; color: var(--text-muted); font-size: 0.76rem; max-width: 190px; white-space: normal; }
+        .cert-why { border-left: 3px solid var(--green); padding-left: 10px; }
+        .cert-rank {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px; margin-right: 8px; border-radius: 50%;
+            background-color: var(--green-soft); color: var(--green); font-size: 0.8rem;
+        }
+        .cert-fine { color: var(--text-muted); font-size: 0.8rem; margin-top: 14px; line-height: 1.45; }
 
         /* ---------- TEACHING EXPERIENCE (timeline) ---------- */
         .timeline {
@@ -460,126 +552,191 @@
                     </figcaption>
                 </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/decisiontrees-thumbnail.jpg">
-                        <source src="../videos/decisiontrees.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:54</span>
-                        <strong>Decision Trees: How a Tutor Finds Where You&#x27;re Stuck</strong>
-                        <span>Yes or no questions, learned from examples, with a path you can trace to see exactly why it decided.</span>
-                    </figcaption>
-                </figure>
+            </div>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/randomforests-thumbnail.jpg">
-                        <source src="../videos/randomforests.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:49</span>
-                        <strong>Random Forests: A Panel of Graders</strong>
-                        <span>Hundreds of decision trees trained on different slices of data, voting so one tree&#x27;s quirks get outvoted.</span>
-                    </figcaption>
-                </figure>
+            <!-- MORE VIDEOS: the first 3 show above; the rest open from this drop-down -->
+            <details class="more-videos">
+                <summary>Show all videos (10 more)</summary>
+                <div class="gallery">
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/decisiontrees-thumbnail.jpg">
+                            <source src="../videos/decisiontrees.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:54</span>
+                            <strong>Decision Trees: How a Tutor Finds Where You&#x27;re Stuck</strong>
+                            <span>Yes or no questions, learned from examples, with a path you can trace to see exactly why it decided.</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/clustering-thumbnail.jpg">
-                        <source src="../videos/clustering.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:40</span>
-                        <strong>Clustering: The Lunchroom Nobody Assigned</strong>
-                        <span>Finding natural groups in data with no labels, and why people still have to decide what they mean.</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/randomforests-thumbnail.jpg">
+                            <source src="../videos/randomforests.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:49</span>
+                            <strong>Random Forests: A Panel of Graders</strong>
+                            <span>Hundreds of decision trees trained on different slices of data, voting so one tree&#x27;s quirks get outvoted.</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/anomalydetection-thumbnail.jpg">
-                        <source src="../videos/anomalydetection.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:42</span>
-                        <strong>Anomaly Detection: The Teacher Who Notices</strong>
-                        <span>Learning what normal looks like and flagging what doesn&#x27;t fit. A flag is not a verdict.</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/clustering-thumbnail.jpg">
+                            <source src="../videos/clustering.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:40</span>
+                            <strong>Clustering: The Lunchroom Nobody Assigned</strong>
+                            <span>Finding natural groups in data with no labels, and why people still have to decide what they mean.</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/reinforcementlearning-thumbnail.jpg">
-                        <source src="../videos/reinforcementlearning.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:49</span>
-                        <strong>Reinforcement Learning: How You Learned to Study</strong>
-                        <span>Try something, get a score, adjust. Plus delayed rewards, explore vs. exploit, and rewarding the right thing.</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/anomalydetection-thumbnail.jpg">
+                            <source src="../videos/anomalydetection.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:42</span>
+                            <strong>Anomaly Detection: The Teacher Who Notices</strong>
+                            <span>Learning what normal looks like and flagging what doesn&#x27;t fit. A flag is not a verdict.</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/regressionclassification-thumbnail.jpg">
-                        <source src="../videos/regressionclassification.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:54</span>
-                        <strong>Regression vs. Classification</strong>
-                        <span>Same gradebook, two questions: how much, or which one? Pick the question first, then the model.</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/reinforcementlearning-thumbnail.jpg">
+                            <source src="../videos/reinforcementlearning.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:49</span>
+                            <strong>Reinforcement Learning: How You Learned to Study</strong>
+                            <span>Try something, get a score, adjust. Plus delayed rewards, explore vs. exploit, and rewarding the right thing.</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/showyourwork-thumbnail.jpg">
-                        <source src="../videos/showyourwork.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:48</span>
-                        <strong>Show Your Work: Trustworthy AI</strong>
-                        <span>Three checks before you trust an AI tool: can it explain itself, does it use real sources, does a human sign off?</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/regressionclassification-thumbnail.jpg">
+                            <source src="../videos/regressionclassification.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:54</span>
+                            <strong>Regression vs. Classification</strong>
+                            <span>Same gradebook, two questions: how much, or which one? Pick the question first, then the model.</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/edgeai-thumbnail.jpg">
-                        <source src="../videos/edgeai.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:46</span>
-                        <strong>Edge AI: Pocket Calculator vs. Calling the Professor</strong>
-                        <span>Cloud AI vs. AI that runs right on the device, and two questions to ask before you use either.</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/showyourwork-thumbnail.jpg">
+                            <source src="../videos/showyourwork.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:48</span>
+                            <strong>Show Your Work: Trustworthy AI</strong>
+                            <span>Three checks before you trust an AI tool: can it explain itself, does it use real sources, does a human sign off?</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/staffroom1-thumbnail.jpg">
-                        <source src="../videos/staffroom1.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:49</span>
-                        <strong>Meet the AI Staff Room, Part 1</strong>
-                        <span>Six AI specialists and their jobs: regression, classification, decision trees, random forests, clustering and forecasting.</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/edgeai-thumbnail.jpg">
+                            <source src="../videos/edgeai.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:46</span>
+                            <strong>Edge AI: Pocket Calculator vs. Calling the Professor</strong>
+                            <span>Cloud AI vs. AI that runs right on the device, and two questions to ask before you use either.</span>
+                        </figcaption>
+                    </figure>
 
-                <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/staffroom2-thumbnail.jpg">
-                        <source src="../videos/staffroom2.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        <span class="tag">VIDEO · 1:56</span>
-                        <strong>Meet the AI Staff Room, Part 2</strong>
-                        <span>Six more: computer vision, RAG, recommendations, anomaly detection, reinforcement learning and edge AI. Plus a cheat sheet.</span>
-                    </figcaption>
-                </figure>
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/staffroom1-thumbnail.jpg">
+                            <source src="../videos/staffroom1.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:49</span>
+                            <strong>Meet the AI Staff Room, Part 1</strong>
+                            <span>Six AI specialists and their jobs: regression, classification, decision trees, random forests, clustering and forecasting.</span>
+                        </figcaption>
+                    </figure>
 
+                    <figure class="gallery-item">
+                        <video controls preload="none" poster="../videos/staffroom2-thumbnail.jpg">
+                            <source src="../videos/staffroom2.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">VIDEO · 1:56</span>
+                            <strong>Meet the AI Staff Room, Part 2</strong>
+                            <span>Six more: computer vision, RAG, recommendations, anomaly detection, reinforcement learning and edge AI. Plus a cheat sheet.</span>
+                        </figcaption>
+                    </figure>
+                </div>
+            </details>
+        </section>
+
+        <!-- CERTIFICATIONS: the list comes from ../data/certifications.json (edit prices there).
+             The recommender sends the resume to our server once, to get suggestions. It isn't saved. -->
+        <section id="certifications" aria-labelledby="certsHeading">
+            <h2 id="certsHeading">Find the right AI certification</h2>
+            <p class="section-note">Recognized industry certifications from AWS, Microsoft, Google, NVIDIA, CompTIA and others,
+                with official prices. Get suggestions for your background, or browse and sort them yourself.</p>
+
+            <form class="cert-tool" id="certForm" novalidate>
+                <h3>Get recommendations</h3>
+                <p class="cert-hint">Tell us where you want to go and paste your resume. AI picks from the list below and explains why.</p>
+                <label for="certGoal">Field you want to work in</label>
+                <input type="text" id="certGoal" list="certGoalIdeas" maxlength="100" required
+                       placeholder="e.g. Data analytics, machine learning engineering, AI for business">
+                <datalist id="certGoalIdeas">
+                    <option value="Data analytics"></option>
+                    <option value="Machine learning engineering"></option>
+                    <option value="Generative AI development"></option>
+                    <option value="AI for business and leadership"></option>
+                    <option value="AI governance and privacy"></option>
+                    <option value="Managing AI projects"></option>
+                    <option value="Cloud AI"></option>
+                </datalist>
+                <label for="certResume">Your resume</label>
+                <textarea id="certResume" maxlength="15000" required
+                          placeholder="Paste your resume here: jobs, skills, school, projects. No need to include your name or contact details."></textarea>
+                <p class="cert-hint">Tip: open your resume, select all, copy and paste. Leave out your phone number and address.
+                    Your resume is used once to make suggestions and is never saved.</p>
+                <div class="cert-row">
+                    <button class="cert-btn" type="submit" id="certGo">Recommend certifications</button>
+                    <label class="cert-file">or load a .txt file<input type="file" id="certFile" accept=".txt,text/plain"></label>
+                    <span class="cert-status" id="certStatus" role="status" aria-live="polite"></span>
+                </div>
+                <div id="certResults" hidden>
+                    <p class="cert-summary" id="certSummary"></p>
+                    <ol class="cert-list" id="certPicks"></ol>
+                    <p class="cert-fine">Suggestions are a starting point, not career advice. Check each provider's page for current
+                        prerequisites and prices before you buy.</p>
+                </div>
+            </form>
+
+            <div class="cert-tool">
+                <h3>Browse all certifications</h3>
+                <div class="cert-filters">
+                    <div class="wide"><label for="certSearch">Search</label>
+                        <input type="search" id="certSearch" placeholder="Name, provider or skill"></div>
+                    <div><label for="certField">Field</label><select id="certField"><option value="">All fields</option></select></div>
+                    <div><label for="certLevel">Level</label><select id="certLevel">
+                        <option value="">All levels</option><option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div>
+                    <div><label for="certSort">Sort by</label><select id="certSort">
+                        <option value="cost-asc">Cost: low to high</option><option value="cost-desc">Cost: high to low</option>
+                        <option value="name">Name (A–Z)</option></select></div>
+                </div>
+                <p class="cert-count" id="certCount" aria-live="polite">Loading certifications…</p>
+                <ul class="cert-list" id="certList"></ul>
+                <p class="cert-fine" id="certFine"></p>
             </div>
         </section>
 
@@ -770,6 +927,134 @@
                 }
             }
             load();
+        })();
+    </script>
+
+    <script>
+        // ---------- Certifications: browse, sort by cost, and AI recommendations ----------
+        // Everything from the catalog or the server is shown with textContent (never as HTML).
+        (function () {
+            const API_BASE = 'https://abstraction-quote-engine.onrender.com';
+            const LEVELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
+            let catalog = [], fields = {}, byId = {};
+            const $ = function (id) { return document.getElementById(id); };
+            function el(tag, cls, text) { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+            function safeUrl(u) { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : null; } catch (e) { return null; } }
+
+            function card(c, rank, why) {
+                const li = el('li', 'cert-card');
+                const h = el('h4');
+                if (rank) h.appendChild(el('span', 'cert-rank', String(rank)));
+                const url = safeUrl(c.url);
+                if (url) {
+                    const a = el('a', null, c.name); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+                    a.setAttribute('aria-label', c.name + ' (official page, opens in a new tab)');
+                    h.appendChild(a);
+                } else h.appendChild(document.createTextNode(c.name));
+                li.appendChild(h);
+                const price = el('div', 'cert-price', c.cost_label);
+                if (c.cost_note) price.appendChild(el('small', null, c.cost_note));
+                li.appendChild(price);
+                li.appendChild(el('div', 'cert-meta', [c.provider, LEVELS[c.level] || c.level, c.time,
+                    (c.fields || []).map(function (f) { return fields[f] || f; }).join(', ')].filter(Boolean).join(' · ')));
+                if (why) li.appendChild(el('p', 'cert-why', why));
+                li.appendChild(el('p', null, c.summary));
+                if (c.prereq) li.appendChild(el('p', 'cert-meta', 'Before you start: ' + c.prereq));
+                return li;
+            }
+
+            // unknown prices (null) always go last, whichever way you sort
+            function byCost(dir) {
+                return function (a, b) {
+                    const x = a.cost_usd, y = b.cost_usd;
+                    if (x == null && y == null) return a.name.localeCompare(b.name);
+                    if (x == null) return 1;
+                    if (y == null) return -1;
+                    return (x - y) * dir || a.name.localeCompare(b.name);
+                };
+            }
+
+            function render() {
+                const q = $('certSearch').value.trim().toLowerCase();
+                const f = $('certField').value, lv = $('certLevel').value, sort = $('certSort').value;
+                const shown = catalog.filter(function (c) {
+                    if (f && (c.fields || []).indexOf(f) < 0) return false;
+                    if (lv && c.level !== lv) return false;
+                    if (!q) return true;
+                    const text = [c.name, c.provider, c.summary, c.prereq].concat((c.fields || []).map(function (k) { return fields[k] || k; }))
+                        .join(' ').toLowerCase();
+                    return q.split(/\s+/).every(function (w) { return text.indexOf(w) >= 0; });
+                }).sort(sort === 'name' ? function (a, b) { return a.name.localeCompare(b.name); }
+                                        : byCost(sort === 'cost-desc' ? -1 : 1));
+                const list = $('certList'); list.textContent = '';
+                shown.forEach(function (c) { list.appendChild(card(c)); });
+                $('certCount').textContent = shown.length === catalog.length ? 'Showing all ' + shown.length + ' certifications'
+                    : (shown.length ? 'Showing ' + shown.length + ' of ' + catalog.length : 'No certifications match. Try fewer words or another filter.');
+            }
+
+            async function loadCatalog() {
+                try {
+                    const r = await fetch('../data/certifications.json', { cache: 'no-cache' });
+                    if (!r.ok) throw new Error();
+                    const data = await r.json();
+                    catalog = data.certifications || []; fields = data.fields || {};
+                    catalog.forEach(function (c) { byId[c.id] = c; });
+                    Object.keys(fields).forEach(function (k) { const o = el('option', null, fields[k]); o.value = k; $('certField').appendChild(o); });
+                    $('certFine').textContent = 'Official US list prices, checked ' + data.checked + '. ' +
+                        'Subscriptions are sorted by their estimated total at about 10 hours a week. Prices can change; each name links to the official page.';
+                    render();
+                } catch (e) {
+                    $('certCount').textContent = 'Couldn’t load the list. Please refresh the page.';
+                }
+            }
+            ['certSearch', 'certField', 'certLevel', 'certSort'].forEach(function (id) {
+                $(id).addEventListener(id === 'certSearch' ? 'input' : 'change', render);
+            });
+
+            $('certFile').addEventListener('change', function () {
+                const file = this.files[0]; this.value = '';
+                if (!file) return;
+                if (file.size > 200000) { status('That file is too big. Paste the text instead.', true); return; }
+                file.text().then(function (t) { $('certResume').value = t.slice(0, 15000); status(''); });
+            });
+
+            function status(msg, isError) { const s = $('certStatus'); s.textContent = msg; s.className = 'cert-status' + (isError ? ' error' : ''); }
+
+            $('certForm').addEventListener('submit', async function (ev) {
+                ev.preventDefault();
+                const goal = $('certGoal').value.trim(), resume = $('certResume').value.trim();
+                if (goal.length < 2) { status('Tell us the field you want to work in.', true); $('certGoal').focus(); return; }
+                if (resume.length < 30) { status('Paste a bit more of your resume (at least a few lines).', true); $('certResume').focus(); return; }
+                const btn = $('certGo'); btn.disabled = true;
+                status('Thinking… (the first request can take up to a minute while our server wakes up)');
+                try {
+                    let r, tries = 0;
+                    while (true) {          // the free server may be asleep: retry a few times on 502/503/504
+                        r = await fetch(API_BASE + '/certs/recommend', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ field: goal, resume: resume.slice(0, 15000) }),
+                            signal: AbortSignal.timeout(60000)
+                        });
+                        if ([502, 503, 504].indexOf(r.status) < 0 || ++tries >= 3) break;
+                        await new Promise(function (d) { setTimeout(d, 4000); });
+                    }
+                    if (r.status === 429) throw new Error('You’ve reached the limit for now. Please try again later.');
+                    if (!r.ok) throw new Error('Something went wrong. Please try again in a minute.');
+                    const data = await r.json();
+                    const picks = (data.recommendations || []).filter(function (p) { return byId[p.id]; });
+                    if (!picks.length) throw new Error('No matches this time. Try describing the field differently.');
+                    const ol = $('certPicks'); ol.textContent = '';
+                    picks.forEach(function (p, i) { ol.appendChild(card(byId[p.id], i + 1, p.why)); });
+                    $('certSummary').textContent = data.summary || 'Suggested order, starting from the top:';
+                    $('certResults').hidden = false;
+                    status('');
+                    $('certResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch (e) {
+                    status(e.name === 'TimeoutError' || e.name === 'TypeError' ? 'Couldn’t reach our server. Please try again in a minute.' : e.message, true);
+                } finally { btn.disabled = false; }
+            });
+
+            loadCatalog();
         })();
     </script>
 
