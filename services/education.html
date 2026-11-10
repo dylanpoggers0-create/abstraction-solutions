@@ -213,8 +213,8 @@
             cursor: pointer;
         }
         .cert-btn:disabled { opacity: 0.55; cursor: wait; }
-        .cert-file { color: var(--green); cursor: pointer; text-decoration: underline; font-size: 0.92rem; }
-        .cert-file input { display: none; }
+        .cert-btn-outline { background-color: transparent; color: var(--green); }
+        .cert-btn-outline:hover { background-color: var(--green-soft); }
         .cert-status { color: var(--text-muted); font-size: 0.92rem; }
         .cert-status.error { color: #ff8f8f; }
         .cert-summary { margin: 18px 0 4px; line-height: 1.5; }
@@ -706,11 +706,12 @@
                 <label for="certResume">Your resume</label>
                 <textarea id="certResume" maxlength="15000" required
                           placeholder="Paste your resume here: jobs, skills, school, projects. No need to include your name or contact details."></textarea>
-                <p class="cert-hint">Tip: open your resume, select all, copy and paste. Leave out your phone number and address.
+                <p class="cert-hint">Upload your resume as a PDF, or paste it. Leave out your phone number and address.
                     Your resume is used once to make suggestions and is never saved.</p>
                 <div class="cert-row">
                     <button class="cert-btn" type="submit" id="certGo">Recommend certifications</button>
-                    <label class="cert-file">or load a .txt file<input type="file" id="certFile" accept=".txt,text/plain"></label>
+                    <button class="cert-btn cert-btn-outline" type="button" id="certUpload">Upload resume.pdf</button>
+                    <input type="file" id="certFile" accept=".pdf,application/pdf,.txt,text/plain" hidden>
                     <span class="cert-status" id="certStatus" role="status" aria-live="polite"></span>
                 </div>
                 <div id="certResults" hidden>
@@ -1011,11 +1012,51 @@
                 $(id).addEventListener(id === 'certSearch' ? 'input' : 'change', render);
             });
 
-            $('certFile').addEventListener('change', function () {
-                const file = this.files[0]; this.value = '';
+            // "Upload resume.pdf": the button opens the file picker (the hidden <input type=file>).
+            $('certUpload').addEventListener('click', function () { $('certFile').click(); });
+
+            // The file as base64 text, so it can travel inside JSON ("data:application/pdf;base64,JVBER..." -> "JVBER...")
+            function toBase64(file) {
+                return new Promise(function (resolve, reject) {
+                    const reader = new FileReader();
+                    reader.onload = function () { resolve(String(reader.result).split(',')[1] || ''); };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            $('certFile').addEventListener('change', async function () {
+                const file = this.files[0]; this.value = '';          // reset, so picking the same file again still works
                 if (!file) return;
-                if (file.size > 200000) { status('That file is too big. Paste the text instead.', true); return; }
-                file.text().then(function (t) { $('certResume').value = t.slice(0, 15000); status(''); });
+                const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+                if (!isPdf) {                                          // a .txt file is read right here in the browser
+                    if (file.size > 200000) { status('That file is too big. Paste the text instead.', true); return; }
+                    $('certResume').value = (await file.text()).slice(0, 15000);
+                    status('Loaded \u201c' + file.name + '\u201d. Check it, then press Recommend.');
+                    return;
+                }
+                if (file.size > 3000000) { status('That PDF is over 3 MB. Paste the text instead.', true); return; }
+                const btn = $('certUpload'); btn.disabled = true;
+                status('Reading your resume\u2026 (the first try can take up to a minute while our server wakes up)');
+                try {
+                    const body = JSON.stringify({ pdf_base64: await toBase64(file) });
+                    let r, tries = 0;
+                    while (true) {          // the free server may be asleep: retry a few times on 502/503/504
+                        r = await fetch(API_BASE + '/certs/resume-text', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body,
+                            signal: AbortSignal.timeout(60000)
+                        });
+                        if ([502, 503, 504].indexOf(r.status) < 0 || ++tries >= 3) break;
+                        await new Promise(function (d) { setTimeout(d, 4000); });
+                    }
+                    const data = await r.json().catch(function () { return {}; });
+                    if (!r.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Couldn\u2019t read that PDF. Paste the text instead.');
+                    $('certResume').value = data.text;
+                    status('Loaded \u201c' + file.name + '\u201d. Check the text, delete your phone number and address, then press Recommend.');
+                    $('certResume').focus();
+                } catch (e) {
+                    status(e.name === 'TimeoutError' || e.name === 'TypeError' ? 'Couldn\u2019t reach our server. Please try again in a minute.' : e.message, true);
+                } finally { btn.disabled = false; }
             });
 
             function status(msg, isError) { const s = $('certStatus'); s.textContent = msg; s.className = 'cert-status' + (isError ? ' error' : ''); }
