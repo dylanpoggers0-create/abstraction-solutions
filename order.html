@@ -18,6 +18,9 @@
     <link rel="shortcut icon" href="abstraction_solutions.jpg">
 
     <!-- Shared styles (header, side nav, pills, footer...) -->
+    <!-- Security policy: which outside sites this page may load from (Stripe, Google sign-in, our API). -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://*.js.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/client https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.stripe.com https://*.goatcounter.com; font-src 'self' data:; media-src 'self'; connect-src 'self' https://abstraction-quote-engine.onrender.com https://api.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/ https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="stylesheet" href="style.css">
 
     <!-- Stripe's payment form. Always load it from js.stripe.com (never copy it), so card data stays with Stripe -->
