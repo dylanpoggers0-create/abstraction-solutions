@@ -180,6 +180,15 @@
         .sec-list .who { font-weight: bold; min-width: 90px; }
         .sec-on { color: var(--green); } .sec-off { color: #f5c451; }
         .sec-card input[type=password], .sec-list input { padding: 8px 12px; }
+        .watch-stats { color: var(--text-muted); font-size: 0.9rem; margin: 4px 0 0; }
+        .watch-list li { flex-direction: column; align-items: stretch; gap: 6px; }
+        .watch-top { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+        .watch-p { font-weight: bold; color: #f5c451; } .watch-p.low { color: var(--green); }
+        .watch-wave { display: flex; align-items: flex-end; height: 22px; gap: 1px; }
+        .watch-wave span { flex: 1; max-width: 10px; height: 4px; background: rgba(126, 233, 111, 0.25); border-radius: 1px; }
+        .watch-wave span.on { height: 22px; background: var(--green); }
+        .watch-sum { color: var(--text-muted); font-size: 0.85rem; }
+        .watch-label { color: var(--green); font-size: 0.85rem; }
 
         /* ---------- DASHBOARD ---------- */
         .toolbar {
@@ -494,6 +503,14 @@
                     <h3>Two-factor login</h3>
                     <p class="hint" id="secRequired"></p>
                     <ul class="sec-list" id="secList"></ul>
+                </div>
+                <div class="sec-card">
+                    <h3>Request watch</h3>
+                    <p class="hint">Requests to the certification recommender, résumé upload, sign-in links and orders are scored
+                        for unusual patterns. This only watches: the normal limits still do the blocking. Mark each flag so
+                        the watch learns what's fine and what isn't.</p>
+                    <p class="watch-stats" id="watchStats"></p>
+                    <ul class="sec-list watch-list" id="watchList"></ul>
                 </div>
                 <div class="sec-card" id="secSetupBox" hidden>
                     <h3>Turn on two-factor for your account</h3>
@@ -849,8 +866,50 @@
                 });
                 const me = st.admins.find(function (a) { return a.username === st.you; });
                 document.getElementById('secSetupBox').hidden = !me || me.on;
+                loadWatch();
             } catch (error) {
                 if (error.message !== 'logged out') msg.textContent = 'Couldn\'t load security settings: ' + error.message;
+            }
+        }
+
+        // ---------- request watch: flagged requests, each with its fingerprint drawn as a square wave ----------
+        async function loadWatch() {
+            const list = document.getElementById('watchList'), stats = document.getElementById('watchStats');
+            try {
+                const data = await api('/admin/request-watch');
+                const s = data.stats || {};
+                stats.textContent = 'Last 7 days: ' + (s.seen || 0) + ' requests watched, ' + (s.flagged || 0) + ' flagged, ' +
+                    (s.labeled || 0) + ' marked by you. Certification votes so far: ' + (s.cert_votes || 0) + '.';
+                list.replaceChildren();
+                if (!data.items.length) { list.append(el('li', 'watch-sum', 'Nothing flagged. 👍')); return; }
+                data.items.forEach(function (it) {
+                    const li = el('li');
+                    const top = el('div', 'watch-top');
+                    top.append(el('span', 'who', it.endpoint),
+                               el('span', 'watch-p' + (it.p_suspicious < 0.6 ? ' low' : ''), Math.round(it.p_suspicious * 100) + '% unusual'),
+                               el('span', 'watch-sum', new Date(it.at).toLocaleString() + ' · visitor ' + it.visitor));
+                    const wave = el('div', 'watch-wave');
+                    wave.title = 'Fingerprint: ' + it.wave;
+                    it.wave.split('').forEach(function (b) { wave.append(el('span', b === '1' ? 'on' : '')); });
+                    li.append(top, wave, el('div', 'watch-sum', it.summary + (it.signals.length ? ' · ' + it.signals.join(', ') : '')));
+                    const row = el('div', 'watch-top');
+                    if (it.label) row.append(el('span', 'watch-label', 'Marked: ' + it.label));
+                    ['normal', 'suspicious'].forEach(function (label) {
+                        if (label === it.label) return;
+                        const b = el('button', 'small-btn' + (label === 'normal' ? ' go' : ''), label === 'normal' ? 'Fine' : 'Suspicious');
+                        b.type = 'button';
+                        b.addEventListener('click', async function () {
+                            b.disabled = true;
+                            try { await postJson('/admin/request-watch/' + it.id + '/label', { label: label }); loadWatch(); }
+                            catch (error) { b.disabled = false; if (error.message !== 'logged out') stats.textContent = error.message; }
+                        });
+                        row.append(b);
+                    });
+                    li.append(row);
+                    list.append(li);
+                });
+            } catch (error) {
+                if (error.message !== 'logged out') stats.textContent = 'Couldn\'t load the request watch: ' + error.message;
             }
         }
 
