@@ -123,7 +123,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Privacy Policy",
-"text": "LEGAL\nEffective November 7, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Email us any time to see or delete your data."
+"text": "LEGAL\nEffective November 12, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Email us any time to see or delete your data."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -153,7 +153,19 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "ails you send us: whatever you choose to include.\nTechnical data: your IP address is kept briefly in server memory to stop spam and abuse (rate limiting). It is not saved to our database.\nWe don't use advertising trackers, and we don't sell or rent your information to anyone.\nVisit counts: we use GoatCounter to count page visits and how many quotes and orders are started. It uses no cookies and doesn't collect personal information, so we can see totals but not who you are."
+"text": "ails you send us: whatever you choose to include.\nCertification Finder: the field you want and the résumé text you paste or upload are used once to make suggestions and are not saved. If you vote on a suggestion, we keep the vote with an anonymous, coarse summary (your field, experience level and a few background signals), never your résumé."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "and a few background signals), never your résumé.\nTechnical data: to stop spam and abuse, our server records your IP address and the time of each request for up to 2 days (rate limiting). For the Certification Finder, résumé upload, sign-in and order forms, it also keeps a coded summary of each request (how often and how fast requests arrive, their size and what kind of browser sent them) with a scrambled, one-way version of your IP address for up to 30 days, to spot automated abuse. It never blocks anyone on its own."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "tomated abuse. It never blocks anyone on its own.\nWe don't use advertising trackers, and we don't sell or rent your information to anyone.\nVisit counts: we use GoatCounter to count page visits and how many quotes and orders are started. It uses no cookies and doesn't collect personal information, so we can see totals but not who you are."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -165,13 +177,13 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": "We rely on a few trusted providers to run the site. Each only gets the information it needs:\nGoogle Gemini : reads the project description you type into the quote tool to estimate its size. Please don't include passwords or sensitive personal information there.\nNeon : the database where orders and mailing-list signups are stored.\nRender and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data."
+"text": "We rely on a few trusted providers to run the site. Each only gets the information it needs:\nGoogle Gemini : reads the project description you type into the quote tool to estimate its size, and the résumé text and field you give the Certification Finder to suggest certifications. Please don't include passwords or sensitive personal information there.\nNeon : the database where orders and mailing-list signups are stored.\nRender and GitHub Pages : host our server and website."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": ": counts visits without cookies or personal data.\nStripe : processes payments (see Stripe's privacy policy )."
+"text": "r and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data.\nStripe : processes payments (see Stripe's privacy policy )."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
