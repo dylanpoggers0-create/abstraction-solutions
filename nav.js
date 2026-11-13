@@ -194,6 +194,17 @@ document.querySelectorAll('.side-links a').forEach(function (a) {
     });
 });
 
+/* UI upgrades (command menu, toasts, gestures, prerendering...): see ux.js.
+   Page scripts can wait for it with  window.uxReady.then(function (UX) { ... })  (it loads in the background). */
+window.uxReady = new Promise(function (resolve, reject) {
+    const s = document.createElement('script');
+    s.src = BASE + 'ux.js';
+    s.onload = function () { resolve(window.UX); };
+    s.onerror = reject;
+    document.head.appendChild(s);
+});
+window.uxReady.catch(function () {});
+
 /* ---------------------------------------------------------
    LOOPING BACKGROUND VIDEO
    Adds the silent network animation behind every page.
@@ -327,12 +338,19 @@ window.trackEvent = function (name) {
 
 (function () {
     if (!GOATCOUNTER_CODE) return;
+    if (document.prerendering) {        // a page prepared ahead of time only counts once you actually open it
+        document.addEventListener('prerenderingchange', addCounter, { once: true });
+        return;
+    }
+    addCounter();
+})();
+function addCounter() {
     const gc = document.createElement('script');
     gc.async = true;
     gc.src = 'https://gc.zgo.at/count.js';
     gc.dataset.goatcounter = 'https://' + GOATCOUNTER_CODE + '.goatcounter.com/count';
     document.head.appendChild(gc);
-})();
+}
 
 /* ---------------------------------------------------------
    SITE ASSISTANT (chat bubble, bottom right)
@@ -361,6 +379,10 @@ const CHAT_ON = true;
             'max-height:calc(100vh - 36px);display:flex;flex-direction:column;background:#0b100c;border:1px solid var(--line,#1e2a20);' +
             'border-radius:18px;box-shadow:0 10px 40px rgba(0,0,0,.7);overflow:hidden}' +
         '.chat-box[hidden]{display:none}' +
+        '.chat-box{transform-origin:bottom right;transition:opacity .2s ease,transform .22s ease}' +
+        '.chat-box.closed{opacity:0;transform:translateY(14px) scale(.97);pointer-events:none}' +
+        '@media(prefers-reduced-motion:reduce){.chat-box{transition:none}}' +
+        '.chat-grab{display:none}' +
         '.chat-head{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line,#1e2a20);font-weight:bold}' +
         '.chat-head .demo{font-size:.65rem;letter-spacing:1.5px;color:#f5c451;border:1px solid #f5c451;border-radius:50px;padding:2px 8px}' +
         '.chat-head button{margin-left:auto;background:none;border:0;color:#9aa69c;font-size:1.4rem;cursor:pointer;line-height:1}' +
@@ -396,7 +418,9 @@ const CHAT_ON = true;
             '.chat-btn svg{width:24px;height:24px}' +
             '.chat-box{inset:0;right:0;bottom:0;width:100%;max-width:none;height:100%;height:100dvh;max-height:none;' +
                 'border:0;border-radius:0;z-index:400}' +
-            '.chat-head{padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top))}' +
+            '.chat-head{padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));touch-action:none}' +
+            '.chat-box.closed{transform:translateY(100%)}' +
+            '.chat-grab{display:block;position:absolute;left:50%;top:calc(5px + env(safe-area-inset-top));width:40px;height:4px;margin-left:-20px;border-radius:4px;background:#3a453b}' +
             '.chat-head button{font-size:2rem;width:44px;height:44px}' +
             '.chat-form{padding:10px 12px calc(10px + env(safe-area-inset-bottom))}' +
             '.chat-form input{font-size:16px}' +          // 16px stops iPhones zooming in on the box
@@ -581,12 +605,12 @@ const CHAT_ON = true;
                     '<span class="chat-label">Ask our site</span>';
 
     const box = document.createElement('div');
-    box.className = 'chat-box';
+    box.className = 'chat-box closed';
     box.hidden = true;
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-label', 'Site assistant');
     box.innerHTML =
-        '<div class="chat-head"><span class="chat-title">Ask Abstraction Solutions' +
+        '<div class="chat-head"><span class="chat-grab" aria-hidden="true"></span><span class="chat-title">Ask Abstraction Solutions' +
             '<span class="chat-sub">Answers from our website, with the page they came from</span></span>' +
             '<button type="button" aria-label="Close chat">&times;</button></div>' +
         '<div class="chat-log" aria-live="polite"></div>' +
@@ -625,9 +649,16 @@ const CHAT_ON = true;
     const phone = window.matchMedia('(max-width: 600px)');
     const SUGGESTIONS = ['What do you do?', 'Nonprofit discount', 'How do refunds work?', 'How do I get a quote?'];
 
+    // Open/close animate with CSS transitions, so a quick close-then-reopen just reverses from wherever it is.
+    let hideTimer = null, chatWatcher = null;
     function openChat() {
+        clearTimeout(hideTimer);
         box.hidden = false;
+        box.getBoundingClientRect();              // start the transition from the closed state
+        box.classList.remove('closed');
+        box.style.transform = '';
         btn.hidden = true;
+        if (!chatWatcher && window.UX && UX.closeWatch) chatWatcher = UX.closeWatch(function () { chatWatcher = null; closeChat(); });
         if (phone.matches) document.documentElement.style.overflow = 'hidden';   // the page behind stays still
         load().catch(function () {});
         if (!log.children.length) {
@@ -644,12 +675,41 @@ const CHAT_ON = true;
         if (!phone.matches) input.focus();   // on phones, don't pop the keyboard over the suggestions
     }
     function closeChat() {
-        box.hidden = true;
+        box.classList.add('closed');
+        box.style.transform = '';
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function () { box.hidden = true; }, 240);
+        if (chatWatcher) { chatWatcher.done(); chatWatcher = null; }
         btn.hidden = false;
         document.documentElement.style.overflow = '';
         btn.focus();
     }
     btn.addEventListener('click', openChat);
+    window.SiteChat = { open: openChat, close: closeChat };
+
+    // PHONES: drag the chat's top bar down to dismiss it (it follows your finger; let go early and it springs back)
+    (function () {
+        const head = box.querySelector('.chat-head');
+        let y0 = null, dy = 0, t0 = 0;
+        head.addEventListener('touchstart', function (e) {
+            if (!phone.matches || e.target.closest('button')) return;
+            y0 = e.touches[0].clientY; dy = 0; t0 = performance.now();
+        }, { passive: true });
+        head.addEventListener('touchmove', function (e) {
+            if (y0 === null) return;
+            dy = Math.max(0, e.touches[0].clientY - y0);
+            box.style.transition = 'none';
+            box.style.transform = 'translateY(' + dy + 'px)';
+        }, { passive: true });
+        function end() {
+            if (y0 === null) return;
+            const fast = dy / Math.max(1, performance.now() - t0) > 0.5;
+            box.style.transition = '';
+            if (dy > innerHeight * 0.25 || (fast && dy > 30)) closeChat(); else box.style.transform = '';
+            y0 = null;
+        }
+        head.addEventListener('touchend', end); head.addEventListener('touchcancel', end);
+    })();
     box.querySelector('.chat-head button').addEventListener('click', closeChat);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.hidden) closeChat(); });
 
