@@ -1056,7 +1056,7 @@
                     const bits = el('div', 'soc-bits');
                     p.days.forEach(function (d) {
                         const b = el('span', d.bit === 1 ? 'b1' : d.bit === 0 ? 'b0' : '', d.bit === null ? '·' : String(d.bit));
-                        b.title = d.day + ': ' + (d.views === null ? 'no number' : d.views + ' views' + (d.source === 'manual' ? ' (typed)' : ''));
+                        b.title = d.day + ': ' + (d.views === null ? 'no number' : d.views + ' views' + (d.source === 'manual' ? ' (typed)' : d.source === 'email' ? ' (emailed report)' : ''));
                         bits.append(b);
                     });
                     const side = el('div', 'soc-side');
@@ -1070,7 +1070,8 @@
 
                     const li = el('li');
                     li.append(el('span', 'who', p.label),
-                              el('span', p.connected ? 'sec-on' : 'sec-off', p.connected ? '✓ Automatic' : (p.key === 'linkedin' ? 'Typed in' : 'Not connected')));
+                              el('span', p.connected || p.emailed ? 'sec-on' : 'sec-off',
+                                 p.connected ? '✓ Automatic (API)' : p.emailed ? '✓ Emailed reports' : (p.key === 'linkedin' ? 'Waiting for emailed reports' : 'Not connected')));
                     if (p.key === 'tiktok' && p.can_connect) {
                         const b = el('button', 'small-btn', p.connected ? 'Reconnect TikTok' : 'Connect TikTok'); b.type = 'button';
                         b.addEventListener('click', async function () {
