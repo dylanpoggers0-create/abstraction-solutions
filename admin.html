@@ -101,10 +101,9 @@
                     border-radius: 12px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); }
         .tab-menu[hidden] { display: none; }
         .tab-menu button { background: none; border: 0; border-radius: 8px; color: inherit; font: inherit; text-align: left;
-                           padding: 10px 12px; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; }
+                           padding: 10px 12px; cursor: pointer; }
         .tab-menu button:hover, .tab-menu button:focus-visible { background: var(--green-soft); outline: none; }
         .tab-menu button.active { color: var(--green); font-weight: bold; }
-        .tab-menu kbd { color: var(--text-muted); font-size: 0.8rem; }
 
         /* ---------- NEWSLETTER ---------- */
         .nl-box { border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 24px;
@@ -541,9 +540,9 @@
                     <button class="tab" id="tabCustomerGroup" type="button" role="tab" aria-haspopup="menu" aria-expanded="false"
                             aria-controls="customerMenu">Customers<span class="tab-sub" id="tabCustomerSub"></span></button>
                     <div class="tab-menu" id="customerMenu" role="menu" aria-label="Customers" hidden>
-                        <button id="tabCustomers" type="button" role="menuitem">Customer list <kbd>2</kbd></button>
-                        <button id="tabNews" type="button" role="menuitem">Newsletter <kbd>3</kbd></button>
-                        <button id="tabAiNews" type="button" role="menuitem">AI News <kbd>4</kbd></button>
+                        <button id="tabCustomers" type="button" role="menuitem">Customer list</button>
+                        <button id="tabNews" type="button" role="menuitem">Newsletter</button>
+                        <button id="tabAiNews" type="button" role="menuitem">AI News</button>
                     </div>
                 </div>
                 <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
