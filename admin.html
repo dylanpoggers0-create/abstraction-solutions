@@ -91,6 +91,21 @@
 
         .tab.active { color: var(--green); border-bottom-color: var(--green); }
 
+        /* Customers menu: Customers, Newsletter and AI News live under one tab */
+        .tab-group { position: relative; }
+        .tab-group > .tab::after { content: "\25BE"; display: inline-block; margin-left: 6px; transition: transform 0.15s ease; }
+        .tab-group > .tab[aria-expanded="true"]::after { transform: rotate(180deg); }
+        .tab-sub { font-weight: normal; color: var(--text-muted); }
+        .tab-menu { position: absolute; top: calc(100% + 4px); left: 0; z-index: 30; min-width: 200px; padding: 6px;
+                    display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line);
+                    border-radius: 12px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); }
+        .tab-menu[hidden] { display: none; }
+        .tab-menu button { background: none; border: 0; border-radius: 8px; color: inherit; font: inherit; text-align: left;
+                           padding: 10px 12px; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; }
+        .tab-menu button:hover, .tab-menu button:focus-visible { background: var(--green-soft); outline: none; }
+        .tab-menu button.active { color: var(--green); font-weight: bold; }
+        .tab-menu kbd { color: var(--text-muted); font-size: 0.8rem; }
+
         /* ---------- NEWSLETTER ---------- */
         .nl-box { border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 24px;
                   background-color: rgba(11, 16, 12, 0.6); }
@@ -206,6 +221,8 @@
         .soc-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
         .soc-form input, .soc-form select { padding: 8px 10px; }
         .soc-form[hidden] { display: none; }
+        #socPaste { width: 100%; box-sizing: border-box; padding: 10px 12px; font: 0.85rem/1.5 ui-monospace, Menlo, Consolas, monospace;
+                    resize: vertical; margin-top: 4px; }
         @media (max-width: 700px) { .soc-row { grid-template-columns: 1fr; } .soc-side { text-align: left; } .soc-bits span { width: 17px; } }
         .watch-list li { flex-direction: column; align-items: stretch; gap: 6px; }
         .watch-top { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
@@ -497,9 +514,15 @@
             <!-- TABS: Orders (from the server) and Hydro Cart (from the cart app on this computer) -->
             <div class="tabs" role="tablist">
                 <button class="tab active" id="tabOrders" type="button" role="tab">Orders</button>
-                <button class="tab" id="tabCustomers" type="button" role="tab">Customers</button>
-                <button class="tab" id="tabNews" type="button" role="tab">Newsletter</button>
-                <button class="tab" id="tabAiNews" type="button" role="tab">AI News</button>
+                <div class="tab-group">
+                    <button class="tab" id="tabCustomerGroup" type="button" role="tab" aria-haspopup="menu" aria-expanded="false"
+                            aria-controls="customerMenu">Customers<span class="tab-sub" id="tabCustomerSub"></span></button>
+                    <div class="tab-menu" id="customerMenu" role="menu" aria-label="Customers" hidden>
+                        <button id="tabCustomers" type="button" role="menuitem">Customer list <kbd>2</kbd></button>
+                        <button id="tabNews" type="button" role="menuitem">Newsletter <kbd>3</kbd></button>
+                        <button id="tabAiNews" type="button" role="menuitem">AI News <kbd>4</kbd></button>
+                    </div>
+                </div>
                 <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
                 <button class="tab" id="tabSocial" type="button" role="tab">Social</button>
                 <button class="tab" id="tabSecurity" type="button" role="tab">Security</button>
@@ -576,6 +599,15 @@
                         <input id="socViews" type="number" min="0" placeholder="Number" aria-label="Number">
                         <button class="small-btn go" id="socSave" type="button">Save</button>
                     </div>
+                </div>
+                <div class="sec-card">
+                    <h3>Paste Grok's report</h3>
+                    <p class="hint">Paste Grok's email or its history: one <code>SOCIAL-REPORT date=YYYY-MM-DD ...</code> line per day, up to 150 lines
+                        from the last 120 days. Other text in the paste is ignored. A typed number above still wins.</p>
+                    <textarea id="socPaste" rows="6" spellcheck="false" aria-label="Grok's report"
+                              placeholder="SOCIAL-REPORT date=2026-11-10 tiktok_views=840 linkedin_views=95 instagram_views=310"></textarea>
+                    <div class="soc-form"><button class="small-btn go" id="socPasteSave" type="button">Add these days</button>
+                        <span class="hint" id="socPasteMsg" role="status"></span></div>
                 </div>
                 <div class="sec-card">
                     <h3>Connections</h3>
@@ -1014,6 +1046,10 @@
                 document.getElementById(panels[k][0]).classList.toggle('active', k === name);
                 document.getElementById(panels[k][1]).hidden = k !== name;
             });
+            const inGroup = ['customers', 'news', 'ainews'].indexOf(name) !== -1;
+            document.getElementById('tabCustomerGroup').classList.toggle('active', inGroup);
+            document.getElementById('tabCustomerSub').textContent = inGroup && name !== 'customers' ? ': ' + panels[name][2] : '';
+            closeCustomerMenu(false);
             document.getElementById('adminTitle').textContent = panels[name][2];
             if (name === 'news') loadSubscribers();
             if (name === 'customers') loadCustomers();
@@ -1027,16 +1063,39 @@
         document.getElementById('tabOrders').addEventListener('click', function () { showTab('orders'); });
         document.getElementById('tabHydro').addEventListener('click', function () { showTab('hydro'); });
         document.getElementById('tabCustomers').addEventListener('click', function () { showTab('customers'); });
+
+        // Customers menu (Customer list, Newsletter, AI News)
+        var groupBtn = document.getElementById('tabCustomerGroup'), customerMenu = document.getElementById('customerMenu');
+        function menuItems() { return Array.from(customerMenu.querySelectorAll('[role=menuitem]')); }
+        function openCustomerMenu() {
+            customerMenu.hidden = false; groupBtn.setAttribute('aria-expanded', 'true');
+            (customerMenu.querySelector('.active') || menuItems()[0]).focus();
+        }
+        function closeCustomerMenu(refocus) {
+            if (!customerMenu || customerMenu.hidden) return;
+            customerMenu.hidden = true; groupBtn.setAttribute('aria-expanded', 'false');
+            if (refocus) groupBtn.focus();
+        }
+        groupBtn.addEventListener('click', function () { customerMenu.hidden ? openCustomerMenu() : closeCustomerMenu(true); });
+        groupBtn.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); openCustomerMenu(); } });
+        customerMenu.addEventListener('keydown', function (e) {
+            const items = menuItems(), i = items.indexOf(document.activeElement);
+            if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+            else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeCustomerMenu(true); }
+            else if (e.key === 'Tab') closeCustomerMenu(false);
+        });
+        document.addEventListener('click', function (e) { if (!e.target.closest('.tab-group')) closeCustomerMenu(false); });
         document.getElementById('tabNews').addEventListener('click', function () { showTab('news'); });
         document.getElementById('tabAiNews').addEventListener('click', function () { showTab('ainews'); });
         document.getElementById('tabSecurity').addEventListener('click', function () { showTab('security'); });
         document.getElementById('tabSocial').addEventListener('click', function () { showTab('social'); });
         document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
-        // keyboard shortcuts: 1-6 switch tabs (when you're not typing); they're also in the Ctrl/⌘ K menu
-        const TAB_KEYS = [['orders', 'Orders'], ['customers', 'Customers'], ['news', 'Newsletter'], ['ainews', 'AI News'], ['hydro', 'Hydro Cart'], ['security', 'Security']];
+        // keyboard shortcuts: 1-7 switch tabs (when you're not typing); they're also in the Ctrl/⌘ K menu
+        const TAB_KEYS = [['orders', 'Orders'], ['customers', 'Customers'], ['news', 'Newsletter'], ['ainews', 'AI News'], ['hydro', 'Hydro Cart'], ['security', 'Security'], ['social', 'Social']];
         TAB_KEYS.forEach(function (t, i) {
-            const ids = { orders: 'tabOrders', customers: 'tabCustomers', news: 'tabNews', ainews: 'tabAiNews', hydro: 'tabHydro', security: 'tabSecurity' };
+            const ids = { orders: 'tabOrders', customers: 'tabCustomers', news: 'tabNews', ainews: 'tabAiNews', hydro: 'tabHydro', security: 'tabSecurity', social: 'tabSocial' };
             const b = document.getElementById(ids[t[0]]);
             if (b) { b.title = t[1] + ' (press ' + (i + 1) + ')'; b.setAttribute('aria-keyshortcuts', String(i + 1)); }
         });
@@ -1106,7 +1165,10 @@
                     const li = el('li');
                     li.append(el('span', 'who', p.label),
                               el('span', p.connected || p.emailed ? 'sec-on' : 'sec-off',
-                                 p.connected ? '✓ Automatic (API)' : p.emailed ? '✓ Emailed reports' : (p.key === 'linkedin' ? 'Waiting for emailed reports' : 'Not connected')));
+                                 p.connected ? '✓ Automatic (API)' : p.emailed ? "✓ Grok's email" :
+                                 p.key === 'youtube' ? 'Not connected' : "Waiting for Grok's email"));
+                    if (!p.connected && p.key !== 'youtube')
+                        li.append(el('span', 'watch-sum', p.last_email_day ? 'numbers up to ' + p.last_email_day : 'every 3 days at 9 PM'));
                     if (p.key === 'tiktok' && p.can_connect) {
                         const b = el('button', 'small-btn', p.connected ? 'Reconnect TikTok' : 'Connect TikTok'); b.type = 'button';
                         b.addEventListener('click', async function () {
@@ -1115,13 +1177,12 @@
                         });
                         li.append(b);
                     }
-                    if (p.key === 'instagram') {
+                    if (p.key === 'instagram' && p.connected) {
                         const b = el('button', 'small-btn', p.connected ? 'Replace token' : 'Add token'); b.type = 'button';
                         b.addEventListener('click', function () { document.getElementById('socIgBox').hidden = false; document.getElementById('socIgToken').focus(); });
                         li.append(b);
                     }
                     if (p.key === 'youtube' && !p.connected) li.append(el('span', 'watch-sum', 'add YOUTUBE_API_KEY + YOUTUBE_CHANNEL_ID on Render'));
-                    if (p.key === 'tiktok' && !p.can_connect) li.append(el('span', 'watch-sum', 'add TIKTOK_CLIENT_KEY + TIKTOK_CLIENT_SECRET on Render'));
                     conn.append(li);
                 });
                 document.getElementById('socRun').textContent = s.last_run
@@ -1180,6 +1241,19 @@
             });
             return box;
         }
+        document.getElementById('socPasteSave').addEventListener('click', async function () {
+            const box = document.getElementById('socPaste'), out = document.getElementById('socPasteMsg'), btn = this;
+            if (box.value.indexOf('SOCIAL-REPORT') === -1) { out.textContent = 'No SOCIAL-REPORT lines in that.'; return; }
+            btn.disabled = true; out.textContent = 'Adding…';
+            try {
+                const r = await postJson('/admin/social/report', { text: box.value });
+                const n = r.days || 1;
+                out.textContent = 'Added ' + n + ' day' + (n === 1 ? '' : 's') + '.' +
+                                  (r.sbss_learned_days ? ' SBSS learned from ' + r.sbss_learned_days + ' more days.' : '');
+                box.value = ''; loadSocial();
+            } catch (e) { if (e.message !== 'logged out') out.textContent = e.message; }
+            btn.disabled = false;
+        });
         document.getElementById('socSave').addEventListener('click', async function () {
             const msg = document.getElementById('socMsg'), kind = document.getElementById('socKind').value;
             try {
