@@ -1,3 +1,14 @@
+// Clickjacking guard: GitHub Pages can't send the X-Frame-Options / frame-ancestors headers, so pages
+// refuse to be shown inside another website's frame (where hidden buttons could trick visitors into clicks).
+if (window.top !== window.self) {
+  let sameSite = false;
+  try { sameSite = window.top.location.origin === location.origin; } catch (e) {}
+  if (!sameSite) {
+    document.documentElement.style.visibility = 'hidden';
+    try { window.top.location = location.href; } catch (e) {}   // a sandboxed frame can't do this; the page stays hidden
+  }
+}
+
 // Always use the secure address: the quote engine only answers https://abstraction-solutions.com,
 // so a page opened as http:// would say "offline" even when everything is up.
 // Tries once per visit, so if the https address ever sends people back to http (a hosting setting),

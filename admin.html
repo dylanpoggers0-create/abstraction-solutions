@@ -12,6 +12,7 @@
     <!-- Security policy: which outside sites this page may load from (Stripe, Google sign-in, our API,
          and the Hydro Cart app on this computer). -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://*.js.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/client https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.stripe.com https://*.goatcounter.com; font-src 'self' data:; media-src 'self'; connect-src 'self' http://127.0.0.1:8000 http://localhost:8000 https://abstraction-quote-engine.onrender.com https://api.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/ https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'">
+    <script>if (window.top !== window.self) document.documentElement.style.visibility = "hidden";</script>
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="hydro-admin.css">
