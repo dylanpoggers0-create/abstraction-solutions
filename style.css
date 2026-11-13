@@ -524,3 +524,140 @@ html {
 @media (max-width: 600px) {
     .promo-line { margin-left: 44px; margin-right: 16px; }
 }
+
+/* =========================================================
+   UI POLISH (works with ux.js)
+   ========================================================= */
+
+/* 17. Balanced headlines: no one-word last lines on headings; nicer paragraph breaks */
+h1, h2, h3, h4, .section-title { text-wrap: balance; }
+p, li, figcaption, .section-sub { text-wrap: pretty; }
+
+/* 16. Tabular numbers: digits all the same width, so prices, counts and stats line up and don't jiggle */
+.tnum, table, .price, .cert-price, .cert-count, input[type=number], time, .stat, .stat-num,
+.count, .soc-bits, .watch-stats, .soc-side, .when, .meta, .stage-chips, .plan, .amount, code, kbd, #roi, #quote, .mini-roi {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 14. Safe area insets: keep fixed controls clear of the notch, the rounded corners and the home bar
+   (pages use viewport-fit=cover so the background reaches the edges) */
+body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+.header-wrapper { top: calc(20px + env(safe-area-inset-top)); }
+.side-tab { left: env(safe-area-inset-left); }
+.side-nav {
+    padding-top: calc(24px + env(safe-area-inset-top));
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    padding-left: calc(18px + env(safe-area-inset-left));
+}
+footer { padding-bottom: calc(40px + env(safe-area-inset-bottom)); }
+@media (max-width: 600px) {
+    .header-wrapper { top: calc(12px + env(safe-area-inset-top)); }
+}
+
+/* 13. Hit slop: small tap targets get an invisible 44x44 touch area around them */
+.close-btn, .chat-head button, .cmdk-close, .toast button, .delete-btn, .small-btn, .side-links a, .site-footer a {
+    position: relative;
+}
+.close-btn::after, .chat-head button::after, .cmdk-close::after, .toast button::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+}
+.site-footer li { margin-bottom: 4px !important; }
+.site-footer a { display: inline-block; padding: 4px 0; }
+
+/* 18. Continuous corners (squircles) where the browser supports them; a normal rounded corner elsewhere.
+   Squircle corners look tighter, so the radius goes up a bit to keep the same feel. */
+@supports (corner-shape: squircle) {
+    .header-container, .side-tab, .promo-line, .cmdk-panel, .toast, .chat-box, .sec-card, .cert-tool, .cert-card,
+    .side-links a, .current-page, .icon-badge {
+        corner-shape: squircle;
+    }
+    .header-container { border-radius: 22px; }
+    .cmdk-panel, .chat-box { border-radius: 30px; }
+    .sec-card, .cert-tool { border-radius: 26px; }
+    .cert-card, .promo-line { border-radius: 22px; }
+}
+
+/* 9. View transitions: pages cross-fade instead of flashing white/black; the header and menu tab stay put */
+@view-transition { navigation: auto; }
+.header-container { view-transition-name: site-header; }
+.side-tab { view-transition-name: menu-tab; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.22s; }
+@media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+}
+
+/* 1. Skeleton loaders: grey shapes where content will appear, with a soft shimmer */
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    color: transparent !important;
+}
+.skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+    animation: skeleton-shine 1.4s ease-in-out infinite;
+}
+.skeleton-line { height: 0.9em; margin: 0.45em 0; }
+.skeleton-card { height: 120px; margin: 0 0 12px; }
+@keyframes skeleton-shine { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .skeleton::after { animation: none; } }
+
+/* 8. BlurHash placeholders: a blurred preview of the picture shows while it downloads */
+[data-blurhash] { background-size: cover; background-position: center; background-color: #0b120d; }
+
+/* 4. Shortcut hints */
+kbd {
+    display: inline-block;
+    min-width: 1.4em;
+    padding: 1px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    font: 600 0.72rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #dfe7df;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.05);
+}
+.search-hint {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--nav-line);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.search-hint:hover { border-color: var(--green-dim); color: #fff; }
+.search-hint .icon { width: 16px; height: 16px; }
+
+/* 20. Services sub-pages: on phones an arrow under "Services" opens them inline; on computers ux.js shows a flyout */
+.side-links .has-sub { position: relative; display: flex; flex-direction: column; }
+.side-links .sub-toggle {
+    position: absolute; right: 4px; top: 6px;
+    width: 34px; height: 34px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer;
+}
+.side-links .sub-toggle::after { content: "›"; font-size: 1.3rem; display: inline-block; transition: transform 0.2s ease; }
+.side-links .sub-toggle[aria-expanded=true]::after { transform: rotate(90deg); }
+.side-links .sub-toggle:hover { background: rgba(255, 255, 255, 0.06); }
+.side-sub { display: none; flex-direction: column; gap: 2px; padding: 4px 0 6px 22px; }
+.side-sub a { font-size: 0.92rem; }
+.has-sub.open > .side-sub { display: flex; }

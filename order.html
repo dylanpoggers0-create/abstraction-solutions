@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Start an AI Project or Check Your Order | Abstraction Solutions</title>
     <meta name="description" content="Start an AI automation, workflow or machine learning project, or check and pay for an existing order with your confirmation number.">
     <link rel="canonical" href="https://abstraction-solutions.com/order.html">
@@ -20,6 +20,7 @@
     <!-- Shared styles (header, side nav, pills, footer...) -->
     <!-- Security policy: which outside sites this page may load from (Stripe, Google sign-in, our API). -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://*.js.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/client https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.stripe.com https://*.goatcounter.com; font-src 'self' data:; media-src 'self'; connect-src 'self' https://abstraction-quote-engine.onrender.com https://api.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/ https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <script>if (window.top !== window.self) document.documentElement.style.visibility = "hidden";</script>
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="stylesheet" href="style.css">
 
@@ -693,6 +694,21 @@
         // Wake up the free server as soon as the page opens
         fetch(API_BASE + '/health').catch(function () {});
 
+        // Idempotency keys: one random key per submission. If the same submission is sent again (a retry while the
+        // server wakes up, or a second click after a timeout), the server recognizes the key and returns the first
+        // answer instead of creating a second order. Editing the form starts a new submission (new key).
+        const submissionKeys = {};
+        function keyFor(kind, payload) {
+            const body = JSON.stringify(payload), k = submissionKeys[kind];
+            if (k && k.body === body) return k.key;
+            const key = (window.UX && UX.idempotencyKey) ? UX.idempotencyKey()
+                : Array.from(crypto.getRandomValues(new Uint8Array(16)), function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+            submissionKeys[kind] = { body: body, key: key };
+            return key;
+        }
+        function doneWith(kind) { delete submissionKeys[kind]; }
+
+
         orderForm.addEventListener('submit', async function (event) {
             event.preventDefault();                    // stop the page from reloading
 
@@ -707,7 +723,7 @@
             }, 5000);
 
             try {
-                const headers = { 'Content-Type': 'application/json' };
+                const headers = { 'Content-Type': 'application/json', 'Idempotency-Key': keyFor('order', order) };
                 const account = orderForm.closest('#signIn') ? currentAccount() : null;
                 if (account) headers.Authorization = 'Bearer ' + account.token;   // saves the order to their account
                 const response = await fetchWithWake(API_BASE + '/orders', {
@@ -725,6 +741,7 @@
                 if (!response.ok) throw new Error('Something went wrong on our end. Please try again or email us.');
 
                 const result = await response.json();  // { ok: true, confirmation: "12345678" }
+                doneWith('order');
                 window.trackEvent && trackEvent('order-placed');
                 orderForm.hidden = true;               // hide the form
                 orderMsg.textContent = 'Order received! Your confirmation number is ' + result.confirmation +
@@ -841,7 +858,10 @@
             const list = document.getElementById('myOrders');
             const msg = document.getElementById('myOrdersMsg');
             if (!account) return;
-            msg.textContent = 'Loading your orders...';
+            msg.textContent = '';
+            if (!list.children.length) {         // skeleton rows until the list arrives
+                for (let i = 0; i < 2; i++) { const s = document.createElement('li'); s.className = 'skeleton skeleton-card'; s.style.height = '64px'; s.setAttribute('aria-hidden', 'true'); list.appendChild(s); }
+            }
             try {
                 const response = await fetchWithWake(API_BASE + '/me/orders', {
                     headers: { Authorization: 'Bearer ' + account.token }
@@ -872,6 +892,7 @@
                     list.appendChild(li);
                 });
             } catch (e) {
+                list.querySelectorAll('.skeleton').forEach(function (s) { s.remove(); });
                 msg.textContent = 'Couldn\'t load your orders right now. Please try again in a minute.';
             }
         }
@@ -1114,7 +1135,8 @@
                 const data = await response.json().catch(function () { return {}; });
                 if (!response.ok) throw new Error(data.detail || 'Couldn\'t start the payment. Please try again.');
 
-                if (data.url) {            // backup: Stripe's own checkout page
+                if (data.url) {            // backup: Stripe's own checkout page (never anywhere else)
+                    if (!/^https:\/\/checkout\.stripe\.com\//.test(data.url)) throw new Error('Couldn\'t start the payment. Please try again.');
                     location.href = data.url;
                     return;
                 }
@@ -1219,14 +1241,16 @@
             button.disabled = true;
             button.textContent = 'Sending...';
             try {
+                const payload = Object.assign({ message: document.getElementById('changeText').value.trim() }, lastSearch);
                 const response = await fetchWithWake(API_BASE + '/orders/change-request', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(Object.assign({ message: document.getElementById('changeText').value.trim() }, lastSearch))
+                    headers: { 'Content-Type': 'application/json', 'Idempotency-Key': keyFor('change', payload) },
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json().catch(function () { return {}; });
                 if (response.status === 422) throw new Error('Please describe the change in at least 10 characters.');
                 if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Something went wrong. Please try again.');
+                doneWith('change');
                 document.getElementById('changeText').value = '';
                 document.getElementById('lookupForm').requestSubmit();   // reload the order to show it
                 setTimeout(function () { note.textContent = 'Request sent. We\'ll reply by email, usually within 2 business days.'; }, 1500);

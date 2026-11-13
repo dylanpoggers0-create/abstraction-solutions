@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Admin | Abstraction Solutions</title>
 
     <!-- tells Google not to list this page in search results -->
@@ -12,6 +12,7 @@
     <!-- Security policy: which outside sites this page may load from (Stripe, Google sign-in, our API,
          and the Hydro Cart app on this computer). -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://*.js.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/client https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.stripe.com https://*.goatcounter.com; font-src 'self' data:; media-src 'self'; connect-src 'self' http://127.0.0.1:8000 http://localhost:8000 https://abstraction-quote-engine.onrender.com https://api.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/ https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://accounts.google.com/gsi/; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'">
+    <script>if (window.top !== window.self) document.documentElement.style.visibility = "hidden";</script>
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="hydro-admin.css">
@@ -1020,6 +1021,26 @@
         document.getElementById('tabSocial').addEventListener('click', function () { showTab('social'); });
         document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
+        // keyboard shortcuts: 1-6 switch tabs (when you're not typing); they're also in the Ctrl/⌘ K menu
+        const TAB_KEYS = [['orders', 'Orders'], ['customers', 'Customers'], ['news', 'Newsletter'], ['ainews', 'AI News'], ['hydro', 'Hydro Cart'], ['security', 'Security']];
+        TAB_KEYS.forEach(function (t, i) {
+            const ids = { orders: 'tabOrders', customers: 'tabCustomers', news: 'tabNews', ainews: 'tabAiNews', hydro: 'tabHydro', security: 'tabSecurity' };
+            const b = document.getElementById(ids[t[0]]);
+            if (b) { b.title = t[1] + ' (press ' + (i + 1) + ')'; b.setAttribute('aria-keyshortcuts', String(i + 1)); }
+        });
+        document.addEventListener('keydown', function (e) {
+            if (dashboard.hidden || e.metaKey || e.ctrlKey || e.altKey) return;
+            const t = e.target;
+            if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+            const n = parseInt(e.key, 10);
+            if (n >= 1 && n <= TAB_KEYS.length) { e.preventDefault(); showTab(TAB_KEYS[n - 1][0]); }
+        });
+        window.uxReady.then(function (UX) {
+            UX.addCommands(TAB_KEYS.map(function (t, i) {
+                return { g: 'Admin', t: t[1] + ' tab', hint: String(i + 1), run: function () { if (!dashboard.hidden) showTab(t[0]); } };
+            }).concat([{ g: 'Admin', t: 'Refresh orders', run: function () { if (!dashboard.hidden) { showTab('orders'); loadOrders(); } } }]));
+        }).catch(function () {});
+
         function showDashboard() {
             loginForm.hidden = true;
             dashboard.hidden = false;
@@ -1513,8 +1534,15 @@
         });
 
         // ---------- show the orders ----------
+        // skeleton cards while a list loads for the first time (later refreshes keep the old list until the new one arrives)
+        function skeletons(list, n) {
+            if (list.children.length) return;
+            for (let i = 0; i < n; i++) { const s = el('div', 'skeleton skeleton-card'); s.setAttribute('aria-hidden', 'true'); list.append(s); }
+        }
+
         async function loadOrders() {
             dashMsg.textContent = '';
+            skeletons(orderList, 3);
             if (document.getElementById('splitBox').hidden) loadDefaultSplit();
             try {
                 const orders = await api('/admin/orders');
@@ -1578,11 +1606,16 @@
                 status.append(option);
             });
             status.disabled = order.status === 'cancelled';
+            // optimistic: the card changes right away; if the server says no, it changes back
             status.addEventListener('change', async function () {
+                const before = order.status, next = status.value;
+                card.className = 'order ' + next;
                 try {
-                    await patchOrder(order, { status: status.value });
-                    card.className = 'order ' + status.value;
+                    await patchOrder(order, { status: next });
+                    order.status = next;
                 } catch (error) {
+                    status.value = before;
+                    card.className = 'order ' + before;
                     if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t update ' + order.confirmation + ': ' + error.message;
                 }
             });
@@ -1621,11 +1654,29 @@
                 saveQuote.textContent = 'Paid';
             }
 
-            // delete (for spam/tests): first click asks, second click deletes for good
+            // delete (for spam/tests): the card disappears right away with an Undo button for 6 seconds;
+            // the order is only deleted on the server once that time is up
             const del = el('button', 'delete-btn', 'Delete');
             del.type = 'button';
             let timer;
             del.addEventListener('click', async function () {
+                if (window.UX && UX.toast) {
+                    card.hidden = true;
+                    UX.toast('Order ' + order.confirmation + ' deleted.', {
+                        undo: function () { card.hidden = false; },
+                        onCommit: async function () {
+                            try {
+                                await api('/admin/orders/' + order.id, { method: 'DELETE', keepalive: true });
+                                card.remove();
+                                loadOrders();   // update the count
+                            } catch (error) {
+                                card.hidden = false;
+                                if (error.message !== 'logged out') dashMsg.textContent = 'Couldn\'t delete ' + order.confirmation + ': ' + error.message;
+                            }
+                        }
+                    });
+                    return;
+                }
                 if (!del.classList.contains('confirm')) {
                     del.classList.add('confirm');
                     del.textContent = 'Click again to delete';
@@ -2029,6 +2080,7 @@
             const list = document.getElementById('customerList');
             const msg = document.getElementById('customerMsg');
             msg.textContent = '';
+            skeletons(list, 3);
             try {
                 const customers = await api('/admin/customers');
                 document.getElementById('customerCount').textContent = customers.length + (customers.length === 1 ? ' customer' : ' customers');
