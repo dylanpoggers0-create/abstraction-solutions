@@ -221,6 +221,29 @@
         .soc-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
         .soc-form input, .soc-form select { padding: 8px 10px; }
         .soc-form[hidden] { display: none; }
+        /* current vs best stretch chart */
+        .match-badge { text-align: right; } .match-badge b { display: block; font-size: 1.8rem; font-variant-numeric: tabular-nums; transition: color 0.4s ease; }
+        .match-badge span { font-size: 0.85rem; color: var(--text-muted); }
+        .match-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 6px; }
+        .match-chips button { background: none; border: 1px solid var(--line); border-radius: 999px; color: var(--text-muted); font: inherit;
+                              font-size: 0.9rem; padding: 6px 14px; cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s; }
+        .match-chips button[aria-pressed="true"] { border-color: var(--green); color: #fff; background: var(--green-soft); }
+        .match-wrap { position: relative; }
+        #matchSvg { width: 100%; height: 280px; display: block; overflow: visible; touch-action: pan-y; }
+        #matchSvg text { font: 11px system-ui, sans-serif; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+        .match-tip { position: absolute; top: 8px; pointer-events: none; background: rgba(8, 12, 9, 0.96); border: 1px solid var(--line);
+                     border-radius: 10px; padding: 8px 12px; font-size: 0.85rem; line-height: 1.5; min-width: 150px; white-space: nowrap; }
+        .match-tip[hidden] { display: none; }
+        .match-tip b { color: #fff; font-variant-numeric: tabular-nums; } .match-tip .k { display: inline-block; width: 14px; height: 0; border-top: 3px solid; margin-right: 6px; vertical-align: middle; }
+        .match-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; }
+        .match-legend i { display: inline-block; width: 18px; height: 0; margin-right: 6px; vertical-align: middle; }
+        .match-legend .k-best { border-top: 2px dashed #7ee96f; }
+        .match-legend .k-cur { height: 3px; border-radius: 2px; background: linear-gradient(90deg, #ff5a5a, #f0a830, #9dff7a); }
+        .match-legend .k-bar { border-top: 1px dotted #e8ece8; }
+        .match-table { margin-top: 10px; font-size: 0.85rem; } .match-table summary { cursor: pointer; color: var(--text-muted); }
+        .match-table table { width: 100%; border-collapse: collapse; margin-top: 6px; font-variant-numeric: tabular-nums; }
+        .match-table th, .match-table td { text-align: right; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+        .match-table th:first-child, .match-table td:first-child { text-align: left; }
         #socPaste { width: 100%; box-sizing: border-box; padding: 10px 12px; font: 0.85rem/1.5 ui-monospace, Menlo, Consolas, monospace;
                     resize: vertical; margin-top: 4px; }
         @media (max-width: 700px) { .soc-row { grid-template-columns: 1fr; } .soc-side { text-align: left; } .soc-bits span { width: 17px; } }
@@ -584,6 +607,28 @@
                     <div id="socGrid"></div>
                     <p class="watch-stats" id="socRun"></p>
                     <div class="stage-row"><button class="small-btn" id="socRunNow" type="button">Check now</button></div>
+                </div>
+                <div class="sec-card" id="matchCard">
+                    <div class="soc-head">
+                        <div>
+                            <h3>Current vs best stretch</h3>
+                            <p class="hint" id="matchHint">The last 14 days against the platform's best 14 days so far.</p>
+                        </div>
+                        <div class="match-badge" id="matchBadge" aria-live="polite"><b id="matchPct">–</b><span id="matchWord"></span></div>
+                    </div>
+                    <div class="match-chips" role="group" aria-label="Platform" id="matchChips"></div>
+                    <div class="match-wrap" id="matchWrap">
+                        <svg id="matchSvg" viewBox="0 0 720 280" role="img" aria-labelledby="matchTitle"><title id="matchTitle">Current vs best stretch</title></svg>
+                        <div class="match-tip" id="matchTip" hidden></div>
+                    </div>
+                    <div class="match-legend">
+                        <span><i class="k-best"></i>Best stretch <span id="matchBestDates"></span></span>
+                        <span><i class="k-cur"></i>Current: red under 70% · amber about 70% · green 90%+</span>
+                        <span><i class="k-bar"></i>Daily bar</span>
+                    </div>
+                    <details class="match-table"><summary>Show as a table</summary>
+                        <table><thead><tr><th>Day</th><th>Current</th><th>Best stretch</th><th>Match</th><th>Bar</th></tr></thead><tbody id="matchRows"></tbody></table>
+                    </details>
                 </div>
                 <div class="sec-card">
                     <h3>Type in a day's views</h3>
@@ -1132,6 +1177,7 @@
             }
             try {
                 const s = await api('/admin/social');
+                MatchChart.update(s.platforms);
                 document.getElementById('socToday').textContent = s.bitstream;
                 document.getElementById('socToday').title = s.bitstream_days.join(' · ') + ' (oldest first). Each group: TikTok, LinkedIn, YouTube, Instagram.';
                 document.getElementById('socTodayDays').textContent = 'TikTok · LinkedIn · YouTube · Instagram, ' + s.bitstream_days[0].slice(5) + ' to ' + s.bitstream_days[2].slice(5);
@@ -1196,6 +1242,184 @@
                 if (error.message !== 'logged out') msg.textContent = 'Couldn\'t load social stats: ' + error.message;
             }
         }
+        // ---------- current vs best stretch: two step functions, the current one coloured by how well it matches ----------
+        const MatchChart = (function () {
+            const NS = 'http://www.w3.org/2000/svg', H = 280, L = 52, R = 12, T = 14, B = 30;
+            let W = 720;                        // set to the chart's real width before each draw, so text never stretches
+            function fit() {
+                W = Math.max(300, Math.round(svg.getBoundingClientRect().width) || 720);
+                svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+                grad.setAttribute('x2', W - R); hit.setAttribute('width', W - L - R);
+            }
+            const RED = [255, 90, 90], AMBER = [240, 168, 48], GREEN = [157, 255, 122], BEST = '#7ee96f';
+            const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const svg = document.getElementById('matchSvg'), tip = document.getElementById('matchTip');
+            let platforms = [], key = null, shown = null, anim = 0;
+            function mk(tag, attrs, parent) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.append(n); return n; }
+            function mix(a, b, t) { return a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); }); }
+            // red at 50% or less, amber at 70%, neon green at 90%+, blended in between
+            function rgb(m) {
+                if (m === null || m === undefined) return [120, 130, 122];
+                if (m <= 0.5) return RED;
+                if (m < 0.7) return mix(RED, AMBER, (m - 0.5) / 0.2);
+                if (m < 0.9) return mix(AMBER, GREEN, (m - 0.7) / 0.2);
+                return GREEN;
+            }
+            function css(c) { return 'rgb(' + c.join(',') + ')'; }
+            function word(m) { return m === null ? 'no numbers to compare yet' : m >= 0.9 ? 'close to its best' : m >= 0.7 ? 'decent match' : 'well below its best'; }
+            function niceMax(v) { if (v <= 0) return 10; const p = Math.pow(10, Math.floor(Math.log10(v))); return [1, 2, 2.5, 5, 10].map(function (k) { return k * p; }).find(function (n) { return n >= v; }); }
+            function fmt(n) { return n === null || n === undefined ? '–' : Math.round(n).toLocaleString(); }
+            const layers = {};
+            ['grid', 'best', 'bar', 'cur', 'hover'].forEach(function (k) { layers[k] = mk('g', {}, svg); });
+            const defs = mk('defs', {}, svg); svg.insertBefore(defs, svg.firstChild);
+            const grad = mk('linearGradient', { id: 'matchGrad', gradientUnits: 'userSpaceOnUse', x1: L, x2: W - R, y1: 0, y2: 0 }, defs);
+            const bestFill = mk('path', { fill: BEST, 'fill-opacity': '0.10', stroke: 'none' }, layers.best);
+            const bestLine = mk('path', { fill: 'none', stroke: BEST, 'stroke-width': 2, 'stroke-dasharray': '6 4', 'stroke-linejoin': 'round' }, layers.best);
+            const barLine = mk('path', { fill: 'none', stroke: '#e8ece8', 'stroke-opacity': '0.7', 'stroke-width': 1, 'stroke-dasharray': '1 3' }, layers.bar);
+            const curLine = mk('path', { fill: 'none', stroke: 'url(#matchGrad)', 'stroke-width': 3, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, layers.cur);
+            const hair = mk('line', { y1: T, y2: H - B, stroke: '#e8ece8', 'stroke-opacity': '0.35', 'stroke-width': 1, visibility: 'hidden' }, layers.hover);
+            const dot = mk('circle', { r: 5, stroke: '#0b100c', 'stroke-width': 2, visibility: 'hidden' }, layers.hover);
+            const hit = mk('rect', { x: L, y: T, width: W - L - R, height: H - T - B, fill: 'transparent', tabindex: '0',
+                                     'aria-label': 'Chart: use left and right arrow keys to read each day' }, svg);
+            // what's drawn: numbers per day (current, best, bar, match), tweened between platforms
+            function target(p) {
+                return { cur: p.days.map(function (d) { return d.views; }), best: p.days.map(function (d) { return d.best; }),
+                         bar: p.days.map(function (d) { return d.bar; }), match: p.days.map(function (d) { return d.match; }),
+                         max: niceMax(1.1 * Math.max.apply(null, [1].concat(p.days.map(function (d) { return Math.max(d.views || 0, d.best || 0, d.bar || 0); })))) };
+            }
+            function lerp(a, b, t) { return (a === null || b === null) ? (t < 0.5 ? a : b) : a + (b - a) * t; }
+            function blend(a, b, t) {
+                return { cur: b.cur.map(function (v, i) { return lerp(a.cur[i], v, t); }), best: b.best.map(function (v, i) { return lerp(a.best[i], v, t); }),
+                         bar: b.bar.map(function (v, i) { return lerp(a.bar[i], v, t); }), match: b.match.map(function (v, i) { return lerp(a.match[i], v, t); }),
+                         max: lerp(a.max, b.max, t) };
+            }
+            function draw(f) {
+                const n = f.cur.length, step = (W - L - R) / n, x = function (i) { return L + i * step; },
+                      y = function (v) { return H - B - (v / f.max) * (H - T - B); };
+                function stepPath(vals, close) {      // a step function: flat across each day, gaps where unknown
+                    let d = '', open = false, first = null, last = null;
+                    vals.forEach(function (v, i) {
+                        if (v === null || v === undefined) { open = false; return; }
+                        d += (open ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1) + 'L' + x(i + 1).toFixed(1) + ' ' + y(v).toFixed(1);
+                        if (first === null) first = i; last = i; open = true;
+                    });
+                    if (close && first !== null) d = 'M' + x(first) + ' ' + y(0) + d.replace(/^M/, 'L') + 'L' + x(last + 1) + ' ' + y(0) + 'Z';
+                    return d;
+                }
+                layers.grid.replaceChildren();
+                for (let k = 0; k <= 4; k++) {
+                    const v = f.max * k / 4;
+                    mk('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: '#1e2a20', 'stroke-width': 1 }, layers.grid);
+                    mk('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end' }, layers.grid).textContent = fmt(v);
+                }
+                bestFill.setAttribute('d', f.best.some(function (v) { return v !== null; }) ? stepPath(f.best.map(function (v) { return v === null ? null : v; }), true) : '');
+                bestLine.setAttribute('d', stepPath(f.best));
+                barLine.setAttribute('d', stepPath(f.bar));
+                curLine.setAttribute('d', stepPath(f.cur));
+                grad.replaceChildren();                 // a colour stop in the middle of each day, so colours blend smoothly across the steps
+                f.match.forEach(function (m, i) {
+                    mk('stop', { offset: ((i + 0.5) / n).toFixed(4), 'stop-color': css(rgb(m)) }, grad);
+                });
+            }
+            function labels(p) {
+                const n = p.days.length, step = (W - L - R) / n;
+                layers.grid.querySelectorAll('.xl').forEach(function (t) { t.remove(); });
+                p.days.forEach(function (d, i) {
+                    if (i % 2 && i !== n - 1) return;
+                    const t = mk('text', { x: L + (i + 0.5) * step, y: H - 10, 'text-anchor': 'middle', class: 'xl' }, layers.grid);
+                    t.textContent = d.day.slice(5).replace('-', '/');
+                });
+            }
+            function render() {
+                const p = platforms.find(function (q) { return q.key === key; });
+                if (!p) return;
+                const to = target(p), from = shown || to, start = performance.now(), dur = reduce || !shown ? 0 : 500;
+                cancelAnimationFrame(anim);
+                (function frame(now) {
+                    const t = dur ? Math.min(1, (now - start) / dur) : 1, e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                    shown = blend(from, to, e); fit(); draw(shown); labels(p);
+                    if (t < 1) anim = requestAnimationFrame(frame);
+                })(start);
+                const m = p.match, pct = document.getElementById('matchPct');
+                pct.textContent = m === null ? '–' : Math.round(m * 100) + '%';
+                pct.style.color = m === null ? '' : css(rgb(m));
+                document.getElementById('matchWord').textContent = (m === null ? '' : 'of best · ') + word(m);
+                document.getElementById('matchBestDates').textContent = p.best_start ? '(from ' + p.best_start.slice(5).replace('-', '/') + ')' : '(not enough history yet)';
+                document.getElementById('matchTitle').textContent = p.label + ': current 14 days vs best stretch, ' + (m === null ? 'no match yet' : Math.round(m * 100) + '% match');
+                const rows = document.getElementById('matchRows'); rows.replaceChildren();
+                p.days.forEach(function (d) {
+                    const tr = el('tr');
+                    [d.day, fmt(d.views), fmt(d.best), d.match === null ? '–' : Math.round(d.match * 100) + '%', fmt(d.bar)].forEach(function (v) { tr.append(el('td', null, v)); });
+                    rows.append(tr);
+                });
+                hideTip();
+            }
+            function showTip(i) {
+                const p = platforms.find(function (q) { return q.key === key; }); if (!p || !shown) return;
+                const d = p.days[i], n = p.days.length, step = (W - L - R) / n, cx = L + (i + 0.5) * step;
+                const box = svg.getBoundingClientRect(), sx = box.width / W;
+                hair.setAttribute('x1', cx); hair.setAttribute('x2', cx); hair.setAttribute('visibility', 'visible');
+                if (d.views !== null) {
+                    dot.setAttribute('cx', cx); dot.setAttribute('cy', H - B - (d.views / shown.max) * (H - T - B));
+                    dot.setAttribute('fill', css(rgb(d.match))); dot.setAttribute('visibility', 'visible');
+                } else dot.setAttribute('visibility', 'hidden');
+                tip.replaceChildren();
+                tip.append(el('div', null, new Date(d.day + 'T12:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })));
+                function row(color, value, label, dashed) {
+                    const r = el('div'), k = el('span', 'k'); k.style.borderTopColor = color; if (dashed) k.style.borderTopStyle = 'dashed';
+                    r.append(k, el('b', null, value), ' ' + label); tip.append(r);
+                }
+                row(css(rgb(d.match)), fmt(d.views), 'current');
+                row(BEST, fmt(d.best), 'best stretch', true);
+                row('#e8ece8', fmt(d.bar), 'bar', true);
+                tip.append(el('div', null, d.match === null ? 'no match (missing numbers)' : Math.round(d.match * 100) + '% match · ' + word(d.match)));
+                tip.hidden = false;
+                const left = cx * sx + 14, wide = tip.offsetWidth;
+                tip.style.left = Math.max(0, Math.min(left, box.width - wide - 4) - (left + wide > box.width ? wide + 28 : 0)) + 'px';
+                active = i;
+            }
+            function hideTip() { tip.hidden = true; hair.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); active = -1; }
+            let active = -1;
+            function dayAt(clientX) {
+                const p = platforms.find(function (q) { return q.key === key; }); if (!p) return -1;
+                const box = svg.getBoundingClientRect(), xv = (clientX - box.left) * W / box.width;
+                return Math.max(0, Math.min(p.days.length - 1, Math.floor((xv - L) / ((W - L - R) / p.days.length))));
+            }
+            hit.addEventListener('pointermove', function (e) { showTip(dayAt(e.clientX)); });
+            hit.addEventListener('pointerleave', hideTip);
+            hit.addEventListener('blur', hideTip);
+            hit.addEventListener('keydown', function (e) {
+                const p = platforms.find(function (q) { return q.key === key; }); if (!p) return;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    showTip(Math.max(0, Math.min(p.days.length - 1, (active < 0 ? p.days.length : active) + (e.key === 'ArrowRight' ? 1 : -1))));
+                } else if (e.key === 'Escape') hideTip();
+            });
+            let resizeTimer = 0;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () { if (shown && !svg.closest('[hidden]')) { fit(); draw(shown); const p = platforms.find(function (q) { return q.key === key; }); if (p) labels(p); hideTip(); } }, 120);
+            });
+            function pick(k) {
+                key = k;
+                try { localStorage.setItem('matchPlatform', k); } catch (e) {}
+                document.querySelectorAll('#matchChips button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.key === k)); });
+                render();
+            }
+            return {
+                update: function (list) {
+                    platforms = list;
+                    const chips = document.getElementById('matchChips');
+                    if (!chips.children.length) list.forEach(function (p) {
+                        const b = el('button', null, p.label); b.type = 'button'; b.dataset.key = p.key;
+                        b.addEventListener('click', function () { pick(p.key); }); chips.append(b);
+                    });
+                    let saved = null; try { saved = localStorage.getItem('matchPlatform'); } catch (e) {}
+                    pick(key || (list.some(function (p) { return p.key === saved; }) ? saved : list[0].key));
+                }
+            };
+        })();
+
         // the bar editor for one platform: fixed number, or auto (grows with your usual day and followers)
         function socEditor(p, btn, msg) {
             const st = p.settings, box = el('div', 'soc-edit' + (st.mode === 'fixed' ? ' fixed' : ''));
