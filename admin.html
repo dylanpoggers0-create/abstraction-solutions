@@ -555,7 +555,8 @@
                             <h3>Daily views: did each platform hit its target?</h3>
                             <p class="hint">1 = met the daily threshold, 0 = missed, · = no number yet. Last 14 days, oldest on the left.</p>
                         </div>
-                        <div class="soc-today"><span class="hint">Yesterday</span><code id="socToday">····</code></div>
+                        <div class="soc-today"><span class="hint">SBSS input, last 3 days</span><code id="socToday">····-····-····</code>
+                            <span class="hint" id="socTodayDays">TikTok · LinkedIn · YouTube · Instagram</span></div>
                     </div>
                     <div id="socGrid"></div>
                     <p class="watch-stats" id="socRun"></p>
@@ -1072,7 +1073,9 @@
             }
             try {
                 const s = await api('/admin/social');
-                document.getElementById('socToday').textContent = s.today_bits;
+                document.getElementById('socToday').textContent = s.bitstream;
+                document.getElementById('socToday').title = s.bitstream_days.join(' · ') + ' (oldest first). Each group: TikTok, LinkedIn, YouTube, Instagram.';
+                document.getElementById('socTodayDays').textContent = 'TikTok · LinkedIn · YouTube · Instagram, ' + s.bitstream_days[0].slice(5) + ' to ' + s.bitstream_days[2].slice(5);
                 const grid = document.getElementById('socGrid'); grid.replaceChildren();
                 const conn = document.getElementById('socConn'); conn.replaceChildren();
                 s.platforms.forEach(function (p) {
@@ -1095,8 +1098,8 @@
                     side.append(el('div', null, p.streak ? p.streak + '-day streak' : 'no streak'),
                                 el('div', null, p.week_known ? 'last 7 days: ' + Math.round(p.week_rate * 100) + '% met' : 'last 7 days: no data'));
                     const o = p.outlook, line = el('div');
-                    if (o.ready) { line.append('next 7 days: '); line.append(el('b', null, '~' + Math.round(o.predicted * 100) + '% likely')); }
-                    else line.textContent = 'outlook: still learning (' + o.learned + '/14 weeks)';
+                    if (o.ready) { line.append('next ' + s.ahead_days + ' days: '); line.append(el('b', null, '~' + Math.round(o.predicted * 100) + '% likely')); }
+                    else line.textContent = 'outlook: still learning (' + o.learned + '/10 days)';
                     side.append(line);
                     row.append(name, bits, side, socEditor(p, editBtn, msg)); grid.append(row);
 
@@ -1123,7 +1126,7 @@
                 });
                 document.getElementById('socRun').textContent = s.last_run
                     ? 'Last check: ' + new Date(s.last_run.at).toLocaleString() + ' · ' +
-                      Object.keys(s.last_run.report).filter(function (k) { return k !== 'sbss_learned_weeks'; })
+                      Object.keys(s.last_run.report).filter(function (k) { return k !== 'sbss_learned_days'; })
                           .map(function (k) { return k + ': ' + s.last_run.report[k]; }).join(' · ')
                     : 'No check has run yet. It runs every morning, or press Check now.';
                 const dayBox = document.getElementById('socDay');
@@ -1145,13 +1148,17 @@
             const growth = field('% of your usual day', num(st.growth_pct, 50, 500), 'auto-only');
             const per1k = field('Views per 1,000 followers (0 = off)', num(st.per_1k, 0, 1000), 'auto-only');
             const win = field('Usual day looks back (days)', num(st.window_days, 7, 90), 'auto-only');
+            const pool = el('select'); pool.innerHTML = '<option value="1">Each day on its own</option><option value="3">Last 3 days together</option>';
+            pool.value = String(st.pool_days);
+            field('Count views', pool);
             mode.addEventListener('change', function () { box.classList.toggle('fixed', mode.value === 'fixed'); });
             const facts = [];
             facts.push(p.usual_day !== null ? 'Usual day (last 28): ' + Math.round(p.usual_day).toLocaleString() + ' views' : 'Usual day: needs a few more days of numbers');
             facts.push(p.followers !== null ? 'Followers: ' + p.followers.toLocaleString() + ' (' + p.followers_day + ')' : 'Followers: none recorded yet');
             facts.push(p.suggested !== null ? 'Suggested minimum: ' + p.suggested.toLocaleString() + ' (beaten on about 60% of recent days)' : 'Suggested minimum: after 7 days of numbers');
             box.append(el('p', 'hint', facts.join(' · ')));
-            box.append(el('p', 'hint', 'Auto: the bar each day is the highest of your minimum, that % of your usual day, and views per 1,000 followers. ' +
+            box.append(el('p', 'hint', '"Last 3 days together": a day is a 1 when it and the 2 days before add up to 3 times its bar, so a post whose views build slowly still counts. ' +
+                                        'Auto: the bar each day is the highest of your minimum, that % of your usual day, and views per 1,000 followers. ' +
                                         'Saving a change makes the outlook relearn from your stored numbers.'));
             const row = el('div', 'stage-row');
             const sug = el('button', 'small-btn', 'Use suggestion'); sug.type = 'button'; sug.disabled = p.suggested === null;
@@ -1161,7 +1168,7 @@
                 save.disabled = true;
                 try {
                     const r = await postJson('/admin/social/threshold', { platform: p.key, mode: mode.value, threshold: Number(min.value),
-                        growth_pct: Number(growth.value), per_1k: Number(per1k.value), window_days: Number(win.value) });
+                        growth_pct: Number(growth.value), per_1k: Number(per1k.value), window_days: Number(win.value), pool_days: Number(pool.value) });
                     msg.textContent = r.relearning ? p.label + ' bar saved. The outlook is relearning with it.' : 'Nothing changed.';
                     loadSocial();
                 } catch (e) { if (e.message !== 'logged out') msg.textContent = e.message; save.disabled = false; }
