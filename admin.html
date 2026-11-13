@@ -181,6 +181,40 @@
         .sec-list .who { font-weight: bold; min-width: 90px; }
         .sec-on { color: var(--green); } .sec-off { color: #f5c451; }
         .sec-card input[type=password], .sec-list input { padding: 8px 12px; }
+        .watch-stats { color: var(--text-muted); font-size: 0.9rem; margin: 4px 0 0; }
+        .soc-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .soc-today { text-align: right; } .soc-today code { display: block; font-size: 1.6rem; letter-spacing: 6px; color: var(--green); }
+        .soc-row { display: grid; grid-template-columns: 110px 1fr auto; gap: 10px 14px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+        .soc-name { font-weight: bold; } .soc-name small { display: block; font-weight: normal; color: var(--text-muted); }
+        .soc-bits { display: flex; gap: 3px; }
+        .soc-bits span { width: 22px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; background: rgba(255, 255, 255, 0.06); color: var(--text-muted); cursor: default; }
+        .soc-bits span.b1 { background: var(--green); color: #041004; font-weight: bold; }
+        .soc-bits span.b0 { background: rgba(255, 110, 110, 0.18); color: #ff9b9b; }
+        .soc-side { text-align: right; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+        .soc-side b { color: var(--text, #fff); }
+        .soc-th { width: 90px; padding: 4px 8px; }
+        .soc-bar { margin-top: 2px; } .soc-bar b { color: var(--text, #fff); font-variant-numeric: tabular-nums; }
+        .soc-edit { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 14px;
+                    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; }
+        .soc-edit[hidden] { display: none; }
+        .soc-edit label { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: var(--text-muted); }
+        .soc-edit input, .soc-edit select { padding: 6px 8px; font-variant-numeric: tabular-nums; }
+        .soc-edit .hint { grid-column: 1 / -1; margin: 0; }
+        .soc-edit .stage-row { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
+        .soc-edit.fixed .auto-only { opacity: 0.4; }
+        .soc-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+        .soc-form input, .soc-form select { padding: 8px 10px; }
+        .soc-form[hidden] { display: none; }
+        @media (max-width: 700px) { .soc-row { grid-template-columns: 1fr; } .soc-side { text-align: left; } .soc-bits span { width: 17px; } }
+        .watch-list li { flex-direction: column; align-items: stretch; gap: 6px; }
+        .watch-top { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+        .watch-p { font-weight: bold; color: #f5c451; } .watch-p.low { color: var(--green); }
+        .watch-wave { display: flex; align-items: flex-end; height: 22px; gap: 1px; }
+        .watch-wave span { flex: 1; max-width: 10px; height: 4px; background: rgba(126, 233, 111, 0.25); border-radius: 1px; }
+        .watch-wave span.on { height: 22px; background: var(--green); }
+        .watch-sum { color: var(--text-muted); font-size: 0.85rem; }
+        .watch-label { color: var(--green); font-size: 0.85rem; }
 
         /* ---------- DASHBOARD ---------- */
         .toolbar {
@@ -467,6 +501,7 @@
                 <button class="tab" id="tabNews" type="button" role="tab">Newsletter</button>
                 <button class="tab" id="tabAiNews" type="button" role="tab">AI News</button>
                 <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
+                <button class="tab" id="tabSocial" type="button" role="tab">Social</button>
                 <button class="tab" id="tabSecurity" type="button" role="tab">Security</button>
                 <button class="small-btn" id="logoutButton" type="button">Log out</button>
             </div>
@@ -496,11 +531,59 @@
                     <p class="hint" id="secRequired"></p>
                     <ul class="sec-list" id="secList"></ul>
                 </div>
+                <div class="sec-card">
+                    <h3>Request watch</h3>
+                    <p class="hint">Requests to the certification recommender, résumé upload, sign-in links and orders are scored
+                        for unusual patterns. This only watches: the normal limits still do the blocking. Mark each flag so
+                        the watch learns what's fine and what isn't.</p>
+                    <p class="watch-stats" id="watchStats"></p>
+                    <ul class="sec-list watch-list" id="watchList"></ul>
+                </div>
                 <div class="sec-card" id="secSetupBox" hidden>
                     <h3>Turn on two-factor for your account</h3>
                     <p class="hint">Enter your password to start. You'll scan a QR code with Google Authenticator.</p>
                     <input id="secPassword" type="password" autocomplete="current-password" placeholder="Your password">
                     <div class="stage-row"><button class="small-btn go" id="secStart" type="button">Set up two-factor</button></div>
+                </div>
+            </div>
+
+            <div id="socialPanel" hidden>
+                <p class="msg" id="socMsg" role="alert"></p>
+                <div class="sec-card">
+                    <div class="soc-head">
+                        <div>
+                            <h3>Daily views: did each platform hit its target?</h3>
+                            <p class="hint">1 = met the daily threshold, 0 = missed, · = no number yet. Last 14 days, oldest on the left.</p>
+                        </div>
+                        <div class="soc-today"><span class="hint">SBSS input, last 3 days</span><code id="socToday">····-····-····</code>
+                            <span class="hint" id="socTodayDays">TikTok · LinkedIn · YouTube · Instagram</span></div>
+                    </div>
+                    <div id="socGrid"></div>
+                    <p class="watch-stats" id="socRun"></p>
+                    <div class="stage-row"><button class="small-btn" id="socRunNow" type="button">Check now</button></div>
+                </div>
+                <div class="sec-card">
+                    <h3>Type in a day's views</h3>
+                    <p class="hint">For LinkedIn, or to fix a number. A typed number always wins over an automatic one.
+                        Pick "Followers" to type a follower count instead (used when a bar grows with followers).</p>
+                    <div class="soc-form">
+                        <select id="socPlat" aria-label="Platform">
+                            <option value="linkedin">LinkedIn</option><option value="tiktok">TikTok</option>
+                            <option value="youtube">YouTube</option><option value="instagram">Instagram</option>
+                        </select>
+                        <input id="socDay" type="date" aria-label="Day">
+                        <select id="socKind" aria-label="What the number is"><option value="views">Views that day</option><option value="followers">Followers</option></select>
+                        <input id="socViews" type="number" min="0" placeholder="Number" aria-label="Number">
+                        <button class="small-btn go" id="socSave" type="button">Save</button>
+                    </div>
+                </div>
+                <div class="sec-card">
+                    <h3>Connections</h3>
+                    <ul class="sec-list" id="socConn"></ul>
+                    <div id="socIgBox" class="soc-form" hidden>
+                        <input id="socIgToken" type="password" autocomplete="off" placeholder="Paste the Instagram access token" aria-label="Instagram access token">
+                        <button class="small-btn go" id="socIgSave" type="button">Connect Instagram</button>
+                    </div>
                 </div>
             </div>
 
@@ -850,8 +933,50 @@
                 });
                 const me = st.admins.find(function (a) { return a.username === st.you; });
                 document.getElementById('secSetupBox').hidden = !me || me.on;
+                loadWatch();
             } catch (error) {
                 if (error.message !== 'logged out') msg.textContent = 'Couldn\'t load security settings: ' + error.message;
+            }
+        }
+
+        // ---------- request watch: flagged requests, each with its fingerprint drawn as a square wave ----------
+        async function loadWatch() {
+            const list = document.getElementById('watchList'), stats = document.getElementById('watchStats');
+            try {
+                const data = await api('/admin/request-watch');
+                const s = data.stats || {};
+                stats.textContent = 'Last 7 days: ' + (s.seen || 0) + ' requests watched, ' + (s.flagged || 0) + ' flagged, ' +
+                    (s.labeled || 0) + ' marked by you. Certification votes so far: ' + (s.cert_votes || 0) + '.';
+                list.replaceChildren();
+                if (!data.items.length) { list.append(el('li', 'watch-sum', 'Nothing flagged. 👍')); return; }
+                data.items.forEach(function (it) {
+                    const li = el('li');
+                    const top = el('div', 'watch-top');
+                    top.append(el('span', 'who', it.endpoint),
+                               el('span', 'watch-p' + (it.p_suspicious < 0.6 ? ' low' : ''), Math.round(it.p_suspicious * 100) + '% unusual'),
+                               el('span', 'watch-sum', new Date(it.at).toLocaleString() + ' · visitor ' + it.visitor));
+                    const wave = el('div', 'watch-wave');
+                    wave.title = 'Fingerprint: ' + it.wave;
+                    it.wave.split('').forEach(function (b) { wave.append(el('span', b === '1' ? 'on' : '')); });
+                    li.append(top, wave, el('div', 'watch-sum', it.summary + (it.signals.length ? ' · ' + it.signals.join(', ') : '')));
+                    const row = el('div', 'watch-top');
+                    if (it.label) row.append(el('span', 'watch-label', 'Marked: ' + it.label));
+                    ['normal', 'suspicious'].forEach(function (label) {
+                        if (label === it.label) return;
+                        const b = el('button', 'small-btn' + (label === 'normal' ? ' go' : ''), label === 'normal' ? 'Fine' : 'Suspicious');
+                        b.type = 'button';
+                        b.addEventListener('click', async function () {
+                            b.disabled = true;
+                            try { await postJson('/admin/request-watch/' + it.id + '/label', { label: label }); loadWatch(); }
+                            catch (error) { b.disabled = false; if (error.message !== 'logged out') stats.textContent = error.message; }
+                        });
+                        row.append(b);
+                    });
+                    li.append(row);
+                    list.append(li);
+                });
+            } catch (error) {
+                if (error.message !== 'logged out') stats.textContent = 'Couldn\'t load the request watch: ' + error.message;
             }
         }
 
@@ -884,7 +1009,7 @@
             const panels = { orders: ['tabOrders', 'ordersPanel', 'Orders'], customers: ['tabCustomers', 'customersPanel', 'Customers'],
                              news: ['tabNews', 'newsPanel', 'Newsletter'],
                              ainews: ['tabAiNews', 'aiNewsPanel', 'AI News'], hydro: ['tabHydro', 'hydroPanel', 'Hydro Cart'],
-                             security: ['tabSecurity', 'securityPanel', 'Security'] };
+                             social: ['tabSocial', 'socialPanel', 'Social'], security: ['tabSecurity', 'securityPanel', 'Security'] };
             Object.keys(panels).forEach(function (k) {
                 document.getElementById(panels[k][0]).classList.toggle('active', k === name);
                 document.getElementById(panels[k][1]).hidden = k !== name;
@@ -894,6 +1019,7 @@
             if (name === 'customers') loadCustomers();
             if (name === 'ainews') anShowList();
             if (name === 'security') loadSecurity();
+            if (name === 'social') loadSocial();
             document.querySelector('main').classList.toggle('wide', name === 'hydro');
             if (name === 'hydro') window.HydroAdmin.start();
             else if (window.HydroAdmin) window.HydroAdmin.stop();
@@ -904,6 +1030,7 @@
         document.getElementById('tabNews').addEventListener('click', function () { showTab('news'); });
         document.getElementById('tabAiNews').addEventListener('click', function () { showTab('ainews'); });
         document.getElementById('tabSecurity').addEventListener('click', function () { showTab('security'); });
+        document.getElementById('tabSocial').addEventListener('click', function () { showTab('social'); });
         document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
         // keyboard shortcuts: 1-6 switch tabs (when you're not typing); they're also in the Ctrl/⌘ K menu
@@ -930,7 +1057,151 @@
             loginForm.hidden = true;
             dashboard.hidden = false;
             loadOrders();
+            if (location.hash === '#social') showTab('social');      // back from connecting TikTok
         }
+
+        // ---------- Social: daily view targets per platform (1 = met, 0 = missed) + the outlook ----------
+        const SOCIAL_RESULT = { 'tiktok-connected': 'TikTok is connected. Its daily views start after two morning checks.',
+            'tiktok-cancelled': 'TikTok connection was cancelled.', 'tiktok-expired': 'That TikTok link expired. Try Connect TikTok again.',
+            'tiktok-failed': 'TikTok didn\'t accept the connection. Check the app settings and try again.' };
+        async function loadSocial() {
+            const msg = document.getElementById('socMsg');
+            const result = new URLSearchParams(location.search).get('social');
+            if (SOCIAL_RESULT[result]) {          // show the TikTok result once, then tidy the address bar
+                msg.textContent = SOCIAL_RESULT[result];
+                history.replaceState(null, '', location.pathname + '#social');
+            }
+            try {
+                const s = await api('/admin/social');
+                document.getElementById('socToday').textContent = s.bitstream;
+                document.getElementById('socToday').title = s.bitstream_days.join(' · ') + ' (oldest first). Each group: TikTok, LinkedIn, YouTube, Instagram.';
+                document.getElementById('socTodayDays').textContent = 'TikTok · LinkedIn · YouTube · Instagram, ' + s.bitstream_days[0].slice(5) + ' to ' + s.bitstream_days[2].slice(5);
+                const grid = document.getElementById('socGrid'); grid.replaceChildren();
+                const conn = document.getElementById('socConn'); conn.replaceChildren();
+                s.platforms.forEach(function (p) {
+                    const row = el('div', 'soc-row');
+                    const name = el('div', 'soc-name', p.label);
+                    const st = p.settings, WHY = { 'usual day': 'from your usual day', followers: 'from followers', minimum: 'your minimum', fixed: 'fixed' };
+                    const barLine = el('small', 'soc-bar'); barLine.append('bar today: ', el('b', null, p.bar_today.toLocaleString()));
+                    barLine.title = (st.mode === 'auto' ? 'Auto' : 'Fixed') + ' · ' + WHY[p.bar_why];
+                    const editBtn = el('button', 'small-btn', 'Edit bar'); editBtn.type = 'button';
+                    editBtn.setAttribute('aria-expanded', 'false');
+                    name.append(barLine, el('small', null, st.mode === 'auto' ? 'Auto · ' + WHY[p.bar_why] : 'Fixed number'), editBtn);
+                    const bits = el('div', 'soc-bits');
+                    p.days.forEach(function (d) {
+                        const b = el('span', d.bit === 1 ? 'b1' : d.bit === 0 ? 'b0' : '', d.bit === null ? '·' : String(d.bit));
+                        b.title = d.day + ': ' + (d.views === null ? 'no number' : d.views.toLocaleString() + ' views' + (d.source === 'manual' ? ' (typed)' : d.source === 'email' ? ' (emailed report)' : '')) +
+                                  ' · bar ' + d.bar.toLocaleString();
+                        bits.append(b);
+                    });
+                    const side = el('div', 'soc-side');
+                    side.append(el('div', null, p.streak ? p.streak + '-day streak' : 'no streak'),
+                                el('div', null, p.week_known ? 'last 7 days: ' + Math.round(p.week_rate * 100) + '% met' : 'last 7 days: no data'));
+                    const o = p.outlook, line = el('div');
+                    if (o.ready) { line.append('next ' + s.ahead_days + ' days: '); line.append(el('b', null, '~' + Math.round(o.predicted * 100) + '% likely')); }
+                    else line.textContent = 'outlook: still learning (' + o.learned + '/10 days)';
+                    side.append(line);
+                    row.append(name, bits, side, socEditor(p, editBtn, msg)); grid.append(row);
+
+                    const li = el('li');
+                    li.append(el('span', 'who', p.label),
+                              el('span', p.connected || p.emailed ? 'sec-on' : 'sec-off',
+                                 p.connected ? '✓ Automatic (API)' : p.emailed ? '✓ Emailed reports' : (p.key === 'linkedin' ? 'Waiting for emailed reports' : 'Not connected')));
+                    if (p.key === 'tiktok' && p.can_connect) {
+                        const b = el('button', 'small-btn', p.connected ? 'Reconnect TikTok' : 'Connect TikTok'); b.type = 'button';
+                        b.addEventListener('click', async function () {
+                            try { location.href = (await api('/admin/social/tiktok/connect')).url; }
+                            catch (e) { if (e.message !== 'logged out') msg.textContent = e.message; }
+                        });
+                        li.append(b);
+                    }
+                    if (p.key === 'instagram') {
+                        const b = el('button', 'small-btn', p.connected ? 'Replace token' : 'Add token'); b.type = 'button';
+                        b.addEventListener('click', function () { document.getElementById('socIgBox').hidden = false; document.getElementById('socIgToken').focus(); });
+                        li.append(b);
+                    }
+                    if (p.key === 'youtube' && !p.connected) li.append(el('span', 'watch-sum', 'add YOUTUBE_API_KEY + YOUTUBE_CHANNEL_ID on Render'));
+                    if (p.key === 'tiktok' && !p.can_connect) li.append(el('span', 'watch-sum', 'add TIKTOK_CLIENT_KEY + TIKTOK_CLIENT_SECRET on Render'));
+                    conn.append(li);
+                });
+                document.getElementById('socRun').textContent = s.last_run
+                    ? 'Last check: ' + new Date(s.last_run.at).toLocaleString() + ' · ' +
+                      Object.keys(s.last_run.report).filter(function (k) { return k !== 'sbss_learned_days'; })
+                          .map(function (k) { return k + ': ' + s.last_run.report[k]; }).join(' · ')
+                    : 'No check has run yet. It runs every morning, or press Check now.';
+                const dayBox = document.getElementById('socDay');
+                if (!dayBox.value) { const y = new Date(Date.now() - 86400000); dayBox.value = y.toLocaleDateString('en-CA'); }
+            } catch (error) {
+                if (error.message !== 'logged out') msg.textContent = 'Couldn\'t load social stats: ' + error.message;
+            }
+        }
+        // the bar editor for one platform: fixed number, or auto (grows with your usual day and followers)
+        function socEditor(p, btn, msg) {
+            const st = p.settings, box = el('div', 'soc-edit' + (st.mode === 'fixed' ? ' fixed' : ''));
+            box.hidden = true;
+            function field(label, input, cls) { const l = el('label', cls || null, label); l.append(input); box.append(l); return input; }
+            function num(v, min, max) { const i = el('input'); i.type = 'number'; i.min = min; i.max = max; i.value = v; return i; }
+            const mode = el('select'); mode.innerHTML = '<option value="auto">Auto (grows)</option><option value="fixed">Fixed number</option>';
+            mode.value = st.mode;
+            field('Mode', mode);
+            const min = field('Minimum views a day', num(st.threshold, 0, 100000000));
+            const growth = field('% of your usual day', num(st.growth_pct, 50, 500), 'auto-only');
+            const per1k = field('Views per 1,000 followers (0 = off)', num(st.per_1k, 0, 1000), 'auto-only');
+            const win = field('Usual day looks back (days)', num(st.window_days, 7, 90), 'auto-only');
+            const pool = el('select'); pool.innerHTML = '<option value="1">Each day on its own</option><option value="3">Last 3 days together</option>';
+            pool.value = String(st.pool_days);
+            field('Count views', pool);
+            mode.addEventListener('change', function () { box.classList.toggle('fixed', mode.value === 'fixed'); });
+            const facts = [];
+            facts.push(p.usual_day !== null ? 'Usual day (last 28): ' + Math.round(p.usual_day).toLocaleString() + ' views' : 'Usual day: needs a few more days of numbers');
+            facts.push(p.followers !== null ? 'Followers: ' + p.followers.toLocaleString() + ' (' + p.followers_day + ')' : 'Followers: none recorded yet');
+            facts.push(p.suggested !== null ? 'Suggested minimum: ' + p.suggested.toLocaleString() + ' (beaten on about 60% of recent days)' : 'Suggested minimum: after 7 days of numbers');
+            box.append(el('p', 'hint', facts.join(' · ')));
+            box.append(el('p', 'hint', '"Last 3 days together": a day is a 1 when it and the 2 days before add up to 3 times its bar, so a post whose views build slowly still counts. ' +
+                                        'Auto: the bar each day is the highest of your minimum, that % of your usual day, and views per 1,000 followers. ' +
+                                        'Saving a change makes the outlook relearn from your stored numbers.'));
+            const row = el('div', 'stage-row');
+            const sug = el('button', 'small-btn', 'Use suggestion'); sug.type = 'button'; sug.disabled = p.suggested === null;
+            sug.addEventListener('click', function () { min.value = p.suggested; });
+            const save = el('button', 'small-btn go', 'Save'); save.type = 'button';
+            save.addEventListener('click', async function () {
+                save.disabled = true;
+                try {
+                    const r = await postJson('/admin/social/threshold', { platform: p.key, mode: mode.value, threshold: Number(min.value),
+                        growth_pct: Number(growth.value), per_1k: Number(per1k.value), window_days: Number(win.value), pool_days: Number(pool.value) });
+                    msg.textContent = r.relearning ? p.label + ' bar saved. The outlook is relearning with it.' : 'Nothing changed.';
+                    loadSocial();
+                } catch (e) { if (e.message !== 'logged out') msg.textContent = e.message; save.disabled = false; }
+            });
+            row.append(sug, save); box.append(row);
+            btn.addEventListener('click', function () {
+                box.hidden = !box.hidden; btn.setAttribute('aria-expanded', String(!box.hidden));
+                if (!box.hidden) mode.focus();
+            });
+            return box;
+        }
+        document.getElementById('socSave').addEventListener('click', async function () {
+            const msg = document.getElementById('socMsg'), kind = document.getElementById('socKind').value;
+            try {
+                const body = { platform: document.getElementById('socPlat').value, day: document.getElementById('socDay').value };
+                body[kind] = Number(document.getElementById('socViews').value);
+                await postJson(kind === 'followers' ? '/admin/social/followers' : '/admin/social/views', body);
+                document.getElementById('socViews').value = ''; msg.textContent = 'Saved.'; loadSocial();
+            } catch (e) { if (e.message !== 'logged out') msg.textContent = e.message; }
+        });
+        document.getElementById('socIgSave').addEventListener('click', async function () {
+            const msg = document.getElementById('socMsg'), box = document.getElementById('socIgToken');
+            try {
+                await postJson('/admin/social/instagram-token', { token: box.value.trim() });
+                box.value = ''; document.getElementById('socIgBox').hidden = true; msg.textContent = 'Instagram is connected.'; loadSocial();
+            } catch (e) { if (e.message !== 'logged out') msg.textContent = e.message; }
+        });
+        document.getElementById('socRunNow').addEventListener('click', async function () {
+            const btn = this; btn.disabled = true;
+            try { await postJson('/admin/social/run', {}); loadSocial(); }
+            catch (e) { if (e.message !== 'logged out') document.getElementById('socMsg').textContent = e.message; }
+            finally { btn.disabled = false; }
+        });
 
         // ---------- newsletter: subscribers + sending ----------
         let subscribers = [];
