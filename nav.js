@@ -325,7 +325,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
                 link('terms.html', 'Terms of Service') +
             '</ul></div>' +
             '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA' +
-                '</div>';
+                '<a class="f-admin" href="' + BASE + 'admin.html" rel="nofollow">Admin</a></div>';
         fillNewsletters();
     }
 
