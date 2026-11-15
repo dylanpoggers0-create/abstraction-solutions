@@ -70,7 +70,8 @@ const PAGES = [
 
     // hidden: true = not in the menu (linked from the footer), but still named correctly as the current page
     { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true },
-    { id: 'recipes',   label: 'Automation Recipes', href: 'recipes/', icon: 'services', hidden: true }
+    { id: 'recipes',   label: 'Automation Recipes', href: 'recipes/', icon: 'services', hidden: true },
+    { id: 'hydrocart', label: 'HydroCart', href: 'hydrocart.html', icon: 'services', hidden: true }
 ];
 
 // The folder nav.js lives in (your main site folder). Putting BASE in front of
@@ -310,20 +311,21 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '<div><h4>EXPLORE</h4><ul class="f-explore">' +
                 link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('aboutus.html', 'About Us') +
                 link('order.html#case-studies', 'Case Studies') + link('index.html#roi', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
-                link('order.html#lookup', 'Check an order') + link('changelog.html', 'Changelog') +
+                link('order.html#lookup', 'Check an order') + link('hydrocart.html', 'HydroCart') + link('changelog.html', 'Changelog') +
             '</ul></div>' +
             '<div class="f-side"><h4>CONTACT</h4><ul>' +
                 '<li><a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></li>' +
                 '<li><a href="https://www.youtube.com/@abstractionsolutions" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:8px"><rect x="2" y="5" width="20" height="14" rx="4"/><polygon points="10,9 15.5,12 10,15" fill="currentColor" stroke="none"/></svg>@abstractionsolutions</a></li>' +
                 '<li><a href="https://www.instagram.com/abstraction.solutions/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:8px"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1" fill="currentColor" stroke="none"/></svg>@abstraction.solutions</a></li>' +
                 '<li><a href="https://www.tiktok.com/@abstraction.soluti" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.6 2.6 2.6 4.3 5 4.5"/></svg>@abstraction.soluti</a></li>' +
+                '<li><a href="https://www.linkedin.com/company/abstraction-solutions/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:8px"><rect x="2" y="2" width="20" height="20" rx="4"/><line x1="7" y1="10" x2="7" y2="17"/><circle cx="7" cy="7" r="0.8" fill="currentColor"/><path d="M11 17v-7M11 13a3 3 0 0 1 6 0v4"/></svg>LinkedIn</a></li>' +
             '</ul>' +
             '<h4 class="f-legal">LEGAL</h4><ul>' +
                 link('privacy.html', 'Privacy Policy') + link('returns.html', 'Returns &amp; Refunds') +
                 link('terms.html', 'Terms of Service') +
             '</ul></div>' +
             '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA' +
-                '<a class="f-admin" href="' + BASE + 'admin.html" rel="nofollow">Admin</a></div>';
+                '</div>';
         fillNewsletters();
     }
 
