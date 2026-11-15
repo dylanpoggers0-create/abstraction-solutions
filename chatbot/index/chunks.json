@@ -2,8 +2,8 @@
 {
 "url": "https://abstraction-solutions.com/aboutus.html",
 "title": "About Abstraction Solutions",
-"heading": "Making AI make sense.",
-"text": "ABOUT US\nAI education and efficient software, built so anyone can understand machine learning.\nDylan Pogue FOUNDER & CEO"
+"heading": "About Abstraction Solutions",
+"text": "ABOUT US\nAbstraction Solutions (“AI Made Simple”) builds plain-English AI training and custom tools for small businesses and nonprofits. We are based in Memphis and also work in Gainesville and nationwide — not Memphis-only.\nDylan Pogue FOUNDER & CEO"
 },
 {
 "url": "https://abstraction-solutions.com/aboutus.html",
@@ -24,100 +24,262 @@
 "text": "CHANGELOG\nDated notes on everything we ship, newest first."
 },
 {
-"url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
-"heading": "AI Made Simple.",
-"text": "AI EDUCATION & CUSTOM AI TOOLS\nGet an instant quote in seconds, handle everything by email, and keep full control of what we build.\nGet a free quote Start a project Learn AI in 60 seconds\nYour browser does not support the video tag.\nSchool-wide our AI chatbot is deployed for every faculty member at a high school"
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "Fewer pages, easier to find",
+"text": "2026-11-07\nNonprofit work and Built in Memphis now live on the Custom Workflows page, so there are fewer pages to click through.\nJoin our mailing list on the homepage for offers, early access, newsletters and giveaways.\nFind us on TikTok, linked in the footer."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "Check your order and pay online",
+"text": "2026-11-06\nCheck an order with your email and confirmation number, see its status and quote, and pay securely online with Stripe."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "50% off for clubs and nonprofits",
+"text": "2026-11-06\nA Clubs & Nonprofits page for Rotary clubs, civic clubs and nonprofits: websites, member updates, event signups, newsletters, dues and donation pages, and simple AI.\nClubs and nonprofits get 50% off every project. Mention it when you order and your final quote takes half off."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "A better site assistant",
+"text": "2026-11-06\nAsk \"What do you do?\" and get our services, with suggested questions to tap.\nOn phones, the assistant opens as a full screen instead of a small window."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "For Memphis small businesses and nonprofits",
+"text": "2026-11-06\nOur offer now focuses on Memphis small businesses and nonprofits.\nThrough Friday, November 13, 2026, quotes are 25% off for everyone other than nonprofits. Nonprofits keep 50% off. The discounts don't stack."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "HydroCart, an indoor growing tower from Abstraction Solutions.",
+"text": "Home › HydroCart\nHYDROCART\nA six-plant hydroponic tower on a rolling cart, built to show what our AI can do. It watches its own water, pH and air, forecasts what comes next, and keeps the hands-on work to a few simple steps.\nBuild something like this See how the AI loop works"
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "What HydroCart is",
+"text": "HydroCart is our showpiece, not a product for sale. It holds six plants in a small footprint and runs a nearly autonomous loop: sensors measure the system, our own AI model learns from those readings, and it predicts where each reading is heading so problems show up before they hurt the plants.\nThe same approach works for other equipment that needs watching, which is why we use it to show clients what a custom AI system can do."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "How the AI loop works",
+"text": "Measure. An Arduino Mega reads pH, the water level in two tanks, and the temperature and humidity at two points on the cart.\nRemember. It saves 10-minute averages on the board itself, enough for about 2.6 days of readings even with no computer attached.\nForecast. A Python app runs our AI model and predicts every reading 30 minutes, 6 hours and 24 hours ahead."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "How the AI loop works",
+"text": "y reading 30 minutes, 6 hours and 24 hours ahead.\nCheck itself. Each forecast is scored against five simpler methods using rules we set before looking at the results, so we only trust the AI where it actually does better.\nShow it. Live readings and forecasts appear on a dashboard, so the few hands-on steps happen at the right time instead of on a guess."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "What's on the cart",
+"text": "A rolling cart with a fixed central tower holding six plants\nA tote reservoir at the bottom, plus a backup tank up top\nA small pump that carries the nutrient solution up the tower so it trickles back down past the roots\nAn aerator and a heater for the water\nGrow lights\nAn Arduino Mega with pH, water-level, temperature and humidity sensors\nMost of the cart is built from reused parts, with about $50 in new parts."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Why grow without soil",
+"text": "Hydroponics is a way to grow plants without soil. A pH-adjusted water solution carries nutrients straight to the roots, sometimes with an inert medium such as coco coir or rockwool for support. That is the method behind HydroCart."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Why grow without soil",
+"text": "for support. That is the method behind HydroCart.\nYou can grow indoors year-round, including in winter, because the plants are not tied to field weather ( University of Missouri Extension, 2024 ). Vertical towers also fit in a small indoor footprint, which is useful in a city where outdoor growing space is limited."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Why grow without soil",
+"text": "in a city where outdoor growing space is limited.\nClosed or recirculating systems can use water efficiently. In one peer-reviewed comparison of lettuce grown in Yuma, Arizona, hydroponic greenhouse production was estimated at about 20 liters of water per kilogram of lettuce per year, compared with about 250 liters for conventional field lettuce — roughly 13 times less water per kilogram, or about 92% less ( Barbosa et al., 2015 ). Those figures are for that crop and setting, not a promise for every plant in every tower."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Why grow without soil",
+"text": "ng, not a promise for every plant in every tower.\nThe same study found much higher yield per square meter for that hydroponic lettuce, and also much higher energy use per kilogram than field production. Hydroponics is not automatically “low energy,” so we do not claim it is."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Why grow without soil",
+"text": "matically “low energy,” so we do not claim it is.\nTypical hydroponic crops include leafy greens, herbs, tomatoes, peppers, and strawberries. NASA has also tested hydroponic and aeroponic growing without soil on the International Space Station ( NASA XROOTS )."
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Want a system like this?",
+"text": "We build custom AI systems that watch equipment, forecast what comes next, and explain it in plain English. Describe yours and get a free instant estimate. Registered nonprofits get 50% off, and every build includes 30 days of free bug fixes after delivery.\nGet a free instant quote"
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Questions",
+"text": "Can I buy a HydroCart?\nNot right now. HydroCart is our showpiece for what our AI can do. If you want a monitoring and forecasting system for your own setup, get a free instant quote.\nWhat is hydroponics?\nGrowing plants without soil, with nutrients delivered in water.\nCan you grow year-round?\nIndoor hydroponic crops can be grown year-round, including in winter, according to University of Missouri Extension.\nDoes it use less water?"
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Questions",
+"text": "ty of Missouri Extension.\nDoes it use less water?\nRecirculating hydroponic systems can use much less water per kilogram than field growing; a 2015 lettuce study in Arizona estimated about 92% less water per kilogram. Results vary by crop and setup.\nDoes it use less electricity?\nNot necessarily. That same study found much higher energy use per kilogram than field lettuce. We will list HydroCart's measured draw here if we publish one.\nIs the food safe to eat?"
+},
+{
+"url": "https://abstraction-solutions.com/hydrocart.html",
+"title": "HydroCart Indoor Growing Tower",
+"heading": "Questions",
+"text": "here if we publish one.\nIs the food safe to eat?\nYes, hydroponically grown food is eaten routinely. Indoor growing can reduce contact with wildlife that sometimes carry foodborne pathogens; you still need clean handling and a clean nutrient solution.\nSources: University of Missouri Extension G6986 · Barbosa et al., 2015 · NASA XROOTS"
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
+"heading": "AI Made Simple.",
+"text": "AI EDUCATION & CUSTOM AI TOOLS\nPlain-English AI training and custom tools for small businesses and nonprofits. Get a free instant quote, then handle the rest by email.\nGet a free quote Start a project Learn AI in 60 seconds\nYour browser does not support the video tag.\nSchool-wide our AI chatbot is deployed for every faculty member at a high school"
+},
+{
+"url": "https://abstraction-solutions.com/",
+"title": "AI Made Simple for Small Business",
 "heading": "What we do",
 "text": "AI education, ethical AI, and custom tools for people, researchers and companies."
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "AI Education",
 "text": "How AI works and what's new, in plain language."
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "AI Automation",
 "text": "Hand reports, data entry and busywork to AI."
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "Custom Workflows",
 "text": "Connect the tools you already use, step to step."
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "Models, Tools & Code",
 "text": "Custom models, tools and code built for you.\nGet Started"
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "What could AI save you?",
 "text": "Two numbers, one quick estimate.\nHOURS A WEEK ON A REPETITIVE TASK\nCOST OF AN HOUR OF THAT TIME ($)\n$0 a month back, assuming about 60% of that task gets automated\nAn estimate from your numbers, not a promise. It uses the same 60% default as the full calculator. Open the full ROI calculator →"
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "Get a quote today",
-"text": "Describe the project below. You get an instant estimate, then final scope and price by email.\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nEstimated cost"
+"text": "Describe the project below. This is an instant estimate, not a final bill. Registered nonprofits see 50% off this estimate. You will get final scope and price by email.\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nEstimated cost"
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "To make this more accurate, tell us:",
 "text": "Accept this quote\nOpens the order form with your project filled in. Instant estimate, then final scope and price by email.\nSee what this could save you →\nNote: This is an instant estimate from our Abstraction Solutions Computational Engine v1.0. The nonprofit price is the same estimate at 50% off. You get an instant estimate, then final scope and price by email: dylanpogue@abstraction-solutions.com ."
 },
 {
 "url": "https://abstraction-solutions.com/",
-"title": "AI Made Simple: AI Education & Custom AI Tools",
+"title": "AI Made Simple for Small Business",
 "heading": "Let's build something",
-"text": "Have a project or a question about AI? Reach out.\nEmail us YouTube Follow @abstraction.solutions TikTok"
+"text": "Have a project or a question about AI? Reach out.\nEmail us YouTube Follow @abstraction.solutions TikTok LinkedIn"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
-"heading": "Start your project.",
-"text": "ORDER\nSmall businesses and nonprofits: tell us what you need. You get an instant estimate, then final scope and price by email.\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nSign in to checkout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as"
+"title": "Free Instant AI Project Quote",
+"heading": "Start your AI project with a free instant quote.",
+"text": "Home › Order\nORDER\nDescribe the work, get an estimate in seconds, and keep the final scope in email so you stay in control of what we build.\nGet a free instant quote Check an existing order\nI represent a nonprofit — show my 50% estimate\nGet a free instant quote\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nSign in to checkout Keep your orders and quotes in one place\nor"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
+"title": "Free Instant AI Project Quote",
+"heading": "Start your AI project with a free instant quote.",
+"text": "ckout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
 "heading": "Your orders",
 "text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nCHANGE REQUESTS"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
+"title": "Free Instant AI Project Quote",
+"heading": "How pricing works",
+"text": "We do not publish a rate card, because every build is different. You get a free instant estimate from our quote engine, then a final scope and price by email at dylanpogue@abstraction-solutions.com . You pay one stage at a time, so you are never far ahead of the work. Cancel anytime and nothing more is due. If you have paid for a stage we have not started, that stage comes back to you in full."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Nonprofit pricing",
+"text": "Registered nonprofits get 50% off the quoted estimate. That discount is not combined with other offers. If you are a nonprofit, say so in the quote form so the estimate already reflects it."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "What you can order",
+"text": "Custom AI chatbots trained on your documents, automations that take reports and busywork off your team, workflows that connect the tools you already use, machine learning models for pricing and forecasting, nonprofit and small-business websites, and plain-English AI training for your staff."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "After you request a quote",
+"text": "You will see an instant estimate on the spot. We follow up by email with scope, timing, and the first stage to pay. When work is delivered, you have 30 days of free bug fixes on what we built.\nPayments through Stripe\nFull refund of a stage that has not started\nCancel anytime with nothing more due\n30 days of free bug fixes after delivery\nROI calculator\nReturns · Terms"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
 "heading": "Case studies",
 "text": "A few things we've built, and what they do for the people who use them.\nAI CHATBOT · EDUCATION"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
+"title": "Free Instant AI Project Quote",
 "heading": "CBHS Information Chatbot",
 "text": "A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.\nSourced answers from the school's own information\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
+"title": "Free Instant AI Project Quote",
 "heading": "Price Optimization & Data Cleanup",
 "text": "Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.\nWeekly used in real pricing decisions\nAUTOMATION · CLIENT PROJECT"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
-"title": "Start an AI Project or Check Your Order",
+"title": "Free Instant AI Project Quote",
 "heading": "Email Response Cyberdeck",
 "text": "A small device that drafts email replies and schedules meetings, and waits for your OK before anything is sent.\nAutomatic replies and scheduling\nIn control you confirm every email"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Questions before you start",
+"text": "How much does a project cost?\nYou get a free instant estimate first. The final price is confirmed by email after we see the scope. We do not ask you to pay for the whole project up front.\nDo nonprofits really get 50% off?\nYes. Registered nonprofits get 50% off the quoted estimate. It is not combined with other offers.\nWhat if I change my mind?"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Questions before you start",
+"text": "ined with other offers.\nWhat if I change my mind?\nCancel anytime. A stage you have paid for that we have not started is refunded in full. After delivery, refunds no longer apply and the 30-day bug-fix period does.\nHow do I pay and check an order?\nPay through Stripe on this site. Use your 8-digit confirmation number on this page to check status.\nDo you only work in Memphis?"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Questions before you start",
+"text": "age to check status.\nDo you only work in Memphis?\nNo. The company is based in Memphis and also serves Gainesville and clients across the United States."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -217,111 +379,111 @@
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "Client document checklist",
 "text": "AUTOMATION RECIPE · CPA AND ACCOUNTING FIRMS\nEach client gets a personal checklist of the documents you need, and reminders for anything still missing."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "The problem today",
 "text": "Every season starts with chasing documents. Clients aren't sure what to send, and your team tracks who's missing what by hand."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "How the automation works › Build the checklist",
 "text": "Each client gets a checklist based on last year's return type and your intake questions."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "How the automation works › Send it",
 "text": "The checklist goes out with a link to the secure upload portal you already use."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "How the automation works › Track",
 "text": "As uploads come in, items are checked off."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "How the automation works › Remind",
 "text": "Clients get polite reminders for whatever is still missing."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "How the automation works › See the status",
 "text": "Your team gets one list of which clients are complete and which aren't.\nYou stay in control\nTax advice always comes from your team, never the AI.\nClient documents stay in the systems you already use.\nYou approve every reminder template."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "How the automation works › Get a quote for this",
 "text": "Every business is different, so this recipe is a starting point. Click below and the quote tool fills in this project for you. Change anything you like, then get your instant estimate.\nQuote this Estimate your ROI\nQuestions? Email dylanpogue@abstraction-solutions.com ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/cpa.html",
-"title": "Client document checklist for CPA and accounting firms",
+"title": "CPA Client Document Checklist Automation",
 "heading": "How the automation works › Other recipes",
-"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges"
+"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges\nSee the steps, then get a free instant quote with the details already filled in ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "After-hours requests and recall reminders",
 "text": "AUTOMATION RECIPE · DENTAL OFFICES\nPatient messages that arrive after closing get sorted and answered first thing, and patients due for a cleaning get a friendly reminder."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "The problem today",
 "text": "Patients email or fill out your website form after hours, and those requests wait until someone has time the next day. Patients who are due for a cleaning slip through the cracks unless someone works the list."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "How the automation works › Collect",
 "text": "After-hours messages from your website form and email land in one place."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "How the automation works › Sort",
 "text": "AI tags each message: new patient, reschedule, billing question or possibly urgent. Possibly urgent ones go to the top for your team."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "How the automation works › Draft",
 "text": "It writes a reply to each one in your office's voice, using only information you've approved, like hours, location and insurance you accept."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "How the automation works › Review",
 "text": "Your front desk approves or edits the replies in the morning. Nothing goes out without approval unless you choose otherwise."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "How the automation works › Remind",
 "text": "From a list of patients due for a cleaning (an export from your scheduling software), it sends reminder emails with a link to book.\nYou stay in control\nClinical and urgent questions always go to a person.\nThe AI never gives medical advice.\nYou decide which replies can send on their own."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "How the automation works › Get a quote for this",
 "text": "Every business is different, so this recipe is a starting point. Click below and the quote tool fills in this project for you. Change anything you like, then get your instant estimate.\nQuote this Estimate your ROI\nQuestions? Email dylanpogue@abstraction-solutions.com ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/dental.html",
-"title": "After-hours requests and recall reminders for Dental offices",
+"title": "After-Hours Dental Request Triage",
 "heading": "How the automation works › Other recipes",
-"text": "Plumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist"
+"text": "Plumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist\nSee the steps, then get a free instant quote with the details already filled in ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/",
@@ -337,219 +499,219 @@
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "Quote intake and emergency triage",
 "text": "AUTOMATION RECIPE · PLUMBING AND HVAC\nEvery request becomes a complete job ticket, and emergencies are flagged the moment they come in."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "The problem today",
 "text": "Requests arrive by email and web form with missing details, so your team spends time going back and forth before anyone can quote or schedule. Real emergencies can get buried in routine requests."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "How the automation works › Ask the right questions",
 "text": "A short online form or email reply collects what your techs need: the problem, the area, photos and how soon."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "How the automation works › Triage",
 "text": "AI flags likely emergencies by your rules (for example no heat or an active leak) and sorts the rest by job type."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "How the automation works › Safety first",
 "text": "For dangerous situations you define, like a gas smell, the customer immediately gets the safety instructions you approve."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "How the automation works › Job ticket",
 "text": "Each request becomes a clean summary your tech can quote from, with the photos attached."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "How the automation works › Reply",
 "text": "The customer gets a confirmation and next steps in your words, and you get suggested time slots from your calendar to confirm.\nYou stay in control\nYou set what counts as an emergency.\nYou approve every safety message.\nPrices and appointments are always confirmed by your team."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "How the automation works › Get a quote for this",
 "text": "Every business is different, so this recipe is a starting point. Click below and the quote tool fills in this project for you. Change anything you like, then get your instant estimate.\nQuote this Estimate your ROI\nQuestions? Email dylanpogue@abstraction-solutions.com ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/plumbing-hvac.html",
-"title": "Quote intake and emergency triage for Plumbing and HVAC",
+"title": "Plumbing and HVAC Quote Intake Chatbot",
 "heading": "How the automation works › Other recipes",
-"text": "Dental offices After-hours requests and recall reminders\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist"
+"text": "Dental offices After-hours requests and recall reminders\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist\nSee the steps, then get a free instant quote with the details already filled in ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "Maintenance request triage",
 "text": "AUTOMATION RECIPE · PROPERTY MANAGEMENT\nTenant requests get categorized, prioritized and routed to the right vendor with a ready-to-use work order."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "The problem today",
 "text": "Maintenance requests come in by email, text and portal with different levels of detail. Someone has to read each one, decide how urgent it is, find the right vendor and keep the tenant updated."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "How the automation works › Collect",
 "text": "Tenants submit requests with photos through a form or email."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "How the automation works › Categorize",
 "text": "AI labels each request (plumbing, electrical, appliance, pests and so on) and sets urgency by your rules."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "How the automation works › Route",
 "text": "It drafts a work order for the right vendor from your contact list, ready for you to send."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "How the automation works › Update tenants",
 "text": "Tenants get status messages you've approved, so they're not left wondering."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "How the automation works › Summarize",
 "text": "You get a weekly summary of open requests by property.\nYou stay in control\nYou approve which vendor gets each job.\nEmergency rules are yours to set.\nTenant messages use wording you approve."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "How the automation works › Get a quote for this",
 "text": "Every business is different, so this recipe is a starting point. Click below and the quote tool fills in this project for you. Change anything you like, then get your instant estimate.\nQuote this Estimate your ROI\nQuestions? Email dylanpogue@abstraction-solutions.com ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/property-management.html",
-"title": "Maintenance request triage for Property management",
+"title": "Property Maintenance Request Triage",
 "heading": "How the automation works › Other recipes",
-"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist"
+"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nVeterinary clinics Vaccine reminders\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist\nSee the steps, then get a free instant quote with the details already filled in ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "Rebooking nudges",
 "text": "AUTOMATION RECIPE · SALONS\nClients get a friendly nudge to rebook when they're due for their next visit."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "The problem today",
 "text": "Regulars forget to rebook, and reaching out to each one by hand takes time nobody has between appointments."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "How the automation works › Learn the rhythm",
 "text": "From your appointment history, it works out each client's usual gap between visits."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "How the automation works › Nudge",
 "text": "When a client is due, they get a short, friendly message with your booking link."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "How the automation works › Skip the booked",
 "text": "Clients who already have an appointment don't get a nudge."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "How the automation works › Respect opt-outs",
 "text": "Anyone who opts out stops getting messages."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "How the automation works › Win-back list",
 "text": "Each month you get a list of clients who haven't come back, for a personal note.\nYou stay in control\nYou write or approve the message style.\nYou choose how often anyone can be contacted.\nOpt-outs are honored automatically."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "How the automation works › Get a quote for this",
 "text": "Every business is different, so this recipe is a starting point. Click below and the quote tool fills in this project for you. Change anything you like, then get your instant estimate.\nQuote this Estimate your ROI\nQuestions? Email dylanpogue@abstraction-solutions.com ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/salon.html",
-"title": "Rebooking nudges for Salons",
+"title": "Salon Rebooking Reminder Automation",
 "heading": "How the automation works › Other recipes",
-"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nCPA and accounting firms Client document checklist"
+"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nVeterinary clinics Vaccine reminders\nCPA and accounting firms Client document checklist\nSee the steps, then get a free instant quote with the details already filled in ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "Vaccine reminders",
 "text": "AUTOMATION RECIPE · VETERINARY CLINICS\nPet owners get a personal reminder when a vaccine is coming due, with a link to book."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "The problem today",
 "text": "Keeping up with vaccine due dates means someone pulling lists and sending reminders by hand, and it's easy to fall behind on busy weeks."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "How the automation works › Export",
 "text": "Start from a list of patients and vaccine due dates exported from your practice software."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "How the automation works › Find who's due",
 "text": "It picks out pets with vaccines coming due soon."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "How the automation works › Remind",
 "text": "Owners get a friendly email with the pet's name, the vaccine and a link to book."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "How the automation works › Follow up",
 "text": "If the list shows no appointment yet, a second reminder goes out later. It skips anyone already booked."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "How the automation works › Summarize",
 "text": "Your team sees who was reminded and who still needs a personal touch.\nYou stay in control\nMedical questions always go to your staff.\nYou approve the reminder wording.\nOwners can opt out at any time."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "How the automation works › Get a quote for this",
 "text": "Every business is different, so this recipe is a starting point. Click below and the quote tool fills in this project for you. Change anything you like, then get your instant estimate.\nQuote this Estimate your ROI\nQuestions? Email dylanpogue@abstraction-solutions.com ."
 },
 {
 "url": "https://abstraction-solutions.com/recipes/vet.html",
-"title": "Vaccine reminders for Veterinary clinics",
+"title": "Vet Clinic Vaccine Reminder Automation",
 "heading": "How the automation works › Other recipes",
-"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist"
+"text": "Dental offices After-hours requests and recall reminders\nPlumbing and HVAC Quote intake and emergency triage\nProperty management Maintenance request triage\nSalons Rebooking nudges\nCPA and accounting firms Client document checklist\nSee the steps, then get a free instant quote with the details already filled in ."
 },
 {
 "url": "https://abstraction-solutions.com/returns.html",
@@ -607,385 +769,427 @@
 },
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
-"title": "AI Automation & Custom Chatbots for Business",
-"heading": "AI Automation",
+"title": "Custom AI Chatbots and Automations",
+"heading": "Custom AI chatbots and automations.",
 "text": "SERVICES\nHere at Abstraction Solutions, we develop various pipelines and architectures to help you automate the tasks you consider simply busy work . This can include responding to emails, cleaning up data, or computing complex back-office metrics. We engineer lightweight, custom AI and data tools that transform your daily manual overhead into reliable, automated systems ."
 },
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
-"title": "AI Automation & Custom Chatbots for Business",
+"title": "Custom AI Chatbots and Automations",
+"heading": "Chatbots trained on your documents",
+"text": "A chatbot that looks up the answer in your own documents before it replies, so it doesn't guess, and shows where the answer came from."
+},
+{
+"url": "https://abstraction-solutions.com/services/automation.html",
+"title": "Custom AI Chatbots and Automations",
+"heading": "Automations that take busywork off your team",
+"text": "Automations that answer routine email, clean up data, and compute the back-office numbers your team does by hand today."
+},
+{
+"url": "https://abstraction-solutions.com/services/automation.html",
+"title": "Custom AI Chatbots and Automations",
+"heading": "A school information chatbot",
+"text": "We built the CBHS Information Chatbot: it answers from the school's own information, and all faculty have it deployed. See it with our other case studies ."
+},
+{
+"url": "https://abstraction-solutions.com/services/automation.html",
+"title": "Custom AI Chatbots and Automations",
+"heading": "Get a free instant quote",
+"text": "Describe what you need and get an estimate in seconds. Get a free instant quote . Every build includes 30 days of free bug fixes after delivery."
+},
+{
+"url": "https://abstraction-solutions.com/services/automation.html",
+"title": "Custom AI Chatbots and Automations",
 "heading": "How it works",
 "text": "You give us a problem, and we provide you with a solution that is simple to explain , addresses the issue efficiently , and does not disrupt your current processes . You can get a quote estimate here:\nGet a quote Free quote in seconds"
 },
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
-"title": "AI Automation & Custom Chatbots for Business",
+"title": "Custom AI Chatbots and Automations",
 "heading": "Past projects › Email Response Cyberdeck",
 "text": "A small, self-contained device that takes care of your communications whenever you're busy .\nTurns on automatically and starts answering emails as soon as it's powered up\nSchedules meetings on your Google Calendar for you\nLets you confirm each email before it's sent\nCustomizable: replies match the tone and context you give it\nRaspberry Pi 4 Arduino Uno 16x2 LCD Google Calendar API"
 },
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
-"title": "AI Automation & Custom Chatbots for Business",
+"title": "Custom AI Chatbots and Automations",
 "heading": "Past projects › CBHS Information Chatbot",
 "text": "A chatbot built to answer questions about Christian Brothers High School , using RAG to find answers in the school's own information instead of guessing.\nDeployed school-wide for every faculty member\nDeployed to all faculty\nRetrieves the right school information before it answers\nHow does RAG work? Watch our 2-minute explainer →\nRAG Chatbot Education"
 },
 {
 "url": "https://abstraction-solutions.com/services/automation.html",
-"title": "AI Automation & Custom Chatbots for Business",
+"title": "Custom AI Chatbots and Automations",
 "heading": "Past projects › Price Optimization Model",
 "text": "A machine learning model that learns from historical pricing data and suggests price changes that increase profit .\nSuggests price adjustments based on past sales\nKeeps sales high while raising the price per unit\nFinds the price where profit is highest\nMachine Learning Pricing Sales Data"
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Making AI make sense.",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Plain-English AI training, plus a certification guide.",
 "text": "AI EDUCATION\nPlain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Short explainers",
 "text": "Short videos that break down the ideas behind modern AI. New ones every week on Instagram: @abstraction.solutions\nYour browser does not support the video tag.\nVIDEO · 1:53 Math is Art: Backpropagation How AI models learn, explained through painting a picture: draft, step back, fix what's off, repeat.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Short explainers",
 "text": "eat.\nYour browser does not support the video tag.\nVIDEO · 1:43 RAG Explained Simply Why AI sometimes makes things up, and how Retrieval-Augmented Generation makes it answer from real sources instead.\nYour browser does not support the video tag.\nVIDEO · 1:58 Math is Art, Part 2: Gradient Descent How AI knows which way to fix its mistakes, explained by mixing paint to match a color.\nShow all videos (10 more)\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Short explainers",
 "text": "ore)\nYour browser does not support the video tag.\nVIDEO · 1:54 Decision Trees: How a Tutor Finds Where You're Stuck Yes or no questions, learned from examples, with a path you can trace to see exactly why it decided.\nYour browser does not support the video tag.\nVIDEO · 1:49 Random Forests: A Panel of Graders Hundreds of decision trees trained on different slices of data, voting so one tree's quirks get outvoted.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Short explainers",
 "text": "ted.\nYour browser does not support the video tag.\nVIDEO · 1:40 Clustering: The Lunchroom Nobody Assigned Finding natural groups in data with no labels, and why people still have to decide what they mean.\nYour browser does not support the video tag.\nVIDEO · 1:42 Anomaly Detection: The Teacher Who Notices Learning what normal looks like and flagging what doesn't fit. A flag is not a verdict.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Short explainers",
 "text": "ict.\nYour browser does not support the video tag.\nVIDEO · 1:49 Reinforcement Learning: How You Learned to Study Try something, get a score, adjust. Plus delayed rewards, explore vs. exploit, and rewarding the right thing.\nYour browser does not support the video tag.\nVIDEO · 1:54 Regression vs. Classification Same gradebook, two questions: how much, or which one? Pick the question first, then the model.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Short explainers",
 "text": "del.\nYour browser does not support the video tag.\nVIDEO · 1:48 Show Your Work: Trustworthy AI Three checks before you trust an AI tool: can it explain itself, does it use real sources, does a human sign off?\nYour browser does not support the video tag.\nVIDEO · 1:46 Edge AI: Pocket Calculator vs. Calling the Professor Cloud AI vs. AI that runs right on the device, and two questions to ask before you use either.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
-"heading": "Educational Sources and Explanations",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Short explainers",
 "text": "her.\nYour browser does not support the video tag.\nVIDEO · 1:49 Meet the AI Staff Room, Part 1 Six AI specialists and their jobs: regression, classification, decision trees, random forests, clustering and forecasting.\nYour browser does not support the video tag.\nVIDEO · 1:56 Meet the AI Staff Room, Part 2 Six more: computer vision, RAG, recommendations, anomaly detection, reinforcement learning and edge AI. Plus a cheat sheet."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "Find the right AI certification",
 "text": "Recognized industry certifications from AWS, Microsoft, Google, NVIDIA, CompTIA and others, with official prices. Get suggestions for your background, or browse and sort them yourself."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "Browse all certifications",
 "text": "Search\nField\nAll fields\nLevel\nAll levels Beginner Intermediate Advanced\nSort by\nCost: low to high Cost: high to low Name (A–Z)\nLoading certifications…"
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "AI training for teams and nonprofits",
+"text": "Plain-English training on how AI works and how to use it well, for staff, students and volunteers. No math or engineering background needed. Registered nonprofits get 50% off. Get a free instant quote ."
+},
+{
+"url": "https://abstraction-solutions.com/services/education.html",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "Questions",
+"text": "Is the certification recommender free?\nYes. It's free to use, with no account needed.\nDoes it store my resume?\nNo. Your resume is used once to make suggestions and is never saved. It is sent to our server, and to Google's Gemini model when that is available, only to make those suggestions.\nCan I sort by cost?\nYes. Sort the recommendations by cost, lowest or highest first."
+},
+{
+"url": "https://abstraction-solutions.com/services/education.html",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "Teaching experience",
 "text": "Years of helping students understand math, science and AI."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "Teaching Assistant",
 "text": "Christian Brothers High School · Aug – Dec 2026\nTaught machine learning models and the Stanford design thinking process , and introduced hands-on projects for students to work on."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "Instructor",
 "text": "Mathnasium · 8 months\nTaught math to students. Also developed software to collect and store star cards digitally to reduce paper use. It wasn't implemented, but I pitched upgrades to the center director, including fuzzy search , machine learning to forecast attendance and a team points calculator ."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "Tutor",
 "text": "Christian Brothers High School · Several years\nTutored students for years, including teaching trigonometry ."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "Awards",
 "text": "Recognition for engineering and computer science work."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
-"title": "AI Training & Machine Learning Education",
+"title": "Plain-English AI Training and Cert Guide",
 "heading": "MAJEC 1st Place",
 "text": "Designed a circuit breaker with an Arduino , then used the idea that breaking a circuit with a relay can trigger a change to design a bike lock . The win earned prize money for the school.\nAerospace Engineering Award Computer Science Award\nGet in touch"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Models, Tools & Code",
 "text": "SERVICES\nWe design custom machine learning models, tools and code for people, researchers and companies."
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "How it works",
 "text": "Tell us what you want to predict , automate or understand . We study your data, build a model that fits the problem, and hand it over with code you can run and a plain-language explanation of how it works. You can get a quote estimate here:\nGet a quote Free quote in seconds"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
+"heading": "Models that can run on a local device",
+"text": "When the job calls for it, we can build models that run on a device you control instead of sending every request to a cloud API. That can mean lower ongoing cost and data that stays in your shop."
+},
+{
+"url": "https://abstraction-solutions.com/services/models.html",
+"title": "Custom ML Models for Business",
 "heading": "Models we build",
 "text": "Tap a model to see what it does and where it's used.\nRegression Predicts a number\nLearns how inputs relate to a number, then predicts that number for new cases.\nUSED FOR\nSales and revenue forecasts\nPricing\nDelivery and wait-time estimates\nClassification Sorts things into categories\nLearns from labeled examples, then decides which group something new belongs to.\nUSED FOR\nSpam and fraud filters\nLead and customer scoring\nSorting support tickets"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Models we build",
 "text": "Lead and customer scoring\nSorting support tickets\nDecision Trees Makes choices with yes/no questions\nSplits data with a series of simple yes/no questions until it reaches an answer, like a flowchart. Easy to read and explain.\nUSED FOR\nLoan and credit approvals\nDiagnosing customer issues\nExplaining why a decision was made\nRandom Forests Many trees voting together"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Models we build",
 "text": "as made\nRandom Forests Many trees voting together\nBuilds hundreds of decision trees on different slices of the data and combines their votes, which makes it more accurate and stable than a single tree.\nUSED FOR\nPredicting customer churn\nFraud detection\nRanking which factors matter most\nClustering Finds natural groups\nGroups similar items together without needing any labels, revealing patterns you didn't know were there.\nUSED FOR\nCustomer segments\nGrouping similar products"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Models we build",
 "text": "D FOR\nCustomer segments\nGrouping similar products\nOrganizing large document sets\nTime-Series Forecasting Predicts what comes next\nStudies how data changes over time, including trends and seasons, to forecast future values.\nUSED FOR\nInventory demand\nStaffing schedules\nEnergy and resource use\nComputer Vision Understands images and video\nUses neural networks (usually CNNs) to recognize objects, read text and spot details in pictures.\nUSED FOR\nProduct defect detection"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Models we build",
 "text": "ls in pictures.\nUSED FOR\nProduct defect detection\nCounting and tracking items\nReading forms and receipts\nLanguage Models (NLP) Reads and writes text\nTransformer models that understand and generate language. Paired with RAG, they answer from your own documents.\nUSED FOR\nChatbots and assistants\nSummarizing documents\nDrafting email replies\nRecommendation Systems Suggests what people want next\nLearns from what people choose to predict what else they'll like.\nUSED FOR"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Models we build",
 "text": "hoose to predict what else they'll like.\nUSED FOR\nProduct recommendations\nPersonalized content\nSmarter upsells\nAnomaly Detection Spots what's unusual\nLearns what normal looks like and flags anything that doesn't fit.\nUSED FOR\nFraud alerts\nEarly warnings for failing equipment\nNetwork security\nReinforcement Learning Learns by trial and reward\nAn agent tries actions, gets rewarded for good results, and improves its strategy over time.\nUSED FOR\nRobotics and control\nDynamic pricing"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Models we build",
 "text": "me.\nUSED FOR\nRobotics and control\nDynamic pricing\nScheduling and routing\nEdge AI Tiny models for low-power devices\nSmall, efficient models that run right on the device instead of in the cloud, using very little power.\nUSED FOR\nSensors and wearables\nDrones\nSmart farming"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Past projects › Price Optimization Model",
 "text": "A machine learning model that learns from historical pricing data and suggests price changes that increase profit .\nIn use every week , suggesting price adjustments based on past sales\nPaired with a data cleanup algorithm that prepares the sales data\nKeeps sales high while raising the price per unit\nFinds the price where profit is highest\nMachine Learning Pricing Sales Data"
 },
 {
 "url": "https://abstraction-solutions.com/services/models.html",
-"title": "Custom Machine Learning Models for Business",
+"title": "Custom ML Models for Business",
 "heading": "Past projects › Ready to build?",
 "text": "Tell us about your data and what you want it to do, and we'll build a model around it.\nOrder a custom ML model"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "Custom Workflows",
 "text": "SERVICES\nYour team already has a way of working. We build custom workflows around it , connecting the tools you use every day so information moves between them on its own, instead of replacing them with something new to learn."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Walk us through your day",
 "text": "You show us your day-to-day tasks, and we note every step."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Find the tedious parts",
 "text": "Together, we pick out the most repetitive tasks and pin down exactly how each one is done today."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Design the solution",
 "text": "We design software that cuts the overhead and repetition out of those tasks."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Get your quote",
 "text": "We send you a quote. Once you approve it, we build a workflow that frees up your time."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Get your time back",
 "text": "You spend more time on the work that matters and less on the same data cleanup.\nYou can get a quote estimate here:\nGet a quote Free quote in seconds"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
-"heading": "How it works › For Memphis nonprofits",
+"title": "Nonprofit and Small Business Workflows",
+"heading": "How it works › Workflows for nonprofit teams",
 "text": "A plain website and simple tools for nonprofits: volunteer updates, event signups, newsletters, donation pages, and AI your supporters can follow. Written for a director or volunteer lead. No technical background needed.\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Nonprofit websites",
 "text": "Who you are, what you do, when things happen, and how to reach someone."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Volunteer communication",
 "text": "One place for announcements, so the same update isn't copied across email threads."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Event RSVPs and signups",
 "text": "A form for a meeting, fundraiser or volunteer shift. Responses go to the person you name."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Newsletters",
 "text": "A signup on your site and a simple way to send news to people who asked for it."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Donation pages",
 "text": "Explains where a gift goes and uses the payment link you already have. You stay in charge of the money."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Simple AI and AI education",
 "text": "Small helpers, like sorting incoming messages or drafting reminders you approve. See AI education\nHow the nonprofit discount works\nWho gets 50%: nonprofits. Everyone else gets 25% off a quote ordered by Friday, November 13, 2026.\nNo stacking: a nonprofit receives 50% off, not 50% plus 25%."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Simple AI and AI education",
 "text": ": a nonprofit receives 50% off, not 50% plus 25%.\nWhat it covers: our price for the project. Outside costs like hosting, domain names, software subscriptions or payment fees are separate, and we tell you about those up front.\nHow to get it: check \"We're a nonprofit\" on the instant quote to see your 50% estimate. The discount is confirmed in your final price by email. We may ask you to confirm nonprofit status before work starts."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Simple AI and AI education",
 "text": "u to confirm nonprofit status before work starts.\nGet a free instant quote Email us"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Built in Memphis",
 "text": "Abstraction Solutions was founded by Memphian Dylan Pogue. We build AI tools and websites for the small businesses and nonprofits that keep Memphis running, with no calls needed and everything explained in plain English.\nOne concrete automation for each trade we serve. Every business is different, so your quote reflects what you actually need."
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Dental offices",
 "text": "Sort and answer after-hours patient requests, and send recall reminders.\nSee the recipe →"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Property management",
 "text": "Triage maintenance requests and route them to the right vendor.\nSee the recipe →"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Plumbing and HVAC",
 "text": "Turn every request into a complete job ticket and flag emergencies first.\nSee the recipe →"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Roofing and landscaping",
 "text": "Collect project details and photos up front, and follow up on open estimates.\nQuote this →"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Veterinary clinics",
 "text": "Send vaccine reminders with each pet's name and a booking link.\nSee the recipe →"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Salons",
 "text": "Nudge regulars to rebook when they're due for their next visit.\nSee the recipe →"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › Cleaning services",
 "text": "Handle quote requests, booking confirmations and recurring-visit reminders.\nQuote this →"
 },
 {
 "url": "https://abstraction-solutions.com/services/workflows.html",
-"title": "Workflow Automation for Memphis Businesses and Nonprofits",
+"title": "Nonprofit and Small Business Workflows",
 "heading": "How it works › CPA and accounting firms",
 "text": "Send each client a document checklist and chase what's missing.\nSee the recipe →\nGet a free instant quote All automation recipes"
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
-"heading": "AI, made simple.",
+"title": "AI Chatbots, Automations, and Training",
+"heading": "AI services, explained in plain English.",
 "text": "SERVICES\nFrom understanding AI to building with it, we help people, researchers and companies put it to work clearly and responsibly."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
+"title": "AI Chatbots, Automations, and Training",
 "heading": "AI Education",
 "text": "Plain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
+"title": "AI Chatbots, Automations, and Training",
 "heading": "AI Automation",
 "text": "Hand repetitive work to AI: reports, data entry, sorting and the everyday busywork that slows a team down."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
+"title": "AI Chatbots, Automations, and Training",
 "heading": "Custom Workflows",
 "text": "Workflows built around how you already work, connecting the tools you use every day instead of replacing them."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
+"title": "AI Chatbots, Automations, and Training",
 "heading": "Models, Tools & Code",
 "text": "Custom tools, machine learning models and code for people, researchers and companies, including efficient edge AI built on our SLGN + DPE research."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
+"title": "AI Chatbots, Automations, and Training",
 "heading": "Memphis nonprofits",
 "text": "Websites, volunteer updates, event signups, newsletters, donation pages, and simple AI for local nonprofits. You get an instant estimate, then final scope and price by email. See websites for Memphis nonprofits .\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nNonprofits"
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
+"title": "AI Chatbots, Automations, and Training",
 "heading": "Automation recipes by trade",
 "text": "Dental, plumbing & HVAC, property management, vet, salon and CPA: see one concrete automation for your trade, step by step.\nSee the recipes\nEthical by design. Every project is built to be transparent and responsible, so you know what your AI is doing and why."
 },
 {
 "url": "https://abstraction-solutions.com/services.html",
-"title": "AI Services: Automation, Chatbots, Workflows & ML Models",
+"title": "AI Chatbots, Automations, and Training",
 "heading": "Not sure what you need?",
 "text": "Tell us what you're working on and we'll point you in the right direction.\nGet Started"
 },
