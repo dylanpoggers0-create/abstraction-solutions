@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Start an AI Project or Check Your Order | Abstraction Solutions</title>
-    <meta name="description" content="Start an AI automation, workflow or machine learning project, or check and pay for an existing order with your confirmation number.">
+    <title>Free Instant AI Project Quote | Abstraction Solutions</title>
+    <meta name="description" content="Get a free instant estimate for a custom AI chatbot, automation, or website. Final scope comes by email. Nonprofits get 50% off. Full refund if that stage has not started.">
     <link rel="canonical" href="https://abstraction-solutions.com/order.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Abstraction Solutions">
-    <meta property="og:title" content="Start an AI Project or Check Your Order | Abstraction Solutions">
-    <meta property="og:description" content="Start an AI automation, workflow or machine learning project, or check and pay for an existing order with your confirmation number.">
+    <meta property="og:title" content="Free Instant AI Project Quote | Abstraction Solutions">
+    <meta property="og:description" content="Get a free instant estimate for a custom AI chatbot, automation, or website. Final scope comes by email. Nonprofits get 50% off. Full refund if that stage has not started.">
     <meta property="og:url" content="https://abstraction-solutions.com/order.html">
     <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free Instant AI Project Quote | Abstraction Solutions">
+    <meta name="twitter:description" content="Get a free instant estimate for a custom AI chatbot, automation, or website. Final scope comes by email. Nonprofits get 50% off. Full refund if that stage has not started.">
+    <meta name="twitter:image" content="https://abstraction-solutions.com/og-image.jpg">
 
     <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
     <link rel="shortcut icon" href="abstraction_solutions.jpg">
@@ -442,7 +445,128 @@
         @media (max-width: 600px) {
             .cases { padding: 0 16px 0 36px; }
         }
+
+        /* SEO plan additions: breadcrumb, CTAs, pricing box, trust row, FAQ */
+        .crumbs { font-size: 0.85rem; color: var(--text-muted, #9aa59b); margin-bottom: 14px; }
+        .crumbs a { color: inherit; } .crumbs a:hover { color: var(--green, #7ee96f); }
+        .order-ctas { justify-content: center; margin-top: 18px; }
+        .np-callout { margin: 12px 0 0; } .np-callout a { color: var(--green, #7ee96f); font-weight: bold; }
+        .order-info { max-width: 820px; margin: 50px auto 0; padding: 0 24px; line-height: 1.65; }
+        .order-info h2 { font-size: 1.3rem; margin: 30px 0 8px; }
+        .info-box { border: 1px solid var(--line, #1e2a20); border-radius: 14px; padding: 4px 22px 16px; margin-bottom: 16px; background: rgba(11, 16, 12, 0.6); }
+        .info-box h2 { margin-top: 18px; }
+        .np-box { border-color: var(--green, #7ee96f); }
+        .order-info a { color: var(--green, #7ee96f); }
+        .order-info .trust-row a { color: inherit; }
+        .order-ctas { margin-bottom: 0; }
+        .trust-row { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+        .trust-row li { border: 1px solid var(--line, #1e2a20); border-radius: 999px; padding: 6px 14px; font-size: 0.88rem; }
+        .trust-row a { color: inherit; }
+        .order-faq { max-width: 820px; margin: 50px auto 0; padding: 0 24px; }
+        .faq-item { border-bottom: 1px solid var(--line, #1e2a20); padding: 4px 0; }
+        .faq-item summary { cursor: pointer; padding: 12px 0; font-weight: bold; }
+        .faq-item p { margin: 0 0 14px; line-height: 1.6; color: var(--text-muted, #c9d2ca); }
+        .mobile-cta { display: none; }
+        @media (max-width: 640px) {
+            /* phones: the main button stays at the bottom of the screen once the top one scrolls away */
+            .mobile-cta { display: block; position: fixed; left: 16px; right: 84px; bottom: calc(12px + env(safe-area-inset-bottom));
+                          z-index: 40; text-align: center; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7);
+                          transition: transform 0.25s ease, opacity 0.25s ease; }
+            .mobile-cta.away { transform: translateY(140%); opacity: 0; pointer-events: none; }
+            body { padding-bottom: 80px; }
+        }
     </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://abstraction-solutions.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Order",
+      "item": "https://abstraction-solutions.com/order.html"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "@id": "https://abstraction-solutions.com/order.html#offer",
+  "name": "Abstraction Solutions",
+  "url": "https://abstraction-solutions.com/order.html",
+  "areaServed": [
+    "Memphis, TN",
+    "Gainesville, FL",
+    "United States"
+  ],
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "name": "Custom AI project with free instant estimate",
+      "description": "Free instant estimate for custom AI chatbots, automations, websites, and training. Registered nonprofits get 50% off the quoted estimate. Final scope confirmed by email.",
+      "url": "https://abstraction-solutions.com/order.html",
+      "availability": "https://schema.org/InStock"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much does a project cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You get a free instant estimate first. The final price is confirmed by email after we see the scope. We do not ask you to pay for the whole project up front."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do nonprofits really get 50% off?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Registered nonprofits get 50% off the quoted estimate. It is not combined with other offers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I change my mind?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cancel anytime. A stage you have paid for that we have not started is refunded in full. After delivery, refunds no longer apply and the 30-day bug-fix period does."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I pay and check an order?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pay through Stripe on this site. Use your 8-digit confirmation number on this page to check status."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you only work in Memphis?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The company is based in Memphis and also serves Gainesville and clients across the United States."
+      }
+    }
+  ]
+}
+    </script>
 </head>
 
 <!-- "order" must match the id in nav.js -->
@@ -450,12 +574,20 @@
 
     <!-- The header, Menu tab and side nav are built here by nav.js -->
     <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a></nav></noscript>
     <script src="nav.js"></script>
 
     <section class="hero">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Order</span></nav>
         <div class="eyebrow">ORDER</div>
-        <h1>Start your project.</h1>
-        <p class="section-sub">Small businesses and nonprofits: tell us what you need. You get an instant estimate, then final scope and price by email.</p>
+        <h1>Start your AI project with a free instant quote.</h1>
+        <p class="section-sub">Describe the work, get an estimate in seconds, and keep the final scope in email so you stay in control of what we build.</p>
+        <div class="pill-container order-ctas">
+            <a class="pill primary order-main-cta" href="/#quote" data-track="order-cta-quote">Get a free instant quote</a>
+            <a class="pill" href="#lookup" data-open-panel="lookup" data-track="order-cta-check">Check an existing order</a>
+        </div>
+        <p class="np-callout"><a href="/index.html?nonprofit=1#quote" data-track="order-cta-nonprofit">I represent a nonprofit — show my 50% estimate</a></p>
+    <a class="pill primary mobile-cta away" href="/#quote" data-track="order-cta-sticky">Get a free instant quote</a>
         <!-- Promo line. Delete this paragraph to remove it. Hidden after Fri Nov 13, 2026, America/Chicago. -->
         <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
     </section>
@@ -616,6 +748,31 @@
 
     </div>
 
+
+    <!-- HOW PRICING WORKS, WHAT YOU CAN ORDER, TRUST ROW (search copy from the Nov 15 SEO plan) -->
+    <section class="order-info" id="pricing">
+        <div class="info-box">
+            <h2>How pricing works</h2>
+            <p>We do not publish a rate card, because every build is different. You get a free instant estimate from our quote engine, then a final scope and price by email at <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a>. You pay one stage at a time, so you are never far ahead of the work. Cancel anytime and nothing more is due. If you have paid for a stage we have not started, that stage comes back to you in full.</p>
+        </div>
+        <div class="info-box np-box">
+            <h2>Nonprofit pricing</h2>
+            <p>Registered nonprofits get 50% off the quoted estimate. That discount is not combined with other offers. If you are a nonprofit, say so in the quote form so the estimate already reflects it.</p>
+        </div>
+        <h2>What you can order</h2>
+        <p>Custom AI chatbots trained on your documents, automations that take reports and busywork off your team, workflows that connect the tools you already use, machine learning models for pricing and forecasting, nonprofit and small-business websites, and plain-English AI training for your staff.</p>
+        <h2>After you request a quote</h2>
+        <p>You will see an instant estimate on the spot. We follow up by email with scope, timing, and the first stage to pay. When work is delivered, you have 30 days of free bug fixes on what we built.</p>
+        <ul class="trust-row" aria-label="How we protect your order">
+            <li>Payments through <strong>Stripe</strong></li>
+            <li><a href="returns.html">Full refund of a stage that has not started</a></li>
+            <li><a href="terms.html">Cancel anytime with nothing more due</a></li>
+            <li><a href="returns.html">30 days of free bug fixes after delivery</a></li>
+            <li><a href="roi.html">ROI calculator</a></li>
+            <li><a href="returns.html">Returns</a> · <a href="terms.html">Terms</a></li>
+        </ul>
+    </section>
+
     <!-- CASE STUDIES (moved here from case-studies.html, which now forwards to #case-studies) -->
     <section id="case-studies">
         <h2 class="section-title">Case studies</h2>
@@ -661,6 +818,16 @@
             </div>
         </article>
     </div>
+
+    <!-- FAQ: keep these answers identical to the FAQPage data in <head> -->
+    <section class="order-faq" id="faq">
+        <h2 class="section-title">Questions before you start</h2>
+        <details class="faq-item"><summary>How much does a project cost?</summary><p>You get a free instant estimate first. The final price is confirmed by email after we see the scope. We do not ask you to pay for the whole project up front.</p></details>
+        <details class="faq-item"><summary>Do nonprofits really get 50% off?</summary><p>Yes. Registered nonprofits get 50% off the quoted estimate. It is not combined with other offers.</p></details>
+        <details class="faq-item"><summary>What if I change my mind?</summary><p>Cancel anytime. A stage you have paid for that we have not started is refunded in full. After delivery, refunds no longer apply and the 30-day bug-fix period does.</p></details>
+        <details class="faq-item"><summary>How do I pay and check an order?</summary><p>Pay through Stripe on this site. Use your 8-digit confirmation number on this page to check status.</p></details>
+        <details class="faq-item"><summary>Do you only work in Memphis?</summary><p>No. The company is based in Memphis and also serves Gainesville and clients across the United States.</p></details>
+    </section>
 
     <footer>© 2026 Abstraction Solutions</footer>
 
@@ -791,6 +958,25 @@
             document.getElementById('lookupCode').value = codeFromLink;
         }
         // both panels start closed, unless they came from the email link: then open Check order
+        document.querySelectorAll('[data-open-panel]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                const panel = document.getElementById(a.dataset.openPanel);
+                if (!panel) return;
+                e.preventDefault(); panel.open = true;
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', '#' + panel.id);
+            });
+        });
+        if (location.hash === '#newOrder') document.getElementById('newOrder').open = true;
+        // phones: show the bottom button only while the top one is off screen and the order form is closed
+        (function () {
+            const bar = document.querySelector('.mobile-cta'), top = document.querySelector('.order-main-cta'), form = document.getElementById('newOrder');
+            if (!bar || !top || !('IntersectionObserver' in window)) return;
+            let topVisible = true;
+            function sync() { bar.classList.toggle('away', topVisible || form.open); }
+            new IntersectionObserver(function (e) { topVisible = e[0].isIntersecting; sync(); }).observe(top);
+            form.addEventListener('toggle', sync); sync();
+        })();
         if (codeFromLink || location.hash === '#lookup') {
             lookupPanel.open = true;
             document.getElementById('lookupEmail').focus();
@@ -1289,5 +1475,6 @@
             lookupMsg.textContent = 'Payment canceled, and you weren\'t charged. Enter your email to try again anytime.';
         }
     </script>
+    <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a> · <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></nav></noscript>
 </body>
 </html>

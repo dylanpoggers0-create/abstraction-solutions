@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /hydro-admin.js
+Disallow: /hydro-admin.css
+Disallow: /chatbot/index/
+Disallow: /chatbot/rag.py
+Disallow: /chatbot/README.md
+Disallow: /chatbot/build_index.py
+Disallow: /chatbot/requirements.txt
+# Hydro research routes stay allowed and out of the sitemap until they are meant to be public.
 
 Sitemap: https://abstraction-solutions.com/sitemap.xml
