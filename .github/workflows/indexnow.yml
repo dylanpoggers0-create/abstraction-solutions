@@ -1,0 +1,50 @@
+# Tells Bing (and other IndexNow search engines) which public pages changed, right after each push.
+# The key file 1fee26debe5fd6758c96f2eb6eb0a39a.txt in the site root proves the site is ours. Google doesn't use IndexNow;
+# it reads sitemap.xml (submit it once in Google Search Console).
+name: IndexNow ping
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.html", "sitemap.xml"]
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Wait for GitHub Pages to publish
+        run: sleep 90
+      - name: Send changed public pages
+        env:
+          KEY: 1fee26debe5fd6758c96f2eb6eb0a39a
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess, urllib.request
+          SITE = "https://abstraction-solutions.com/"
+          listed = set(re.findall(r"<loc>([^<]+)</loc>", open("sitemap.xml").read()))
+          try:
+              changed = subprocess.check_output(["git", "diff", "--name-only", "HEAD~1", "HEAD"], text=True).split()
+          except subprocess.CalledProcessError:
+              changed = []
+          urls = set()
+          for f in changed:
+              if f == "sitemap.xml":
+                  continue
+              u = SITE + ("" if f == "index.html" else f[:-len("index.html")] if f.endswith("/index.html") else f)
+              if u in listed:                      # only pages that are meant to be found (noindex and admin pages are not in the sitemap)
+                  urls.add(u)
+          if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
+              urls = listed                        # run by hand: send every page in the sitemap
+          if not urls:
+              print("No sitemap pages changed."); raise SystemExit(0)
+          body = json.dumps({"host": "abstraction-solutions.com", "key": os.environ["KEY"],
+                             "keyLocation": SITE + os.environ["KEY"] + ".txt", "urlList": sorted(urls)}).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                                       headers={"Content-Type": "application/json; charset=utf-8"})
+          with urllib.request.urlopen(req, timeout=30) as r:
+              print("IndexNow:", r.status, sorted(urls))
+          PY

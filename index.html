@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src 'self' https://buttondown.com; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>AI Made Simple: AI Education &amp; Custom AI Tools | Abstraction Solutions</title>
-    <meta name="description" content="AI made simple: plain-language AI education, automations, custom workflows and AI tools, built in Memphis. Get a free instant quote.">
+    <title>AI Made Simple for Small Business | Abstraction Solutions</title>
+    <meta name="description" content="Plain-English AI training, chatbots, and automations for small businesses and nonprofits. Free instant quote. Nonprofits get 50% off. Based in Memphis.">
     <link rel="canonical" href="https://abstraction-solutions.com/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Abstraction Solutions">
-    <meta property="og:title" content="AI Made Simple | Abstraction Solutions">
-    <meta property="og:description" content="Plain-language AI education, automations, custom workflows and AI tools. Get a free instant quote.">
+    <meta property="og:title" content="AI Made Simple for Small Business | Abstraction Solutions">
+    <meta property="og:description" content="Plain-English AI training, chatbots, and automations for small businesses and nonprofits. Free instant quote. Nonprofits get 50% off. Based in Memphis.">
     <meta property="og:url" content="https://abstraction-solutions.com/">
     <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -613,6 +613,7 @@
 
     <!-- The header, Menu tab and side nav are built here by nav.js -->
     <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="recipes/index.html">Recipes</a> · <a href="services/education.html">Education</a> · <a href="aboutus.html">About</a> · <a href="order.html">Order</a> · <a href="index.html#contact">Contact</a></nav></noscript>
     <script src="nav.js"></script>
 
     <!-- HERO: what we do + the two main buttons, next to the video -->
@@ -620,7 +621,7 @@
         <div class="hero-text">
             <div class="eyebrow">AI EDUCATION &amp; CUSTOM AI TOOLS</div>
             <h1>AI Made <span>Simple.</span></h1>
-            <p>Get an instant quote in seconds, handle everything by email, and keep full control of what we build.</p>
+            <p>Plain-English AI training and custom tools for small businesses and nonprofits. Get a free instant quote, then handle the rest by email.</p>
             <div class="pill-container">
                 <a class="pill primary" href="#quote">Get a free quote</a>
                 <a class="pill" href="order.html">Start a project</a>
@@ -812,7 +813,7 @@
     <!-- QUOTE: the form sends the description to the Python quote engine (quote-engine/main.py) -->
     <section class="quote" id="quote">
         <h2 class="section-title">Get a quote today</h2>
-        <p class="section-sub">Describe the project below. You get an instant estimate, then final scope and price by email.</p>
+        <p class="section-sub">Describe the project below. This is an instant estimate, not a final bill. Registered nonprofits see 50% off this estimate. You will get final scope and price by email.</p>
         <!-- Promo line. Delete this paragraph to remove it. Hidden after Fri Nov 13, 2026, America/Chicago. -->
         <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
 
@@ -824,7 +825,7 @@
                 <span>We're a nonprofit <strong>(50% off)</strong>. We may ask you to confirm your nonprofit status before work starts.</span>
             </label>
             <div class="pill-container">
-                <button class="pill primary" id="quoteButton" type="submit">Get a quote</button>
+                <button class="pill primary" id="quoteButton" type="submit">Get my free instant estimate</button>
             </div>
         </form>
 
@@ -913,7 +914,7 @@
         const video = document.getElementById('heroVideo');
         const audioBtn = document.getElementById('audioToggle');
 
-        // Phones get a smaller copy of the video (about 0.6 MB instead of 4 MB)
+        // Phones get a smaller copy of the video (about 0.6 MB instead of 0.9 MB)
         if (window.matchMedia('(max-width: 700px)').matches) {
             video.src = 'ad1-mobile.mp4';
         }
@@ -1017,7 +1018,7 @@
             } finally {
                 clearTimeout(slowTimer);
                 button.disabled = false;
-                button.textContent = 'Get a quote';
+                button.textContent = 'Get my free instant estimate';
             }
         });
 
@@ -1134,5 +1135,6 @@
         })();
     </script>
 
+    <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="chatbot/">Site assistant</a> · <a href="roi.html">ROI calculator</a> · <a href="returns.html">Returns</a> · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="changelog.html">Changelog</a><br><a href="https://www.youtube.com/@abstractionsolutions">YouTube</a> · <a href="https://www.instagram.com/abstraction.solutions/">Instagram</a> · <a href="https://www.linkedin.com/company/abstraction-solutions">LinkedIn</a></nav></noscript>
 </body>
 </html>

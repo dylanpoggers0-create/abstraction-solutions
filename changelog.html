@@ -50,6 +50,7 @@
 <body data-page="changelog">
 
     <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="index.html">Home</a> · <a href="services.html">Services</a> · <a href="recipes/index.html">Recipes</a> · <a href="services/education.html">Education</a> · <a href="aboutus.html">About</a> · <a href="order.html">Order</a> · <a href="index.html#contact">Contact</a></nav></noscript>
     <script src="nav.js"></script>
 
     <section class="hero">
@@ -59,7 +60,12 @@
     </section>
 
     <main class="log" id="log">
-        <noscript><p class="log-note">Turn on JavaScript to see the changelog.</p></noscript>
+        <!-- newest 5 entries as plain HTML for search engines; the script below replaces them with the full list -->
+        <article class="log-static"><h2>Fewer pages, easier to find</h2><p><time datetime="2026-11-07">2026-11-07</time></p><ul><li>Nonprofit work and Built in Memphis now live on the Custom Workflows page, so there are fewer pages to click through.</li><li>Join our mailing list on the homepage for offers, early access, newsletters and giveaways.</li><li>Find us on TikTok, linked in the footer.</li></ul></article>
+        <article class="log-static"><h2>Check your order and pay online</h2><p><time datetime="2026-11-06">2026-11-06</time></p><ul><li>Check an order with your email and confirmation number, see its status and quote, and pay securely online with Stripe.</li></ul></article>
+        <article class="log-static"><h2>50% off for clubs and nonprofits</h2><p><time datetime="2026-11-06">2026-11-06</time></p><ul><li>A Clubs &amp; Nonprofits page for Rotary clubs, civic clubs and nonprofits: websites, member updates, event signups, newsletters, dues and donation pages, and simple AI.</li><li>Clubs and nonprofits get 50% off every project. Mention it when you order and your final quote takes half off.</li></ul></article>
+        <article class="log-static"><h2>A better site assistant</h2><p><time datetime="2026-11-06">2026-11-06</time></p><ul><li>Ask &quot;What do you do?&quot; and get our services, with suggested questions to tap.</li><li>On phones, the assistant opens as a full screen instead of a small window.</li></ul></article>
+        <article class="log-static"><h2>For Memphis small businesses and nonprofits</h2><p><time datetime="2026-11-06">2026-11-06</time></p><ul><li>Our offer now focuses on Memphis small businesses and nonprofits.</li><li>Through Friday, November 13, 2026, quotes are 25% off for everyone other than nonprofits. Nonprofits keep 50% off. The discounts don&#x27;t stack.</li></ul></article>
     </main>
 
     <footer>© 2026 Abstraction Solutions</footer>
@@ -98,7 +104,7 @@
 
             fetch('changelog.json', { cache: 'no-cache' })
                 .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-                .then(show)
+                .then(function (d) { log.querySelectorAll('.log-static').forEach(function (n) { n.remove(); }); show(d); })
                 .catch(function () {
                     const p = document.createElement('p');
                     p.className = 'log-note';
@@ -107,5 +113,6 @@
                 });
         })();
     </script>
+    <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="chatbot/">Site assistant</a> · <a href="roi.html">ROI calculator</a> · <a href="returns.html">Returns</a> · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="changelog.html">Changelog</a><br><a href="https://www.youtube.com/@abstractionsolutions">YouTube</a> · <a href="https://www.instagram.com/abstraction.solutions/">Instagram</a> · <a href="https://www.linkedin.com/company/abstraction-solutions">LinkedIn</a></nav></noscript>
 </body>
 </html>

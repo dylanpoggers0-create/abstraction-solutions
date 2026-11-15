@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src 'self' https://buttondown.com; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>AI Training &amp; Machine Learning Education | Abstraction Solutions</title>
-    <meta name="description" content="AI and machine learning training for teams, students and schools, taught by an experienced teacher and tutor. Learn how AI really works.">
+    <title>Plain-English AI Training and Cert Guide | Abstraction Solutions</title>
+    <meta name="description" content="Free AI explainers, a certification recommender based on your resume and field, and training for teams and nonprofits. Sort picks by cost.">
     <link rel="canonical" href="https://abstraction-solutions.com/services/education.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Abstraction Solutions">
-    <meta property="og:title" content="AI Training &amp; Machine Learning Education | Abstraction Solutions">
-    <meta property="og:description" content="AI and machine learning training for teams, students and schools, taught by an experienced teacher and tutor. Learn how AI really works.">
+    <meta property="og:title" content="Plain-English AI Training and Cert Guide | Abstraction Solutions">
+    <meta property="og:description" content="Free AI explainers, a certification recommender based on your resume and field, and training for teams and nonprofits. Sort picks by cost.">
     <meta property="og:url" content="https://abstraction-solutions.com/services/education.html">
     <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -487,7 +487,42 @@
                 padding-left: 40px;   /* extra room on the left for the Menu tab */
             }
         }
+        .edu-faq .faq-item { border-bottom: 1px solid var(--line, #1e2a20); padding: 4px 0; }
+        .edu-faq summary { cursor: pointer; padding: 12px 0; font-weight: bold; }
+        .edu-faq p { margin: 0 0 14px; line-height: 1.6; }
     </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is the certification recommender free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. It's free to use, with no account needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it store my resume?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Your resume is used once to make suggestions and is never saved. It is sent to our server, and to Google's Gemini model when that is available, only to make those suggestions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I sort by cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Sort the recommendations by cost, lowest or highest first."
+      }
+    }
+  ]
+}
+    </script>
 </head>
 
 <!-- "services" keeps the Services link highlighted in the side nav -->
@@ -495,6 +530,7 @@
 
     <!-- Header, Menu tab and side nav (built by nav.js) -->
     <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="../index.html">Home</a> · <a href="../services.html">Services</a> · <a href="../recipes/index.html">Recipes</a> · <a href="../services/education.html">Education</a> · <a href="../aboutus.html">About</a> · <a href="../order.html">Order</a> · <a href="../index.html#contact">Contact</a></nav></noscript>
     <script src="../nav.js"></script>
 
     <main>
@@ -508,13 +544,13 @@
         <!-- PAGE HEADING -->
         <div class="page-intro">
             <div class="eyebrow">AI EDUCATION</div>
-            <h1>Making AI make sense.</h1>
+            <h1>Plain-English AI training, plus a certification guide.</h1>
             <p class="lead">Plain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background.</p>
         </div>
 
         <!-- VIDEO GALLERY -->
         <section>
-            <h2>Educational Sources and Explanations <span class="badge live">Live</span></h2>
+            <h2>Short explainers <span class="badge live">Live</span></h2>
             <p class="section-note">Short videos that break down the ideas behind modern AI.
                 New ones every week on Instagram: <a href="https://www.instagram.com/abstraction.solutions/" target="_blank" rel="noopener"
                 style="color: var(--green); font-weight: bold;">@abstraction.solutions</a></p>
@@ -755,13 +791,28 @@
         <!-- THIS WEEK'S AI NEWS: weekly editions written in admin.html (AI News tab) and loaded from the server.
              Stays hidden until there's a published edition. Articles open on the publisher's own site. -->
         <section id="ai-news" hidden aria-labelledby="newsHeading">
-            <h2 id="newsHeading">This Week's AI News</h2>
+            <h2 id="newsHeading">This week's AI news</h2>
             <p class="news-meta" id="newsMeta"></p>
             <ol class="news-list" id="newsList"></ol>
             <details class="news-archive" id="newsArchive" hidden>
                 <summary>Past editions</summary>
                 <ul id="newsArchiveList"></ul>
             </details>
+        </section>
+
+        <!-- TRAINING + FAQ (from the Nov 15 SEO plan; keep the FAQ answers identical to the FAQPage data in <head>) -->
+        <section id="training">
+            <h2>AI training for teams and nonprofits</h2>
+            <p class="section-note">Plain-English training on how AI works and how to use it well, for staff, students and volunteers. No math or engineering background needed. Registered nonprofits get 50% off. <a href="../index.html#quote" style="color: var(--green); font-weight: bold;">Get a free instant quote</a>.</p>
+        </section>
+
+        <section id="faq">
+            <h2>Questions</h2>
+            <div class="edu-faq">
+                <details class="faq-item"><summary>Is the certification recommender free?</summary><p>Yes. It&#x27;s free to use, with no account needed.</p></details>
+                <details class="faq-item"><summary>Does it store my resume?</summary><p>No. Your resume is used once to make suggestions and is never saved. It is sent to our server, and to Google&#x27;s Gemini model when that is available, only to make those suggestions.</p></details>
+                <details class="faq-item"><summary>Can I sort by cost?</summary><p>Yes. Sort the recommendations by cost, lowest or highest first.</p></details>
+            </div>
         </section>
 
         <!-- TEACHING EXPERIENCE -->
@@ -1153,5 +1204,6 @@
         })();
     </script>
 
+    <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="../chatbot/">Site assistant</a> · <a href="../roi.html">ROI calculator</a> · <a href="../returns.html">Returns</a> · <a href="../terms.html">Terms</a> · <a href="../privacy.html">Privacy</a> · <a href="../changelog.html">Changelog</a><br><a href="https://www.youtube.com/@abstractionsolutions">YouTube</a> · <a href="https://www.instagram.com/abstraction.solutions/">Instagram</a> · <a href="https://www.linkedin.com/company/abstraction-solutions">LinkedIn</a></nav></noscript>
 </body>
 </html>

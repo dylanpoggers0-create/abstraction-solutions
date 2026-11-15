@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /hydro-admin.js
+Disallow: /hydro-admin.css
+Disallow: /chatbot/index/
+Disallow: /chatbot/README.md
 
 Sitemap: https://abstraction-solutions.com/sitemap.xml

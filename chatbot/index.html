@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src 'self' https://buttondown.com; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>AI Chatbot That Runs in Your Browser | Abstraction Solutions</title>
+    <meta name="description" content="An AI assistant that answers from our pages, shows its source, and runs in your browser, so questions don&#x27;t reach our servers. Get one for your site.">
+    <link rel="canonical" href="https://abstraction-solutions.com/chatbot/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="AI Chatbot That Runs in Your Browser | Abstraction Solutions">
+    <meta property="og:description" content="An AI assistant that answers from our pages, shows its source, and runs in your browser, so questions don&#x27;t reach our servers. Get one for your site.">
+    <meta property="og:url" content="https://abstraction-solutions.com/chatbot/">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/jpeg" href="../abstraction_solutions.jpg">
+
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        main { max-width: 820px; margin: 0 auto; padding: 130px 24px 40px; line-height: 1.7; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9); }
+        main h2 { margin-top: 34px; }
+        .crumbs { font-size: 0.85rem; color: var(--text-muted, #9aa59b); } .crumbs a { color: inherit; }
+        .steps li { margin-bottom: 8px; }
+        .eyebrow { color: var(--green, #7ee96f); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; margin: 14px 0 6px; }
+        main .pill-container { justify-content: flex-start; }
+    </style>
+    <script type="application/ld+json">
+{"@context": "https://schema.org", "@graph": [
+  {"@type": "BreadcrumbList", "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://abstraction-solutions.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Site assistant", "item": "https://abstraction-solutions.com/chatbot/"}]},
+  {"@type": "Service", "name": "AI site assistant that runs in the browser", "serviceType": "AI chatbot",
+   "provider": {"@id": "https://abstraction-solutions.com/#business"}, "areaServed": "United States",
+   "url": "https://abstraction-solutions.com/chatbot/"}]}
+    </script>
+</head>
+<body data-page="services">
+    <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="../index.html">Home</a> · <a href="../services.html">Services</a> · <a href="../recipes/index.html">Recipes</a> · <a href="../services/education.html">Education</a> · <a href="../aboutus.html">About</a> · <a href="../order.html">Order</a> · <a href="../index.html#contact">Contact</a></nav></noscript>
+    <script src="../nav.js"></script>
+    <main>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a> › <span aria-current="page">Site assistant</span></nav>
+        <div class="eyebrow">SITE ASSISTANT</div>
+        <h1>An AI site assistant that runs in the browser.</h1>
+        <p>This assistant answers questions from our public pages and shows the passage it used. It runs in the visitor's browser, so questions do not go to our servers. That is the simplest on-device demo we can show you — and we can build a similar assistant for your site.</p>
+        <div class="pill-container">
+            <a class="pill primary" href="#" id="openChat" data-track="chatbot-try">Try it now</a>
+            <a class="pill" href="../index.html?describe=An%20AI%20site%20assistant%20for%20my%20website%20that%20answers%20visitors%27%20questions%20from%20my%20own%20pages.#quote" data-track="chatbot-quote">Get a free instant quote</a>
+        </div>
+
+        <h2>How it works</h2>
+        <ol class="steps">
+            <li>We read your public pages and split them into short passages by heading.</li>
+            <li>Those passages are turned into a small search index that ships with your site.</li>
+            <li>When a visitor asks a question, their browser finds the best passage and shows it with a link to the page it came from. If nothing matches well enough, it says so instead of guessing.</li>
+            <li>The index rebuilds itself whenever a page changes, so answers stay current.</li>
+        </ol>
+
+        <h2>Why run it in the browser</h2>
+        <p>There is no server to pay for or keep awake, answers come back right away, and visitors' questions stay on their own device.</p>
+
+        <h2>Want one on your site?</h2>
+        <p>Tell us about your site and get a free instant quote. Registered nonprofits get 50% off, and every build includes 30 days of free bug fixes after delivery.</p>
+        <div class="pill-container"><a class="pill primary" href="../index.html?describe=An%20AI%20site%20assistant%20for%20my%20website%20that%20answers%20visitors%27%20questions%20from%20my%20own%20pages.#quote">Get a free instant quote</a></div>
+    </main>
+    <footer>© 2026 Abstraction Solutions</footer>
+    <script>
+        document.getElementById('openChat').addEventListener('click', function (e) {
+            e.preventDefault();
+            const bubble = document.querySelector('.chat-bubble, #chatBubble, [data-chat-open]');
+            if (window.SiteChat && SiteChat.open) SiteChat.open(); else if (bubble) bubble.click();
+        });
+    </script>
+    <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="../roi.html">ROI calculator</a> · <a href="../returns.html">Returns</a> · <a href="../terms.html">Terms</a> · <a href="../privacy.html">Privacy</a> · <a href="../changelog.html">Changelog</a></nav></noscript>
+</body>
+</html>
