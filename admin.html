@@ -372,6 +372,12 @@
         .small-btn.danger { border-color: rgba(255, 138, 128, 0.5); color: #ff8a80; }
         .small-btn.danger.confirm { background-color: #ff8a80; color: black; }
         .hint.warn { color: #f5c451; }
+        .agreement-tools .agree-doc { max-height: 380px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; padding: 4px 16px 12px;
+                                      margin: 8px 0; font-size: 0.88rem; line-height: 1.55; background: rgba(6, 9, 7, 0.6); }
+        .agreement-tools .agree-doc h1 { font-size: 1.1rem; } .agreement-tools .agree-doc h2 { font-size: 0.95rem; margin: 14px 0 4px; }
+        .agreement-tools .agree-doc table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+        .agreement-tools .agree-doc th, .agreement-tools .agree-doc td { border: 1px solid var(--line); padding: 4px 6px; text-align: left; }
+        .agreement-tools .agree-doc code { word-break: break-all; }
         .edit-field { display: block; margin-bottom: 12px; }
         .edit-field .label { display: block; font-size: 0.8rem; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
         .edit-field input, .edit-field select, .edit-field textarea { width: 100%; box-sizing: border-box; padding: 9px 12px; }
@@ -2063,7 +2069,7 @@
                 saveQuote.textContent = 'Cancelled';
             }
 
-            card.append(top, meta, details, actions, editDetailsBox(order), stagesBox(order));
+            card.append(top, meta, details, actions, editDetailsBox(order), agreementBox(order), stagesBox(order));
             return card;
         }
 
@@ -2192,13 +2198,21 @@
                     return sum + (inputs[p.stage] ? Math.round(parseFloat(inputs[p.stage].dollars.value || '0') * 100) : p.amount_cents);
                 }, 0);
             }
-            function refresh() {
+            // every percent is a share of the order's CURRENT total, so the stages add up to 100% exactly when the total
+            // stays the same (set Coding to 25% and move another stage to make room)
+            function refresh(changedKey) {
                 const t = total();
-                Object.keys(inputs).forEach(function (key) {
-                    const cents = Math.round(parseFloat(inputs[key].dollars.value || '0') * 100);
-                    if (document.activeElement !== inputs[key].pct) inputs[key].pct.value = t ? (cents * 100 / t).toFixed(1) : '0';
-                });
-                totalLine.textContent = 'New total: ' + money(t) + (t !== base ? ' (was ' + money(base) + ')' : '');
+                if (changedKey && base) {      // dollars typed: show that stage's share of the current total
+                    const cents = Math.round(parseFloat(inputs[changedKey].dollars.value || '0') * 100);
+                    inputs[changedKey].pct.value = (cents * 100 / base).toFixed(1);
+                }
+                const pctSum = order.plan.reduce(function (sum, p) {
+                    return sum + (inputs[p.stage] ? (parseFloat(inputs[p.stage].pct.value) || 0) : (base ? p.amount_cents * 100 / base : p.percent));
+                }, 0);
+                totalLine.textContent = 'Percents add up to ' + (Math.round(pctSum * 10) / 10) + '%' +
+                    (Math.abs(pctSum - 100) < 0.05 ? ' ✓' : ' (set them to 100% to keep the same total)') +
+                    ' · New total: ' + money(t) + (t !== base ? ' (was ' + money(base) + ')' : '');
+                totalLine.classList.toggle('warn', Math.abs(pctSum - 100) >= 0.05);
             }
             order.plan.forEach(function (p) {
                 const line = el('div', 'plan-line');
@@ -2213,7 +2227,9 @@
                         dollars.value = (base * (parseFloat(pct.value) || 0) / 10000).toFixed(2);
                         refresh();
                     });
-                    dollars.addEventListener('input', refresh);
+                    pct.addEventListener('change', function () { pct.value = (parseFloat(pct.value) || 0).toFixed(1); refresh(); });
+                    pct.value = base ? (p.amount_cents * 100 / base).toFixed(1) : p.percent;
+                    dollars.addEventListener('input', function () { refresh(p.stage); });
                     inputs[p.stage] = { pct: pct, dollars: dollars };
                     const pctBox = el('label', 'unit'); pctBox.append(pct, el('span', '', '%'));
                     const dolBox = el('label', 'unit'); dolBox.append(el('span', '', '$'), dollars);
@@ -2385,6 +2401,41 @@
         // ---------- edit an order's details (name, email, service, description) ----------
         const SERVICES = ['AI Automation', 'Custom Workflows', 'Custom ML Model', 'AI Education', 'Nonprofit website', 'Other'];
 
+        // ----- service agreement: status, the text, and a button to email the link -----
+        function agreementBox(order) {
+            const box = el('details', 'stage-tools agreement-tools');
+            const info = order.contract || {};
+            box.append(el('summary', '', info.signed
+                ? 'Agreement ✓ signed by ' + info.signer + ' (' + new Date(info.signed_at).toLocaleDateString() + ')'
+                : order.quote_cents === null ? 'Agreement (ready once you set a quote)' : 'Agreement · not signed yet'));
+            const tool = el('div', 'tool');
+            const doc = el('div', 'agree-doc');
+            const msg = el('span', 'saved');
+            const send = el('button', 'small-btn', info.signed ? 'Email them the signed copy link' : 'Email them a link to sign');
+            send.type = 'button'; send.disabled = order.quote_cents === null;
+            send.addEventListener('click', async function () {
+                send.disabled = true;
+                try { await postJson('/admin/orders/' + order.id + '/contract/send', {}); msg.textContent = 'Sent.'; if (window.UX && UX.toast) UX.toast('Agreement link sent'); }
+                catch (error) { if (error.message !== 'logged out') msg.textContent = error.message; }
+                send.disabled = false;
+            });
+            const row = el('div', 'stage-row'); row.append(send, msg);
+            tool.append(el('p', 'hint', info.signed
+                ? 'This is the exact signed copy, with the signer\'s name, time and document fingerprint. Their IP address is kept in the record but not shown here.'
+                : 'This is the current draft, filled in from the quote, payment plan, legal name and scope. The customer signs it on the order page before their first payment.'), doc, row);
+            box.append(tool);
+            let loaded = false;
+            box.addEventListener('toggle', async function () {
+                if (!box.open || loaded || order.quote_cents === null) return;
+                loaded = true; doc.textContent = 'Loading…';
+                try {
+                    const data = await api('/admin/orders/' + order.id + '/contract');
+                    doc.innerHTML = data.html;      // our own template; every value is escaped by the server
+                } catch (error) { loaded = false; doc.textContent = error.message; }
+            });
+            return box;
+        }
+
         function editDetailsBox(order) {
             const box = el('details', 'stage-tools edit-details');
             box.append(el('summary', '', 'Edit order details'));
@@ -2404,6 +2455,8 @@
                 service.append(option);
             });
             const details = field('PROJECT DETAILS', el('textarea')); details.maxLength = 3000; details.value = order.details;
+            const legal = field('LEGAL NAME FOR THE AGREEMENT (BLANK = USE THE NAME ABOVE)', el('input')); legal.maxLength = 200; legal.value = order.legal_name || '';
+            const scope = field('FINAL SCOPE FOR THE AGREEMENT (BLANK = USE THE PROJECT DETAILS)', el('textarea')); scope.maxLength = 5000; scope.value = order.scope || '';
             const msg = el('span', 'saved');
             const save = el('button', 'small-btn go', 'Save details');
             save.type = 'button';
@@ -2414,6 +2467,8 @@
                 if (email.value.trim().toLowerCase() !== order.email.toLowerCase()) changes.email = email.value.trim();
                 if (service.value !== order.service) changes.service = service.value;
                 if (details.value.trim() !== order.details) changes.details = details.value.trim();
+                if (legal.value.trim() !== (order.legal_name || '')) changes.legal_name = legal.value.trim();
+                if (scope.value.trim() !== (order.scope || '')) changes.scope = scope.value.trim();
                 if (!Object.keys(changes).length) { msg.textContent = 'Nothing changed.'; return; }
                 if (changes.details !== undefined && changes.details.length < 20) { msg.textContent = 'Project details need at least 20 characters.'; return; }
                 save.disabled = true;
@@ -2427,7 +2482,7 @@
             });
             const row = el('div', 'stage-row');
             row.append(save, msg);
-            form.append(row, el('p', 'hint', 'If you change the email, the old address gets a short notice.'));
+            form.append(row, el('p', 'hint', 'If you change the email, the old address gets a short notice. Legal name and final scope go into the service agreement; once it is signed, the signed copy doesn\'t change.'));
             box.append(form);
             return box;
         }

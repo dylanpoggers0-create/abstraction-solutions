@@ -450,6 +450,19 @@
         .crumbs { font-size: 0.85rem; color: var(--text-muted, #9aa59b); margin-bottom: 14px; }
         .crumbs a { color: inherit; } .crumbs a:hover { color: var(--green, #7ee96f); }
         .order-ctas { justify-content: center; margin-top: 18px; }
+        .agree-box { margin: 18px 0 6px; }
+        .agree-status { margin: 4px 0 8px; }
+        .agree-read summary { cursor: pointer; color: var(--green, #7ee96f); font-weight: bold; padding: 6px 0; }
+        .agree-doc { max-height: 420px; overflow: auto; text-align: left; border: 1px solid var(--line, #1e2a20); border-radius: 12px;
+                     padding: 6px 18px 14px; margin: 8px 0 14px; font-size: 0.92rem; line-height: 1.6; background: rgba(6, 9, 7, 0.85); }
+        .agree-doc h1 { font-size: 1.2rem; } .agree-doc h2 { font-size: 1rem; margin: 18px 0 6px; }
+        .agree-doc table { width: 100%; border-collapse: collapse; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+        .agree-doc th, .agree-doc td { border: 1px solid var(--line, #1e2a20); padding: 5px 7px; text-align: left; }
+        .agree-doc blockquote { border-left: 3px solid var(--green, #7ee96f); margin: 0; padding: 2px 14px; }
+        .agree-doc code { word-break: break-all; }
+        .order-form .agree-check { color: var(--text, #fff); font-size: 0.92rem; line-height: 1.5; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .agree-check { display: flex; gap: 10px; align-items: flex-start; text-transform: none; letter-spacing: 0; font-weight: normal; margin: 10px 0; text-align: left; }
+        .agree-check input { width: auto; margin-top: 4px; }
         .np-callout { margin: 12px 0 0; } .np-callout a { color: var(--green, #7ee96f); font-weight: bold; }
         .order-info { max-width: 820px; margin: 50px auto 0; padding: 0 24px; line-height: 1.65; }
         .order-info h2 { font-size: 1.3rem; margin: 30px 0 8px; }
@@ -721,6 +734,26 @@
                         <ol class="plan" id="resPlan"></ol>
                     </div>
                     <p class="note" id="resNote"></p>
+                    <!-- service agreement: read, sign (before the first payment), download -->
+                    <div id="agreeBox" class="agree-box" hidden>
+                        <div class="label plan-label">SERVICE AGREEMENT</div>
+                        <p class="agree-status" id="agreeStatus" role="status"></p>
+                        <details class="agree-read" id="agreeRead">
+                            <summary>Read the agreement</summary>
+                            <div class="agree-doc" id="agreeDoc" tabindex="0" aria-label="Service agreement text"></div>
+                        </details>
+                        <form class="order-form agree-sign" id="agreeForm" hidden>
+                            <label for="agreeName">YOUR FULL LEGAL NAME (OR YOUR ORGANIZATION'S, IF YOU SIGN FOR IT)</label>
+                            <input id="agreeName" type="text" required minlength="2" maxlength="200" autocomplete="name">
+                            <label class="agree-check"><input type="checkbox" id="agreeCheck" required>
+                                <span>I have read this agreement and agree to it. Typing my name and clicking Sign is my electronic signature.</span></label>
+                            <div class="pill-container"><button class="pill primary" id="agreeButton" type="submit">Sign the agreement</button></div>
+                            <p class="note" id="agreeMsg" role="status"></p>
+                        </form>
+                        <div class="pill-container agree-tools" id="agreeTools" hidden>
+                            <button class="pill" id="agreeDownload" type="button">Download a copy</button>
+                        </div>
+                    </div>
                     <div class="pill-container" id="payBox" hidden>
                         <button class="pill primary" id="payButton" type="button">Pay now</button>
                     </div>
@@ -1294,12 +1327,93 @@
             payBox.hidden = !due;
             document.getElementById('payButton').textContent = due ? 'Pay ' + dollars(due.amount_cents) + ' for ' + due.name : 'Pay now';
             paidStagesShown = plan.filter(function (p) { return p.state === 'paid'; }).length;
+            lastOrder = order;
+            showAgreement(order, due);
             showChanges(order);
             document.getElementById('payMsg').textContent = '';
             document.getElementById('checkout-form').replaceChildren();   // clear any earlier payment form
 
             lookupResult.hidden = false;
         }
+
+        // ---------- SERVICE AGREEMENT ----------
+        let agreement = null;   // what the server sent: the draft (with its fingerprint) or the signed copy
+        let lastOrder = null;
+        const agreeBox = document.getElementById('agreeBox'), agreeStatus = document.getElementById('agreeStatus');
+        const agreeForm = document.getElementById('agreeForm'), agreeMsg = document.getElementById('agreeMsg');
+        function setPayLock(locked) {
+            const pay = document.getElementById('payButton');
+            pay.disabled = locked;
+            pay.title = locked ? 'Sign the service agreement first' : '';
+        }
+        async function showAgreement(order, due) {
+            const info = order.contract || {};
+            agreeBox.hidden = order.quote_cents === null || order.status === 'cancelled' && !info.signed;
+            if (agreeBox.hidden) return;
+            // the first payment needs a signature; later payments don't wait on it
+            const needsSignature = !info.signed && !order.plan.some(function (p) { return p.state === 'paid'; });
+            setPayLock(Boolean(due) && needsSignature);
+            agreeStatus.textContent = info.signed
+                ? 'Signed by ' + info.signer + ' on ' + new Date(info.signed_at).toLocaleDateString() + '.'
+                : needsSignature ? 'Please read and sign your service agreement before your first payment.' : 'Your service agreement is ready to read.';
+            agreeForm.hidden = true; document.getElementById('agreeTools').hidden = true;
+            document.getElementById('agreeDoc').replaceChildren();
+            try {
+                const r = await fetch(API_BASE + '/orders/contract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(lastSearch) });
+                agreement = await r.json().catch(function () { return {}; });
+                if (!r.ok) throw new Error(agreement.detail || 'Couldn\'t load the agreement.');
+                // the agreement is our own template, with every value escaped by the server
+                document.getElementById('agreeDoc').innerHTML = agreement.html;
+                document.getElementById('agreeTools').hidden = false;
+                if (!agreement.signed && order.status !== 'cancelled') {
+                    agreeForm.hidden = false;
+                    document.getElementById('agreeName').value = agreement.legal_name || '';
+                    if (needsSignature) document.getElementById('agreeRead').open = true;
+                }
+            } catch (error) {
+                agreeStatus.textContent = error instanceof TypeError ? 'The agreement couldn\'t load right now. Please try again in a minute.' : error.message;
+            }
+        }
+        agreeForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!agreement || !lastSearch) return;
+            const button = document.getElementById('agreeButton');
+            button.disabled = true; agreeMsg.textContent = 'Signing...';
+            try {
+                const r = await fetch(API_BASE + '/orders/contract/sign', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.assign({}, lastSearch, { legal_name: document.getElementById('agreeName').value.trim(),
+                                                                         agree: document.getElementById('agreeCheck').checked, sha256: agreement.sha256 }))
+                });
+                const data = await r.json().catch(function () { return {}; });
+                if (!r.ok) throw new Error(data.detail || 'Couldn\'t sign. Please try again.');
+                agreement = data;
+                document.getElementById('agreeDoc').innerHTML = data.html;
+                agreeForm.hidden = true;
+                agreeStatus.textContent = 'Signed by ' + data.signer + ' on ' + new Date(data.signed_at).toLocaleDateString() + '. We emailed you a copy.';
+                setPayLock(false);
+                if (window.UX && UX.toast) UX.toast('Agreement signed');
+            } catch (error) {
+                agreeMsg.textContent = error instanceof TypeError ? 'We couldn\'t reach our server. Please try again in a minute.' : error.message;
+                if (/changed since you opened it/.test(error.message) && lastOrder)
+                    showAgreement(lastOrder, (lastOrder.plan || []).find(function (p) { return p.state === 'due'; }));
+            }
+            button.disabled = false;
+            if (!agreeForm.hidden && agreeMsg.textContent === 'Signing...') agreeMsg.textContent = '';
+        });
+        document.getElementById('agreeDownload').addEventListener('click', function () {
+            if (!agreement) return;
+            const code = lastSearch ? lastSearch.confirmation : 'order';
+            const page = '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Service Agreement AS-' + code + '</title>' +
+                '<style>body{font:15px/1.6 Georgia,serif;max-width:760px;margin:40px auto;padding:0 20px;color:#111}table{border-collapse:collapse;width:100%}' +
+                'th,td{border:1px solid #bbb;padding:6px 8px;text-align:left}blockquote{border-left:3px solid #999;margin:0;padding:4px 14px}</style></head><body>' +
+                agreement.html + '</body></html>';
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(new Blob([page], { type: 'text/html' }));
+            link.download = 'Service-Agreement-AS-' + code + '.html';
+            document.body.append(link); link.click(); link.remove();
+            setTimeout(function () { URL.revokeObjectURL(link.href); }, 2000);
+        });
 
         // ---------- PAY ----------
         const payButton = document.getElementById('payButton');
