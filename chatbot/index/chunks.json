@@ -213,7 +213,7 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Your orders",
-"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nCHANGE REQUESTS"
+"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement\nCHANGE REQUESTS"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -327,7 +327,13 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "tomated abuse. It never blocks anyone on its own.\nWe don't use advertising trackers, and we don't sell or rent your information to anyone.\nVisit counts: we use GoatCounter to count page visits and how many quotes and orders are started. It uses no cookies and doesn't collect personal information, so we can see totals but not who you are."
+"text": "tomated abuse. It never blocks anyone on its own.\nService agreement signatures: when you sign your project's service agreement on the order page, we keep a signature record: the name you typed, your email, the time, your IP address, your browser type, and an exact copy of the agreement you signed with its digital fingerprint. It proves what was agreed, and we keep it for 7 years after the project ends."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "nd we keep it for 7 years after the project ends.\nWe don't use advertising trackers, and we don't sell or rent your information to anyone.\nVisit counts: we use GoatCounter to count page visits and how many quotes and orders are started. It uses no cookies and doesn't collect personal information, so we can see totals but not who you are."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -351,7 +357,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "How long we keep it",
-"text": "We keep order records for as long as needed to deliver and support your project and to keep accurate business and tax records. After that, we delete them. You can ask us to delete your data sooner, and we will unless we're required to keep it."
+"text": "We keep order records for as long as needed to deliver and support your project and to keep accurate business and tax records. Signed service agreements and their signature records are kept for 7 years after the project ends. After that, we delete them. You can ask us to delete your data sooner, and we will unless we're required to keep it."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -1204,6 +1210,12 @@
 "title": "Terms of Service",
 "heading": "Agreement",
 "text": "These terms apply when you use abstraction-solutions.com or order a project from Abstraction Solutions (\"we\", \"us\"). By placing an order or paying for any stage of a project, you agree to these terms. See also our Privacy Policy ."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Agreement",
+"text": "ree to these terms. See also our Privacy Policy .\nService agreement: once your final quote is ready, your order page shows a service agreement for your project. It sets out your scope, payment plan and these same terms, and you sign it online before your first payment. You can view or download it from your order page anytime."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
