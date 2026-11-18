@@ -67,6 +67,7 @@ const PAGES = [
     { id: 'privacy',  label: 'Privacy Policy',    href: 'privacy.html', icon: 'privacy', group: 'legal' },
     { id: 'returns',  label: 'Returns & Refunds', href: 'returns.html', icon: 'returns', group: 'legal' },
     { id: 'terms',    label: 'Terms of Service',  href: 'terms.html',   icon: 'terms',   group: 'legal' },
+    { id: 'dpa',      label: 'Data Processing (DPA)', href: 'dpa.html', icon: 'terms', group: 'legal', hidden: true },
 
     // hidden: true = not in the menu (linked from the footer), but still named correctly as the current page
     { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true },
@@ -323,6 +324,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '<h4 class="f-legal">LEGAL</h4><ul>' +
                 link('privacy.html', 'Privacy Policy') + link('returns.html', 'Returns &amp; Refunds') +
                 link('terms.html', 'Terms of Service') +
+                link('dpa.html', 'DPA &amp; Subprocessors') +
             '</ul></div>' +
             '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA' +
                 '<a class="f-admin" href="' + BASE + 'admin.html" rel="nofollow">Admin</a></div>';

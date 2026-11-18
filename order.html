@@ -28,7 +28,6 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- Stripe's payment form. Always load it from js.stripe.com (never copy it), so card data stays with Stripe -->
-    <script src="https://js.stripe.com/dahlia/stripe.js"></script>
 
     <!-- Styles only this page uses (copied from aboutus.html) -->
     <style>
@@ -302,6 +301,8 @@
             }
         }
         .agree { color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 0; }
+        .order-form label.agree-tick, .agree-tick { display: flex; gap: 10px; align-items: flex-start; letter-spacing: normal; text-transform: none; font-weight: normal; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; cursor: pointer; }
+        .agree-tick input { width: 18px; height: 18px; margin: 2px 0 0; flex: none; accent-color: #8bf171; }
 
         /* ---------- PAYMENT STAGES on an order ---------- */
         #resPlanBox[hidden] { display: none; }
@@ -642,6 +643,7 @@
                     <div class="account-bar">
                         <span>Signed in as <strong id="accountEmail"></strong></span>
                         <button class="link-button" id="signOutButton" type="button">Sign out</button>
+                        <button class="link-button" id="exportAccountButton" type="button">Download my data</button>
                         <button class="link-button" id="deleteAccountButton" type="button">Delete account</button>
                     </div>
                     <div id="accountFormSlot"></div>
@@ -684,8 +686,11 @@
                     <textarea id="details" name="details" required minlength="20" maxlength="3000"
                         placeholder="What should we build? If you are a nonprofit, say so. Any deadline?"></textarea>
 
-                    <p class="agree">By placing an order you agree to our <a href="terms.html">Terms &amp; Refund Policy</a>
-                       and <a href="privacy.html">Privacy Policy</a>.</p>
+                    <label class="agree agree-tick" for="termsAccepted">
+                        <input type="checkbox" id="termsAccepted" name="terms_accepted" value="true" required>
+                        <span>I agree to the <a href="terms.html" target="_blank">Terms of Service &amp; Refund Policy</a>
+                        and the <a href="privacy.html" target="_blank">Privacy Policy</a>.</span>
+                    </label>
 
                     <div class="pill-container">
                         <button class="pill primary" id="orderButton" type="submit">Place order</button>
@@ -778,6 +783,8 @@
                         </form>
                         <p class="note" id="changeNote"></p>
                     </div>
+
+                    <p class="note"><button class="link-button" id="exportOrderButton" type="button">Download everything we hold for this order</button></p>
 
                     <!-- cancel: as easy as ordering, right here -->
                     <div id="cancelBox" hidden>
@@ -1227,6 +1234,31 @@
 
         document.getElementById('signOutButton').addEventListener('click', signOut);
 
+        // "Download my data": a JSON file of everything we hold (account, orders, payments, agreements, mailing list)
+        function saveFile(blob, name) {
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+        }
+        document.getElementById('exportAccountButton').addEventListener('click', async function () {
+            const account = currentAccount(); if (!account) return;
+            try {
+                const r = await fetchWithWake(API_BASE + '/me/export', { headers: { Authorization: 'Bearer ' + account.token } });
+                if (r.status === 401) { signOut(); signInMsg.textContent = 'Your sign-in expired. Please sign in again.'; return; }
+                if (!r.ok) throw new Error();
+                saveFile(await r.blob(), 'abstraction-solutions-my-data.json');
+            } catch (e) { signInMsg.textContent = 'Couldn\'t download your data right now. Please try again in a minute.'; }
+        });
+        document.getElementById('exportOrderButton').addEventListener('click', async function () {
+            try {
+                const r = await fetchWithWake(API_BASE + '/orders/export', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(lastSearch) });
+                if (r.status === 429) throw new Error('Too many tries. Please wait a minute.');
+                if (!r.ok) throw new Error('Couldn\'t download the data right now. Please try again in a minute.');
+                saveFile(await r.blob(), 'abstraction-solutions-order-' + lastSearch.confirmation + '.json');
+            } catch (e) { lookupMsg.textContent = e instanceof TypeError ? 'Our system is offline right now.' : e.message; }
+        });
+
         // delete account: two clicks, then it's gone (orders stay on record and can still be looked up)
         (function () {
             const btn = document.getElementById('deleteAccountButton');
@@ -1535,7 +1567,19 @@
         });
 
         // Stripe's embedded form (from the code Stripe gave us), styled to match the site
+        // Stripe's script loads only when someone pays, so visitors who don't pay never contact Stripe
+        function loadStripe() {
+            if (typeof Stripe !== 'undefined') return Promise.resolve();
+            return new Promise(function (resolve) {
+                const tag = document.createElement('script');
+                tag.src = 'https://js.stripe.com/dahlia/stripe.js';
+                tag.onload = resolve; tag.onerror = resolve;          // the check below reports a failure
+                document.head.appendChild(tag);
+            });
+        }
+
         async function showPaymentForm(clientSecret, publishableKey) {
+            await loadStripe();
             if (typeof Stripe === 'undefined') throw new Error('The payment form couldn\'t load. Please check your connection and try again.');
             if (!publishableKey) throw new Error('Online payment isn\'t set up yet. Please email us to pay.');
             const stripe = Stripe(publishableKey);
