@@ -336,6 +336,8 @@
         .panel .section-note.small { font-size: 0.85rem; text-align: center; margin: 0; }
         #signInMsg { min-height: 1.4em; margin: 10px 0 0; text-align: center; line-height: 1.5; }
         #signInMsg:empty { min-height: 0; margin: 0; }
+        #cancelStart[hidden], #cancelForm[hidden], #cancelBox[hidden] { display: none; }
+        #cancelBox .note a { color: #8bf171; }
         .account-bar {
             display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px;
             padding: 12px 16px; border: 1px solid var(--green-dim); border-radius: 12px; background-color: var(--green-soft);
@@ -640,6 +642,7 @@
                     <div class="account-bar">
                         <span>Signed in as <strong id="accountEmail"></strong></span>
                         <button class="link-button" id="signOutButton" type="button">Sign out</button>
+                        <button class="link-button" id="deleteAccountButton" type="button">Delete account</button>
                     </div>
                     <div id="accountFormSlot"></div>
                     <h3 class="orders-heading">Your orders</h3>
@@ -774,6 +777,22 @@
                             </div>
                         </form>
                         <p class="note" id="changeNote"></p>
+                    </div>
+
+                    <!-- cancel: as easy as ordering, right here -->
+                    <div id="cancelBox" hidden>
+                        <div class="label plan-label">CANCEL THIS PROJECT</div>
+                        <p class="note">You can cancel anytime, and nothing more will be due. If you've paid for a stage we haven't started, it comes back to you under our <a href="returns.html">refund policy</a>.</p>
+                        <div class="pill-container" id="cancelStart"><button class="pill" id="cancelButton" type="button">Cancel this project</button></div>
+                        <form class="order-form" id="cancelForm" hidden>
+                            <label for="cancelReason">WHY ARE YOU CANCELLING? (OPTIONAL)</label>
+                            <textarea id="cancelReason" maxlength="1000" placeholder="Anything that would help us do better."></textarea>
+                            <div class="pill-container">
+                                <button class="pill primary" id="cancelConfirm" type="submit">Yes, cancel my project</button>
+                                <button class="pill" id="cancelKeep" type="button">Keep my project</button>
+                            </div>
+                        </form>
+                        <p class="note" id="cancelMsg" role="status"></p>
                     </div>
                 </div>
             </div>
@@ -946,6 +965,7 @@
                 orderForm.hidden = true;               // hide the form
                 orderMsg.textContent = 'Order received! Your confirmation number is ' + result.confirmation +
                     '. We\'ve emailed it to you, and we\'ll be in touch within 2 business days.';
+                if (result.support && window.CrisisSupport) CrisisSupport.show(orderMsg, result.support);
                 if (account) loadMyOrders();
             } catch (error) {
                 orderMsg.textContent = error instanceof TypeError
@@ -1207,6 +1227,65 @@
 
         document.getElementById('signOutButton').addEventListener('click', signOut);
 
+        // delete account: two clicks, then it's gone (orders stay on record and can still be looked up)
+        (function () {
+            const btn = document.getElementById('deleteAccountButton');
+            let armed = null;
+            btn.addEventListener('click', async function () {
+                if (!armed) {
+                    btn.textContent = 'Click again to permanently delete your account';
+                    armed = setTimeout(function () { armed = null; btn.textContent = 'Delete account'; }, 6000);
+                    return;
+                }
+                clearTimeout(armed); armed = null;
+                const account = currentAccount();
+                if (!account) return;
+                btn.disabled = true; btn.textContent = 'Deleting...';
+                try {
+                    const response = await fetchWithWake(API_BASE + '/me/delete', {
+                        method: 'POST', headers: { Authorization: 'Bearer ' + account.token }
+                    });
+                    if (!response.ok && response.status !== 401) throw new Error();
+                    signOut();
+                    signInMsg.textContent = 'Your account was deleted. Your orders stay on record for our business and tax records, ' +
+                        'and you can still look them up with your email and confirmation number.';
+                } catch (e) {
+                    signInMsg.textContent = 'Couldn\'t delete your account right now. Please try again, or email dylanpogue@abstraction-solutions.com.';
+                } finally { btn.disabled = false; btn.textContent = 'Delete account'; }
+            });
+        })();
+
+        // cancel a project from the order page
+        (function () {
+            const form = document.getElementById('cancelForm'), msg = document.getElementById('cancelMsg');
+            document.getElementById('cancelButton').addEventListener('click', function () {
+                document.getElementById('cancelStart').hidden = true; form.hidden = false; msg.textContent = '';
+                document.getElementById('cancelReason').focus();
+            });
+            document.getElementById('cancelKeep').addEventListener('click', function () {
+                form.hidden = true; document.getElementById('cancelStart').hidden = false;
+            });
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const button = document.getElementById('cancelConfirm');
+                button.disabled = true; button.textContent = 'Cancelling...';
+                try {
+                    const payload = Object.assign({ confirm: true, reason: document.getElementById('cancelReason').value.trim() || null }, lastSearch);
+                    const response = await fetchWithWake(API_BASE + '/orders/cancel', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    });
+                    const data = await response.json().catch(function () { return {}; });
+                    if (response.status === 429) throw new Error('Too many tries. Please wait a minute.');
+                    if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Something went wrong. Please try again.');
+                    window.trackEvent && trackEvent('order-cancelled');
+                    document.getElementById('lookupForm').requestSubmit();       // reload the order to show it cancelled
+                    setTimeout(function () { lookupMsg.textContent = 'Your project is cancelled and nothing more is due. We\'ve emailed you a confirmation.'; }, 1500);
+                } catch (error) {
+                    msg.textContent = error instanceof TypeError ? 'Our system is offline right now. Please try again in a minute.' : error.message;
+                } finally { button.disabled = false; button.textContent = 'Yes, cancel my project'; }
+            });
+        })();
+
         renderAccount();
 
         // "Accept this quote" on the home page sends ?service=...&details=... : fill in and open an order panel
@@ -1330,6 +1409,10 @@
             lastOrder = order;
             showAgreement(order, due);
             showChanges(order);
+            const ended = order.status === 'cancelled' || order.status === 'complete';
+            document.getElementById('cancelBox').hidden = ended;
+            document.getElementById('cancelForm').hidden = true;
+            document.getElementById('cancelStart').hidden = false;
             document.getElementById('payMsg').textContent = '';
             document.getElementById('checkout-form').replaceChildren();   // clear any earlier payment form
 
@@ -1551,6 +1634,7 @@
                 if (response.status === 422) throw new Error('Please describe the change in at least 10 characters.');
                 if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Something went wrong. Please try again.');
                 doneWith('change');
+                if (data.support && window.CrisisSupport) CrisisSupport.show(note, data.support);
                 document.getElementById('changeText').value = '';
                 document.getElementById('lookupForm').requestSubmit();   // reload the order to show it
                 setTimeout(function () { note.textContent = 'Request sent. We\'ll reply by email, usually within 2 business days.'; }, 1500);

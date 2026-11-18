@@ -1153,6 +1153,12 @@
                     if (r.status === 429) throw new Error('You’ve reached the limit for now. Please try again later.');
                     if (!r.ok) throw new Error('Something went wrong. Please try again in a minute.');
                     const data = await r.json();
+                    if (data.support) {                      // they wrote that they may hurt themselves: help first
+                        $('certResults').hidden = true; status('');
+                        CrisisSupport.show($('certStatus'), data.support);
+                        return;
+                    }
+                    if (window.CrisisSupport) CrisisSupport.clear();
                     const picks = (data.recommendations || []).filter(function (p) { return byId[p.id]; });
                     if (!picks.length) throw new Error('No matches this time. Try describing the field differently.');
                     const ol = $('certPicks'); ol.textContent = '';
