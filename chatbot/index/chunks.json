@@ -54,6 +54,78 @@
 "text": "2026-11-06\nOur offer now focuses on Memphis small businesses and nonprofits.\nThrough Friday, November 13, 2026, quotes are 25% off for everyone other than nonprofits. Nonprofits keep 50% off. The discounts don't stack."
 },
 {
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "Data Processing Addendum",
+"text": "LEGAL\nEffective November 18, 2026\nThe short version: when we build something that handles your customers' or members' personal data (a chatbot, an automation, a website with a form), you stay in control of that data. We only use it to do the work you asked for, keep it confidential and secure, tell you quickly if something goes wrong, and delete or return it when the project ends. The providers we rely on are listed below ."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "When this applies",
+"text": "This addendum is part of our Terms of Service and your project's service agreement. It applies whenever we process personal data on your behalf while building, testing or supporting your project. For that data, you are the controller (you decide why and how it's used) and we are the processor (we handle it for you). Our own customer records, like your order and contact details, are covered by our Privacy Policy instead."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "What we promise",
+"text": "Your instructions only: we use your data only to deliver and support your project, as set out in your service agreement and your written instructions. We'll tell you if we think an instruction breaks the law.\nNo selling, no training: we never sell your data, and we never use it to train AI models or for our own purposes.\nLeast data: we ask for, copy and keep only what the work needs. Where we can, we use test or sample data instead of real records."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "What we promise",
+"text": "use test or sample data instead of real records.\nConfidentiality: only people working on your project can access your data, and they're bound to keep it confidential.\nSecurity: we use encryption in transit (HTTPS), password-protected admin tools that support two-factor sign-in, private databases, and we don't put your data in public storage or public code repositories."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "What we promise",
+"text": "ta in public storage or public code repositories.\nSubprocessors: we only use the providers listed below. We'll update this page and, for active projects, email you before adding a new provider that will receive your data, so you can object.\nBreaches: if we learn your data was accessed without permission, we'll email you without undue delay, and within 72 hours, with what we know and what we're doing about it."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "What we promise",
+"text": "with what we know and what we're doing about it.\nHelping you: we'll help you answer requests from people to see, correct, export or delete their data, and give you the information you reasonably need to show you're meeting your own obligations.\nWhen the project ends: we delete or hand back your data within 30 days, unless you ask us to keep supporting the project or the law requires us to keep it."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "AI in your project",
+"text": "If your project uses an AI service (for example Google Gemini, OpenAI, Anthropic or an open-source model), we'll tell you which one before it handles your data, configure it so your data isn't used to train the provider's models where the provider offers that option, and add a clear notice for your users that they're talking to or being helped by AI. Chatbots we build show crisis resources if a user says they may hurt themselves."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "Subprocessors",
+"text": "These are the providers we use to run our business and deliver projects. A project only uses the ones it needs, and your service agreement lists any project-specific providers (for example, the hosting you choose).\nProvider\nWhat it does\nData it may receive\nLocation\nNeon\nDatabase for orders, accounts and project data\nContact details, order and project data\nUnited States\nRender\nRuns our server and project back ends\nData passing through the server\nUnited States\nGitHub (GitHub Pages)"
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "Subprocessors",
+"text": "gh the server\nUnited States\nGitHub (GitHub Pages)\nWebsite hosting and code storage\nWebsite visitors' IP addresses (as any web host does); no customer records\nUnited States\nGoogle (Workspace, Sign-In, Gemini API)\nBusiness email, optional sign-in, AI estimates and suggestions\nEmails, sign-in details, text typed into AI tools\nUnited States / global\nStripe\nPayments\nPayment details (entered directly with Stripe)\nUnited States\nResend\nSending email\nEmail addresses and message contents"
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "Subprocessors",
+"text": "ending email\nEmail addresses and message contents\nUnited States\nGoatCounter\nVisit counts without cookies\nPage views, no personal data\nEuropean Union\nHugging Face, jsDelivr\nServe public files for our site search\nVisitors' IP addresses (as any file host does)\nUnited States / global"
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "Signing a copy",
+"text": "Most projects are covered by this page as part of your service agreement. If your organization needs a signed DPA, email dylanpogue@abstraction-solutions.com and we'll send one for signature."
+},
+{
+"url": "https://abstraction-solutions.com/dpa.html",
+"title": "Data Processing Addendum & Subprocessors",
+"heading": "Changes",
+"text": "If we change this addendum, we'll update the date at the top. Changes that reduce your protections won't apply to an active project without your agreement."
+},
+{
 "url": "https://abstraction-solutions.com/hydrocart.html",
 "title": "HydroCart Indoor Growing Tower",
 "heading": "HydroCart, an indoor growing tower from Abstraction Solutions.",
@@ -183,7 +255,7 @@
 "url": "https://abstraction-solutions.com/",
 "title": "AI Made Simple for Small Business",
 "heading": "Get a quote today",
-"text": "Describe the project below. This is an instant estimate, not a final bill. Registered nonprofits see 50% off this estimate. You will get final scope and price by email.\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nEstimated cost"
+"text": "Describe the project below. This is an instant estimate, not a final bill. Registered nonprofits see 50% off this estimate. You will get final scope and price by email.\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nEstimates are made automatically by AI (Google Gemini) from what you type, so please leave out passwords and personal details. A person reviews every final quote. How we use AI\nEstimated cost"
 },
 {
 "url": "https://abstraction-solutions.com/",
@@ -213,7 +285,13 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Your orders",
-"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement\nCHANGE REQUESTS"
+"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement\nCHANGE REQUESTS\nCANCEL THIS PROJECT"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Your orders",
+"text": "the agreement\nCHANGE REQUESTS\nCANCEL THIS PROJECT\nYou can cancel anytime, and nothing more will be due. If you've paid for a stage we haven't started, it comes back to you under our refund policy ."
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -285,7 +363,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Privacy Policy",
-"text": "LEGAL\nEffective November 12, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Email us any time to see or delete your data."
+"text": "LEGAL\nEffective November 12, 2026 · Updated November 18, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or unsubscribe yourself, anytime, and email us to see or delete your data."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -303,7 +381,19 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "g Face and jsDelivr, like loading any other file.\nOrders: your name, email address, the service you pick and your project details. We also store your confirmation number, order status, quote and whether it has been paid.\nPayments: handled entirely by Stripe. Your card number never touches our servers. We only receive a record that the payment succeeded."
+"text": "g Face and jsDelivr, like loading any other file.\nOrders: your name, email address, the service you pick and your project details. We also store your confirmation number, order status, quote and whether it has been paid."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "order status, quote and whether it has been paid.\nAccounts (optional): if you sign in with Google or with an emailed sign-in link, we keep your email address, your name, your Google account ID (if you used Google) and when you last signed in, so you can see your orders in one place. Your browser keeps you signed in on your device; we don't use tracking cookies. You can delete your account yourself anytime from the order page."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "our account yourself anytime from the order page.\nPayments: handled entirely by Stripe. Your card number never touches our servers. We only receive a record that the payment succeeded."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -315,7 +405,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "ails you send us: whatever you choose to include.\nCertification Finder: the field you want and the résumé text you paste or upload are used once to make suggestions and are not saved. If you vote on a suggestion, we keep the vote with an anonymous, coarse summary (your field, experience level and a few background signals), never your résumé."
+"text": "ails you send us: whatever you choose to include.\nCertification Finder: the field you want and the résumé text you paste or upload are used once to make suggestions and are not saved. A résumé PDF you upload is read in our server's memory to pull out its text, then thrown away: it is never written to disk, never put in file storage, and never logged. If you vote on a suggestion, we keep the vote with an anonymous, coarse summary (your field, experience level and a few background signals), never your résumé."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -338,6 +428,42 @@
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
+"heading": "How we use AI",
+"text": "We're an AI company, so we want to be clear about where AI touches your information:\nInstant quote: the project description you type is sent to Google Gemini , which estimates the size of the project. The estimate is automatic and not a final price. A person reviews every final quote before you're asked to pay anything."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "How we use AI",
+"text": "final quote before you're asked to pay anything.\nCertification Finder: your field and résumé text are sent to Google Gemini to pick and explain certifications. If Gemini is busy, our own in-house model, which runs on our server, makes the picks instead. It also learns from the anonymous votes described above, never from résumés."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "How we use AI",
+"text": "nymous votes described above, never from résumés.\nAbuse protection: our in-house model looks at the coded request summaries described above to spot automated abuse. It flags requests for a person to review and never blocks anyone on its own.\nSite assistant: it searches our own pages in your browser. It doesn't write answers with AI and doesn't send your questions anywhere."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "How we use AI",
+"text": "with AI and doesn't send your questions anywhere.\nBuilding your project: we use AI tools to help write code and content. A person designs, reviews and tests everything before it's delivered to you."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "How we use AI",
+"text": "nd tests everything before it's delivered to you.\nAI never makes final decisions about your quote, order, refund or payments; a person does. We don't use your personal information to train AI models. Google handles the text we send to Gemini under its Gemini API terms, and on free-tier use Google may use that text to improve its own products, which is one more reason to leave personal details out. Please don't type passwords or sensitive personal information into the quote tool or Certification Finder."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "How we use AI",
+"text": "tion into the quote tool or Certification Finder.\nIf you're going through something hard: if you write in any of our forms that you might hurt yourself, we show you crisis resources (like the 988 Suicide & Crisis Lifeline) instead of an AI answer, and we don't send your message to the AI. We also email ourselves a short alert, without your message, so a person can check in if you left your email."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
 "heading": "How we use it",
 "text": "To generate your instant estimate and prepare your final quote.\nTo send you your confirmation, quote, payment receipt and project updates by email.\nIf you joined our mailing list, to send you offers, newsletters and announcements until you unsubscribe.\nTo build and support the project you ordered.\nTo keep the site secure and prevent abuse."
 },
@@ -345,13 +471,31 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": "We rely on a few trusted providers to run the site. Each only gets the information it needs:\nGoogle Gemini : reads the project description you type into the quote tool to estimate its size, and the résumé text and field you give the Certification Finder to suggest certifications. Please don't include passwords or sensitive personal information there.\nNeon : the database where orders and mailing-list signups are stored.\nRender and GitHub Pages : host our server and website."
+"text": "We rely on a few trusted providers to run the site. Each only gets the information it needs. The full list, with locations, is on our subprocessors page .\nGoogle Sign-In : lets you sign in with your Google account if you choose to. Google tells us your email, name and account ID; we never see your Google password.\nGoogle Workspace : runs our business email inbox, so emails you send us are stored there."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": "r and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data.\nStripe : processes payments (see Stripe's privacy policy )."
+"text": "il inbox, so emails you send us are stored there.\nGoogle Gemini : reads the project description you type into the quote tool to estimate its size, and the résumé text and field you give the Certification Finder to suggest certifications. Please don't include passwords or sensitive personal information there.\nNeon : the private database where orders, accounts, signature records and mailing-list signups are stored. It is not publicly accessible."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "Services we use",
+"text": "ignups are stored. It is not publicly accessible.\nRender and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data.\nHugging Face and jsDelivr : serve the public search model and code files your browser downloads for the site assistant. They see your IP address like any website you load files from.\nStripe : processes payments (see Stripe's privacy policy )."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "Cookies and browser storage",
+"text": "We don't use advertising or tracking cookies, so there's no cookie banner to click through. GoatCounter counts visits without cookies. Your browser only stores what the site needs to work: your sign-in (if you sign in), and drafts so a form isn't lost if you refresh. Stripe's payment form loads only when you choose to pay, and Google's sign-in button loads only on the order page, where you choose whether to use it."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "Files and storage",
+"text": "We don't keep uploaded files. The only upload on our site is the résumé PDF for the Certification Finder, and it's discarded right after its text is read. We don't use public file storage or public storage buckets. Your information lives only in our private database and email inbox. Our website's code is public on GitHub, and it contains no customer information."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -363,7 +507,13 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Your choices",
-"text": "You can ask to see, correct or delete the information we hold about you by emailing dylanpogue@abstraction-solutions.com from the address you ordered with. We'll respond within 30 days."
+"text": "Cancel a project: look up your order on the order page and press \"Cancel this project\". Nothing more is due after that.\nDownload your data: on the order page, signed-in customers can press \"Download my data\", and anyone can download everything we hold for an order with its email and confirmation number.\nDelete your account: sign in on the order page and press \"Delete account\". Your orders stay on record for business and tax purposes, but they're no longer linked to an account."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "Your choices",
+"text": "oses, but they're no longer linked to an account.\nUnsubscribe: one click from the link at the bottom of any of our emails.\nYou can also ask to see, correct or delete the information we hold about you by emailing dylanpogue@abstraction-solutions.com from the address you ordered with. We'll respond within 30 days."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -742,6 +892,12 @@
 "title": "Returns & Refunds",
 "heading": "Free bug fixes for one month",
 "text": "For 30 days after we deploy your project , we'll fix bugs and errors in the work we delivered at no cost.\nThis covers problems with our work. It doesn't cover new features, changes to the original requirements, or problems caused by changes made by someone else or by third-party services. We're happy to quote those separately."
+},
+{
+"url": "https://abstraction-solutions.com/returns.html",
+"title": "Returns & Refunds",
+"heading": "How to cancel",
+"text": "Look up your order on the order page and press Cancel this project . It takes effect right away and you'll get a confirmation email. You can also just reply to any of our emails."
 },
 {
 "url": "https://abstraction-solutions.com/returns.html",
@@ -1203,7 +1359,7 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Terms of Service",
-"text": "LEGAL\nEffective November 4, 2026 · Updated November 9, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You pay in stages (Planning, Coding, Testing, Done) as each one begins, never all up front. You can request changes until Testing begins and cancel anytime. A stage you've paid for but we haven't started is fully refundable, and every project comes with one month of free bug fixes ."
+"text": "LEGAL\nEffective November 4, 2026 · Updated November 18, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You pay in stages (Planning, Coding, Testing, Done) as each one begins, never all up front. You can request changes until Testing begins and cancel anytime. A stage you've paid for but we haven't started is fully refundable, and every project comes with one month of free bug fixes ."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
@@ -1281,13 +1437,31 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Cancellations and refunds",
-"text": "not refundable, because that work has been done.\nAfter delivery: no refund. Instead, you're covered by the free bug-fix period below."
+"text": "not refundable, because that work has been done.\nAfter delivery: no refund. Instead, you're covered by the free bug-fix period below.\nHow to cancel: look up your order on the order page and press \"Cancel this project\". It takes effect right away, and you'll get an email confirming it. You can also reply to any of our emails or write to dylanpogue@abstraction-solutions.com with your confirmation number."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Cancellations and refunds",
-"text": "you're covered by the free bug-fix period below.\nTo cancel or request a refund, email dylanpogue@abstraction-solutions.com with your confirmation number. Approved refunds go back to the card you paid with through Stripe, usually within 5 to 10 business days. We may also cancel a project, for example if a payment stays overdue or we can't complete the work; any refund then follows the same rules."
+"text": "tion-solutions.com with your confirmation number.\nTo request a refund, email us with your confirmation number. Approved refunds go back to the card you paid with through Stripe, usually within 5 to 10 business days. We may also cancel a project, for example if a payment stays overdue or we can't complete the work; any refund then follows the same rules."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Ongoing plans and trials",
+"text": "We don't offer free trials, and we never start charging you automatically when one ends. Ongoing maintenance is only set up by written agreement with you, and you can cancel it anytime by emailing us."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "AI-generated content",
+"text": "Some tools on this site use AI, as explained in our Privacy Policy . Instant estimates and Certification Finder suggestions are generated automatically and may be wrong. They aren't professional, legal, financial or career advice, and they aren't a binding price. A person reviews every final quote."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Your customers' data",
+"text": "If your project handles personal data about your customers, members or users, our Data Processing Addendum applies and is part of these terms."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
