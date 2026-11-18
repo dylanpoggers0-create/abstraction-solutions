@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src 'self' https://buttondown.com; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Data Processing Addendum &amp; Subprocessors | Abstraction Solutions</title>
+    <meta name="description" content="How Abstraction Solutions handles personal data in projects we build for businesses and nonprofits, and the list of service providers (subprocessors) we use.">
+    <link rel="canonical" href="https://abstraction-solutions.com/dpa.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="Data Processing Addendum &amp; Subprocessors | Abstraction Solutions">
+    <meta property="og:description" content="How Abstraction Solutions handles personal data in projects we build for businesses and nonprofits, and the list of service providers (subprocessors) we use.">
+    <meta property="og:url" content="https://abstraction-solutions.com/dpa.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Data Processing Addendum &amp; Subprocessors | Abstraction Solutions">
+    <meta name="twitter:description" content="How Abstraction Solutions handles personal data in projects we build for businesses and nonprofits, and the list of service providers (subprocessors) we use.">
+    <meta name="twitter:image" content="https://abstraction-solutions.com/og-image.jpg">
+
+    <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Styles only the legal pages use -->
+    <style>
+        .hero { padding: 150px 24px 10px; text-align: center; }
+        .eyebrow { color: var(--green); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; }
+        .hero h1 { font-size: 2.8rem; margin: 14px 0 10px; }
+        .updated { color: var(--text-muted); font-size: 0.9rem; }
+
+        .legal {
+            max-width: 760px;
+            margin: 30px auto 60px;
+            padding: 0 24px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+        }
+        .legal h2 {
+            margin: 40px 0 12px;
+            color: var(--green);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .legal p, .legal li { color: #e8eee8; font-size: 1.05rem; line-height: 1.75; }
+        .legal p { margin: 0 0 14px; }
+        .legal ul { margin: 0 0 14px; padding-left: 22px; }
+        .legal li { margin-bottom: 6px; }
+        .legal strong { color: #fff; }
+        .legal a { color: var(--green); font-weight: bold; }
+
+        /* short plain-English summary at the top */
+        .summary {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--green);
+            border-radius: 12px;
+            padding: 18px 22px;
+            text-shadow: none;
+        }
+        .summary p { margin: 0; }
+
+        @media (max-width: 600px) {
+            .hero { padding-top: 120px; }
+            .hero h1 { font-size: 2.1rem; }
+            .legal { padding: 0 20px 0 40px; }   /* room for the Menu tab */
+        }
+        .subs { width: 100%; border-collapse: collapse; margin: 6px 0 18px; font-size: .95rem; text-shadow: none; }
+        .subs th, .subs td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; vertical-align: top; color: #e8eee8; }
+        .subs th { color: var(--green); font-size: .78rem; letter-spacing: 2px; text-transform: uppercase; }
+        .table-wrap { overflow-x: auto; }
+    </style>
+</head>
+
+<body data-page="dpa">
+
+    <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a></nav></noscript>
+    <script src="nav.js"></script>
+
+    <section class="hero">
+        <div class="eyebrow">LEGAL</div>
+        <h1>Data Processing Addendum</h1>
+        <p class="updated">Effective November 18, 2026</p>
+    </section>
+
+    <div class="legal">
+        <div class="summary">
+            <p><strong>The short version:</strong> when we build something that handles <em>your</em> customers' or
+               members' personal data (a chatbot, an automation, a website with a form), you stay in control of that data.
+               We only use it to do the work you asked for, keep it confidential and secure, tell you quickly if
+               something goes wrong, and delete or return it when the project ends. The providers we rely on are listed
+               <a href="#subprocessors">below</a>.</p>
+        </div>
+
+        <h2>When this applies</h2>
+        <p>This addendum is part of our <a href="terms.html">Terms of Service</a> and your project's service agreement.
+           It applies whenever we process personal data on your behalf while building, testing or supporting your
+           project. For that data, you are the <strong>controller</strong> (you decide why and how it's used) and we are
+           the <strong>processor</strong> (we handle it for you). Our own customer records, like your order and contact
+           details, are covered by our <a href="privacy.html">Privacy Policy</a> instead.</p>
+
+        <h2>What we promise</h2>
+        <ul>
+            <li><strong>Your instructions only:</strong> we use your data only to deliver and support your project, as set
+                out in your service agreement and your written instructions. We'll tell you if we think an instruction
+                breaks the law.</li>
+            <li><strong>No selling, no training:</strong> we never sell your data, and we never use it to train AI models
+                or for our own purposes.</li>
+            <li><strong>Least data:</strong> we ask for, copy and keep only what the work needs. Where we can, we use test
+                or sample data instead of real records.</li>
+            <li><strong>Confidentiality:</strong> only people working on your project can access your data, and they're
+                bound to keep it confidential.</li>
+            <li><strong>Security:</strong> we use encryption in transit (HTTPS), password-protected admin tools that support
+                two-factor sign-in, private databases, and we don't put your data in public storage
+                or public code repositories.</li>
+            <li><strong>Subprocessors:</strong> we only use the providers listed below. We'll update this page and, for
+                active projects, email you before adding a new provider that will receive your data, so you can object.</li>
+            <li><strong>Breaches:</strong> if we learn your data was accessed without permission, we'll email you without
+                undue delay, and within 72 hours, with what we know and what we're doing about it.</li>
+            <li><strong>Helping you:</strong> we'll help you answer requests from people to see, correct, export or delete
+                their data, and give you the information you reasonably need to show you're meeting your own obligations.</li>
+            <li><strong>When the project ends:</strong> we delete or hand back your data within 30 days, unless you ask us
+                to keep supporting the project or the law requires us to keep it.</li>
+        </ul>
+
+        <h2>AI in your project</h2>
+        <p>If your project uses an AI service (for example Google Gemini, OpenAI, Anthropic or an open-source model), we'll
+           tell you which one before it handles your data, configure it so your data isn't used to train the provider's
+           models where the provider offers that option, and add a clear notice for your users that they're talking to
+           or being helped by AI. Chatbots we build show crisis resources if a user says they may hurt themselves.</p>
+
+        <h2 id="subprocessors">Subprocessors</h2>
+        <p>These are the providers we use to run our business and deliver projects. A project only uses the ones it
+           needs, and your service agreement lists any project-specific providers (for example, the hosting you choose).</p>
+        <div class="table-wrap">
+        <table class="subs">
+            <thead><tr><th>Provider</th><th>What it does</th><th>Data it may receive</th><th>Location</th></tr></thead>
+            <tbody>
+                <tr><td>Neon</td><td>Database for orders, accounts and project data</td><td>Contact details, order and project data</td><td>United States</td></tr>
+                <tr><td>Render</td><td>Runs our server and project back ends</td><td>Data passing through the server</td><td>United States</td></tr>
+                <tr><td>GitHub (GitHub Pages)</td><td>Website hosting and code storage</td><td>Website visitors' IP addresses (as any web host does); no customer records</td><td>United States</td></tr>
+                <tr><td>Google (Workspace, Sign-In, Gemini API)</td><td>Business email, optional sign-in, AI estimates and suggestions</td><td>Emails, sign-in details, text typed into AI tools</td><td>United States / global</td></tr>
+                <tr><td>Stripe</td><td>Payments</td><td>Payment details (entered directly with Stripe)</td><td>United States</td></tr>
+                <tr><td>Resend</td><td>Sending email</td><td>Email addresses and message contents</td><td>United States</td></tr>
+                <tr><td>GoatCounter</td><td>Visit counts without cookies</td><td>Page views, no personal data</td><td>European Union</td></tr>
+                <tr><td>Hugging Face, jsDelivr</td><td>Serve public files for our site search</td><td>Visitors' IP addresses (as any file host does)</td><td>United States / global</td></tr>
+            </tbody>
+        </table>
+        </div>
+
+        <h2>Signing a copy</h2>
+        <p>Most projects are covered by this page as part of your service agreement. If your organization needs a signed
+           DPA, email <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a> and
+           we'll send one for signature.</p>
+
+        <h2>Changes</h2>
+        <p>If we change this addendum, we'll update the date at the top. Changes that reduce your protections won't
+           apply to an active project without your agreement.</p>
+    </div>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+    <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a> · <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></nav></noscript>
+</body>
+</html>

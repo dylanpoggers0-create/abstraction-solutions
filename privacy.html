@@ -76,14 +76,15 @@
     <section class="hero">
         <div class="eyebrow">LEGAL</div>
         <h1>Privacy Policy</h1>
-        <p class="updated">Effective November 12, 2026</p>
+        <p class="updated">Effective November 12, 2026 · Updated November 18, 2026</p>
     </section>
 
     <div class="legal">
         <div class="summary">
             <p><strong>The short version:</strong> we only collect what we need to quote, build and get paid for your
-               project. We never sell your information. Card details go straight to Stripe, never to us. Email us any
-               time to see or delete your data.</p>
+               project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on
+               this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or
+               unsubscribe yourself, anytime, and email us to see or delete your data.</p>
         </div>
 
         <h2>Who we are</h2>
@@ -99,6 +100,10 @@
                 model from Hugging Face and jsDelivr, like loading any other file.</li>
             <li><strong>Orders:</strong> your name, email address, the service you pick and your project details.
                 We also store your confirmation number, order status, quote and whether it has been paid.</li>
+            <li><strong>Accounts (optional):</strong> if you sign in with Google or with an emailed sign-in link, we keep
+                your email address, your name, your Google account ID (if you used Google) and when you last signed in, so
+                you can see your orders in one place. Your browser keeps you signed in on your device; we don't use
+                tracking cookies. You can delete your account yourself anytime from the order page.</li>
             <li><strong>Payments:</strong> handled entirely by Stripe. Your card number never touches our servers. We only
                 receive a record that the payment succeeded.</li>
             <li><strong>Mailing list:</strong> if you sign up on our homepage, your first and last name, email address,
@@ -107,7 +112,9 @@
                 link, or email us and we'll remove you.</li>
             <li><strong>Emails you send us:</strong> whatever you choose to include.</li>
             <li><strong>Certification Finder:</strong> the field you want and the résumé text you paste or upload are
-                used once to make suggestions and are not saved. If you vote on a suggestion, we keep the vote with an
+                used once to make suggestions and are not saved. A résumé PDF you upload is read in our server's memory
+                to pull out its text, then thrown away: it is never written to disk, never put in file storage, and
+                never logged. If you vote on a suggestion, we keep the vote with an
                 anonymous, coarse summary (your field, experience level and a few background signals), never your résumé.</li>
             <li><strong>Technical data:</strong> to stop spam and abuse, our server records your IP address and the time of
                 each request for up to 2 days (rate limiting). For the Certification Finder, résumé upload, sign-in and order
@@ -124,6 +131,32 @@
            to count page visits and how many quotes and orders are started. It uses no cookies and doesn't collect
            personal information, so we can see totals but not who you are.</p>
 
+        <h2 id="ai">How we use AI</h2>
+        <p>We're an AI company, so we want to be clear about where AI touches your information:</p>
+        <ul>
+            <li><strong>Instant quote:</strong> the project description you type is sent to <strong>Google Gemini</strong>,
+                which estimates the size of the project. The estimate is automatic and not a final price. A person
+                reviews every final quote before you're asked to pay anything.</li>
+            <li><strong>Certification Finder:</strong> your field and résumé text are sent to Google Gemini to pick and
+                explain certifications. If Gemini is busy, our own in-house model, which runs on our server, makes the
+                picks instead. It also learns from the anonymous votes described above, never from résumés.</li>
+            <li><strong>Abuse protection:</strong> our in-house model looks at the coded request summaries described above
+                to spot automated abuse. It flags requests for a person to review and never blocks anyone on its own.</li>
+            <li><strong>Site assistant:</strong> it searches our own pages in your browser. It doesn't write answers
+                with AI and doesn't send your questions anywhere.</li>
+            <li><strong>Building your project:</strong> we use AI tools to help write code and content. A person
+                designs, reviews and tests everything before it's delivered to you.</li>
+        </ul>
+        <p>AI never makes final decisions about your quote, order, refund or payments; a person does. We don't use
+           your personal information to train AI models. Google handles the text we send to Gemini under its Gemini API
+           terms, and on free-tier use Google may use that text to improve its own products, which is one more reason
+           to leave personal details out. Please don't type passwords or sensitive personal information
+           into the quote tool or Certification Finder.</p>
+        <p><strong>If you're going through something hard:</strong> if you write in any of our forms that you might hurt
+           yourself, we show you crisis resources (like the 988 Suicide &amp; Crisis Lifeline) instead of an AI answer,
+           and we don't send your message to the AI. We also email ourselves a short alert, without your message, so a
+           person can check in if you left your email.</p>
+
         <h2>How we use it</h2>
         <ul>
             <li>To generate your instant estimate and prepare your final quote.</li>
@@ -134,17 +167,36 @@
         </ul>
 
         <h2>Services we use</h2>
-        <p>We rely on a few trusted providers to run the site. Each only gets the information it needs:</p>
+        <p>We rely on a few trusted providers to run the site. Each only gets the information it needs. The full list,
+           with locations, is on our <a href="dpa.html#subprocessors">subprocessors page</a>.</p>
         <ul>
+            <li><strong>Google Sign-In</strong>: lets you sign in with your Google account if you choose to. Google tells us
+                your email, name and account ID; we never see your Google password.</li>
+            <li><strong>Google Workspace</strong>: runs our business email inbox, so emails you send us are stored there.</li>
             <li><strong>Google Gemini</strong>: reads the project description you type into the quote tool to estimate
                 its size, and the résumé text and field you give the Certification Finder to suggest certifications.
                 Please don't include passwords or sensitive personal information there.</li>
-            <li><strong>Neon</strong>: the database where orders and mailing-list signups are stored.</li>
+            <li><strong>Neon</strong>: the private database where orders, accounts, signature records and mailing-list
+                signups are stored. It is not publicly accessible.</li>
             <li><strong>Render</strong> and <strong>GitHub Pages</strong>: host our server and website.</li>
             <li><strong>Resend</strong>: sends our emails.</li>
             <li><strong>GoatCounter</strong>: counts visits without cookies or personal data.</li>
+            <li><strong>Hugging Face</strong> and <strong>jsDelivr</strong>: serve the public search model and code files
+                your browser downloads for the site assistant. They see your IP address like any website you load files from.</li>
             <li><strong>Stripe</strong>: processes payments (see <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe's privacy policy</a>).</li>
         </ul>
+
+        <h2>Cookies and browser storage</h2>
+        <p>We don't use advertising or tracking cookies, so there's no cookie banner to click through. GoatCounter counts
+           visits without cookies. Your browser only stores what the site needs to work: your sign-in (if you sign in),
+           and drafts so a form isn't lost if you refresh. Stripe's payment form loads only when you choose to pay, and
+           Google's sign-in button loads only on the order page, where you choose whether to use it.</p>
+
+        <h2>Files and storage</h2>
+        <p>We don't keep uploaded files. The only upload on our site is the résumé PDF for the Certification Finder,
+           and it's discarded right after its text is read. We don't use public file storage or public storage buckets.
+           Your information lives only in our private database and email inbox. Our website's code is public on GitHub,
+           and it contains no customer information.</p>
 
         <h2>How long we keep it</h2>
         <p>We keep order records for as long as needed to deliver and support your project and to keep accurate
@@ -153,7 +205,16 @@
            will unless we're required to keep it.</p>
 
         <h2>Your choices</h2>
-        <p>You can ask to see, correct or delete the information we hold about you by emailing
+        <ul>
+            <li><strong>Cancel a project:</strong> look up your order on the <a href="order.html">order page</a> and press
+                "Cancel this project". Nothing more is due after that.</li>
+            <li><strong>Download your data:</strong> on the order page, signed-in customers can press "Download my data",
+                and anyone can download everything we hold for an order with its email and confirmation number.</li>
+            <li><strong>Delete your account:</strong> sign in on the order page and press "Delete account". Your orders stay
+                on record for business and tax purposes, but they're no longer linked to an account.</li>
+            <li><strong>Unsubscribe:</strong> one click from the link at the bottom of any of our emails.</li>
+        </ul>
+        <p>You can also ask to see, correct or delete the information we hold about you by emailing
            <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a> from the address you ordered with. We'll respond within 30 days.</p>
 
         <h2>Security</h2>

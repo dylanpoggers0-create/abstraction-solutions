@@ -67,6 +67,7 @@ const PAGES = [
     { id: 'privacy',  label: 'Privacy Policy',    href: 'privacy.html', icon: 'privacy', group: 'legal' },
     { id: 'returns',  label: 'Returns & Refunds', href: 'returns.html', icon: 'returns', group: 'legal' },
     { id: 'terms',    label: 'Terms of Service',  href: 'terms.html',   icon: 'terms',   group: 'legal' },
+    { id: 'dpa',      label: 'Data Processing (DPA)', href: 'dpa.html', icon: 'terms', group: 'legal', hidden: true },
 
     // hidden: true = not in the menu (linked from the footer), but still named correctly as the current page
     { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true },
@@ -323,6 +324,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '<h4 class="f-legal">LEGAL</h4><ul>' +
                 link('privacy.html', 'Privacy Policy') + link('returns.html', 'Returns &amp; Refunds') +
                 link('terms.html', 'Terms of Service') +
+                link('dpa.html', 'DPA &amp; Subprocessors') +
             '</ul></div>' +
             '<div class="f-copy">© ' + new Date().getFullYear() + ' Abstraction Solutions · Tennessee, USA' +
                 '<a class="f-admin" href="' + BASE + 'admin.html" rel="nofollow">Admin</a></div>';
@@ -364,6 +366,64 @@ function addCounter() {
     gc.dataset.goatcounter = 'https://' + GOATCOUNTER_CODE + '.goatcounter.com/count';
     document.head.appendChild(gc);
 }
+
+/* ---------------------------------------------------------
+   CRISIS SUPPORT
+   If someone types that they want to hurt or kill themselves (in the site chat, the quote tool, the
+   Certification Finder or the order forms), they see real help first. The server runs the same check
+   and sends this list back as "support"; the site chat checks here, in the browser.
+   Only first-person statements count, so "an app for our suicide-prevention hotline" is not flagged.
+   --------------------------------------------------------- */
+window.CrisisSupport = (function () {
+    const RE = /\b(kill(ing)? my ?self|end(ing)? (my (own )?life|it all)|take my (own )?life|(i'?m|i am|feel(ing)?|been) (so )?suicidal|suicidal (thoughts|feelings)|thinking (about|of) (suicide|killing)|(want|wanna|going|plan(ning)?) (to )?(die|be dead|commit suicide)|wish i (was|were) dead|better off dead|(hurt|harm|cut)(ting)? my ?self|self[- ]?harm(ing)? (again|myself)|don'?t want to (live|be alive|be here anymore)|no reason to (live|go on)|overdose on purpose)\b/i;
+    const DEFAULT = {
+        title: 'You don’t have to go through this alone',
+        message: 'It sounds like you might be going through something really hard. Please reach out to someone who can help right now.',
+        resources: [
+            { label: 'Call or text 988 (Suicide & Crisis Lifeline, US)', href: 'tel:988' },
+            { label: 'Text HOME to 741741 (Crisis Text Line, US)', href: 'sms:741741?&body=HOME' },
+            { label: 'Outside the US: find a helpline', href: 'https://findahelpline.com' },
+            { label: 'In immediate danger: call 911 or your local emergency number', href: 'tel:911' }
+        ]
+    };
+    const css = document.createElement('style');
+    css.textContent =
+        '.crisis-card{margin:16px 0;padding:18px 20px;border:2px solid #8bf171;border-radius:14px;background:#0d150d;color:#eef6ec;text-align:left}' +
+        '.crisis-card h3{margin:0 0 6px;font-size:1.05rem;color:#8bf171}' +
+        '.crisis-card p{margin:0 0 10px;line-height:1.45}' +
+        '.crisis-card ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}' +
+        '.crisis-card a{display:block;padding:10px 12px;border-radius:10px;background:#162216;color:#fff;text-decoration:none;font-weight:600}' +
+        '.crisis-card a:hover,.crisis-card a:focus{background:#1f301f}';
+    document.head.appendChild(css);
+    function test(text) { return RE.test(String(text || '').replace(/’/g, "'")); }
+    function card(support) {
+        const s = support && support.resources ? support : DEFAULT;
+        const box = document.createElement('div');
+        box.className = 'crisis-card'; box.setAttribute('role', 'alert');
+        const h = document.createElement('h3'); h.textContent = s.title || DEFAULT.title; box.appendChild(h);
+        const p = document.createElement('p'); p.textContent = s.message || DEFAULT.message; box.appendChild(p);
+        const ul = document.createElement('ul');
+        (s.resources || []).forEach(function (r) {
+            if (!/^(tel:|sms:|https:\/\/)/.test(r.href || '')) return;          // only phone, text and https links
+            const li = document.createElement('li'); const a = document.createElement('a');
+            a.href = r.href; a.textContent = r.label;
+            if (/^https:/.test(r.href)) { a.target = '_blank'; a.rel = 'noopener'; }
+            li.appendChild(a); ul.appendChild(li);
+        });
+        box.appendChild(ul);
+        return box;
+    }
+    // shows the card right after `anchor` (replacing an earlier one), and scrolls it into view
+    function show(anchor, support) {
+        const old = document.getElementById('crisisCard'); if (old) old.remove();
+        const c = card(support); c.id = 'crisisCard';
+        anchor.insertAdjacentElement('afterend', c);
+        c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return c;
+    }
+    function clear() { const old = document.getElementById('crisisCard'); if (old) old.remove(); }
+    return { test: test, card: card, show: show, clear: clear, DEFAULT: DEFAULT };
+})();
 
 /* ---------------------------------------------------------
    SITE ASSISTANT (chat bubble, bottom right)
@@ -624,7 +684,7 @@ const CHAT_ON = true;
     box.setAttribute('aria-label', 'Site assistant');
     box.innerHTML =
         '<div class="chat-head"><span class="chat-grab" aria-hidden="true"></span><span class="chat-title">Ask Abstraction Solutions' +
-            '<span class="chat-sub">Answers from our website, with the page they came from</span></span>' +
+            '<span class="chat-sub">Automated assistant: answers come from our website, with the page they came from</span></span>' +
             '<button type="button" aria-label="Close chat">&times;</button></div>' +
         '<div class="chat-log" aria-live="polite"></div>' +
         '<form class="chat-form">' +
@@ -735,8 +795,13 @@ const CHAT_ON = true;
         if (q.length < 2) return;
         say('me', q);
         input.value = '';
-        window.trackEvent && trackEvent('chat-question');
         const m = say('bot', '');
+        if (window.CrisisSupport && CrisisSupport.test(q)) {      // help first, no search results
+            m.appendChild(CrisisSupport.card());
+            log.scrollTop = log.scrollHeight;
+            return;
+        }
+        window.trackEvent && trackEvent('chat-question');
         let res;
         try { res = await answer(q); } catch (err) {
             m.textContent = 'The search couldn\'t load. Please refresh the page and try again.';

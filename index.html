@@ -833,6 +833,7 @@
             </div>
         </form>
 
+        <p class="quote-meta" style="font-size:.85rem;opacity:.8;margin-top:10px">Estimates are made automatically by AI (Google Gemini) from what you type, so please leave out passwords and personal details. A person reviews every final quote. <a href="privacy.html#ai" style="color:#8bf171">How we use AI</a></p>
         <p class="quote-error" id="quoteError" role="alert"></p>
 
         <!-- Filled in by the script at the bottom of the page -->
@@ -1014,7 +1015,14 @@
                 if (response.status === 422) throw new Error('Please describe your project in at least 10 characters.');
                 if (response.status === 429) throw new Error('You\'ve asked for a lot of quotes. Please try again later, or email us.');
                 if (!response.ok) throw new Error('The quote engine had a problem. Please try again.');
-                showQuote(await response.json());
+                const data = await response.json();
+                if (data.support) {                          // they wrote that they may hurt themselves: help first
+                    document.getElementById('quoteResult').hidden = true;
+                    CrisisSupport.show(errorBox, data.support);
+                    return;
+                }
+                if (window.CrisisSupport) CrisisSupport.clear();
+                showQuote(data);
             } catch (error) {
                 // fetch itself fails (TypeError / timeout) when the server can't be reached
                 errorBox.textContent = (error instanceof TypeError || error.name === 'TimeoutError')
