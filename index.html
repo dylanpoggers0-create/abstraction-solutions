@@ -634,7 +634,7 @@
         </div>
 
         <div class="video-container">
-            <video id="heroVideo" playsinline preload="metadata" poster="ad-thumbnail.jpg" data-blurhash="L63SkJkBD8aft$fjQ;afICayyBj[">
+            <video id="heroVideo" playsinline preload="none" poster="ad-thumbnail.jpg" data-blurhash="L63SkJkBD8aft$fjQ;afICayyBj[">
                 <source src="ad1.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -920,10 +920,12 @@
         const video = document.getElementById('heroVideo');
         const audioBtn = document.getElementById('audioToggle');
 
-        // Phones get a smaller copy of the video (about 0.6 MB instead of 0.9 MB)
+        // Phones get a smaller copy of the video (about 0.6 MB instead of 0.9 MB).
+        // The page picks one before anything downloads (preload="none" above), so phones never fetch both.
         if (window.matchMedia('(max-width: 700px)').matches) {
             video.src = 'ad1-mobile.mp4';
         }
+        video.preload = 'metadata';
 
         // Keep the button text in sync with the video's sound
         function updateButton() {
