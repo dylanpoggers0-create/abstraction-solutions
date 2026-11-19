@@ -116,6 +116,10 @@
             gap: 18px;
         }
 
+        /* vertical shorts: portrait cards, 2 across on phones */
+        .gallery.shorts { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+        .gallery.shorts .gallery-item video { aspect-ratio: 9 / 16; }
+
         /* the rest of the videos, behind "Show all" */
         .more-videos { margin-top: 20px; }
         .more-videos summary {
@@ -485,6 +489,11 @@
             .gallery {
                 grid-template-columns: 1fr;
             }
+            .gallery.shorts {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .gallery.shorts figcaption span:last-child { display: none; }   /* keep phone cards short */
 
             main {
                 padding-left: 40px;   /* extra room on the left for the Menu tab */
@@ -494,6 +503,267 @@
         .edu-faq summary { cursor: pointer; padding: 12px 0; font-weight: bold; }
         .edu-faq p { margin: 0 0 14px; line-height: 1.6; }
     </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "AI Made Simple shorts",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Why AI Makes Things Up",
+        "description": "A noir case file on hallucinations: AI predicts likely words, it doesn't look facts up. The fix: real sources, citations, and checking what matters.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/hallucinations-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/hallucinations.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT37S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Tokens: How AI Actually Reads",
+        "description": "AI reads chunks, not words. Why it charges per token, hits length limits, and can't count the r's in strawberry.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/tokens-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/tokens.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT37S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Vague Prompt vs. Specific Prompt",
+        "description": "Same AI, same question, very different answers. The four parts of a good prompt: role, context, task and format.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/prompts-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/prompts.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT34S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Neural Networks: A Really Big Group Project",
+        "description": "Students passing notes, weighing who to trust, and adjusting when the group gets it wrong. That's training.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/neural-networks-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/neural-networks.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT37S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Overfitting: Memorizing the Answer Key",
+        "description": "100% on the practice test, failed the real one. Why models memorize, and how variety and unseen test data fix it.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/overfitting-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/overfitting.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT36S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Training vs. Using AI",
+        "description": "Writing the recipe takes months; cooking from it takes seconds. Why most small businesses never need to train their own AI.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/training-vs-inference-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/training-vs-inference.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT42S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 7,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Chatbot vs. AI Agent",
+        "description": "A chatbot talks, an agent does. Why agents need guardrails and a human approving the big steps.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/chatbot-vs-agent-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/chatbot-vs-agent.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT39S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 8,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Embeddings: A Map of Meaning",
+        "description": "To AI, every word has a location. How search finds \"refund policy\" when you typed \"can I get my money back?\"",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/embeddings-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/embeddings.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT38S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 9,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Paste It or Pass It?",
+        "description": "A game show on what never goes into an everyday AI chat, and what to check before using AI for sensitive work.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/paste-it-or-pass-it-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/paste-it-or-pass-it.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT46S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 10,
+      "item": {
+        "@type": "VideoObject",
+        "name": "AI Bias Comes From the Data",
+        "description": "AI isn't born biased, it learns it. Two questions to ask any vendor before you buy an AI tool.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/ai-bias-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/ai-bias.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT39S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 11,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Temperature: Creative vs. Reliable",
+        "description": "The hidden dial behind predictable answers and wild brainstorms, and where you actually set it.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/temperature-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/temperature.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT39S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 12,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Attention: How AI Knows What \"It\" Means",
+        "description": "A spotlight on the idea behind transformers, the T in GPT: every word looks at every other word.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/attention-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/attention.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT33S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 13,
+      "item": {
+        "@type": "VideoObject",
+        "name": "When You DON'T Need AI",
+        "description": "A hot take from an AI company: fixed rules are better served by simple automation. Use AI for the messy parts.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/when-not-to-use-ai-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/when-not-to-use-ai.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT38S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 14,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Why Vibe-Coded Apps Break",
+        "description": "AI can build an app in an afternoon. The five checks an experienced developer adds before real customers use it.",
+        "thumbnailUrl": "https://abstraction-solutions.com/videos/shorts/vibe-coded-apps-thumbnail.jpg",
+        "contentUrl": "https://abstraction-solutions.com/videos/shorts/vibe-coded-apps.mp4",
+        "uploadDate": "2026-11-19",
+        "duration": "PT40S",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Abstraction Solutions",
+          "url": "https://abstraction-solutions.com/"
+        }
+      }
+    }
+  ]
+}
+    </script>
 </head>
 
 <!-- "services" keeps the Services link highlighted in the side nav -->
@@ -518,6 +788,191 @@
             <h1>Plain-English AI training, plus a certification guide.</h1>
             <p class="lead">Plain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background.</p>
         </div>
+
+        <!-- AI MADE SIMPLE SHORTS: vertical videos under a minute (files in ../videos/shorts) -->
+        <section id="shorts" aria-labelledby="shortsHeading">
+            <h2 id="shortsHeading">AI Made Simple shorts <span class="badge live">New</span></h2>
+            <p class="section-note">Under a minute each: one AI idea, explained for business owners and nonprofit teams.
+                Follow along on TikTok: <a href="https://www.tiktok.com/@abstraction.soluti" target="_blank" rel="noopener"
+                style="color: var(--green); font-weight: bold;">@abstraction.soluti</a></p>
+
+            <div class="gallery shorts">
+
+                <figure class="gallery-item">
+                    <video controls preload="metadata" playsinline poster="../videos/shorts/hallucinations-thumbnail.jpg" data-blurhash="videos/shorts/hallucinations-thumbnail.jpg">
+                        <source src="../videos/shorts/hallucinations.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption>
+                        <span class="tag">SHORT · 0:37</span>
+                        <strong>Why AI Makes Things Up</strong>
+                        <span>A noir case file on hallucinations: AI predicts likely words, it doesn't look facts up. The fix: real sources, citations, and checking what matters.</span>
+                    </figcaption>
+                </figure>
+
+                <figure class="gallery-item">
+                    <video controls preload="metadata" playsinline poster="../videos/shorts/tokens-thumbnail.jpg" data-blurhash="videos/shorts/tokens-thumbnail.jpg">
+                        <source src="../videos/shorts/tokens.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption>
+                        <span class="tag">SHORT · 0:37</span>
+                        <strong>Tokens: How AI Actually Reads</strong>
+                        <span>AI reads chunks, not words. Why it charges per token, hits length limits, and can't count the r's in strawberry.</span>
+                    </figcaption>
+                </figure>
+
+                <figure class="gallery-item">
+                    <video controls preload="none" playsinline poster="../videos/shorts/prompts-thumbnail.jpg" data-blurhash="videos/shorts/prompts-thumbnail.jpg">
+                        <source src="../videos/shorts/prompts.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption>
+                        <span class="tag">SHORT · 0:34</span>
+                        <strong>Vague Prompt vs. Specific Prompt</strong>
+                        <span>Same AI, same question, very different answers. The four parts of a good prompt: role, context, task and format.</span>
+                    </figcaption>
+                </figure>
+
+                <figure class="gallery-item">
+                    <video controls preload="none" playsinline poster="../videos/shorts/neural-networks-thumbnail.jpg" data-blurhash="videos/shorts/neural-networks-thumbnail.jpg">
+                        <source src="../videos/shorts/neural-networks.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption>
+                        <span class="tag">SHORT · 0:37</span>
+                        <strong>Neural Networks: A Really Big Group Project</strong>
+                        <span>Students passing notes, weighing who to trust, and adjusting when the group gets it wrong. That's training.</span>
+                    </figcaption>
+                </figure>
+
+            </div>
+
+            <details class="more-videos">
+                <summary>Show all shorts (10 more)</summary>
+                <div class="gallery shorts">
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/overfitting-thumbnail.jpg" data-blurhash="videos/shorts/overfitting-thumbnail.jpg">
+                            <source src="../videos/shorts/overfitting.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:36</span>
+                            <strong>Overfitting: Memorizing the Answer Key</strong>
+                            <span>100% on the practice test, failed the real one. Why models memorize, and how variety and unseen test data fix it.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/training-vs-inference-thumbnail.jpg" data-blurhash="videos/shorts/training-vs-inference-thumbnail.jpg">
+                            <source src="../videos/shorts/training-vs-inference.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:42</span>
+                            <strong>Training vs. Using AI</strong>
+                            <span>Writing the recipe takes months; cooking from it takes seconds. Why most small businesses never need to train their own AI.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/chatbot-vs-agent-thumbnail.jpg" data-blurhash="videos/shorts/chatbot-vs-agent-thumbnail.jpg">
+                            <source src="../videos/shorts/chatbot-vs-agent.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:39</span>
+                            <strong>Chatbot vs. AI Agent</strong>
+                            <span>A chatbot talks, an agent does. Why agents need guardrails and a human approving the big steps.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/embeddings-thumbnail.jpg" data-blurhash="videos/shorts/embeddings-thumbnail.jpg">
+                            <source src="../videos/shorts/embeddings.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:38</span>
+                            <strong>Embeddings: A Map of Meaning</strong>
+                            <span>To AI, every word has a location. How search finds "refund policy" when you typed "can I get my money back?"</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/paste-it-or-pass-it-thumbnail.jpg" data-blurhash="videos/shorts/paste-it-or-pass-it-thumbnail.jpg">
+                            <source src="../videos/shorts/paste-it-or-pass-it.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:46</span>
+                            <strong>Paste It or Pass It?</strong>
+                            <span>A game show on what never goes into an everyday AI chat, and what to check before using AI for sensitive work.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/ai-bias-thumbnail.jpg" data-blurhash="videos/shorts/ai-bias-thumbnail.jpg">
+                            <source src="../videos/shorts/ai-bias.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:39</span>
+                            <strong>AI Bias Comes From the Data</strong>
+                            <span>AI isn't born biased, it learns it. Two questions to ask any vendor before you buy an AI tool.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/temperature-thumbnail.jpg" data-blurhash="videos/shorts/temperature-thumbnail.jpg">
+                            <source src="../videos/shorts/temperature.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:39</span>
+                            <strong>Temperature: Creative vs. Reliable</strong>
+                            <span>The hidden dial behind predictable answers and wild brainstorms, and where you actually set it.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/attention-thumbnail.jpg" data-blurhash="videos/shorts/attention-thumbnail.jpg">
+                            <source src="../videos/shorts/attention.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:33</span>
+                            <strong>Attention: How AI Knows What "It" Means</strong>
+                            <span>A spotlight on the idea behind transformers, the T in GPT: every word looks at every other word.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/when-not-to-use-ai-thumbnail.jpg" data-blurhash="videos/shorts/when-not-to-use-ai-thumbnail.jpg">
+                            <source src="../videos/shorts/when-not-to-use-ai.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:38</span>
+                            <strong>When You DON'T Need AI</strong>
+                            <span>A hot take from an AI company: fixed rules are better served by simple automation. Use AI for the messy parts.</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <video controls preload="none" playsinline poster="../videos/shorts/vibe-coded-apps-thumbnail.jpg" data-blurhash="videos/shorts/vibe-coded-apps-thumbnail.jpg">
+                            <source src="../videos/shorts/vibe-coded-apps.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <figcaption>
+                            <span class="tag">SHORT · 0:40</span>
+                            <strong>Why Vibe-Coded Apps Break</strong>
+                            <span>AI can build an app in an afternoon. The five checks an experienced developer adds before real customers use it.</span>
+                        </figcaption>
+                    </figure>
+                </div>
+            </details>
+        </section>
 
         <!-- VIDEO GALLERY -->
         <section>
