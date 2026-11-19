@@ -489,7 +489,13 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Cookies and browser storage",
-"text": "We don't use advertising or tracking cookies, so there's no cookie banner to click through. GoatCounter counts visits without cookies. Your browser only stores what the site needs to work: your sign-in (if you sign in), and drafts so a form isn't lost if you refresh. Stripe's payment form loads only when you choose to pay, and Google's sign-in button loads only on the order page, where you choose whether to use it."
+"text": "We don't use advertising or tracking cookies, so there's no cookie banner to click through. GoatCounter counts visits without cookies. Your browser only stores what the site needs to work: your sign-in (if you sign in), a copy of your order list so it opens instantly (removed when you sign out), and drafts so a form isn't lost if you refresh."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "Cookies and browser storage",
+"text": ", and drafts so a form isn't lost if you refresh. Stripe's payment form loads only when you choose to pay, and Google's sign-in button loads only on the order page, where you choose whether to use it."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
