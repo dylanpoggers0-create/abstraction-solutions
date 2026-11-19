@@ -1,0 +1,26 @@
+# Runs tools/check_site.py on every push and pull request: page security policies, JavaScript and JSON syntax,
+# and broken local links. If it fails, open the run: the summary lists each problem as file:line: what's wrong.
+name: Site checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Check the site
+        run: python3 tools/check_site.py
