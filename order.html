@@ -710,6 +710,15 @@
                 </span>
             </summary>
             <div class="panel-body">
+                <!-- signed in: their orders, no confirmation number needed -->
+                <div id="lookupMine" hidden>
+                    <p class="section-note">Signed in as <strong id="lookupMineEmail"></strong>. Pick an order to see its status, quote and payments.</p>
+                    <ul class="my-orders" id="lookupMyOrders"></ul>
+                    <p class="section-note" id="lookupMineMsg"></p>
+                    <button class="link-button" id="lookupOtherButton" type="button">Look up a different order</button>
+                </div>
+
+                <div id="lookupManual">
                 <p class="section-note">Enter the email you ordered with and the 8-digit confirmation number from your email.</p>
 
                 <form class="order-form" id="lookupForm">
@@ -724,6 +733,7 @@
                         <button class="pill" id="lookupButton" type="submit">Find my order</button>
                     </div>
                 </form>
+                </div>
 
                 <p id="lookupMsg" role="status"></p>
 
@@ -1092,8 +1102,13 @@
             document.getElementById('signedInBox').hidden = !account;
             signInPanel.querySelector('.panel-sub').textContent = account
                 ? 'Signed in as ' + account.email : 'Keep your orders and quotes in one place';
+            document.getElementById('lookupMine').hidden = !account;
+            document.getElementById('lookupManual').hidden = !!account;
+            lookupPanel.querySelector('.panel-sub').textContent = account
+                ? 'Your orders, ready to open' : 'See the status and quote of an existing order';
             if (account) {
                 document.getElementById('accountEmail').textContent = account.email;
+                document.getElementById('lookupMineEmail').textContent = account.email;
                 loadMyOrders();
             }
             placeOrderForm();
@@ -1113,9 +1128,10 @@
             msg.textContent = '';
             const snap = readSnap(account.email);
             if (snap) showMyOrders(snap);
-            else if (!list.children.length) {    // skeleton rows until the list arrives
-                for (let i = 0; i < 2; i++) { const s = document.createElement('li'); s.className = 'skeleton skeleton-card'; s.style.height = '64px'; s.setAttribute('aria-hidden', 'true'); list.appendChild(s); }
-            }
+            else [list, document.getElementById('lookupMyOrders')].forEach(function (l) {
+                if (l.children.length) return;   // skeleton rows until the list arrives
+                for (let i = 0; i < 2; i++) { const s = document.createElement('li'); s.className = 'skeleton skeleton-card'; s.style.height = '64px'; s.setAttribute('aria-hidden', 'true'); l.appendChild(s); }
+            });
             try {
                 const response = await fetchWithWake(API_BASE + '/me/orders', {
                     headers: { Authorization: 'Bearer ' + account.token }
@@ -1126,13 +1142,16 @@
                 try { localStorage.setItem(ORDERS_SNAP, JSON.stringify({ email: account.email, orders: orders })); } catch (e) {}
                 showMyOrders(orders);
             } catch (e) {
-                list.querySelectorAll('.skeleton').forEach(function (s) { s.remove(); });
+                document.querySelectorAll('#myOrders .skeleton, #lookupMyOrders .skeleton').forEach(function (s) { s.remove(); });
+                if (!snap) { document.getElementById('lookupMineMsg').textContent = 'Couldn\'t load your orders right now. You can still look one up below.'; document.getElementById('lookupManual').hidden = false; }
                 if (!snap) msg.textContent = 'Couldn\'t load your orders right now. Please try again in a minute.';
             }
         }
         function showMyOrders(orders) {
-                const list = document.getElementById('myOrders');
-                const msg = document.getElementById('myOrdersMsg');
+            showOrderList(orders, document.getElementById('myOrders'), document.getElementById('myOrdersMsg'));
+            showOrderList(orders, document.getElementById('lookupMyOrders'), document.getElementById('lookupMineMsg'));
+        }
+        function showOrderList(orders, list, msg) {
                 list.replaceChildren();
                 msg.textContent = orders.length ? '' : 'No orders yet. Your first one will show up here.';
                 orders.forEach(function (o) {
@@ -1143,7 +1162,7 @@
                     open.className = 'link-button open-order';
                     open.type = 'button';
                     open.textContent = o.amount_due_cents ? 'View & pay' : 'View';
-                    open.addEventListener('click', function () { openOrder(o.confirmation); });
+                    open.addEventListener('click', function () { openOrder(o); });
                     const meta = document.createElement('span');
                     meta.className = 'meta';
                     const stageName = { planning: 'Planning', coding: 'Coding', testing: 'Testing', done: 'Done' }[o.stage];
@@ -1158,9 +1177,9 @@
         }
 
         // "View" on one of their orders: reuse the Find an order panel (status, quote, Pay now)
-        function openOrder(confirmation) {
-            document.getElementById('lookupEmail').value = currentAccount().email;
-            document.getElementById('lookupCode').value = confirmation;
+        function openOrder(o) {
+            document.getElementById('lookupEmail').value = o.email || currentAccount().email;
+            document.getElementById('lookupCode').value = o.confirmation;
             lookupPanel.open = true;
             lookupPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
             document.getElementById('lookupForm').requestSubmit();
@@ -1255,6 +1274,10 @@
         }).catch(function () {});
 
         document.getElementById('signOutButton').addEventListener('click', signOut);
+        document.getElementById('lookupOtherButton').addEventListener('click', function () {
+            document.getElementById('lookupManual').hidden = false;
+            document.getElementById('lookupEmail').focus();
+        });
 
         // "Download my data": a JSON file of everything we hold (account, orders, payments, agreements, mailing list)
         function saveFile(blob, name) {
