@@ -184,6 +184,8 @@
     /* ---------- 7. Pre-rendering: the browser prepares the page you're about to open (on hover/touch-start) ---------- */
     function speculation() {
         if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('speculationrules')) return;
+        // This is an inline script, so every page's Content-Security-Policy allows exactly this text by its
+        // sha256 hash. If you change the rules below, run  python3 tools/strict_csp.py  to update the hash.
         const s = el('script');
         s.type = 'speculationrules';
         s.textContent = JSON.stringify({

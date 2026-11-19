@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src 'self' https://buttondown.com; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Qgci8qoVcpLYlrWEl50yYbLIR43Y9zABH79QrKMQgfw=' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src 'self' https://buttondown.com; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>AI Made Simple for Small Business | Abstraction Solutions</title>
     <meta name="description" content="Plain-English AI training, chatbots, and automations for small businesses and nonprofits. Free instant quote. Nonprofits get 50% off. Based in Memphis, available nationwide.">
@@ -649,40 +649,7 @@
             <div class="stat-dots" id="statDots"></div>
         </div>
     </section>
-    <script>
-        // flips between project facts every few seconds; pauses on hover, stays still for reduced-motion users
-        (function () {
-            const facts = [
-                ['School-wide', 'our AI chatbot is deployed for every faculty member at a high school'],
-                ['Weekly', 'hours saved on repetitive data prep with our cleanup automation']
-            ];
-            const box = document.getElementById('statCarousel');
-            const card = box.querySelector('.stat');
-            const big = document.getElementById('statBig'), small = document.getElementById('statSmall');
-            const dots = document.getElementById('statDots');
-            let i = 0, timer = null, paused = false;
-            facts.forEach(function (f, n) {
-                const b = document.createElement('button');
-                b.type = 'button'; b.setAttribute('aria-label', 'Show fact ' + (n + 1));
-                b.addEventListener('click', function () { show(n); restart(); });
-                dots.appendChild(b);
-            });
-            function mark() { Array.from(dots.children).forEach(function (b, n) { b.setAttribute('aria-current', n === i ? 'true' : 'false'); }); }
-            function show(n) {
-                if (n === i) return;
-                card.classList.add('out');
-                setTimeout(function () { i = n; big.textContent = facts[i][0]; small.textContent = facts[i][1]; mark(); card.classList.remove('out'); }, 450);
-            }
-            function restart() {
-                clearInterval(timer);
-                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-                timer = setInterval(function () { if (!paused) show((i + 1) % facts.length); }, 4000);
-            }
-            box.addEventListener('mouseenter', function () { paused = true; });
-            box.addEventListener('mouseleave', function () { paused = false; });
-            mark(); restart();
-        })();
-    </script>
+    <script src="index.page.js"></script>
 
     <!-- WHAT WE DO: the 4 services (left) share the row with the mailing-list signup (right) -->
     <section id="services">
@@ -884,271 +851,19 @@
     <footer>© 2026 Abstraction Solutions</footer>
 
     <!-- PRE-FILL THE QUOTE from a recipe page's "Quote this" button: index.html?describe=...#quote -->
-    <script>
-        (function () {
-            const query = new URLSearchParams(location.search);
-            const text = query.get('describe');
-            if (text) document.getElementById('quoteText').value = text.slice(0, 2000);
-            if (query.get('nonprofit') === '1') document.getElementById('quoteNonprofit').checked = true;
-        })();
-    </script>
+    <script src="index.page-2.js"></script>
 
     <!-- MINI ROI: same math as roi.html (60% automated, no project cost here) -->
-    <script>
-        (function () {
-            const hrs = document.getElementById('miniHours');
-            const rate = document.getElementById('miniRate');
-            let counted = false;
-            function calc(fromUser) {
-                const h = Math.max(0, Number(hrs.value) || 0);
-                const r = Math.max(0, Number(rate.value) || 0);
-                const month = h * 0.6 * r * 52 / 12;
-                document.getElementById('miniMonth').textContent = '$' + Math.round(month).toLocaleString('en-US');
-                document.getElementById('miniLink').href = 'roi.html?hours=' + h + '&rate=' + r;
-                if (fromUser && !counted && window.trackEvent) { counted = true; trackEvent('roi-mini'); }
-            }
-            hrs.addEventListener('input', function () { calc(true); });
-            rate.addEventListener('input', function () { calc(true); });
-            calc(false);
-        })();
-    </script>
+    <script src="index.page-3.js"></script>
 
     <!-- VIDEO SOUND CONTROL
          1st play: tries to play WITH sound.
          After that: loops forever on mute, unless the visitor presses Unmute. -->
-    <script>
-        const video = document.getElementById('heroVideo');
-        const audioBtn = document.getElementById('audioToggle');
-
-        // Phones get a smaller copy of the video (about 0.6 MB instead of 0.9 MB).
-        // The page picks one before anything downloads (preload="none" above), so phones never fetch both.
-        if (window.matchMedia('(max-width: 700px)').matches) {
-            video.src = 'ad1-mobile.mp4';
-        }
-        video.preload = 'metadata';
-
-        // Keep the button text in sync with the video's sound
-        function updateButton() {
-            audioBtn.textContent = video.muted ? '🔇 Unmute' : '🔊 Mute';
-        }
-
-        // Unmute / Mute button
-        audioBtn.addEventListener('click', function () {
-            video.muted = !video.muted;
-            video.play();
-            updateButton();
-        });
-
-        // When the FIRST play finishes: mute it and loop from then on
-        video.addEventListener('ended', function firstPlayDone() {
-            video.removeEventListener('ended', firstPlayDone); // only do this once
-            video.muted = true;
-            video.loop = true;
-            video.currentTime = 0;
-            video.play();
-            updateButton();
-        });
-
-        // Start: try with sound. Browsers often block sound until the visitor has
-        // clicked the site at least once. If that happens, play muted instead.
-        video.muted = false;
-        video.play()
-            .then(updateButton)
-            .catch(function () {
-                video.muted = true;
-                video.play();
-                updateButton();
-            });
-    </script>
+    <script src="index.page-4.js"></script>
 
     <!-- QUOTE ENGINE: sends the text to the Python server and shows the answer -->
-    <script>
-        // Where the Python quote engine runs (your Render server).
-        // Must match the address at the top of your Render service page exactly.
-        const API_BASE = 'https://abstraction-quote-engine.onrender.com';
-
-        // The free server sleeps when nobody uses it, and restarts after an update. While it's starting, Render
-        // answers with an error page the browser isn't allowed to read, which looks exactly like "no internet".
-        // So instead of giving up on the first try, keep trying for about 75 seconds before saying it's offline.
-        async function fetchWithWake(url, options) {
-            const giveUp = Date.now() + 75000;
-            let wait = 2000;
-            while (true) {
-                try {
-                    const response = await fetch(url, Object.assign({}, options, { signal: AbortSignal.timeout(60000) }));
-                    const starting = response.status === 502 || response.status === 503 || response.status === 504;
-                    if (!starting || Date.now() + wait >= giveUp) return response;
-                } catch (error) {
-                    if (Date.now() + wait >= giveUp) throw error;
-                }
-                await new Promise(function (done) { setTimeout(done, wait); });
-                wait = Math.min(wait * 1.5, 10000);
-            }
-        }
-
-        const form = document.getElementById('quoteForm');
-        const button = document.getElementById('quoteButton');
-        const errorBox = document.getElementById('quoteError');
-        const result = document.getElementById('quoteResult');
-
-        const dollars = n => '$' + n.toLocaleString('en-US');
-
-        // The free server falls asleep when nobody uses it. Poke it as soon as the page
-        // loads, so it's usually awake by the time someone finishes typing.
-        fetch(API_BASE + '/health').catch(function () {});
-
-        form.addEventListener('submit', async function (event) {
-            event.preventDefault();               // don't reload the page
-            errorBox.textContent = '';
-            button.disabled = true;
-            button.textContent = 'Calculating...';
-
-            // If it takes a while, the server is probably waking up. Say so.
-            const slowTimer = setTimeout(function () {
-                button.textContent = 'Waking up the engine (up to a minute)...';
-            }, 5000);
-
-            try {
-                const response = await fetchWithWake(API_BASE + '/quote', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ description: document.getElementById('quoteText').value.trim() })
-                });
-                if (response.status === 422) throw new Error('Please describe your project in at least 10 characters.');
-                if (response.status === 429) throw new Error('You\'ve asked for a lot of quotes. Please try again later, or email us.');
-                if (!response.ok) throw new Error('The quote engine had a problem. Please try again.');
-                const data = await response.json();
-                if (data.support) {                          // they wrote that they may hurt themselves: help first
-                    document.getElementById('quoteResult').hidden = true;
-                    CrisisSupport.show(errorBox, data.support);
-                    return;
-                }
-                if (window.CrisisSupport) CrisisSupport.clear();
-                showQuote(data);
-            } catch (error) {
-                // fetch itself fails (TypeError / timeout) when the server can't be reached
-                errorBox.textContent = (error instanceof TypeError || error.name === 'TimeoutError')
-                    ? 'The quote engine is offline right now. Email us for a quote instead.'
-                    : error.message;
-            } finally {
-                clearTimeout(slowTimer);
-                button.disabled = false;
-                button.textContent = 'Get my free instant estimate';
-            }
-        });
-
-        // textContent (not innerHTML) so nothing in the answer can run as code
-        function showQuote(q) {
-            // Nonprofits: show the same estimate at 50% off (the regular range is shown crossed out next to it)
-            const nonprofit = document.getElementById('quoteNonprofit').checked;
-            const half = function (n) { return Math.round(n / 2); };
-            const price = document.getElementById('quotePrice');
-            price.textContent = nonprofit ? dollars(half(q.low)) + ' – ' + dollars(half(q.high)) : dollars(q.low) + ' – ' + dollars(q.high);
-            if (nonprofit) {
-                const was = document.createElement('s');
-                was.textContent = dollars(q.low) + ' – ' + dollars(q.high);
-                price.append(was);
-            }
-            document.getElementById('quoteLabel').textContent = nonprofit ? 'Nonprofit estimate (50% off)' : 'Estimated cost';
-            const disc = document.getElementById('quoteDiscount');
-            disc.hidden = !nonprofit;
-            disc.textContent = nonprofit ? '50% nonprofit discount applied to the estimate. The breakdown below shows regular prices. ' +
-                'We confirm the final price by email and may ask you to confirm nonprofit status.' : '';
-
-            const [w1, w2] = q.timeline_weeks;
-            document.getElementById('quoteMeta').textContent =
-                q.project_type_label + ' · about ' + q.hours_low + '–' + q.hours_high + ' hours · ' +
-                (w1 === w2 ? w1 : w1 + '–' + w2) + ' week' + (w2 > 1 ? 's' : '');
-
-            const summary = document.getElementById('quoteSummary');
-            summary.textContent = q.summary;
-            summary.hidden = !q.summary;
-
-            const list = document.getElementById('quoteBreakdown');
-            list.replaceChildren();
-            q.breakdown.forEach(function (line) {
-                const li = document.createElement('li');
-                const name = document.createElement('span');
-                const cost = document.createElement('span');
-                name.textContent = line.label;
-                cost.textContent = dollars(line.low) + ' – ' + dollars(line.high);
-                li.append(name, cost);
-                list.append(li);
-            });
-
-            const adj = document.getElementById('quoteAdjustments');
-            adj.textContent = q.adjustments.length ? 'Includes: ' + q.adjustments.join(', ') : '';
-            adj.hidden = !q.adjustments.length;
-
-            const questions = document.getElementById('quoteQuestions');
-            questions.replaceChildren();
-            q.questions.forEach(function (text) {
-                const li = document.createElement('li');
-                li.textContent = text;
-                questions.append(li);
-            });
-            document.getElementById('quoteQuestionsBox').hidden = !q.questions.length;
-
-            // "Accept this quote": send the service, estimate and description to the order form
-            const SERVICE_FOR = {
-                'Automation / workflow': 'AI Automation',
-                'AI tool or chatbot': 'AI Automation',
-                'Custom machine learning model': 'Custom ML Model'
-            };
-            const params = new URLSearchParams({
-                service: SERVICE_FOR[q.project_type_label] || 'Other',
-                details: (nonprofit ? 'NONPROFIT (50% off requested). Nonprofit estimate: ' + dollars(half(q.low)) + ' – ' +
-                                      dollars(half(q.high)) + ', regular ' : 'Instant estimate: ') +
-                         dollars(q.low) + ' – ' + dollars(q.high) +
-                         ' (' + q.project_type_label + ')\n\n' + document.getElementById('quoteText').value.trim()
-            });
-            document.getElementById('acceptQuote').href = 'order.html?' + params.toString() + '#newOrder';
-            // ROI calculator starts with the middle of this estimate as the project cost
-            document.getElementById('roiLink').href = 'roi.html?cost=' + Math.round((q.low + q.high) / 2);
-            window.trackEvent && trackEvent('quote-requested');
-
-            result.hidden = false;
-            result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    </script>
-    <script>
-        // Newsletter signup -> quote engine (POST /newsletter), which saves it to the database
-        (function () {
-            const form = document.getElementById('signupForm');
-            if (!form) return;
-            const button = document.getElementById('signupButton');
-            const status = document.getElementById('signupStatus');
-            function say(text, kind) { status.textContent = text; status.className = 'signup-status ' + (kind || ''); }
-
-            form.addEventListener('submit', async function (event) {
-                event.preventDefault();
-                const first = form.first_name.value.trim(), last = form.last_name.value.trim(), email = form.email.value.trim();
-                if (!first || !last) return say('Please enter your first and last name.', 'err');
-                if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return say('Please enter a valid email address.', 'err');
-                if (!form.opt_in.checked) return say('Please check the box to agree to receive emails.', 'err');
-
-                button.disabled = true; button.textContent = 'Subscribing...'; say('');
-                try {
-                    const response = await fetchWithWake(API_BASE + '/newsletter', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ first_name: first, last_name: last, email: email,
-                                               opt_in: true, website: form.website.value })
-                    });
-                    if (response.status === 429) throw new Error('Too many signups from here. Please try again later.');
-                    if (!response.ok) throw new Error('Something went wrong. Please try again.');
-                    form.reset();
-                    say("You're on the list, " + first + '! Watch your inbox for updates.', 'ok');
-                } catch (error) {
-                    say(error.name === 'TypeError' || error.name === 'TimeoutError'
-                        ? 'Our signup system is offline right now. Please try again in a minute.'
-                        : error.message, 'err');
-                } finally {
-                    button.disabled = false; button.textContent = 'Subscribe';
-                }
-            });
-        })();
-    </script>
+    <script src="index.page-5.js"></script>
+    <script src="index.page-6.js"></script>
 
     <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a> · <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></nav></noscript>
 </body>

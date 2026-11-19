@@ -15,7 +15,16 @@ permissions: {}
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 8
     steps:
+      # If the server still doesn't answer after ~4 minutes of retries, this run fails, and GitHub emails you
+      # (Settings -> Notifications -> Actions: "Send notifications for failed workflows only" should be on).
       - name: Ping the quote engine
-        run: curl -fsS --max-time 90 --retry 2 --retry-delay 10 https://abstraction-quote-engine.onrender.com/health || echo "Server didn't answer this time; the next ping will try again."
+        run: |
+          for i in 1 2 3 4; do
+            if curl -fsS --max-time 90 https://abstraction-quote-engine.onrender.com/health; then echo; echo "Server is up."; exit 0; fi
+            echo "No answer (try $i of 4); waiting 30 s..."; sleep 30
+          done
+          echo "## Server is DOWN" >> "$GITHUB_STEP_SUMMARY"
+          echo "The quote engine didn't answer /health for about 4 minutes. Check the Render dashboard (Logs and Events)." >> "$GITHUB_STEP_SUMMARY"
+          exit 1
