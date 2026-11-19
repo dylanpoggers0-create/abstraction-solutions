@@ -1101,11 +1101,12 @@
             document.getElementById('tabCustomerSub').textContent = inGroup && name !== 'customers' ? ': ' + panels[name][2] : '';
             closeCustomerMenu(false);
             document.getElementById('adminTitle').textContent = panels[name][2];
-            if (name === 'news') loadSubscribers();
-            if (name === 'customers') loadCustomers();
+            // tabs loaded in the last minute (e.g. fetched in the background at login) open instantly
+            if (name === 'news' && !fresh('news')) loadSubscribers();
+            if (name === 'customers' && !fresh('customers')) loadCustomers();
             if (name === 'ainews') anShowList();
             if (name === 'security') loadSecurity();
-            if (name === 'social') loadSocial();
+            if (name === 'social' && !fresh('social')) loadSocial();
             document.querySelector('main').classList.toggle('wide', name === 'hydro');
             if (name === 'hydro') window.HydroAdmin.start();
             else if (window.HydroAdmin) window.HydroAdmin.stop();
@@ -1162,10 +1163,16 @@
             }).concat([{ g: 'Admin', t: 'Refresh orders', run: function () { if (!dashboard.hidden) { showTab('orders'); loadOrders(); } } }]));
         }).catch(function () {});
 
+        // When the dashboard opens, every tab's data is requested at the same time instead of
+        // one tab at a time, so switching tabs afterwards doesn't wait on the server.
+        const loadedAt = {};
+        function fresh(name) { const ok = Date.now() - (loadedAt[name] || 0) < 60000; loadedAt[name] = Date.now(); return ok; }
         function showDashboard() {
             loginForm.hidden = true;
             dashboard.hidden = false;
             loadOrders();
+            fresh('social'); fresh('customers'); fresh('news');
+            loadSocial(); loadCustomers(); loadSubscribers();
             if (location.hash === '#social') showTab('social');      // back from connecting TikTok
         }
 

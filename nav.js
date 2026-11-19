@@ -225,17 +225,30 @@ window.uxReady.catch(function () {});
    --------------------------------------------------------- */
 (function () {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return;
+    const conn = navigator.connection || {};
+    const slow = conn.saveData || /(^|-)(2g|3g)$/.test(conn.effectiveType || '');
 
+    // A still frame (13 KB) shows right away, like a saved snapshot of the screen,
+    // so the page looks finished before the moving version arrives.
     const bg = document.createElement('video');
     bg.className = 'bg-loop';
-    bg.src = BASE + 'videos/network-loop.mp4';
+    bg.poster = BASE + 'videos/network-loop-poster.jpg';
     bg.muted = true;          // must be muted, or browsers won't autoplay it
     bg.loop = true;
-    bg.autoplay = true;
     bg.playsInline = true;    // stops iPhones from opening it fullscreen
+    bg.preload = 'none';
     bg.setAttribute('aria-hidden', 'true');
     document.body.prepend(bg);
+    if (reduceMotion || slow) return;          // still frame only: no motion, nothing extra to download
+
+    // The moving loop (about 0.5 MB) only starts after the page itself has finished loading,
+    // so it never competes with the text, pictures and buttons people came for.
+    function start() {
+        bg.src = BASE + 'videos/network-loop.mp4';
+        bg.play().catch(function () {});
+    }
+    function later() { (window.requestIdleCallback || setTimeout)(start, { timeout: 2000 }); }
+    if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
 })();
 
 /* ---------------------------------------------------------
