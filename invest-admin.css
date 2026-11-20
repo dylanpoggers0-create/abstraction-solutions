@@ -55,3 +55,5 @@
 #investPanel .inv-table a { color: var(--green); font-weight: bold; text-decoration: none; }
 #investPanel .inv-table a:hover { text-decoration: underline; }
 .inv-row label[hidden] { display: none; }
+.inv-manual { margin: 12px 0 4px; padding: 12px 14px; border: 1px dashed var(--line); border-radius: 12px; }
+.inv-manual input { width: 140px; }

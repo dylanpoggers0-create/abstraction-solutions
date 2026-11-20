@@ -214,6 +214,7 @@
                     sig(v.signal.action));
         q.append(head, msgLine(v.signal.reason));
         if (v.position) q.append(msgLine('Company holds ' + v.position.qty + ' @ ' + usd.format(v.position.avg_cost)));
+        q.append(manualTrade(v));
         const ranges = el('div', 'inv-ranges');
         [['3M', 63], ['6M', 126], ['1Y', 252]].forEach(function (r) {
             const b = el('button', 'small-btn' + (chartRange === r[1] ? ' active' : ''), r[0]); b.type = 'button';
@@ -229,6 +230,39 @@
         chartData = { c: v.chart, cost: v.position ? v.position.avg_cost : null, symbol: v.symbol };
         drawChart();
     }
+    // manual trade: buy (or sell) any stock you looked up, whatever the strategy's signal says.
+    // The server's safeguards still apply: paper only, per-order and daily caps, pause switch, trade log.
+    function manualTrade(v) {
+        const box = el('div', 'inv-row inv-manual');
+        const max = status ? status.limits.max_order : 500;
+        const l = el('label', null, 'Manual buy ($1–' + usd.format(max) + ')'), amt = el('input');
+        amt.type = 'number'; amt.min = '1'; amt.max = String(max); amt.step = '0.01'; amt.placeholder = '50.00';
+        l.append(amt);
+        const note = v.signal.action === 'STRONG BUY' ? '' : ' (strategy says ' + v.signal.action + ')';
+        const done = async function (text) {
+            load(true);                                   // account, holdings, log
+            await lookup(v.symbol);                       // fresh button + "Sell all" once it's held
+            const fresh = parts.quote.querySelector('.inv-manual');
+            if (fresh) fresh.after(msgLine(text));
+        };
+        const buy = confirmBtn('Buy ' + v.symbol, 'Click to buy ' + v.symbol + note, 'go', async function () {
+            const n = Math.round(parseFloat(amt.value) * 100) / 100;
+            if (!(n >= 1 && n <= max)) throw new Error('Enter an amount between $1 and ' + usd.format(max) + '.');
+            const r = await placeTrade({ symbol: v.symbol, side: 'buy', notional: n,
+                                         reason: ('[manual] strategy said ' + v.signal.action + ': ' + v.signal.reason).slice(0, 300) });
+            done('Paper order sent: buy ' + usd.format(n) + ' of ' + v.symbol + ' (order ' + r.order_id + ').');
+        }, say);
+        box.append(l, buy);
+        if (v.position) {
+            box.append(confirmBtn('Sell all ' + v.symbol, 'Click to sell all ' + v.symbol, 'danger', async function () {
+                const r = await placeTrade({ symbol: v.symbol, side: 'sell', notional: null,
+                                             reason: ('[manual] strategy said ' + v.signal.action + ': ' + v.signal.reason).slice(0, 300) });
+                done('Paper order sent: sell all ' + v.symbol + ' (order ' + r.order_id + ').');
+            }, say));
+        }
+        return box;
+    }
+
     function drawChart() {
         if (!chartData || !parts.chart) return;
         const NS = 'http://www.w3.org/2000/svg', narrow = parts.chart.clientWidth > 0 && parts.chart.clientWidth < 520,
