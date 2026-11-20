@@ -16,6 +16,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="hydro-admin.css">
+    <link rel="stylesheet" href="invest-admin.css">
 
     <style>
         main {
@@ -552,6 +553,7 @@
                     </div>
                 </div>
                 <button class="tab" id="tabHydro" type="button" role="tab">Hydro Cart</button>
+                <button class="tab" id="tabInvest" type="button" role="tab">Invest</button>
                 <button class="tab" id="tabSocial" type="button" role="tab">Social</button>
                 <button class="tab" id="tabSecurity" type="button" role="tab">Security</button>
                 <button class="small-btn" id="logoutButton" type="button">Log out</button>
@@ -808,10 +810,14 @@
 
             <!-- filled in by hydro-admin.js -->
             <div id="hydroPanel" hidden></div>
+
+            <!-- filled in by invest-admin.js (paper trading) -->
+            <div id="investPanel" hidden></div>
         </section>
     </main>
 
     <script src="hydro-admin.js"></script>
+    <script src="invest-admin.js"></script>
     <script src="admin-page.js"></script>
 </body>
 </html>
