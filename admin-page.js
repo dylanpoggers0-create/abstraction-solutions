@@ -278,6 +278,7 @@
         const panels = { orders: ['tabOrders', 'ordersPanel', 'Orders'], customers: ['tabCustomers', 'customersPanel', 'Customers'],
                          news: ['tabNews', 'newsPanel', 'Newsletter'],
                          ainews: ['tabAiNews', 'aiNewsPanel', 'AI News'], hydro: ['tabHydro', 'hydroPanel', 'Hydro Cart'],
+                         invest: ['tabInvest', 'investPanel', 'Invest'],
                          social: ['tabSocial', 'socialPanel', 'Social'], security: ['tabSecurity', 'securityPanel', 'Security'] };
         Object.keys(panels).forEach(function (k) {
             document.getElementById(panels[k][0]).classList.toggle('active', k === name);
@@ -294,12 +295,14 @@
         if (name === 'ainews') anShowList();
         if (name === 'security') loadSecurity();
         if (name === 'social' && !fresh('social')) loadSocial();
-        document.querySelector('main').classList.toggle('wide', name === 'hydro');
+        document.querySelector('main').classList.toggle('wide', name === 'hydro' || name === 'invest');
         if (name === 'hydro') window.HydroAdmin.start();
         else if (window.HydroAdmin) window.HydroAdmin.stop();
+        if (name === 'invest' && window.InvestAdmin) window.InvestAdmin.start();
     }
     document.getElementById('tabOrders').addEventListener('click', function () { showTab('orders'); });
     document.getElementById('tabHydro').addEventListener('click', function () { showTab('hydro'); });
+    document.getElementById('tabInvest').addEventListener('click', function () { showTab('invest'); });
     document.getElementById('tabCustomers').addEventListener('click', function () { showTab('customers'); });
 
     // Customers menu (Customer list, Newsletter, AI News)
@@ -330,10 +333,10 @@
     document.getElementById('tabSocial').addEventListener('click', function () { showTab('social'); });
     document.getElementById('refreshButton').addEventListener('click', loadOrders);
 
-    // keyboard shortcuts: 1-7 switch tabs (when you're not typing); they're also in the Ctrl/⌘ K menu
-    const TAB_KEYS = [['orders', 'Orders'], ['customers', 'Customers'], ['news', 'Newsletter'], ['ainews', 'AI News'], ['hydro', 'Hydro Cart'], ['security', 'Security'], ['social', 'Social']];
+    // keyboard shortcuts: 1-8 switch tabs (when you're not typing); they're also in the Ctrl/⌘ K menu
+    const TAB_KEYS = [['orders', 'Orders'], ['customers', 'Customers'], ['news', 'Newsletter'], ['ainews', 'AI News'], ['hydro', 'Hydro Cart'], ['security', 'Security'], ['social', 'Social'], ['invest', 'Invest']];
     TAB_KEYS.forEach(function (t, i) {
-        const ids = { orders: 'tabOrders', customers: 'tabCustomers', news: 'tabNews', ainews: 'tabAiNews', hydro: 'tabHydro', security: 'tabSecurity', social: 'tabSocial' };
+        const ids = { orders: 'tabOrders', customers: 'tabCustomers', news: 'tabNews', ainews: 'tabAiNews', hydro: 'tabHydro', security: 'tabSecurity', social: 'tabSocial', invest: 'tabInvest' };
         const b = document.getElementById(ids[t[0]]);
         if (b) { b.title = t[1] + ' (press ' + (i + 1) + ')'; b.setAttribute('aria-keyshortcuts', String(i + 1)); }
     });
