@@ -235,11 +235,11 @@ window.uxReady.catch(function () {});
     const conn = navigator.connection || {};
     const slow = conn.saveData || /(^|-)(2g|3g)$/.test(conn.effectiveType || '');
 
-    // A still frame (13 KB) shows right away, like a saved snapshot of the screen,
+    // A still frame (22 KB) shows right away, like a saved snapshot of the screen,
     // so the page looks finished before the moving version arrives.
     const bg = document.createElement('video');
     bg.className = 'bg-loop';
-    bg.poster = BASE + 'videos/network-loop-poster.jpg';
+    bg.poster = BASE + 'videos/ml-loop-poster.jpg';
     bg.muted = true;          // must be muted, or browsers won't autoplay it
     bg.loop = true;
     bg.playsInline = true;    // stops iPhones from opening it fullscreen
@@ -248,10 +248,11 @@ window.uxReady.catch(function () {});
     document.body.prepend(bg);
     if (reduceMotion || slow) return;          // still frame only: no motion, nothing extra to download
 
-    // The moving loop (about 0.5 MB) only starts after the page itself has finished loading,
+    // The moving loop (about 1.3 MB: gradient descent, a neural network, a classifier, clustering, a loss curve) only starts after the page itself has finished loading,
     // so it never competes with the text, pictures and buttons people came for.
     function start() {
-        bg.src = BASE + 'videos/network-loop.mp4';
+        bg.src = BASE + 'videos/ml-loop.mp4';
+        bg.currentTime = 1;   // the poster is the frame at 1s, so the switch is seamless
         bg.play().catch(function () {});
     }
     function later() { (window.requestIdleCallback || setTimeout)(start, { timeout: 2000 }); }

@@ -13,7 +13,7 @@
    4. A soft white light follows the cursor behind the page, and across cards.
    5. The top headline settles in once when the page opens; cards further
       down rise into place as you reach them; headings sit on a deeper layer.
-   6. The brand box at the top has a green aura that circles its edge.
+   6. The brand mark at the top has a slow green aura behind the logo (style.css).
 
    Nothing here changes text or layout. Visitors with "reduce motion" on get
    the new look (step 1) with no movement at all.
@@ -249,7 +249,10 @@
         const layers = [];
         document.querySelectorAll('h2, .section-title, .section-sub, .eyebrow').forEach(function (el) {
             if (el.closest('[data-af~="surface"], ' + SKIP) || layers.length > 40) return;
-            layers.push({ el: el, depth: el.matches('.section-sub') ? 0.035 : el.matches('.eyebrow') ? 0.09 : 0.06, cur: 0 });
+            // anything on the opening screen starts exactly where the page put it
+            const r0 = el.getBoundingClientRect(), mid0 = r0.top + scrollY + r0.height / 2;
+            layers.push({ el: el, depth: el.matches('.section-sub') ? 0.035 : el.matches('.eyebrow') ? 0.07 : 0.06, cur: 0,
+                          rest: mid0 < vh() ? mid0 - vh() / 2 : 0 });
         });
 
         /* the opening headline and the hero's picture/video lean a little with the cursor */
@@ -279,16 +282,8 @@
             window.addEventListener('pointermove', function (e) { L.tx = px = e.clientX; L.ty = py = e.clientY; L.seen = true; }, { passive: true });
         }
 
-        /* the brand box at the top: its aura follows the cursor around its edge */
+        /* the brand mark at the top scrolls away with the page */
         const header = document.querySelector('.header-container');
-        const H = { x: 0, y: 0, vx: 0, vy: 0 };
-        if (header && finePointer) {
-            header.addEventListener('pointermove', function (e) {
-                const r = header.getBoundingClientRect();
-                header.style.setProperty('--hx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
-            });
-            header.addEventListener('pointerleave', function () { header.style.removeProperty('--hx'); });
-        }
 
         /* scrolling pushes the cards, like a wake */
         let lastY = scrollY, scrollV = 0;
@@ -368,7 +363,7 @@
                 const l = layers[i];
                 const r = l.r;
                 if (r.bottom < -100 || r.top > h + 100) continue;
-                const off = (r.top + r.height / 2 - l.cur - h / 2) * l.depth;
+                const off = clamp(((r.top + r.height / 2 - l.cur - h / 2) - l.rest) * l.depth, 28);
                 l.cur += (off - l.cur) * 0.2 * dt;
                 l.el.style.translate = '0 ' + l.cur.toFixed(2) + 'px';
             }
@@ -395,13 +390,6 @@
                 0.004, 0.09, dt);
             aura.style.translate = A.x.toFixed(1) + 'px ' + A.y.toFixed(1) + 'px';
 
-            // brand box: bobs, and dips with the scroll
-            if (header) {
-                H.vy += clamp(kick * 0.04, 2.5);
-                spring(H, 0, Math.sin(now * 0.0008) * 2, 0.03, 0.18, dt);
-                header.style.translate = '0 ' + H.y.toFixed(2) + 'px';
-                header.style.rotate = clamp(H.vy * 0.25, 1.2).toFixed(3) + 'deg';
-            }
 
             if (!document.hidden) requestAnimationFrame(tick); else running = false;
         }
@@ -424,7 +412,7 @@
                 });
                 if (header && header.animate) {
                     header.animate([
-                        { opacity: 0, transform: 'translateY(-18px) scale(.94)' },
+                        { opacity: 0, transform: 'translateY(-14px)' },
                         { opacity: 1, transform: 'none' }
                     ], { duration: 900, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
                 }

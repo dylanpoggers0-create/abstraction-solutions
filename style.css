@@ -724,7 +724,7 @@ p, li { text-wrap: pretty; }
 }
 
 /* the background network gets quieter, the light gets whiter */
-.bg-loop { opacity: 0.26; filter: saturate(0.75); }
+.bg-loop { opacity: 0.5; }
 
 /* one soft white light drifts behind the page and leans toward the cursor */
 .af-light {
@@ -837,82 +837,65 @@ p, li { text-wrap: pretty; }
     outline: none;
 }
 
-/* ---------- top brand box: logo first, a green aura around it ---------- */
-@property --af-ang {
-    syntax: "<angle>";
-    inherits: false;
-    initial-value: 0deg;
+/* ---------- brand mark at the top: large, not sticky, scrolls away with the page ---------- */
+@font-face {
+    font-family: "Unbounded";
+    src: url("fonts/unbounded-latin-wght-normal.woff2") format("woff2");
+    font-weight: 200 900;
+    font-style: normal;
+    font-display: swap;
+}
+.header-wrapper {
+    position: absolute !important;
+    top: 0 !important;
+    justify-content: flex-start !important;
+    padding: 30px 48px 0 72px !important;
 }
 .header-container {
     position: relative;
-    isolation: isolate;
-    gap: 12px !important;
-    padding: 8px 22px 8px 9px !important;
-    border-radius: 999px !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    background-color: rgba(8, 11, 8, 0.62) !important;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset,
-                0 24px 50px -24px rgba(0, 0, 0, 0.95),
-                0 0 34px -6px rgba(126, 233, 111, 0.28) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(1.4);
-    backdrop-filter: blur(18px) saturate(1.4);
-    transition: box-shadow 0.5s ease, padding 0.5s cubic-bezier(.2, .8, .2, 1) !important;
-    will-change: translate;
+    gap: 18px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
 }
-/* the soft green glow behind it; leans toward the cursor */
-.header-container::before {
-    content: "";
-    position: absolute;
-    inset: -18px -26px;
-    border-radius: 999px;
-    background: radial-gradient(55% 110% at var(--hx, 50%) 50%, rgba(126, 233, 111, 0.34), rgba(126, 233, 111, 0.08) 55%, transparent 75%);
-    filter: blur(16px);
-    z-index: -1;
-    pointer-events: none;
-    animation: af-breathe 6s ease-in-out infinite;
-    transition: opacity 0.5s ease;
-}
-/* a thin light that travels around the edge */
-.header-container::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    padding: 1px;
-    border-radius: inherit;
-    background: conic-gradient(from var(--af-ang), transparent 0deg, transparent 200deg, rgba(126, 233, 111, 0.85) 285deg, #f5f8f4 310deg, rgba(126, 233, 111, 0.85) 330deg, transparent 360deg);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    pointer-events: none;
-    animation: af-spin 7.5s linear infinite;
-}
-.header-container:hover {
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset,
-                0 24px 50px -24px rgba(0, 0, 0, 0.95),
-                0 0 50px -4px rgba(126, 233, 111, 0.45) !important;
-}
-.header-container:hover::after { animation-duration: 3s; }
 .brand-box {
     flex-direction: row-reverse;
-    gap: 12px !important;
+    gap: 18px !important;
 }
+/* the logo sits in a slow green aura */
 .brand-box img {
-    width: 40px !important;
-    height: 40px !important;
+    position: relative;
+    width: 60px !important;
+    height: 60px !important;
     border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.35), 0 0 18px rgba(126, 233, 111, 0.35);
+    box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.45),
+                0 0 26px rgba(126, 233, 111, 0.45),
+                0 0 70px rgba(126, 233, 111, 0.22);
+    animation: af-logo 5.5s ease-in-out infinite;
 }
 .brand-name {
-    font-size: 1.12rem !important;
-    font-weight: 620 !important;
-    letter-spacing: -0.012em !important;
+    font-family: "Unbounded", "Schibsted Grotesk", sans-serif !important;
+    font-size: 1.9rem !important;
+    font-weight: 560 !important;
+    letter-spacing: -0.025em !important;
+    line-height: 1;
     color: var(--paper);
+    transition: text-shadow 0.5s ease, color 0.5s ease;
 }
-.af-scrolled .header-container {
-    padding-top: 5px !important;
-    padding-bottom: 5px !important;
+.header-container:hover .brand-name {
+    text-shadow: 0 0 28px rgba(126, 233, 111, 0.55);
 }
-@keyframes af-spin { to { --af-ang: 360deg; } }
+.header-container:hover .brand-box img {
+    animation-duration: 2s;
+}
+@keyframes af-logo {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.4), 0 0 22px rgba(126, 233, 111, 0.38), 0 0 60px rgba(126, 233, 111, 0.16); }
+    50% { box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.7), 0 0 32px rgba(126, 233, 111, 0.6), 0 0 90px rgba(126, 233, 111, 0.3); }
+}
 @keyframes af-breathe {
     0%, 100% { opacity: 0.75; scale: 0.96; }
     50% { opacity: 1; scale: 1.04; }
@@ -989,12 +972,14 @@ main a:not([data-af]):not(.pill):not([class*="btn"]):hover,
     }
     .af-light { width: 600px; height: 600px; margin: -300px 0 0 -300px; }
     .af-aura { width: 800px; height: 800px; margin: -400px 0 0 -400px; }
-    .brand-box img { width: 32px !important; height: 32px !important; }
-    .brand-name { font-size: 1rem !important; }
+    .header-wrapper { padding: 22px 20px 0 !important; justify-content: center !important; }
+    .brand-box, .header-container { gap: 12px !important; }
+    .brand-box img { width: 42px !important; height: 42px !important; }
+    .brand-name { font-size: 1.22rem !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .af-light, .af-aura { display: none; }
-    .header-container::before, .header-container::after { animation: none; }
+    .brand-box img { animation: none; }
     [data-af] { will-change: auto; }
 }
