@@ -200,8 +200,9 @@
                     if (first && !b.still && r.top > vh() * 0.92) {
                         b.waiting = true;
                         b.y = 46 + b.depth * 20;
+                        b.x = (surfaces.indexOf(b) % 2 ? 1 : -1) * (10 + b.depth * 10);   // starts off to one side, so it rises on a curve
                         b.el.style.opacity = '0';
-                        b.el.style.translate = '0 ' + b.y + 'px';
+                        b.el.style.translate = b.x + 'px ' + b.y + 'px';
                     }
                     if (!b.still && finePointer) {
                         const p = b.el.parentElement;
@@ -324,7 +325,9 @@
                 if (b.riseAt) {
                     if (now < b.riseAt) continue;
                     // rising: a softer spring, so it glides up and settles with a tiny overshoot
-                    spring(b, 0, 0, 0.03, 0.2, dt);
+                    // sideways settles faster than upward, so the path is an arc, not a straight line
+                    b.vx += (-b.x * 0.06 - b.vx * 0.3) * dt; b.x += b.vx * dt;
+                    b.vy += (-b.y * 0.03 - b.vy * 0.2) * dt; b.y += b.vy * dt;
                     const o = Math.max(0, Math.min(1, 1 - b.y / 60));
                     b.el.style.opacity = o > 0.995 ? '' : o.toFixed(3);
                     if (Math.abs(b.y) < 0.6 && Math.abs(b.vy) < 0.05) { b.riseAt = 0; b.el.style.opacity = ''; }

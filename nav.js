@@ -225,6 +225,13 @@ window.uxReady.catch(function () {});
     document.head.appendChild(s);
 })();
 
+/* How the site answers what you do (press, errors, progress, shortcuts): see feel.js. */
+(function () {
+    const s = document.createElement('script');
+    s.src = BASE + 'feel.js';
+    document.head.appendChild(s);
+})();
+
 /* ---------------------------------------------------------
    LOOPING BACKGROUND VIDEO
    Adds the silent network animation behind every page.
