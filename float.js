@@ -402,20 +402,35 @@
             while (sib && n < 3) { group.push(sib); sib = sib.nextElementSibling; n++; }
             const prev = h1.previousElementSibling;
             if (prev) group.unshift(prev);
+            const name = header && header.querySelector('.brand-name');
+            if (name && !name.querySelector('.af-ch')) {
+                name.setAttribute('aria-label', name.textContent);
+                // letters are wrapped per word, so a phone breaks the line between words, never inside one
+                name.innerHTML = name.textContent.split(' ').map(function (word) {
+                    return '<span class="af-w" aria-hidden="true">' + word.split('').map(function (ch) {
+                        return '<span class="af-ch">' + ch + '</span>';
+                    }).join('') + '</span>';
+                }).join(' ');
+            }
             function play() {
+                if (name) name.querySelectorAll('.af-ch').forEach(function (ch, i) {
+                    ch.animate([
+                        { opacity: 0, transform: 'translateY(0.45em) rotate(4deg)', filter: 'blur(6px)' },
+                        { opacity: 1, transform: 'none', filter: 'blur(0)' }
+                    ], { duration: 900, delay: 120 + i * 32, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+                });
                 group.forEach(function (el, i) {
                     if (!el.animate) return;
                     el.animate([
                         { opacity: 0, transform: 'translateY(26px)', filter: 'blur(8px)' },
                         { opacity: 1, transform: 'none', filter: 'blur(0)' }
-                    ], { duration: 1100, delay: 80 + i * 110, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+                    ], { duration: 1100, delay: 520 + i * 110, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
                 });
-                if (header && header.animate) {
-                    header.animate([
-                        { opacity: 0, transform: 'translateY(-14px)' },
-                        { opacity: 1, transform: 'none' }
-                    ], { duration: 900, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
-                }
+                const logo = header && header.querySelector('img');
+                if (logo && logo.animate) logo.animate([
+                    { opacity: 0, transform: 'scale(.6) rotate(-20deg)' },
+                    { opacity: 1, transform: 'none' }
+                ], { duration: 1000, easing: 'cubic-bezier(.34, 1.56, .64, 1)', fill: 'backwards' });
             }
             // prerendered pages wait until they're actually shown
             if (document.prerendering) document.addEventListener('prerenderingchange', play, { once: true });
