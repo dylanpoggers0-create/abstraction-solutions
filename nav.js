@@ -167,17 +167,17 @@ document.getElementById('site-nav').innerHTML =
     // hidden checkbox that remembers open/closed (must come first)
     '<input type="checkbox" id="nav-toggle" class="nav-check" aria-label="Open menu">' +
 
-    // floating header — clicking it opens the nav
+    // the title at the top: logo + name, takes you to the home page
     '<div class="header-wrapper">' +
-        '<label for="nav-toggle" class="header-container" title="Open menu">' +
+        '<a href="' + BASE + '" class="header-container" title="Home" aria-label="Abstraction Solutions home">' +
             '<span class="brand-box">' +
                 '<span class="brand-name">Abstraction Solutions</span>' +
                 '<img src="' + BASE + 'abstraction_solutions.jpg" alt="Abstraction Solutions logo">' +
             '</span>' +
-        '</label>' +
+        '</a>' +
     '</div>' +
 
-    // Menu tab on the left edge — also opens the nav
+    // Menu button (top right; bottom left on phones) — opens the nav
     '<label for="nav-toggle" class="side-tab" title="Open menu">' + svg('menu') + '<span>Menu</span></label>' +
 
     // the side nav itself

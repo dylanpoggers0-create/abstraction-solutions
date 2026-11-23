@@ -11,10 +11,10 @@
       animation, so no two cards move the same).
    3. Buttons lean toward your cursor and spring back when you leave.
    4. A soft white light follows the cursor behind the page, and across cards.
-   5. The top headline settles in once when the page opens; cards further
-      down rise into place as you reach them; headings sit on a deeper layer.
+   5. Words of headings rise in one by one as they come on screen; the big headline
+      keeps drifting; cards further down rise into place; headings sit on a deeper layer.
    6. The brand mark at the top has a slow green aura behind the logo (style.css).
-   7. Every few seconds the title's letters flicker through other tech typefaces.
+   7. Every few seconds the title glitches: binary decode, typefaces, bit waves, noise.
 
    Nothing here changes text or layout. Visitors with "reduce motion" on get
    the new look (step 1) with no movement at all.
@@ -395,59 +395,153 @@
             if (!document.hidden) requestAnimationFrame(tick); else running = false;
         }
 
-        /* ---------- the one entrance: the top of the page settles in ---------- */
-        (function intro() {
-            if (!h1 || scrollY > 200) return;
-            const group = [h1];
-            let sib = h1.nextElementSibling, n = 0;
-            while (sib && n < 3) { group.push(sib); sib = sib.nextElementSibling; n++; }
-            const prev = h1.previousElementSibling;
-            if (prev) group.unshift(prev);
-            const name = header && header.querySelector('.brand-name');
-            if (name && !name.querySelector('.af-ch')) {
-                name.setAttribute('aria-label', name.textContent);
-                // letters are wrapped per word, so a phone breaks the line between words, never inside one
-                name.innerHTML = name.textContent.split(' ').map(function (word) {
-                    return '<span class="af-w" aria-hidden="true">' + word.split('').map(function (ch) {
-                        return '<span class="af-ch">' + ch + '</span>';
-                    }).join('') + '</span>';
-                }).join(' ');
-            }
-            function play() {
-                if (name) name.querySelectorAll('.af-ch').forEach(function (ch, i) {
-                    ch.animate([
-                        { opacity: 0, transform: 'translateY(0.45em) rotate(4deg)', filter: 'blur(6px)' },
-                        { opacity: 1, transform: 'none', filter: 'blur(0)' }
-                    ], { duration: 900, delay: 120 + i * 32, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+        /* ---------- 5. words rise in, one after another ----------
+           Headings, sub-headings and the opening paragraph are split into words. Each block's
+           words rise into place as it comes on screen. The big headline's words then keep
+           drifting gently, and lean toward the cursor. */
+        const OUT = 'cubic-bezier(.16, 1, .3, 1)';
+        function splitWords(el) {
+            if (el.__afSplit) return el.__afSplit;
+            const words = [];
+            (function walk(node) {
+                Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+                    if (n.nodeType === 3) {
+                        if (!n.nodeValue.trim()) return;
+                        const frag = document.createDocumentFragment();
+                        n.nodeValue.split(/(\s+)/).forEach(function (part) {
+                            if (!part) return;
+                            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+                            const w = document.createElement('af-w');
+                            w.textContent = part;
+                            words.push(w);
+                            frag.appendChild(w);
+                        });
+                        n.parentNode.replaceChild(frag, n);
+                    } else if (n.nodeType === 1 && !/^(SVG|IMG|BR|INPUT|BUTTON|AF-W)$/i.test(n.tagName)) {
+                        walk(n);
+                    }
                 });
-                group.forEach(function (el, i) {
-                    if (!el.animate) return;
-                    el.animate([
-                        { opacity: 0, transform: 'translateY(26px)', filter: 'blur(8px)' },
-                        { opacity: 1, transform: 'none', filter: 'blur(0)' }
-                    ], { duration: 1100, delay: 520 + i * 110, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
-                });
-                const logo = header && header.querySelector('img');
-                if (logo && logo.animate) logo.animate([
-                    { opacity: 0, transform: 'scale(.6) rotate(-20deg)' },
-                    { opacity: 1, transform: 'none' }
-                ], { duration: 1000, easing: 'cubic-bezier(.34, 1.56, .64, 1)', fill: 'backwards' });
-            }
-            // prerendered pages wait until they're actually shown
-            if (document.prerendering) document.addEventListener('prerenderingchange', play, { once: true });
-            else play();
-            if (name) flicker(name);
-        })();
+            })(el);
+            el.__afSplit = words;
+            return words;
+        }
 
-        /* ---------- 7. every few seconds the title's letters flicker through other tech typefaces ----------
-           Each letter starts at a slightly different moment, runs at its own speed through 2-5
-           random faces, then lands back on Unbounded. Every letter keeps its usual width, so the
-           word itself never shifts about. Hovering the title sets one off too. */
-        function flicker(name) {
+        const name = header && header.querySelector('.brand-name');
+        if (name && !name.querySelector('.af-ch')) {
+            name.setAttribute('aria-label', name.textContent);
+            // letters are wrapped per word, so a phone breaks the line between words, never inside one
+            name.innerHTML = name.textContent.split(' ').map(function (word) {
+                return '<span class="af-w" aria-hidden="true">' + word.split('').map(function (ch) {
+                    return '<span class="af-ch" data-c="' + ch + '">' + ch + '</span>';
+                }).join('') + '</span>';
+            }).join(' ');
+            // each letter carries its own colour and light from here on (see style.css), so it can move on its own
+            name.querySelectorAll('.af-ch').forEach(function (ch, i) { ch.style.setProperty('--i', i); });
+            name.classList.add('af-split');
+        }
+
+        const firstScreen = scrollY < 200;
+        const texts = [];
+        document.querySelectorAll('h1, h2, h3, .section-title, .section-sub, .eyebrow, .hero-text p, .hero > p, .lead').forEach(function (el) {
+            if (el.closest('.header-wrapper, .side-nav, footer, form, [data-af~="btn"], [data-af-skip]')) return;
+            if (texts.indexOf(el) !== -1 || el.querySelector('input, select, textarea, video, img')) return;
+            const n = (el.textContent.match(/\S+/g) || []).length;
+            if (!n || n > 70) return;
+            texts.push(el);
+        });
+
+        function reveal(el, extraDelay) {
+            const words = splitWords(el);
+            const big = /^H1$/.test(el.tagName);
+            const step = big ? 70 : words.length > 25 ? 14 : 34;
+            words.forEach(function (w, i) {
+                w.style.opacity = '';
+                w.animate([
+                    { opacity: 0, transform: 'translateY(' + (big ? 0.55 : 0.7) + 'em) rotate(' + (big ? 5 : 2) + 'deg)', filter: 'blur(' + (big ? 10 : 6) + 'px)' },
+                    { opacity: 1, transform: 'none', filter: 'blur(0)' }
+                ], { duration: big ? 1300 : 950, delay: extraDelay + Math.min(i * step, 1100), easing: OUT, fill: 'backwards' });
+            });
+            if (big) drift(el, words);
+        }
+
+        // the big headline keeps moving: each word drifts on its own slow beat, and leans toward the cursor
+        function drift(el, words) {
+            words.forEach(function (w, i) {
+                w.animate([{ translate: '0 0' }, { translate: '0 ' + (-3 - Math.random() * 3).toFixed(1) + 'px' }], {
+                    duration: 2400 + Math.random() * 1800, delay: 1400 + i * 120, direction: 'alternate',
+                    iterations: Infinity, easing: 'ease-in-out', fill: 'backwards'
+                });
+                w.style.transition = 'scale 0.6s cubic-bezier(.34, 1.56, .64, 1), rotate 0.6s cubic-bezier(.34, 1.56, .64, 1)';
+            });
+            if (!finePointer) return;
+            el.addEventListener('pointermove', function (e) {
+                words.forEach(function (w) {
+                    const r = w.getBoundingClientRect();
+                    const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+                    const d = Math.sqrt(dx * dx + dy * dy), k = Math.max(0, 1 - d / 260);
+                    w.style.scale = (1 + k * 0.07).toFixed(3);
+                    w.style.rotate = (clamp(dx, 200) / 200 * -3 * k).toFixed(2) + 'deg';
+                });
+            });
+            el.addEventListener('pointerleave', function () {
+                words.forEach(function (w) { w.style.scale = ''; w.style.rotate = ''; });
+            });
+        }
+
+        function play() {
+            // the title: letters rise in, the logo pops
+            if (name) name.querySelectorAll('.af-ch').forEach(function (ch, i) {
+                ch.animate([
+                    { opacity: 0, transform: 'translateY(0.45em) rotate(4deg)', filter: 'blur(6px)' },
+                    { opacity: 1, transform: 'none', filter: 'blur(0)' }
+                ], { duration: 900, delay: 120 + i * 32, easing: OUT, fill: 'backwards' });
+            });
+            const logo = header && header.querySelector('img');
+            if (logo && logo.animate) logo.animate([
+                { opacity: 0, transform: 'scale(.6) rotate(-20deg)' },
+                { opacity: 1, transform: 'none' }
+            ], { duration: 1000, easing: 'cubic-bezier(.34, 1.56, .64, 1)', fill: 'backwards' });
+
+            // everything else: words rise as each block comes on screen (the first screen follows the title)
+            const seen = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+                let order = 0;
+                entries.forEach(function (e) {
+                    if (!e.isIntersecting) return;
+                    seen.unobserve(e.target);
+                    const top = firstScreen && e.target.getBoundingClientRect().top < vh() && !e.target.__afLate;
+                    reveal(e.target, (top ? 420 : 0) + order++ * 120);
+                });
+            }, { rootMargin: '0px' }) : null;
+            if (!seen) return;
+            texts.forEach(function (el) {
+                const r = el.getBoundingClientRect();
+                if (!firstScreen && r.bottom < vh()) return;   // came back scrolled down: leave what's already in view alone
+                el.__afLate = r.top > vh();
+                splitWords(el).forEach(function (w) { w.style.opacity = '0'; });
+                seen.observe(el);
+            });
+        }
+        // prerendered pages wait until they're actually shown
+        if (document.prerendering) document.addEventListener('prerenderingchange', play, { once: true });
+        else play();
+        if (name) glitch(name);
+
+        /* ---------- 7. the title glitches every few seconds ----------
+           Each round picks a different style, so it never repeats the same way twice in a row:
+             decode:  letters scramble through binary, then hex, and resolve left to right
+             fonts:   each letter runs through other tech typefaces at its own pace
+             bits:    a wave of 0s and 1s rolls across the name and back
+             noise:   a mix of typefaces, binary, block shades and symbols
+           Every change fades in rather than snapping, letters slow down before they land,
+           and each one settles with a small drop. Every letter keeps its usual width, so the
+           name itself never shifts about. Hovering the title sets a round off too. */
+        function glitch(name) {
             const FACES = [['G Audiowide', 0.92], ['G Chakra', 1.08], ['G MajorMono', 0.9], ['G Michroma', 0.78],
                            ['G Orbitron', 0.92], ['G Silkscreen', 0.82], ['G SpaceMono', 0.96], ['G VT323', 1.32]];
+            const BIN = '01', HEX = '0123456789ABCDEF', BLOCK = '▓▒░█', SYM = '#$%&@*+=<>/\\|_{}[]';
+            const pick = function (s) { return s.charAt(Math.floor(Math.random() * s.length)); };
             const chars = Array.prototype.slice.call(name.querySelectorAll('.af-ch'));
-            let busy = false;
+            let busy = false, modes = [];
 
             function lockWidths() {
                 chars.forEach(function (ch) { ch.classList.remove('af-fixed'); ch.style.width = ''; ch.style.height = ''; ch.style.lineHeight = ''; });
@@ -459,43 +553,103 @@
                     ch.classList.add('af-fixed');
                 });
             }
-
-            function wave() {
-                if (busy || document.hidden) return;
-                busy = true;
-                let left = chars.length;
-                chars.forEach(function (ch, i) {
-                    const steps = 2 + Math.floor(Math.random() * 4);
-                    const pace = 45 + Math.random() * 95;            // this letter's own speed
-                    let k = 0, prev = -1;
-                    setTimeout(function step() {
-                        if (k < steps) {
-                            let f;
-                            do { f = Math.floor(Math.random() * FACES.length); } while (f === prev);
-                            prev = f;
-                            ch.style.fontFamily = '"' + FACES[f][0] + '", monospace';
-                            ch.style.fontSize = FACES[f][1] + 'em';
-                            k++;
-                            setTimeout(step, pace * (0.6 + Math.random() * 0.9));
-                        } else {
-                            ch.style.fontFamily = '';
-                            ch.style.fontSize = '';
-                            if (--left === 0) busy = false;
-                        }
-                    }, i * 32 + Math.random() * 280);                // slightly off from its neighbours
-                });
+            function setFace(ch, f) {
+                ch.classList.remove('af-glyph');
+                ch.textContent = ch.dataset.c;
+                ch.style.fontFamily = '"' + FACES[f][0] + '", monospace';
+                ch.style.fontSize = FACES[f][1] + 'em';
+            }
+            function setGlyph(ch, c) {
+                ch.classList.add('af-glyph');
+                ch.style.fontFamily = '';
+                ch.style.fontSize = '0.86em';
+                ch.textContent = c;
+            }
+            function pulse(ch, d) {      // each change fades in, so the flicker reads as smooth, not jumpy
+                ch.animate([{ opacity: 0.35, filter: 'blur(2px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: Math.max(60, d * 0.8), easing: 'ease-out' });
+            }
+            function land(ch, done) {
+                ch.classList.remove('af-glyph');
+                ch.textContent = ch.dataset.c;
+                ch.style.fontFamily = '';
+                ch.style.fontSize = '';
+                ch.animate([
+                    { transform: 'translateY(-0.12em) scale(1.08)', filter: 'blur(3px)', opacity: 0.6 },
+                    { transform: 'none', filter: 'blur(0)', opacity: 1 }
+                ], { duration: 520, easing: OUT });
+                done();
+            }
+            // runs one letter through `steps` changes; the gaps grow toward the end, so it slows before landing
+            function run(ch, startAt, steps, pace, change, done) {
+                let k = 0;
+                setTimeout(function next() {
+                    if (k >= steps) { land(ch, done); return; }
+                    const d = pace * (0.7 + Math.random() * 0.5) * (1 + 1.6 * Math.pow(k / steps, 2));
+                    change(ch, k, steps);
+                    pulse(ch, d);
+                    k++;
+                    setTimeout(next, d);
+                }, startAt);
             }
 
+            const MODES = {
+                decode: function (done) {
+                    chars.forEach(function (ch, i) {
+                        const steps = 8 + i * 0.8 | 0;
+                        run(ch, Math.random() * 120, steps, 70, function (c, k, n) { setGlyph(c, pick(k < n * 0.55 ? BIN : HEX)); }, done);
+                    });
+                },
+                fonts: function (done) {
+                    chars.forEach(function (ch, i) {
+                        let prev = -1;
+                        run(ch, i * 40 + Math.random() * 320, 4 + (Math.random() * 5 | 0), 70 + Math.random() * 90, function (c) {
+                            let f; do { f = Math.random() * FACES.length | 0; } while (f === prev);
+                            prev = f; setFace(c, f);
+                        }, done);
+                    });
+                },
+                bits: function (done) {
+                    const n = chars.length;
+                    chars.forEach(function (ch, i) {
+                        // out across the name, then back: each letter flips to bits twice as the wave passes
+                        const there = i * 55, back = (2 * n - i) * 55;
+                        run(ch, there, 3, 70, function (c) { setGlyph(c, pick(BIN)); }, function () {
+                            run(ch, back - there - 210, 3, 70, function (c) { setGlyph(c, pick(BIN)); }, done);
+                        });
+                    });
+                },
+                noise: function (done) {
+                    const POOLS = [BIN, BLOCK, SYM, HEX];
+                    chars.forEach(function (ch, i) {
+                        run(ch, Math.random() * 600, 5 + (Math.random() * 6 | 0), 60 + Math.random() * 80, function (c) {
+                            const r = Math.random();
+                            if (r < 0.4) setFace(c, Math.random() * FACES.length | 0);
+                            else setGlyph(c, pick(POOLS[Math.random() * POOLS.length | 0]));
+                        }, done);
+                    });
+                }
+            };
+
+            function round(mode) {
+                if (busy || document.hidden) return;
+                busy = true;
+                if (!mode) {
+                    if (!modes.length) modes = Object.keys(MODES).sort(function () { return Math.random() - 0.5; });
+                    mode = modes.shift();
+                }
+                let left = chars.length;
+                MODES[mode](function () { if (--left === 0) setTimeout(function () { busy = false; }, 200); });
+            }
             function every() {
-                setTimeout(function () { wave(); every(); }, 5200 + Math.random() * 3600);
+                setTimeout(function () { round(); every(); }, 6500 + Math.random() * 3500);
             }
 
             Promise.all([document.fonts.load('1em "Unbounded"')].concat(FACES.map(function (f) {
-                return document.fonts.load('1em "' + f[0] + '"', 'AbstractionSolutions');
+                return document.fonts.load('1em "' + f[0] + '"', 'AbstractionSolutions01');
             }))).then(function () {
                 setTimeout(function () {
                     lockWidths();
-                    wave();
+                    round('decode');                                 // the first one always decodes
                     every();
                 }, 2300);                                            // after the letters have risen in
                 let rt = null;
@@ -505,7 +659,7 @@
                 });
                 let lastHover = 0;
                 header.addEventListener('pointerenter', function () {
-                    if (Date.now() - lastHover > 1500) { lastHover = Date.now(); wave(); }
+                    if (Date.now() - lastHover > 2500) { lastHover = Date.now(); round(); }
                 });
             }).catch(function () {});
         }
