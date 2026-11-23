@@ -218,6 +218,13 @@ window.uxReady = new Promise(function (resolve, reject) {
 });
 window.uxReady.catch(function () {});
 
+/* The floating look and gentle movement on every page: see float.js (styles at the end of style.css). */
+(function () {
+    const s = document.createElement('script');
+    s.src = BASE + 'float.js';
+    document.head.appendChild(s);
+})();
+
 /* ---------------------------------------------------------
    LOOPING BACKGROUND VIDEO
    Adds the silent network animation behind every page.

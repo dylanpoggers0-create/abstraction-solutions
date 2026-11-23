@@ -661,3 +661,239 @@ kbd {
 .side-sub { display: none; flex-direction: column; gap: 2px; padding: 4px 0 6px 22px; }
 .side-sub a { font-size: 0.92rem; }
 .has-sub.open > .side-sub { display: flex; }
+
+/* =========================================================
+   FLOAT LAYER: the look that sits on top of everything above.
+   float.js tags the page pieces it finds:
+       data-af="surface"   cards, panels, boxes
+       data-af="btn"       buttons and button-like links
+       data-af="field"     text boxes
+   and moves them. Everything here only touches those tags plus
+   type, so page layouts stay exactly as they were.
+   Visitors with "reduce motion" on get the look without the motion.
+   ========================================================= */
+
+@font-face {
+    font-family: "Schibsted Grotesk";
+    src: url("fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2");
+    font-weight: 400 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --paper: #f5f8f4;                          /* the white */
+    --frost: rgba(255, 255, 255, 0.065);       /* glass fill */
+    --frost-top: rgba(255, 255, 255, 0.12);   /* glass fill, lit edge */
+    --rim: rgba(255, 255, 255, 0.12);          /* glass edge */
+    --rim-hi: rgba(255, 255, 255, 0.26);
+    --text-muted: #a7b3a9;
+    --float-shadow: 0 1px 0 rgba(255, 255, 255, 0.07) inset,
+                    0 40px 70px -40px rgba(0, 0, 0, 0.95),
+                    0 18px 30px -24px rgba(0, 0, 0, 0.8);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--paper);
+}
+
+h1, h2, h3, .section-title, .brand-name {
+    font-weight: 650;
+    letter-spacing: -0.022em;
+}
+h1 { letter-spacing: -0.035em; }
+.brand-name { letter-spacing: 0.01em; }
+
+p, li { text-wrap: pretty; }
+
+.eyebrow {
+    letter-spacing: 0.06em !important;
+    font-weight: 600 !important;
+    opacity: 0.9;
+}
+
+/* the background network gets quieter, the light gets whiter */
+.bg-loop { opacity: 0.26; filter: saturate(0.75); }
+
+/* one soft white light drifts behind the page and leans toward the cursor */
+.af-light {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 900px;
+    height: 900px;
+    margin: -450px 0 0 -450px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(245, 248, 244, 0.085), rgba(126, 233, 111, 0.035) 55%, transparent 100%);
+    pointer-events: none;
+    z-index: -1;
+    will-change: translate;
+}
+
+/* ---------- glass surfaces ---------- */
+[data-af~="surface"] {
+    background-color: transparent !important;
+    background-image:
+        radial-gradient(520px circle at var(--mx, -999px) var(--my, -999px), rgba(255, 255, 255, 0.075), transparent 42%),
+        linear-gradient(180deg, var(--frost-top), var(--frost) 38%, rgba(255, 255, 255, 0.035)),
+        linear-gradient(rgba(6, 8, 6, 0.72), rgba(6, 8, 6, 0.72)) !important;
+    border-color: var(--rim) !important;
+    box-shadow: var(--float-shadow) !important;
+    transition: border-color 0.5s ease, box-shadow 0.5s ease, transform 0.4s cubic-bezier(.2, .8, .2, 1) !important;
+}
+[data-af~="surface"][data-af~="lit"] {
+    border-color: var(--rim-hi) !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset,
+                0 50px 80px -40px rgba(0, 0, 0, 1),
+                0 0 0 1px rgba(126, 233, 111, 0.06),
+                0 30px 60px -50px rgba(126, 233, 111, 0.35) !important;
+}
+/* small boxes inside glass (icon squares, chips) read as etched, not stacked */
+[data-af~="surface"] [data-af~="chip"] {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ---------- buttons ---------- */
+[data-af~="btn"] {
+    transition: background-color 0.35s cubic-bezier(.2, .7, .2, 1),
+                color 0.35s cubic-bezier(.2, .7, .2, 1),
+                border-color 0.35s ease,
+                box-shadow 0.45s ease !important;
+    will-change: translate;
+}
+/* outlined buttons: thin white glass that fills with white on hover */
+[data-af~="btn"][data-af~="ghost"] {
+    background-color: rgba(255, 255, 255, 0.045) !important;
+    border-color: rgba(255, 255, 255, 0.34) !important;
+    color: var(--paper) !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 14px 30px -18px rgba(0, 0, 0, 0.9) !important;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+[data-af~="btn"][data-af~="ghost"]:hover,
+[data-af~="btn"][data-af~="ghost"]:focus-visible {
+    background-color: var(--paper) !important;
+    border-color: var(--paper) !important;
+    color: #000 !important;
+    box-shadow: 0 18px 40px -16px rgba(245, 248, 244, 0.35) !important;
+}
+[data-af~="btn"][data-af~="ghost"]:hover *,
+[data-af~="btn"][data-af~="ghost"]:focus-visible * { color: inherit; }
+/* green-edged buttons keep their green, minus the neon halo */
+[data-af~="btn"][data-af~="accent"] {
+    background-color: rgba(126, 233, 111, 0.06) !important;
+    border-color: rgba(126, 233, 111, 0.7) !important;
+    color: var(--green) !important;
+    box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.9) !important;
+}
+[data-af~="btn"][data-af~="accent"]:hover,
+[data-af~="btn"][data-af~="accent"]:focus-visible {
+    background-color: var(--green) !important;
+    border-color: var(--green) !important;
+    color: #000 !important;
+    box-shadow: 0 18px 40px -16px rgba(126, 233, 111, 0.45) !important;
+}
+/* solid buttons: no glow, a soft lift instead */
+[data-af~="btn"][data-af~="solid"] {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 16px 34px -18px rgba(126, 233, 111, 0.5) !important;
+}
+/* the first button near the top of a page is the white one: the clearest next step */
+[data-af~="btn"][data-af~="lead"] {
+    background-color: var(--paper) !important;
+    border-color: var(--paper) !important;
+    color: #000 !important;
+    box-shadow: 0 1px 0 #fff inset, 0 20px 44px -20px rgba(245, 248, 244, 0.4) !important;
+}
+[data-af~="btn"][data-af~="lead"]:hover,
+[data-af~="btn"][data-af~="lead"]:focus-visible {
+    background-color: var(--green) !important;
+    border-color: var(--green) !important;
+    color: #000 !important;
+}
+[data-af~="btn"]:active { transition-duration: 0.08s !important; }
+
+/* ---------- text boxes ---------- */
+[data-af~="field"] {
+    background-color: rgba(255, 255, 255, 0.045) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+[data-af~="field"]:focus {
+    background-color: rgba(255, 255, 255, 0.075) !important;
+    border-color: rgba(126, 233, 111, 0.75) !important;
+    box-shadow: 0 0 0 4px rgba(126, 233, 111, 0.12) !important;
+    outline: none;
+}
+
+/* ---------- top brand box and menu tab ---------- */
+.header-container {
+    border: 1px solid var(--rim-hi) !important;
+    background-color: rgba(10, 12, 10, 0.55) !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 24px 50px -24px rgba(0, 0, 0, 0.95) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    backdrop-filter: blur(18px) saturate(1.3);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease, padding 0.5s cubic-bezier(.2, .8, .2, 1) !important;
+    will-change: translate;
+}
+.header-container:hover {
+    border-color: rgba(245, 248, 244, 0.5) !important;
+}
+.af-scrolled .header-container {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.side-tab {
+    background-color: rgba(18, 20, 18, 0.6) !important;
+    border-color: var(--rim) !important;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+/* links get a calm underline that grows instead of jumping */
+main a:not([data-af]):not(.pill):not([class*="btn"]),
+.section-sub a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(126, 233, 111, 0.45);
+    transition: text-decoration-color 0.3s ease, text-underline-offset 0.3s ease;
+}
+main a:not([data-af]):not(.pill):not([class*="btn"]):hover,
+.section-sub a:hover {
+    text-decoration-color: currentColor;
+    text-underline-offset: 5px;
+}
+
+:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 3px;
+}
+
+::selection {
+    background: var(--paper);
+    color: #000;
+}
+
+/* phones: glass blur is costly on small chips, so the fill gets a bit more solid instead */
+@media (max-width: 700px), (pointer: coarse) {
+    [data-af~="surface"] {
+        background-image: linear-gradient(180deg, rgba(34, 38, 34, 0.9), rgba(16, 19, 16, 0.88)) !important;
+    }
+    .af-light { width: 600px; height: 600px; margin: -300px 0 0 -300px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .af-light { display: none; }
+    [data-af] { will-change: auto; }
+}
