@@ -11,7 +11,9 @@
       animation, so no two cards move the same).
    3. Buttons lean toward your cursor and spring back when you leave.
    4. A soft white light follows the cursor behind the page, and across cards.
-   5. The top headline settles in once when the page opens.
+   5. The top headline settles in once when the page opens; cards further
+      down rise into place as you reach them; headings sit on a deeper layer.
+   6. The brand box at the top has a green aura that circles its edge.
 
    Nothing here changes text or layout. Visitors with "reduce motion" on get
    the new look (step 1) with no movement at all.
@@ -128,7 +130,7 @@
             // every card gets its own slow rhythm, so they never move in step
             p1: rand() * 6.283, p2: rand() * 6.283,
             w1: 0.00055 + rand() * 0.00035, w2: 0.00031 + rand() * 0.0002,
-            amp: 1.6 + rand() * 1.6,
+            amp: 2.6 + rand() * 2.4,
             depth: 0.55 + rand() * 0.6,   // how far it lags when you scroll
             tx: 0, ty: 0,                 // where the cursor is pulling it
             hover: false,
@@ -157,45 +159,73 @@
         if (first && !greenUp && !isAdmin) add(first, 'lead');   // never compete with a green call to action
         if (reduce) return;
 
+        const vh = function () { return window.innerHeight; };
+
         // later content (order lists, admin tabs, chat replies) gets the look too
         let pending = null;
-        new MutationObserver(function (list) {
+        new MutationObserver(function () {
             if (pending) return;
             pending = setTimeout(function () {
                 pending = null;
-                const main = document.querySelector('main') || document.body;
                 const before = surfaces.length + buttons.length;
-                scan(main);
-                if (surfaces.length + buttons.length !== before) watchAll();
+                scan(document.querySelector('main') || document.body);
+                if (surfaces.length + buttons.length !== before) watchAll(false);
             }, 250);
         }).observe(document.querySelector('main') || document.body, { childList: true, subtree: true });
 
+        /* cards below the first screen wait just under where they'll sit,
+           then rise up into place as they come into view */
+        let riseQueue = 0;
         const io = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
             entries.forEach(function (e) {
                 const b = e.target.__afBody;
-                if (b) b.visible = e.isIntersecting;
+                if (!b) return;
+                b.visible = e.isIntersecting;
+                if (e.isIntersecting && b.waiting) {
+                    b.waiting = false;
+                    b.riseAt = performance.now() + (riseQueue++ % 6) * 85;   // neighbours follow one another
+                    setTimeout(function () { riseQueue = 0; }, 400);
+                    wake();
+                }
             });
-        }, { rootMargin: '80px' }) : null;
+        }, { rootMargin: '0px 0px -8% 0px' }) : null;
 
-        function watchAll() {
+        function watchAll(first) {
             surfaces.concat(buttons).forEach(function (b) {
                 if (b.el.__afBody) return;
                 b.el.__afBody = b;
+                if (b.kind === 'surface') {
+                    const r = b.el.getBoundingClientRect();
+                    if (first && !b.still && r.top > vh() * 0.92) {
+                        b.waiting = true;
+                        b.y = 46 + b.depth * 20;
+                        b.el.style.opacity = '0';
+                        b.el.style.translate = '0 ' + b.y + 'px';
+                    }
+                    if (!b.still && finePointer) {
+                        const p = b.el.parentElement;
+                        if (p && p !== document.body && !p.style.perspective) p.style.perspective = '1100px';
+                    }
+                    bindSurface(b);
+                } else if (finePointer) bindButton(b);
                 if (io) io.observe(b.el);
-                if (b.kind === 'surface') bindSurface(b);
-                else if (finePointer) bindButton(b);
             });
         }
 
         function bindSurface(b) {
-            b.el.addEventListener('pointerenter', function () { b.hover = true; add(b.el, 'lit'); b.rect = b.el.getBoundingClientRect(); });
+            b.el.addEventListener('pointerenter', function () { b.hover = true; add(b.el, 'lit'); b.rect = b.el.getBoundingClientRect(); wake(); });
             b.el.addEventListener('pointermove', function (e) {
                 const r = b.rect || (b.rect = b.el.getBoundingClientRect());
-                b.el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-                b.el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+                const lx = e.clientX - r.left, ly = e.clientY - r.top;
+                b.el.style.setProperty('--mx', lx + 'px');
+                b.el.style.setProperty('--my', ly + 'px');
+                // tilt toward the cursor: up to about 5 degrees on a small card, less on a wide one
+                const k = Math.min(1, 320 / Math.max(r.width, r.height));
+                b.tiltX = ((ly / r.height) - 0.5) * -9 * k;
+                b.tiltY = ((lx / r.width) - 0.5) * 9 * k;
             });
             b.el.addEventListener('pointerleave', function () {
-                b.hover = false; b.rect = null;
+                b.hover = false; b.rect = null; b.tiltX = 0; b.tiltY = 0;
                 b.el.setAttribute('data-af', b.el.getAttribute('data-af').replace(/\s*\blit\b/, ''));
                 b.el.style.removeProperty('--mx'); b.el.style.removeProperty('--my');
             });
@@ -206,29 +236,59 @@
             b.el.addEventListener('pointermove', function (e) {
                 const r = b.rect || (b.rect = b.el.getBoundingClientRect());
                 const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
-                b.tx = Math.max(-7, Math.min(7, dx * 0.16));
-                b.ty = Math.max(-5, Math.min(5, dy * 0.22));
-                wake();
+                b.tx = Math.max(-9, Math.min(9, dx * 0.2));
+                b.ty = Math.max(-6, Math.min(6, dy * 0.28));
             });
-            b.el.addEventListener('pointerleave', function () { b.hover = false; b.tx = 0; b.ty = 0; b.rect = null; wake(); });
-            b.el.addEventListener('pointerdown', function () { b.vy += 2.2; wake(); });
+            b.el.addEventListener('pointerleave', function () { b.hover = false; b.tx = 0; b.ty = 0; b.rect = null; });
+            b.el.addEventListener('pointerdown', function () { b.vy += 2.6; });
         }
 
-        watchAll();
+        watchAll(true);
 
-        /* the light behind the page */
-        const light = document.createElement('div');
-        light.className = 'af-light';
-        light.setAttribute('aria-hidden', 'true');
-        document.body.prepend(light);
+        /* section headings sit on a slightly deeper layer, so the page has depth as you scroll */
+        const layers = [];
+        document.querySelectorAll('h2, .section-title, .section-sub, .eyebrow').forEach(function (el) {
+            if (el.closest('[data-af~="surface"], ' + SKIP) || layers.length > 40) return;
+            layers.push({ el: el, depth: el.matches('.section-sub') ? 0.035 : el.matches('.eyebrow') ? 0.09 : 0.06, cur: 0 });
+        });
+
+        /* the opening headline and the hero's picture/video lean a little with the cursor */
+        const hero = [];
+        const h1 = document.querySelector('h1');
+        if (h1 && finePointer) {
+            hero.push({ el: h1, f: -10, x: 0, y: 0, vx: 0, vy: 0 });
+            const media = document.querySelector('.hero video, .hero img, .hero-video, .hero [data-af~="surface"]');
+            if (media && !media.closest('.header-wrapper')) hero.push({ el: media.closest('[data-af~="surface"]') || media, f: 14, x: 0, y: 0, vx: 0, vy: 0, skipTranslate: true });
+        }
+
+        /* two lights behind the page: a white one that follows the cursor,
+           and a wide green aura that drifts around on its own */
+        function makeLight(cls) {
+            const d = document.createElement('div');
+            d.className = cls;
+            d.setAttribute('aria-hidden', 'true');
+            document.body.prepend(d);
+            return d;
+        }
+        const light = makeLight('af-light');
+        const aura = makeLight('af-aura');
         const L = { x: innerWidth * 0.7, y: innerHeight * 0.3, vx: 0, vy: 0, tx: innerWidth * 0.7, ty: innerHeight * 0.3, seen: false };
+        const A = { x: innerWidth * 0.2, y: innerHeight * 0.7, vx: 0, vy: 0 };
+        let px = innerWidth / 2, py = innerHeight / 2;
         if (finePointer) {
-            window.addEventListener('pointermove', function (e) { L.tx = e.clientX; L.ty = e.clientY; L.seen = true; wake(); }, { passive: true });
+            window.addEventListener('pointermove', function (e) { L.tx = px = e.clientX; L.ty = py = e.clientY; L.seen = true; }, { passive: true });
         }
 
-        /* header: settles smaller once you scroll */
+        /* the brand box at the top: its aura follows the cursor around its edge */
         const header = document.querySelector('.header-container');
-        const H = { y: 0, vy: 0 };
+        const H = { x: 0, y: 0, vx: 0, vy: 0 };
+        if (header && finePointer) {
+            header.addEventListener('pointermove', function (e) {
+                const r = header.getBoundingClientRect();
+                header.style.setProperty('--hx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+            });
+            header.addEventListener('pointerleave', function () { header.style.removeProperty('--hx'); });
+        }
 
         /* scrolling pushes the cards, like a wake */
         let lastY = scrollY, scrollV = 0;
@@ -237,7 +297,6 @@
             scrollV += y - lastY;
             lastY = y;
             document.documentElement.classList.toggle('af-scrolled', y > 40);
-            wake();
         }, { passive: true });
 
         /* ---------- the one loop ---------- */
@@ -251,37 +310,51 @@
             b.x += b.vx * dt;
             b.y += b.vy * dt;
         }
+        function clamp(v, a) { return v < -a ? -a : v > a ? a : v; }
 
         function tick(now) {
             const dt = Math.min(2.5, (now - last) / 16.667);   // in 60fps frames, so a slow phone doesn't explode
             last = now;
             const kick = scrollV;
             scrollV = 0;
-            let busy = false;
+            const h = vh();
+            // read first, write after: measuring between writes makes the browser redo layout
+            for (let i = 0; i < layers.length; i++) layers[i].r = layers[i].el.getBoundingClientRect();
 
             for (let i = 0; i < surfaces.length; i++) {
                 const b = surfaces[i];
-                if (b.still || !b.visible) continue;
-                // the slow bob: two sine waves at odd periods, so it never looks looped
-                const bob = Math.sin(now * b.w1 + b.p1) * b.amp + Math.sin(now * b.w2 + b.p2) * b.amp * 0.45;
-                const drift = Math.sin(now * b.w2 * 0.7 + b.p1) * b.amp * 0.35;
-                b.vy += Math.max(-3, Math.min(3, kick * 0.045 * b.depth));
-                spring(b, drift, bob + (b.hover ? -5 : 0), 0.022, 0.16, dt);
-                b.y = Math.max(-16, Math.min(16, b.y));
-                const r = Math.max(-0.5, Math.min(0.5, b.vy * 0.06));
+                if (b.still || b.waiting) continue;
+                if (!b.visible && !b.riseAt) continue;
+                if (b.riseAt) {
+                    if (now < b.riseAt) continue;
+                    // rising: a softer spring, so it glides up and settles with a tiny overshoot
+                    spring(b, 0, 0, 0.03, 0.2, dt);
+                    const o = Math.max(0, Math.min(1, 1 - b.y / 60));
+                    b.el.style.opacity = o > 0.995 ? '' : o.toFixed(3);
+                    if (Math.abs(b.y) < 0.6 && Math.abs(b.vy) < 0.05) { b.riseAt = 0; b.el.style.opacity = ''; }
+                } else {
+                    // the slow bob: two sine waves at odd periods, so it never looks looped
+                    const bob = Math.sin(now * b.w1 + b.p1) * b.amp + Math.sin(now * b.w2 + b.p2) * b.amp * 0.5;
+                    const drift = Math.sin(now * b.w2 * 0.7 + b.p1) * b.amp * 0.6;
+                    b.vy += clamp(kick * 0.06 * b.depth, 4);
+                    spring(b, drift, bob + (b.hover ? -7 : 0), 0.022, 0.15, dt);
+                    b.y = clamp(b.y, 22);
+                }
+                // tilt (cursor) + a little sway from the bob and the scroll
+                b.rx = (b.rx || 0) + (((b.tiltX || 0) - b.vy * 0.25) - (b.rx || 0)) * 0.12 * dt;
+                b.ry = (b.ry || 0) + (((b.tiltY || 0) + b.vx * 0.3) - (b.ry || 0)) * 0.12 * dt;
+                const ang = Math.sqrt(b.rx * b.rx + b.ry * b.ry);
                 b.el.style.translate = b.x.toFixed(2) + 'px ' + b.y.toFixed(2) + 'px';
-                b.el.style.rotate = Math.abs(r) < 0.01 ? '' : r.toFixed(3) + 'deg';
-                busy = true;   // cards are always gently moving while on screen
+                b.el.style.rotate = ang < 0.02 ? '' : (b.rx / ang).toFixed(3) + ' ' + (b.ry / ang).toFixed(3) + ' 0 ' + ang.toFixed(3) + 'deg';
             }
 
             for (let i = 0; i < buttons.length; i++) {
                 const b = buttons[i];
                 if (!b.visible) continue;
-                spring(b, b.tx, b.ty, 0.09, 0.32, dt);
+                spring(b, b.tx, b.ty, 0.09, 0.3, dt);
                 const moving = Math.abs(b.x) + Math.abs(b.y) + Math.abs(b.vx) + Math.abs(b.vy) > 0.02;
                 if (moving || b.hover) {
                     b.el.style.translate = b.x.toFixed(2) + 'px ' + b.y.toFixed(2) + 'px';
-                    busy = true;
                     b.rested = false;
                 } else if (!b.rested) {
                     b.x = b.y = b.vx = b.vy = 0;
@@ -290,27 +363,51 @@
                 }
             }
 
-            // light: follows the cursor lazily; with no cursor it wanders on its own
+            // headings drift at their own depth as they pass through the screen
+            for (let i = 0; i < layers.length; i++) {
+                const l = layers[i];
+                const r = l.r;
+                if (r.bottom < -100 || r.top > h + 100) continue;
+                const off = (r.top + r.height / 2 - l.cur - h / 2) * l.depth;
+                l.cur += (off - l.cur) * 0.2 * dt;
+                l.el.style.translate = '0 ' + l.cur.toFixed(2) + 'px';
+            }
+
+            // hero lean
+            const nx = (px / innerWidth) - 0.5, ny = (py / innerHeight) - 0.5;
+            for (let i = 0; i < hero.length; i++) {
+                const o = hero[i];
+                spring(o, nx * o.f, ny * o.f * 0.6, 0.03, 0.22, dt);
+                if (!o.skipTranslate) o.el.style.translate = o.x.toFixed(2) + 'px ' + o.y.toFixed(2) + 'px';
+                else if (o.el.__afBody) { o.el.__afBody.tiltY = (o.el.__afBody.hover ? o.el.__afBody.tiltY : o.x * 0.25); o.el.__afBody.tiltX = o.el.__afBody.hover ? o.el.__afBody.tiltX : -o.y * 0.25; }
+            }
+
+            // lights
             if (!L.seen) {
                 L.tx = innerWidth * (0.55 + 0.25 * Math.sin(now * 0.00012));
                 L.ty = innerHeight * (0.35 + 0.2 * Math.sin(now * 0.00009 + 1.3));
             }
             spring(L, L.tx, L.ty, 0.012, 0.14, dt);
             light.style.translate = L.x.toFixed(1) + 'px ' + L.y.toFixed(1) + 'px';
+            spring(A,
+                innerWidth * (0.5 + 0.42 * Math.sin(now * 0.000071)) + (L.x - innerWidth / 2) * 0.15,
+                innerHeight * (0.55 + 0.35 * Math.sin(now * 0.000053 + 2.1)) - kick * 0.5,
+                0.004, 0.09, dt);
+            aura.style.translate = A.x.toFixed(1) + 'px ' + A.y.toFixed(1) + 'px';
 
+            // brand box: bobs, and dips with the scroll
             if (header) {
-                H.vy += Math.max(-2, Math.min(2, kick * 0.03));
-                spring(H, 0, Math.sin(now * 0.0007) * 1.2, 0.03, 0.2, dt);
+                H.vy += clamp(kick * 0.04, 2.5);
+                spring(H, 0, Math.sin(now * 0.0008) * 2, 0.03, 0.18, dt);
                 header.style.translate = '0 ' + H.y.toFixed(2) + 'px';
+                header.style.rotate = clamp(H.vy * 0.25, 1.2).toFixed(3) + 'deg';
             }
 
-            busy = true;   // the light and header keep breathing while the tab is open
-            if (busy && !document.hidden) requestAnimationFrame(tick); else running = false;
+            if (!document.hidden) requestAnimationFrame(tick); else running = false;
         }
 
-        /* ---------- 5. the one entrance: the top headline settles in ---------- */
+        /* ---------- the one entrance: the top of the page settles in ---------- */
         (function intro() {
-            const h1 = document.querySelector('main h1, .hero h1, h1');
             if (!h1 || scrollY > 200) return;
             const group = [h1];
             let sib = h1.nextElementSibling, n = 0;
@@ -321,10 +418,16 @@
                 group.forEach(function (el, i) {
                     if (!el.animate) return;
                     el.animate([
-                        { opacity: 0, translate: '0 18px', filter: 'blur(6px)' },
-                        { opacity: 1, translate: '0 0', filter: 'blur(0)' }
-                    ], { duration: 900, delay: 60 + i * 90, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+                        { opacity: 0, transform: 'translateY(26px)', filter: 'blur(8px)' },
+                        { opacity: 1, transform: 'none', filter: 'blur(0)' }
+                    ], { duration: 1100, delay: 80 + i * 110, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
                 });
+                if (header && header.animate) {
+                    header.animate([
+                        { opacity: 0, transform: 'translateY(-18px) scale(.94)' },
+                        { opacity: 1, transform: 'none' }
+                    ], { duration: 900, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+                }
             }
             // prerendered pages wait until they're actually shown
             if (document.prerendering) document.addEventListener('prerenderingchange', play, { once: true });

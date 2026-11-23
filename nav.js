@@ -171,7 +171,7 @@ document.getElementById('site-nav').innerHTML =
     '<div class="header-wrapper">' +
         '<label for="nav-toggle" class="header-container" title="Open menu">' +
             '<span class="brand-box">' +
-                '<span class="brand-name">ABSTRACTION SOLUTIONS</span>' +
+                '<span class="brand-name">Abstraction Solutions</span>' +
                 '<img src="' + BASE + 'abstraction_solutions.jpg" alt="Abstraction Solutions logo">' +
             '</span>' +
         '</label>' +
