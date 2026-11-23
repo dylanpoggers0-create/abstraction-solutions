@@ -178,7 +178,7 @@ document.getElementById('site-nav').innerHTML =
     '</div>' +
 
     // Menu tab on the left edge — also opens the nav
-    '<label for="nav-toggle" class="side-tab" title="Open menu">' + svg('menu') + '<span>MENU</span></label>' +
+    '<label for="nav-toggle" class="side-tab" title="Open menu">' + svg('menu') + '<span>Menu</span></label>' +
 
     // the side nav itself
     '<aside class="side-nav">' +

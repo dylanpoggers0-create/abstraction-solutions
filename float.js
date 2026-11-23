@@ -14,6 +14,7 @@
    5. The top headline settles in once when the page opens; cards further
       down rise into place as you reach them; headings sit on a deeper layer.
    6. The brand mark at the top has a slow green aura behind the logo (style.css).
+   7. Every few seconds the title's letters flicker through other tech typefaces.
 
    Nothing here changes text or layout. Visitors with "reduce motion" on get
    the new look (step 1) with no movement at all.
@@ -435,7 +436,79 @@
             // prerendered pages wait until they're actually shown
             if (document.prerendering) document.addEventListener('prerenderingchange', play, { once: true });
             else play();
+            if (name) flicker(name);
         })();
+
+        /* ---------- 7. every few seconds the title's letters flicker through other tech typefaces ----------
+           Each letter starts at a slightly different moment, runs at its own speed through 2-5
+           random faces, then lands back on Unbounded. Every letter keeps its usual width, so the
+           word itself never shifts about. Hovering the title sets one off too. */
+        function flicker(name) {
+            const FACES = [['G Audiowide', 0.92], ['G Chakra', 1.08], ['G MajorMono', 0.9], ['G Michroma', 0.78],
+                           ['G Orbitron', 0.92], ['G Silkscreen', 0.82], ['G SpaceMono', 0.96], ['G VT323', 1.32]];
+            const chars = Array.prototype.slice.call(name.querySelectorAll('.af-ch'));
+            let busy = false;
+
+            function lockWidths() {
+                chars.forEach(function (ch) { ch.classList.remove('af-fixed'); ch.style.width = ''; ch.style.height = ''; ch.style.lineHeight = ''; });
+                chars.forEach(function (ch) {
+                    const r = ch.getBoundingClientRect();
+                    ch.style.width = r.width + 'px';
+                    ch.style.height = r.height + 'px';
+                    ch.style.lineHeight = r.height + 'px';
+                    ch.classList.add('af-fixed');
+                });
+            }
+
+            function wave() {
+                if (busy || document.hidden) return;
+                busy = true;
+                let left = chars.length;
+                chars.forEach(function (ch, i) {
+                    const steps = 2 + Math.floor(Math.random() * 4);
+                    const pace = 45 + Math.random() * 95;            // this letter's own speed
+                    let k = 0, prev = -1;
+                    setTimeout(function step() {
+                        if (k < steps) {
+                            let f;
+                            do { f = Math.floor(Math.random() * FACES.length); } while (f === prev);
+                            prev = f;
+                            ch.style.fontFamily = '"' + FACES[f][0] + '", monospace';
+                            ch.style.fontSize = FACES[f][1] + 'em';
+                            k++;
+                            setTimeout(step, pace * (0.6 + Math.random() * 0.9));
+                        } else {
+                            ch.style.fontFamily = '';
+                            ch.style.fontSize = '';
+                            if (--left === 0) busy = false;
+                        }
+                    }, i * 32 + Math.random() * 280);                // slightly off from its neighbours
+                });
+            }
+
+            function every() {
+                setTimeout(function () { wave(); every(); }, 5200 + Math.random() * 3600);
+            }
+
+            Promise.all([document.fonts.load('1em "Unbounded"')].concat(FACES.map(function (f) {
+                return document.fonts.load('1em "' + f[0] + '"', 'AbstractionSolutions');
+            }))).then(function () {
+                setTimeout(function () {
+                    lockWidths();
+                    wave();
+                    every();
+                }, 2300);                                            // after the letters have risen in
+                let rt = null;
+                window.addEventListener('resize', function () {
+                    clearTimeout(rt);
+                    rt = setTimeout(function () { if (!busy) lockWidths(); }, 200);
+                });
+                let lastHover = 0;
+                header.addEventListener('pointerenter', function () {
+                    if (Date.now() - lastHover > 1500) { lastHover = Date.now(); wave(); }
+                });
+            }).catch(function () {});
+        }
 
         wake();
     }

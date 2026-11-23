@@ -30,7 +30,7 @@
         /* HERO: headline + buttons on the left, video on the right (stacked on phones) */
         .hero-split {
             display: grid;
-            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.55fr);
+            grid-template-columns: minmax(0, 1fr);
             gap: 44px;
             align-items: center;
             max-width: 1440px;
@@ -47,10 +47,13 @@
         }
 
         .hero-text h1 {
-            font-size: 3.2rem;
-            line-height: 1.12;
-            margin: 14px 0 18px;
+            font-size: clamp(3.4rem, 7.4vw, 7.2rem);
+            line-height: 0.98;
+            margin: 16px 0 24px;
         }
+
+        .hero-text { max-width: 860px; }
+        .hero-text p { font-size: 1.3rem; max-width: 600px; }
 
         .hero-text h1 span {
             color: var(--green);
@@ -154,8 +157,10 @@
             }
 
             .hero-text h1 {
-                font-size: 2.4rem;
+                font-size: clamp(2.8rem, 13vw, 4rem);
             }
+
+            .hero-text p { font-size: 1.12rem; }
 
             .proof {
                 padding: 0 20px 0 40px;
@@ -620,7 +625,7 @@
     <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a></nav></noscript>
     <script src="nav.js"></script>
 
-    <!-- HERO: what we do + the two main buttons, next to the video -->
+    <!-- HERO: what we do + the main buttons, over the background loop -->
     <section class="hero-split" id="home">
         <div class="hero-text">
             <div class="eyebrow">AI EDUCATION &amp; CUSTOM AI TOOLS</div>
@@ -631,14 +636,6 @@
                 <a class="pill" href="order.html">Start a project</a>
                 <a class="pill" href="services/education.html">Learn AI in 60 seconds</a>
             </div>
-        </div>
-
-        <div class="video-container">
-            <video id="heroVideo" playsinline preload="none" poster="ad-thumbnail.jpg" data-blurhash="L63SkJkBD8aft$fjQ;afICayyBj[">
-                <source src="ad1.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <button id="audioToggle" class="audio-btn" type="button">🔇 Unmute</button>
         </div>
     </section>
 
@@ -859,7 +856,6 @@
     <!-- VIDEO SOUND CONTROL
          1st play: tries to play WITH sound.
          After that: loops forever on mute, unless the visitor presses Unmute. -->
-    <script src="index.page-4.js"></script>
 
     <!-- QUOTE ENGINE: sends the text to the Python server and shows the answer -->
     <script src="index.page-5.js"></script>

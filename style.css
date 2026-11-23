@@ -966,11 +966,81 @@ p, li { text-wrap: pretty; }
     will-change: translate;
 }
 
+/* ---------- the menu button: a white pill pinned top right ---------- */
 .side-tab {
-    background-color: rgba(18, 20, 18, 0.6) !important;
-    border-color: var(--rim) !important;
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
+    left: auto !important;
+    right: 28px;
+    top: 30px !important;
+    transform: none !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    padding: 13px 20px 13px 16px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background-color: var(--paper) !important;
+    color: #050705 !important;
+    box-shadow: 0 1px 0 #fff inset,
+                0 18px 40px -18px rgba(0, 0, 0, 0.9),
+                0 0 40px -6px rgba(126, 233, 111, 0.35) !important;
+    corner-shape: round;   /* a squircle at full radius looks boxy */
+    transition: background-color 0.35s ease, box-shadow 0.45s ease, opacity 0.2s ease,
+                scale 0.45s cubic-bezier(.34, 1.56, .64, 1) !important;
+}
+.side-tab span {
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+    font-size: 0.98rem !important;
+    font-weight: 620 !important;
+    letter-spacing: 0 !important;
+}
+.side-tab .icon { width: 20px !important; height: 20px !important; stroke-width: 2.4; }
+.side-tab .icon line, .side-tab .icon path { transition: translate 0.4s cubic-bezier(.34, 1.56, .64, 1); }
+.side-tab:hover {
+    background-color: var(--green) !important;
+    scale: 1.06;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
+                0 18px 40px -18px rgba(0, 0, 0, 0.9),
+                0 0 0 8px rgba(126, 233, 111, 0.16),
+                0 0 54px -4px rgba(126, 233, 111, 0.6) !important;
+}
+.side-tab:active { scale: 0.96; }
+/* phones: a round button bottom-left, where a thumb reaches it */
+@media (max-width: 700px) {
+    .side-tab {
+        top: auto !important;
+        right: auto;
+        left: 16px !important;
+        bottom: calc(18px + env(safe-area-inset-bottom));
+        padding: 15px !important;
+    }
+    .side-tab span { display: none; }
+    .side-tab .icon { width: 22px !important; height: 22px !important; }
+}
+
+/* ---------- more white: the project highlight on the home page is a white card ---------- */
+.proof .stat-carousel .stat[data-af] {
+    background-color: transparent !important;
+    background-image: linear-gradient(180deg, #ffffff, #eef3ed) !important;
+    border-color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 30px 70px -36px rgba(126, 233, 111, 0.55), 0 20px 40px -26px rgba(0, 0, 0, 0.9) !important;
+}
+.proof .stat-carousel .stat strong { color: #17702b !important; }
+.proof .stat-carousel .stat span { color: #2d3830 !important; }
+.proof .stat-dots button { border-color: var(--paper); }
+.proof .stat-dots button[aria-current="true"] { background: var(--paper); }
+
+/* ---------- the title's flicker fonts (cut down to just its letters, about 20 KB in all) ---------- */
+@font-face { font-family: "G Audiowide"; src: url("fonts/glitch/audiowide.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "G Chakra"; src: url("fonts/glitch/chakra-petch.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "G MajorMono"; src: url("fonts/glitch/major-mono-display.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "G Michroma"; src: url("fonts/glitch/michroma.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "G Orbitron"; src: url("fonts/glitch/orbitron.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "G Silkscreen"; src: url("fonts/glitch/silkscreen.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "G SpaceMono"; src: url("fonts/glitch/space-mono.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "G VT323"; src: url("fonts/glitch/vt323.woff2") format("woff2"); font-display: block; }
+.brand-name .af-ch.af-fixed {
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* links get a calm underline that grows instead of jumping */
