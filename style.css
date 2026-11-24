@@ -1084,29 +1084,48 @@ main a:not([data-af]):not(.pill):not([class*="btn"]):hover,
     [data-af] { will-change: auto; }
 }
 
-/* ---------- more white: the footer is a white sheet the page rests on ---------- */
+/* ---------- the footer: a black glass box with a glowing white edge that turns green ----------
+   The light inside follows the cursor (feel.js sets --fx / --fy), like the cards. */
 footer.site-footer {
     max-width: 1180px;
-    margin-top: 90px;
+    margin: 90px auto 28px;
     padding: 48px 48px 34px;
-    border: 0;
-    border-radius: 32px 32px 0 0;
-    background: #f5f8f4;
-    color: #3f4a42;
-    box-shadow: 0 -40px 90px -50px rgba(126, 233, 111, 0.45), 0 -1px 0 rgba(255, 255, 255, 0.9),
-                0 260px 0 0 #f5f8f4;   /* carries the white down past any space under the footer */
+    border: 1px solid rgba(245, 248, 244, 0.55);
+    border-radius: 28px;
+    background-color: #000000;
+    background-image:
+        radial-gradient(600px circle at var(--fx, 50%) var(--fy, -40%), rgba(255, 255, 255, 0.09), transparent 45%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015) 40%, rgba(255, 255, 255, 0));
+    color: var(--text-muted, #c4ccc5);
+    box-shadow: 0 0 0 1px rgba(245, 248, 244, 0.06),
+                0 0 22px rgba(245, 248, 244, 0.22),
+                0 0 60px rgba(245, 248, 244, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: border-color 0.6s ease, box-shadow 0.6s ease;
 }
-footer.site-footer .f-brand { color: #050705; }
+footer.site-footer:hover,
+footer.site-footer:focus-within {
+    border-color: rgba(126, 233, 111, 0.85);
+    box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.12),
+                0 0 26px rgba(126, 233, 111, 0.4),
+                0 0 70px rgba(126, 233, 111, 0.14),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+footer.site-footer .f-brand { color: #ffffff; }
 footer.site-footer .f-brand img { border-radius: 50%; }
-footer.site-footer h4 { color: #1d7a31; }
-footer.site-footer a { color: #0c120d; }
-footer.site-footer a:hover { color: #1d7a31; }
+footer.site-footer h4 { color: var(--green); }
+footer.site-footer a { color: #dfe7df; }
+footer.site-footer a:hover { color: var(--green); }
 footer.site-footer .f-copy,
-footer.site-footer .f-news { border-color: #d5ddd5; }
-footer.site-footer .f-admin { color: #5c675e; }
-footer.site-footer svg { color: #0c120d; }
+footer.site-footer .f-news { border-color: rgba(245, 248, 244, 0.12); }
+/* bottom row: the copyright line and Admin sit on one line, vertically centred */
+footer.site-footer .f-copy { align-items: center; line-height: 1.4; }
+footer.site-footer .f-copy a.f-admin { padding: 0; line-height: 1.4; color: var(--text-muted, #9aa69c); }
+footer.site-footer .f-copy a.f-admin:hover { color: var(--green); }
+footer.site-footer svg { color: #dfe7df; }
 @media (max-width: 600px) {
-    footer.site-footer { padding: 36px 24px 28px 44px; border-radius: 24px 24px 0 0; }
+    /* extra room at the bottom so the round Menu and chat buttons never cover the last line */
+    footer.site-footer { margin: 70px 12px 16px; padding: 36px 22px 92px 40px; border-radius: 22px; }
 }
 
 hr { border-top-color: rgba(245, 248, 244, 0.2) !important; }

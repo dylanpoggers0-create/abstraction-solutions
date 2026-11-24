@@ -146,6 +146,15 @@
         });
     }
 
+    /* ---------- the footer's gloss follows the cursor ---------- */
+    if (fine) document.addEventListener('pointermove', function (e) {
+        const f = e.target.closest && e.target.closest('footer.site-footer');
+        if (!f) return;
+        const r = f.getBoundingClientRect();
+        f.style.setProperty('--fx', (e.clientX - r.left) + 'px');
+        f.style.setProperty('--fy', (e.clientY - r.top) + 'px');
+    }, { passive: true });
+
     /* ---------- moving in arcs + follow through: menu links swing in one by one ---------- */
     ready(function () {
         document.querySelectorAll('.side-links a, .side-links small').forEach(function (a, i) { a.style.setProperty('--n', i); });
