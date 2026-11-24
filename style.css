@@ -846,6 +846,8 @@ p, li { text-wrap: pretty; }
 }
 
 /* ---------- brand mark at the top: large, not sticky, scrolls away with the page ---------- */
+/* Unbounded is cut down to the letters it shows ("Abstraction Solutions", "Ask Gideon!"): 5 KB instead of 51 KB.
+   Any other letter falls back to Schibsted Grotesk. To use it for new text, re-cut it with pyftsubset. */
 @font-face {
     font-family: "Unbounded";
     src: url("fonts/unbounded-latin-wght-normal.woff2") format("woff2");
@@ -1324,4 +1326,41 @@ af-w { display: inline-block; }
     .gideon-dots i { animation: g-dot-calm 1.2s linear infinite; }
     @keyframes g-dot-calm { 0%, 60%, 100% { background: rgba(245, 248, 244, 0.35); } 25% { background: var(--green); } }
     .g-word.g-in { animation: none; }
+}
+
+/* ---------- the home page's main button: white from the first paint, green on hover ----------
+   Every few seconds it gives a small hop (squash, stretch, settle) and a light sweeps across it.
+   It's white straight from the CSS, so it never waits on JavaScript. */
+a.pill.cta-main[class] {
+    background-color: var(--paper) !important;
+    background-image: linear-gradient(110deg, transparent 38%, rgba(126, 233, 111, 0.45) 50%, transparent 62%) !important;
+    background-size: 260% 100% !important;
+    background-position: 130% 0 !important;
+    background-repeat: no-repeat !important;
+    border-color: var(--paper) !important;
+    color: #000000 !important;
+    font-weight: 700;
+    box-shadow: 0 1px 0 #ffffff inset, 0 18px 40px -18px rgba(245, 248, 244, 0.45), 0 0 0 0 rgba(126, 233, 111, 0) !important;
+    animation: cta-hop 6s cubic-bezier(.3, .7, .4, 1) 2.4s infinite, cta-sweep 6s ease-in-out 2.4s infinite;
+}
+a.pill.cta-main[class]:hover,
+a.pill.cta-main[class]:focus-visible {
+    background-color: var(--green) !important;
+    border-color: var(--green) !important;
+    color: #000000 !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 20px 44px -16px rgba(126, 233, 111, 0.7), 0 0 0 6px rgba(126, 233, 111, 0.16) !important;
+    animation-play-state: paused;
+}
+@keyframes cta-hop {
+    0%, 12%, 100% { transform: none; }
+    3% { transform: translateY(1px) scale(1.04, 0.94); }
+    6% { transform: translateY(-7px) scale(0.97, 1.05); }
+    9% { transform: translateY(0) scale(1.02, 0.98); }
+}
+@keyframes cta-sweep {
+    0%, 4% { background-position: 130% 0; }
+    18%, 100% { background-position: -30% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    a.pill.cta-main[class] { animation: none; }
 }

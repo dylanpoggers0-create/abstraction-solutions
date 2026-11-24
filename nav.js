@@ -24,7 +24,7 @@ if (location.protocol === 'http:' && /(^|\.)abstraction-solutions\.com$/.test(lo
 
    Each page needs, right after <body>:
        <div id="site-nav"></div>
-       <script src="nav.js"></script>
+       <script src="nav.min.js"></script>   (the condensed copy; tools/minify.py builds it from this file)
    and says which page it is on the <body> tag:
        <body data-page="services">
 
@@ -80,7 +80,7 @@ const PAGES = [
 // Where the site's files are, taken from this script's own address. It's checked before use, because the menu and
 // footer are built as HTML text: an address with quotes or angle brackets in it can never become markup.
 const BASE = (function () {
-    const base = document.currentScript.src.replace(/nav\.js.*$/, '');
+    const base = document.currentScript.src.replace(/nav(\.min)?\.js.*$/, '');   // nav.js or its condensed copy nav.min.js
     return /^https?:\/\/[^\s"'<>`]+\/$/.test(base) ? base : '/';
 })();
 
@@ -172,7 +172,7 @@ document.getElementById('site-nav').innerHTML =
         '<a href="' + BASE + '" class="header-container" title="Home" aria-label="Abstraction Solutions home">' +
             '<span class="brand-box">' +
                 '<span class="brand-name">Abstraction Solutions</span>' +
-                '<img src="' + BASE + 'abstraction_solutions.jpg" alt="Abstraction Solutions logo">' +
+                '<img src="' + BASE + 'logo-small.jpg" alt="Abstraction Solutions logo">' +
             '</span>' +
         '</a>' +
     '</div>' +
@@ -184,7 +184,7 @@ document.getElementById('site-nav').innerHTML =
     '<aside class="side-nav">' +
         '<div class="side-nav-top">' +
             '<div class="side-brand">' +
-                '<img src="' + BASE + 'abstraction_solutions.jpg" alt="">' +
+                '<img src="' + BASE + 'logo-small.jpg" alt="">' +
                 '<span>ABSTRACTION<br>SOLUTIONS</span>' +
             '</div>' +
             '<label for="nav-toggle" class="close-btn" title="Close menu">' + svg('close') + '</label>' +
@@ -341,7 +341,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
         footer.innerHTML =
             signup() +
             '<div>' +
-                '<div class="f-brand"><img src="' + BASE + 'abstraction_solutions.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
+                '<div class="f-brand"><img src="' + BASE + 'logo-small.jpg" alt="">ABSTRACTION SOLUTIONS</div>' +
                 '<p>AI made simple: plain-language AI education, automations and custom AI tools.</p>' +
             '</div>' +
             '<div><h4>EXPLORE</h4><ul class="f-explore">' +

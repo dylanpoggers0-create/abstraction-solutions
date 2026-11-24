@@ -1,0 +1,48 @@
+# Rebuilds the condensed copies (style.min.css, nav.min.js, ux.min.js, float.min.js, feel.min.js, gideon.min.js)
+# whenever one of the readable files changes, commits them, and republishes the site.
+# You only ever edit the readable files; this keeps the .min copies in step.
+name: Condensed files
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'style.css'
+      - 'nav.js'
+      - 'ux.js'
+      - 'float.js'
+      - 'feel.js'
+      - 'gideon.js'
+      - 'tools/minify.py'
+      - '.github/workflows/minify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # to commit the rebuilt files
+  pages: write      # to republish the site afterwards
+
+concurrency:
+  group: minify
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: python3 tools/minify.py
+      - name: Commit the rebuilt files and republish the site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add style.min.css nav.min.js ux.min.js float.min.js feel.min.js gideon.min.js
+          if git diff --cached --quiet; then echo "Condensed files already up to date"; exit 0; fi
+          git commit -m "Rebuild condensed files"
+          git pull --rebase
+          git push
+          gh api -X POST "repos/${{ github.repository }}/pages/builds"

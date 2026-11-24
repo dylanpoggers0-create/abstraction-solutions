@@ -19,11 +19,11 @@
     <meta name="twitter:image" content="https://abstraction-solutions.com/og-image.jpg">
 
     <!-- Favicon Links -->
-    <link rel="icon" type="image/jpeg" href="abstraction_solutions.jpg">
-    <link rel="shortcut icon" href="abstraction_solutions.jpg">
+    <link rel="icon" type="image/jpeg" href="logo-small.jpg">
+    <link rel="shortcut icon" href="logo-small.jpg">
 
     <!-- Shared styles (header, side nav, pills, footer...) -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
 
     <!-- Styles only the home page uses -->
     <style>
@@ -92,17 +92,6 @@
             color: var(--green);
             background-color: black;
             box-shadow: 0 0 20px var(--green-dim);
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            overflow: hidden;
-            background: black;
-            border-radius: 20px;
-            border: 1px solid var(--line);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px var(--green-soft);
         }
 
         video {
@@ -183,28 +172,6 @@
             }
         }
 
-        /* UNMUTE BUTTON (bottom-right of the video) */
-        .audio-btn {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            z-index: 10;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: 1px solid white;
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            transition: all 0.2s ease;
-        }
-
-        .audio-btn:hover {
-            background-color: white;
-            color: black;
-        }
-
         .newsletter {
             padding: 40px 24px 10px;
         }
@@ -212,15 +179,6 @@
         .contact {
             text-align: center;
             padding-bottom: 60px;
-        }
-
-        @media (max-width: 600px) {
-            .audio-btn {
-                bottom: 10px;
-                right: 10px;
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
         }
 
         /* QUOTE SECTION */
@@ -639,7 +597,7 @@
     <!-- The header, Menu tab and side nav are built here by nav.js -->
     <div id="site-nav"></div>
     <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a></nav></noscript>
-    <script src="nav.js"></script>
+    <script src="nav.min.js"></script>
 
     <!-- HERO: what we do + the main buttons, over the background loop -->
     <section class="hero-split" id="home">
@@ -648,7 +606,7 @@
             <h1>AI Made <span>Simple.</span></h1>
             <p>Plain-English AI training and custom tools for small businesses and nonprofits. Get a free instant quote, then handle the rest by email.</p>
             <div class="pill-container">
-                <a class="pill primary" href="#quote">Get a free quote</a>
+                <a class="pill primary cta-main" href="#quote">Get a free quote</a>
                 <a class="pill" href="order.html">Start a project</a>
                 <a class="pill" href="services/education.html">Learn AI in 60 seconds</a>
             </div>

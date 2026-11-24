@@ -12,7 +12,7 @@
 (function () {
     'use strict';
     const UX = window.UX = window.UX || {};
-    const BASE = (document.currentScript && document.currentScript.src || '').replace(/ux\.js.*$/, '') || '/';
+    const BASE = (document.currentScript && document.currentScript.src || '').replace(/ux(\.min)?\.js.*$/, '') || '/';
     const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
     const MOD = IS_MAC ? '⌘' : 'Ctrl';
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
