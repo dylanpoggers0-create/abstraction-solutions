@@ -29,7 +29,7 @@
     const isAdmin = /\/admin(\.html)?$/.test(location.pathname);   // a work screen: styled, but kept still
 
     /* ---------- 1. tagging ---------- */
-    const SKIP = '.side-nav, .side-tab, .header-wrapper, video, iframe, svg, canvas, [data-af-skip]';
+    const SKIP = '.side-nav, .side-tab, .header-wrapper, .chat-box, video, iframe, svg, canvas, [data-af-skip]';   // the chat window keeps its own solid look
 
     function rgba(str) {
         const m = str && str.match(/rgba?\(([^)]+)\)/);
@@ -246,6 +246,18 @@
         }
 
         watchAll(true);
+
+        // the chat button is added by nav.js, sometimes after this runs: give it the same spring as the others
+        function adoptLate() {
+            document.querySelectorAll('.chat-btn').forEach(function (el) {
+                if (el.__afBody || buttons.some(function (b) { return b.el === el; })) return;
+                buttons.push(makeBody(el, 'btn'));
+                watchAll(false);
+            });
+        }
+        adoptLate();
+        window.addEventListener('load', adoptLate);
+        setTimeout(adoptLate, 1500);
 
         /* section headings sit on a slightly deeper layer, so the page has depth as you scroll */
         const layers = [];
@@ -561,12 +573,19 @@
                 ch.textContent = ch.dataset.c;
                 ch.style.fontFamily = '"' + FACES[f][0] + '", monospace';
                 ch.style.fontSize = FACES[f][1] + 'em';
+                fit(ch, FACES[f][1]);
+            }
+            // a wide typeface shrinks to fit its letter's slot, so it never runs into the next letter
+            function fit(ch, size) {
+                const slot = parseFloat(ch.style.width), used = ch.scrollWidth;
+                if (slot && used > slot) ch.style.fontSize = (size * slot / used * 0.96).toFixed(3) + 'em';
             }
             function setGlyph(ch, c) {
                 ch.classList.add('af-glyph');
                 ch.style.fontFamily = '';
                 ch.style.fontSize = '0.86em';
                 ch.textContent = c;
+                fit(ch, 0.86);
             }
             function pulse(ch, d) {      // each change fades in, so the flicker reads as smooth, not jumpy
                 ch.animate([{ opacity: 0.35, filter: 'blur(2px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: Math.max(60, d * 0.8), easing: 'ease-out' });

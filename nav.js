@@ -475,7 +475,9 @@ const CHAT_ON = true;
         '.chat-btn{position:fixed;right:18px;bottom:18px;z-index:250;display:flex;align-items:center;gap:8px;padding:12px 18px;' +
             'border-radius:50px;border:1px solid var(--green,#7ee96f);background:#0b100c;color:#fff;font:inherit;font-weight:bold;' +
             'cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,.6)}' +
-        '.chat-btn svg{width:20px;height:20px;stroke:var(--green,#7ee96f);fill:none;stroke-width:2}' +
+        '.chat-btn>svg{width:20px;height:20px;stroke:var(--green,#7ee96f);fill:none;stroke-width:2}.chat-btn[hidden]{display:none}' +
+        '.chat-btn{overflow:visible}.chat-btn:hover>svg,.chat-btn:focus-visible>svg{stroke:#061006}' +
+        '.chat-avatar{display:flex;width:34px;height:34px;flex:none}' +
         '.chat-box{position:fixed;right:18px;bottom:18px;z-index:260;width:360px;max-width:calc(100vw - 36px);height:520px;' +
             'max-height:calc(100vh - 36px);display:flex;flex-direction:column;background:#0b100c;border:1px solid var(--line,#1e2a20);' +
             'border-radius:18px;box-shadow:0 10px 40px rgba(0,0,0,.7);overflow:hidden}' +
@@ -504,7 +506,6 @@ const CHAT_ON = true;
         '.chat-msg.bot a{color:var(--green,#7ee96f)}' +
         '.chat-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}' +
         '.chat-head .chat-title{display:flex;flex-direction:column;line-height:1.25}' +
-        '.chat-head .chat-sub{font-weight:normal;font-size:.75rem;color:#9aa69c}' +
         '.chat-list{margin:4px 0 8px;padding-left:18px}.chat-list li{margin-bottom:6px}' +
         '.chat-list strong{color:#fff}' +
         '.chat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}' +
@@ -516,7 +517,7 @@ const CHAT_ON = true;
         '@media(max-width:600px){' +
             '.chat-btn{right:14px;bottom:14px;width:56px;height:56px;padding:0;justify-content:center;border-radius:50%}' +
             '.chat-btn .chat-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}' +
-            '.chat-btn svg{width:24px;height:24px}' +
+            '.chat-btn>svg{width:24px;height:24px}' +
             '.chat-box{inset:0;right:0;bottom:0;width:100%;max-width:none;height:100%;height:100dvh;max-height:none;' +
                 'border:0;border-radius:0;z-index:400}' +
             '.chat-head{padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));touch-action:none}' +
@@ -702,6 +703,7 @@ const CHAT_ON = true;
     btn.className = 'chat-btn';
     btn.type = 'button';
     btn.setAttribute('aria-label', 'Ask our site');
+    btn.setAttribute('data-af', 'btn accent');        // same highlight, spring and bounce as every other button (float.js, feel.js)
     btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
                     '<span class="chat-label">Ask our site</span>';
 
@@ -711,8 +713,8 @@ const CHAT_ON = true;
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-label', 'Site assistant');
     box.innerHTML =
-        '<div class="chat-head"><span class="chat-grab" aria-hidden="true"></span><span class="chat-title">Ask Abstraction Solutions' +
-            '<span class="chat-sub">Automated assistant: answers come from our website, with the page they came from</span></span>' +
+        '<div class="chat-head"><span class="chat-grab" aria-hidden="true"></span>' +
+            '<span class="chat-avatar"></span><span class="chat-title">Ask Gideon!</span>' +
             '<button type="button" aria-label="Close chat">&times;</button></div>' +
         '<div class="chat-log" aria-live="polite"></div>' +
         '<form class="chat-form">' +
@@ -763,7 +765,9 @@ const CHAT_ON = true;
         if (phone.matches) document.documentElement.style.overflow = 'hidden';   // the page behind stays still
         load().catch(function () {});
         if (!log.children.length) {
-            const hi = say('bot', 'Hi! Ask me anything about Abstraction Solutions, or tap a question:');
+            // Gideon says up front that he's automated and answers from our website
+            const hi = say('bot', 'Hi, I\'m Gideon, Abstraction Solutions\' automated assistant. I answer from our website. ' +
+                                  'Ask me anything, or tap a question:');
             const chips = el('div', 'chat-chips');
             SUGGESTIONS.forEach(function (text) {
                 const chip = el('button', 'chat-chip', text);
@@ -830,8 +834,19 @@ const CHAT_ON = true;
             return;
         }
         window.trackEvent && trackEvent('chat-question');
-        let res;
-        try { res = await answer(q); } catch (err) {
+
+        // Gideon "thinks" for 2.5 seconds: three dots hop and light up in turn while the search runs alongside
+        const G = window.Gideon;
+        const stopThinking = G ? G.thinking(m) : function () {};
+        if (avatar) avatar.think(true);
+        let res = null;
+        await Promise.all([
+            answer(q).then(function (r) { res = r; }, function () { res = null; }),
+            promptProcess()
+        ]);
+        stopThinking();
+        if (avatar) avatar.think(false);
+        if (!res) {
             m.textContent = 'The search couldn\'t load. Please refresh the page and try again.';
             return;
         }
@@ -850,7 +865,7 @@ const CHAT_ON = true;
             src.appendChild(link(BASE + 'services.html', 'Services'));
             src.appendChild(link(BASE + 'index.html#quote', 'Get a free quote'));
             m.appendChild(src);
-            log.scrollTop = log.scrollHeight;
+            await reply(m);
             return;
         }
         res.notes.forEach(function (n) {
@@ -880,7 +895,40 @@ const CHAT_ON = true;
             p.appendChild(document.createTextNode(', or email ' + EMAIL + '.'));
             m.appendChild(p);
         }
-        log.scrollTop = log.scrollHeight;
+        await reply(m);
         if (!phone.matches) input.focus();
     }
+
+    // The 2.5-second think, the JavaScript version of:
+    //     def prompt_process():
+    //         time.sleep(2.5)
+    // It runs at the same time as the search (Promise.all above), so a slow search doesn't add on top of it.
+    function promptProcess() {
+        return new Promise(function (resolve) { setTimeout(resolve, 2500); });
+    }
+
+    // Shows a finished answer one word at a time, and Gideon's mouth moves with each word.
+    function reply(m) {
+        if (!window.Gideon) { log.scrollTop = log.scrollHeight; return Promise.resolve(); }
+        return Gideon.typeOut(m, {
+            scroller: log,
+            onWord: function (w, i) { if (avatar && i % 2 === 0) avatar.talk(); }
+        }).then(function () { log.scrollTop = log.scrollHeight; });
+    }
+
+    // Gideon's face: small in the chat's header, and popping up over the button on hover (gideon.js)
+    let avatar = null;
+    function meetGideon() {
+        if (!window.Gideon || avatar) return;
+        avatar = Gideon.face(34);
+        avatar.smile(true);
+        box.querySelector('.chat-avatar').appendChild(avatar.el);
+        Gideon.attachPeek(btn);
+    }
+    if (window.Gideon) meetGideon(); else document.addEventListener('gideon-ready', meetGideon, { once: true });
+    (function () {
+        const s = document.createElement('script');
+        s.src = BASE + 'gideon.js';
+        document.head.appendChild(s);
+    })();
 })();
