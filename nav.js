@@ -210,7 +210,7 @@ document.getElementById('site-nav').innerHTML =
         '</div>' +
         '<a href="' + BASE + 'order.html#signIn" class="acct-side" data-account-open="signup">' +
             '<span class="icon-badge">' + svg('account') + '</span><span class="acct-initial" hidden></span>' +
-            '<span data-account-label>' + (ACCOUNT_LABEL === 'Sign in' ? 'Sign in or sign up' : ACCOUNT_LABEL) + '</span></a>' +
+            '<span data-account-label>' + ACCOUNT_LABEL + '</span></a>' +
         '<nav class="side-links"><small>PAGES</small>' + links + '</nav>' +
         '<div class="side-footer">© 2026 Abstraction Solutions</div>' +
     '</aside>' +

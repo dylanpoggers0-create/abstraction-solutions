@@ -50,7 +50,7 @@
         document.querySelectorAll('[data-account-open]').forEach(function (b) {
             const text = b.querySelector('[data-account-label]');
             const badge = b.querySelector('.acct-initial');
-            if (text) text.textContent = a ? 'Account' : (b.classList.contains('acct-side') ? 'Sign in or sign up' : 'Sign in');
+            if (text) text.textContent = a ? 'Account' : 'Sign in';
             if (badge) { badge.textContent = a ? initial(a) : ''; badge.hidden = !a; }
             b.classList.toggle('is-signed-in', !!a);
             b.setAttribute('aria-label', a ? 'Your account (' + a.email + ')' : 'Sign in or sign up');
