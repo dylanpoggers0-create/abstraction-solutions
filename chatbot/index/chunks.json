@@ -393,7 +393,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "our account yourself anytime from the order page. Signed-in accounts also store an 8-digit user ID and which AI Education videos you watched, and how much of each (if you watch while signed out, that stays in your browser until you next sign in)."
+"text": "our account yourself anytime from the order page. Signed-in accounts also store an 8-digit user ID and which AI Education videos you watched, and how much of each (if you watch while signed out, that stays in your browser until you next sign in). For rewards, we store the coins each finished video earned and any discount codes you redeem, linked only to that user ID; deleting your account deletes them too."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -1660,5 +1660,11 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "D, shown on the order page when you're signed in.\n2026-11-24: The AI Education Playground. A new Playground page under AI Education, with two demos that run right in your browser. Gradient descent: type any equation (x^2 + 3x, sin(3x) + 0.2x^2 ...), see it and its slope written out, and watch a ball roll down to the lowest point, step by step. Genetic algorithm: type a phrase and watch 250 random guesses evolve into it, generation by generation."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "guesses evolve into it, generation by generation.\n2026-11-24: Coins for AI Education videos. Signed in, finishing an AI Education video earns coins: 5, 10 or 15 depending on its length, once per video. Coins burst out of the green check when you finish a video and fly into your balance next to Account. Spend coins on 5% to 20% off one project from the new Rewards panel."
 }
 ]
