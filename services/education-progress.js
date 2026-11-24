@@ -22,9 +22,11 @@
      time this page opens signed in. Nothing is sent to analytics.
 
    The celebration
-     The first time a video reaches 100% for you: the screen dims, a big black circle-check appears, fills
-     with green liquid from the bottom (it sloshes a little), glows, then shrinks and flies into the video's
-     sticker. About 2.7 seconds; click, tap or Esc skips it. Once per video, never on replays.
+     The first time a video reaches 100% for you, once the whole Education page is back on screen (it waits
+     for you to leave full-screen video): the page blurs, a big black check on a black disc appears, green
+     liquid rises up through it from the bottom (it sloshes a little) until it's a black check on green, then
+     it thumps, glows and throws out a shockwave and sparks, and flies into the video's sticker.
+     About 3 seconds; click, tap or Esc skips it. Once per video, never on replays.
      With "reduce motion" on there's no overlay: the sticker simply fades to green.
    ========================================================= */
 (function () {
@@ -215,12 +217,35 @@
 
     /* ---------- the celebration ---------- */
     let showing = null;
+    // Waits until the whole Education page is on screen: not in full-screen video (desktop or iPhone)
+    // and not in a background tab. Then runs fn once.
+    function whenPageVisible(video, fn) {
+        function fullScreen() {
+            return !!(document.fullscreenElement || document.webkitFullscreenElement || (video && video.webkitDisplayingFullscreen));
+        }
+        if (!fullScreen() && !document.hidden) { fn(); return; }
+        let done = false;
+        function check() {
+            if (done || fullScreen() || document.hidden) return;
+            done = true;
+            ['fullscreenchange', 'webkitfullscreenchange', 'visibilitychange'].forEach(function (ev) { document.removeEventListener(ev, check); });
+            if (video) video.removeEventListener('webkitendfullscreen', check);
+            setTimeout(fn, 350);                           // let the page settle back into place first
+        }
+        ['fullscreenchange', 'webkitfullscreenchange', 'visibilitychange'].forEach(function (ev) { document.addEventListener(ev, check); });
+        if (video) video.addEventListener('webkitendfullscreen', check);   // iPhone's own full-screen player
+    }
+
     function celebrate(st) {
         if (reduce.matches || showing) {               // reduce motion (or one already playing): the sticker fades to green
             st.sticker.classList.add('vp-fade');
             paint(st);
             return;
         }
+        whenPageVisible(st.video, function () { play(st); });
+    }
+    function play(st) {
+        if (showing) { st.sticker.classList.add('vp-fade'); paint(st); return; }
         const ov = document.createElement('div');
         ov.className = 'vp-overlay';
         ov.setAttribute('role', 'status');
@@ -230,9 +255,10 @@
                 '<div class="vp-glow"></div>' +
                 '<svg viewBox="0 0 200 200" aria-hidden="true">' +
                     '<defs><clipPath id="vpLiquid"><path class="vp-wave" d=""/></clipPath></defs>' +
-                    // empty: a black disc with a dark check
-                    '<circle cx="100" cy="100" r="86" fill="#000" stroke="rgba(245,248,244,0.35)" stroke-width="4"/>' +
-                    '<path d="M58 102l28 28 56-62" fill="none" stroke="#2a332c" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>' +
+                    // empty: a black disc with a green rim and a black check (outlined in green so it shows)
+                    '<circle cx="100" cy="100" r="86" fill="#000" stroke="#7ee96f" stroke-opacity="0.7" stroke-width="4"/>' +
+                    '<path d="M58 102l28 28 56-62" fill="none" stroke="#2e5a34" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>' +
+                    '<path d="M58 102l28 28 56-62" fill="none" stroke="#000" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>' +
                     // full: the same badge in green, shown only below the liquid line
                     '<g clip-path="url(#vpLiquid)">' +
                         '<circle cx="100" cy="100" r="86" fill="#7ee96f" stroke="#b9f5ad" stroke-width="4"/>' +
@@ -271,9 +297,34 @@
         showing.raf = requestAnimationFrame(frame);
 
         requestAnimationFrame(function () { ov.classList.add('is-in'); });
-        showing.timers.push(setTimeout(function () { badge.classList.add('is-glowing'); }, START + RISE));
-        showing.timers.push(setTimeout(function () { flyHome(); }, START + RISE + 650));
-        showing.timers.push(setTimeout(finish, START + RISE + 650 + 620));
+        showing.timers.push(setTimeout(burst, START + RISE));
+        showing.timers.push(setTimeout(function () { flyHome(); }, START + RISE + 900));
+        showing.timers.push(setTimeout(finish, START + RISE + 900 + 620));
+
+        // full: the badge thumps, glows, and throws out a shockwave and a ring of sparks
+        function burst() {
+            badge.classList.add('is-glowing');
+            badge.querySelector('svg').animate([
+                { transform: 'scale(1)' }, { transform: 'scale(1.14)', offset: 0.35 }, { transform: 'scale(0.97)', offset: 0.7 }, { transform: 'scale(1)' }
+            ], { duration: 520, easing: 'ease-out' });
+            for (let r = 0; r < 2; r++) {
+                const ring = document.createElement('div');
+                ring.className = 'vp-shock';
+                badge.appendChild(ring);
+                ring.animate([{ transform: 'scale(0.9)', opacity: 0.9 }, { transform: 'scale(' + (2.1 + r * 0.6) + ')', opacity: 0 }],
+                             { duration: 750 + r * 200, delay: r * 120, easing: 'cubic-bezier(.2, .7, .3, 1)', fill: 'both' });
+            }
+            for (let i = 0; i < 16; i++) {
+                const sp = document.createElement('div');
+                sp.className = 'vp-spark' + (i % 4 === 0 ? ' is-white' : '');
+                badge.appendChild(sp);
+                const a = i / 16 * Math.PI * 2 + Math.random() * 0.3, d = 120 + Math.random() * 70;
+                sp.animate([
+                    { transform: 'translate(-50%, -50%) rotate(' + a + 'rad) translateX(70px) scaleX(1)', opacity: 1 },
+                    { transform: 'translate(-50%, -50%) rotate(' + a + 'rad) translateX(' + d + 'px) scaleX(0.3)', opacity: 0 }
+                ], { duration: 650 + Math.random() * 250, easing: 'cubic-bezier(.15, .8, .3, 1)', fill: 'both' });
+            }
+        }
 
         // shrink and fly into the video's sticker
         function flyHome() {
