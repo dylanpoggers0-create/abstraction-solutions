@@ -28,6 +28,17 @@
      it thumps, glows and throws out a shockwave and sparks, and flies into the video's sticker.
      About 3 seconds; click, tap or Esc skips it. Once per video, never on replays.
      With "reduce motion" on there's no overlay: the sticker simply fades to green.
+
+   Coins
+     Signed in, finishing a video for the first time earns coins. The server decides how many (from the
+     video's real length and the seconds it has on record) and says so in its reply to the save; this file
+     never sends or adds up coins itself. When the check fills and thumps, that many coins burst out of it,
+     hang for a moment, then fly into the coin balance next to Account with a "+15", and the balance
+     counts up as they land (account.js does the flying). If the reply comes after the celebration, a
+     smaller burst flies from the video's sticker instead. With "reduce motion" on, the number just changes.
+     Next to each sticker: "Earned 15" (greyed) once a video has paid out, or for signed-out visitors
+     "Sign in to earn 15" (a button that opens sign-in). Completions made signed out pay out once, after
+     signing in, when the server has checked their played seconds.
    ========================================================= */
 (function () {
     'use strict';
@@ -41,6 +52,10 @@
     const videos = Array.prototype.slice.call(document.querySelectorAll('video[data-video-id]'));
     if (!videos.length) return;
 
+    const COIN_SVG = (function () {                   // ../assets/coin.svg, wherever the site is served from
+        const sc = document.querySelector('script[src*="education-progress"]');
+        return sc ? sc.src.replace(/services\/education-progress(\.min)?\.js.*$/, 'assets/coin.svg') : '/assets/coin.svg';
+    })();
     function account() {
         try {
             const a = JSON.parse(localStorage.getItem(ACCOUNT_KEY) || 'null');
@@ -101,7 +116,8 @@
         const fig = v.closest('figure') || v.parentElement;
         fig.classList.add('vp-card');
         const st = state[id] = { id: id, video: v, ranges: [], duration: 0, saved: 0, completed: false,
-                                 celebrated: false, dirty: false, lastSave: 0, lastT: null, sticker: makeSticker(fig) };
+                                 celebrated: false, dirty: false, lastSave: 0, lastT: null, sticker: makeSticker(fig),
+                                 worth: 0, earned: 0, award: null, coinHold: false, chip: null };
         paint(st);
 
         function setDuration() { if (isFinite(v.duration) && v.duration > 0) st.duration = v.duration; }
@@ -133,12 +149,62 @@
         v.addEventListener('ended', stop);
     });
 
+    /* ---------- the coin note beside each sticker ---------- */
+    function chip(st) {
+        const signedIn = !!account();
+        let text = '', n = 0, button = false;
+        if (signedIn && st.earned) { text = 'Earned '; n = st.earned; }
+        else if (!signedIn && st.worth) { text = st.completed ? 'Sign in to collect ' : 'Sign in to earn '; n = st.worth; button = true; }
+        if (!text) { if (st.chip) { st.chip.remove(); st.chip = null; } return; }
+        if (!st.chip || (st.chip.tagName === 'BUTTON') !== button) {
+            if (st.chip) st.chip.remove();
+            st.chip = document.createElement(button ? 'button' : 'span');
+            st.chip.className = 'vp-coin';
+            if (button) {
+                st.chip.type = 'button';
+                st.chip.addEventListener('click', function () { window.ASAccount ? ASAccount.open('signup', st.chip) : (location.href = '../order.html#signIn'); });
+            }
+            st.chip.innerHTML = '<img src="' + COIN_SVG + '" alt="" width="18" height="18"><span class="vp-coin-w"></span><b></b>';
+            st.sticker.parentNode.insertBefore(st.chip, st.sticker);
+        }
+        st.chip.classList.toggle('is-earned', !button);
+        st.chip.querySelector('.vp-coin-w').textContent = text;      // on phones only the coin and number show
+        st.chip.querySelector('b').textContent = n;
+        st.chip.setAttribute('aria-label', button ? text + n + ' coins' : 'Earned ' + n + ' coins for this video');
+    }
+    function paintChips() { Object.keys(state).forEach(function (id) { chip(state[id]); }); }
+    // the server said this save paid out: show it now, or leave it for the celebration's burst
+    function gotAward(st, res) {
+        if (!res || !(res.coins_awarded > 0)) return;
+        st.earned = res.coins_awarded;
+        st.award = { coins: res.coins_awarded, balance: res.balance, done: false };
+        if (!st.coinHold) payOut(st, null);
+    }
+    function payOut(st, from) {
+        const a = st.award;
+        if (!a || a.done) return;
+        a.done = true;
+        chip(st);
+        whenCoins(function (C) {
+            if (from) C.explode(a.coins, from, a.balance);
+            else {
+                const r = st.sticker.getBoundingClientRect();
+                C.add(a.coins, { x: r.left + r.width / 2, y: r.top + r.height / 2 }, a.balance);
+            }
+        });
+    }
+    function whenCoins(fn) {                            // account.js loads in the background: wait for it if needed
+        if (window.ASCoins) fn(window.ASCoins);
+        else window.addEventListener('as-coins-ready', function () { fn(window.ASCoins); }, { once: true });
+    }
+
     function update(st, forceSave) {
         const pct = percentOf(st);
         if (pct >= 100 && !st.completed) {
             st.completed = true;
             st.dirty = true;
             if (!st.celebrated) { st.celebrated = true; celebrate(st); }
+            chip(st);
             forceSave = true;
         } else {
             paint(st);
@@ -162,7 +228,9 @@
             if (!r.ok) { st.dirty = true; return null; }
             return r.json();
         }).then(function (res) {
-            if (res) st.saved = Math.max(st.saved, res.percent || 0);
+            if (!res) return;
+            st.saved = Math.max(st.saved, res.percent || 0);
+            gotAward(st, res);
         }).catch(function () { st.dirty = true; });   // offline: try again on the next save
     }
     function keepPending(st, body) {
@@ -181,6 +249,8 @@
     /* ---------- page open: load the account's progress, add any pending signed-out progress ---------- */
     const acct = account();
     document.querySelectorAll('[data-progress-note]').forEach(function (n) { n.hidden = !!acct; });
+    // signed in or out in another tab, or here (the Order page's sign-in): the notes follow
+    window.addEventListener('storage', function (e) { if (e.key === ACCOUNT_KEY) paintChips(); });
     if (acct) {
         fetch(API_BASE + '/api/progress/videos', { headers: { Authorization: 'Bearer ' + acct.token } })
             .then(function (r) { return r.ok ? r.json() : null; })
@@ -196,12 +266,39 @@
                 });
                 addPending(acct);
             }).catch(function () {});
+        // what each finished video earned ("Earned 15"), from the same reply that fills the balance
+        whenCoins(function (C) {
+            C.refresh().then(function (d) {
+                if (!d) return;
+                (d.earned || []).forEach(function (e) { if (state[e.video_id]) state[e.video_id].earned = e.coins; });
+                const vc = (d.config && d.config.video_coins) || {};
+                Object.keys(state).forEach(function (id) { state[id].worth = vc[id] || 0; });
+                paintChips();
+            });
+        });
+    } else {
+        // signed out: what each video is worth, so the "Sign in to earn 15" notes can show (kept a day in this browser)
+        const KEY = 'asRewardsConfig';
+        let cached = null;
+        try { cached = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+        function useConfig(c) {
+            Object.keys(state).forEach(function (id) { state[id].worth = (c.video_coins || {})[id] || 0; });
+            paintChips();
+        }
+        if (cached && cached.c) useConfig(cached.c);
+        if (!cached || Date.now() - cached.t > 86400000) {
+            fetch(API_BASE + '/api/rewards/config').then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
+                if (!c) return;
+                try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), c: c })); } catch (e) {}
+                useConfig(c);
+            }).catch(function () {});
+        }
     }
     function addPending(acct) {
         let p;
         try { p = JSON.parse(localStorage.getItem(PENDING_KEY) || 'null'); } catch (e) { p = null; }
         if (!p) return;
-        const jobs = Object.keys(p).filter(function (id) { return state[id]; }).map(function (id) {
+        const jobs = Object.keys(p).filter(function (id) { return state[id]; }).map(function (id, i) {
             const st = state[id];
             st.ranges = merge(st.ranges.concat(p[id].watched_ranges || []));
             st.saved = Math.max(st.saved, p[id].percent || 0);
@@ -210,7 +307,13 @@
             return fetch(API_BASE + '/api/progress/videos/' + encodeURIComponent(id), {
                 method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + acct.token },
                 body: JSON.stringify(p[id])
-            }).then(function (r) { if (!r.ok) throw new Error('save'); });
+            }).then(function (r) {
+                if (!r.ok) throw new Error('save');
+                return r.json();
+            }).then(function (res) {
+                // finished while signed out: the server re-checked the played seconds and may pay out now
+                setTimeout(function () { gotAward(st, res); }, 600 + i * 450);
+            });
         });
         Promise.all(jobs).then(function () { try { localStorage.removeItem(PENDING_KEY); } catch (e) {} }, function () {});
     }
@@ -242,10 +345,15 @@
             paint(st);
             return;
         }
+        st.coinHold = !!account();                     // the coins wait for the burst
         whenPageVisible(st.video, function () { play(st); });
     }
+    function release(st) {                             // the celebration is over (or never ran): any coins still owed fly now
+        st.coinHold = false;
+        payOut(st, null);
+    }
     function play(st) {
-        if (showing) { st.sticker.classList.add('vp-fade'); paint(st); return; }
+        if (showing) { st.sticker.classList.add('vp-fade'); paint(st); release(st); return; }
         const ov = document.createElement('div');
         ov.className = 'vp-overlay';
         ov.setAttribute('role', 'status');
@@ -304,6 +412,11 @@
         // full: the badge thumps, glows, and throws out a shockwave and a ring of sparks
         function burst() {
             badge.classList.add('is-glowing');
+            // the coins this video earned burst out of the check (if the server has answered by now)
+            if (st.award && !st.award.done) {
+                const r = badge.getBoundingClientRect();
+                payOut(st, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+            }
             badge.querySelector('svg').animate([
                 { transform: 'scale(1)' }, { transform: 'scale(1.14)', offset: 0.35 }, { transform: 'scale(0.97)', offset: 0.7 }, { transform: 'scale(1)' }
             ], { duration: 520, easing: 'ease-out' });
@@ -347,6 +460,7 @@
             ov.remove();
             document.removeEventListener('keydown', onKey);
             paint(st);
+            release(st);
             st.sticker.classList.add('vp-pop');
             setTimeout(function () { st.sticker.classList.remove('vp-pop'); }, 700);
         }

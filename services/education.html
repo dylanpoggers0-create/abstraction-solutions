@@ -602,6 +602,27 @@
             .vp-fill, .vp-sticker { transition: none; }
             .vp-sticker.vp-pop { animation: none; }
         }
+        /* the coin note beside the sticker: "Earned 15" (greyed) or "Sign in to earn 15" */
+        .vp-coin {
+            position: absolute; top: 16px; right: 60px; z-index: 3;
+            display: inline-flex; align-items: center; gap: 5px;
+            height: 32px; padding: 0 11px 0 7px; border-radius: 999px;
+            background: rgba(0, 0, 0, 0.78); border: 1px solid rgba(126, 233, 111, 0.6);
+            color: #fff; font: inherit; font-size: 0.78rem; font-weight: 700; white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+        }
+        .vp-coin img { width: 18px; height: 18px; display: block; }
+        button.vp-coin { cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease; }
+        button.vp-coin:hover, button.vp-coin:focus-visible { border-color: var(--green); color: var(--green); }
+        .vp-coin.is-earned { pointer-events: none; color: #9aa69c; border-color: rgba(245, 248, 244, 0.18); }
+        .vp-coin.is-earned img { filter: grayscale(1) brightness(0.75); }
+        .vp-coin b { font-weight: inherit; }
+        .vp-coin-w { white-space: pre; }
+        @media (max-width: 560px) {          /* two cards across: just the coin and the number */
+            .vp-coin { right: 58px; padding: 0 9px 0 6px; }
+            .vp-coin-w { display: none; }
+            button.vp-coin b::before { content: "+"; }
+        }
         .playground-link { margin: 6px 0 0; font-size: 1.02rem; color: #dfe7df; }
         .playground-link a { color: var(--green); font-weight: 700; }
     </style>

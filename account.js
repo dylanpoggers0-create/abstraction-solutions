@@ -9,6 +9,8 @@
        Email:  the link is made for this page (return_to), so it opens right here and finishes signing in.
    - Signed in, the same button shows your initial and opens your account: email, 8-digit user ID,
      your orders, and Sign out.
+   - Signed in, a coin button with your balance sits next to it (the Rewards panel, rewards.js, opens from it).
+     window.ASCoins: refresh() reloads the balance; explode()/add() send coins flying into it and count it up.
    The sign-in is the same one the Order page uses (saved in this browser as "asAccount"), so signing in
    here or there counts everywhere. Without JavaScript, the buttons are plain links to the Order page's sign-in.
    ========================================================= */
@@ -20,6 +22,7 @@
     const API = 'https://abstraction-quote-engine.onrender.com';
     const ACCOUNT_KEY = 'asAccount';
     const ORDERS_SNAP = 'snap:myOrders';
+    const MIN = /\.min\.js/.test((document.currentScript || {}).src || '');   // the condensed copy loads condensed copies
     const onOrderPage = /\/order(\.html)?$/.test(location.pathname);   // the Order page runs its own sign-in
 
     /* ---------- the saved sign-in ---------- */
@@ -38,7 +41,7 @@
         return a;
     }
     function signOut() {
-        try { localStorage.removeItem(ACCOUNT_KEY); localStorage.removeItem(ORDERS_SNAP); } catch (e) {}
+        try { localStorage.removeItem(ACCOUNT_KEY); localStorage.removeItem(ORDERS_SNAP); localStorage.removeItem(COINS_KEY); } catch (e) {}
         if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
         location.reload();
     }
@@ -55,11 +58,16 @@
             b.classList.toggle('is-signed-in', !!a);
             b.setAttribute('aria-label', a ? 'Your account (' + a.email + ')' : 'Sign in or sign up');
         });
+        const coin = coinTab();
+        if (coin) coin.hidden = !a;
+        document.documentElement.classList.toggle('has-coins', !!a);
     }
     // keep the Menu button and this one side by side, whatever the Menu button's width
     function place() {
         const tab = document.querySelector('.side-tab');
         if (tab) document.documentElement.style.setProperty('--menu-w', Math.round(tab.getBoundingClientRect().width) + 'px');
+        const acct = document.querySelector('.acct-tab');
+        if (acct) document.documentElement.style.setProperty('--acct-w', Math.round(acct.getBoundingClientRect().width) + 'px');
     }
 
     /* ---------- the panel ---------- */
@@ -99,6 +107,7 @@
                     '<div class="acct-links">' +
                         '<a class="acct-link" href="' + base() + 'order.html#lookup">Your orders</a>' +
                         '<a class="acct-link" href="' + base() + 'services/education.html#shorts">Your video progress</a>' +
+                        '<a class="acct-link" href="' + base() + 'services/education.html#rewards" data-rewards-open>Your coins and rewards</a>' +
                     '</div>' +
                     '<button type="button" class="acct-signout">Sign out</button>' +
                 '</div>' +
@@ -303,7 +312,194 @@
         wrap.hidden = false;
     }
 
+    /* ---------- coins: the balance next to Account ---------- */
+    const COINS_KEY = 'asCoins';                       // { u: email, b: balance }: the last balance seen, shown at once
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let coinsShown = null, coinsLoad = null, live = null;
+    function coinTab() { return document.querySelector('.coin-tab'); }
+    function showCoins(n) {
+        coinsShown = n;
+        const t = coinTab();
+        if (!t) return;
+        t.querySelector('.coin-num').textContent = n;
+        t.setAttribute('aria-label', 'Rewards: ' + n + ' coin' + (n === 1 ? '' : 's'));
+    }
+    function keepCoins(n) {
+        const a = account();
+        if (a) try { localStorage.setItem(COINS_KEY, JSON.stringify({ u: a.email, b: n })); } catch (e) {}
+    }
+    function setCoins(n) { keepCoins(n); showCoins(n); }
+    // the server is the only source of the balance; this asks it (once per page unless forced)
+    function loadRewards(force) {
+        const a = account();
+        if (!a) return Promise.resolve(null);
+        if (coinsLoad && !force) return coinsLoad;
+        coinsLoad = fetch(API + '/api/rewards', { headers: { Authorization: 'Bearer ' + a.token } })
+            .then(function (r) {
+                if (r.status === 401) { try { localStorage.removeItem(ACCOUNT_KEY); } catch (e) {} labels(); return null; }
+                return r.ok ? r.json() : null;
+            })
+            .then(function (d) { if (d && !flying) setCoins(d.balance); return d; })
+            .catch(function () { coinsLoad = null; return null; });
+        return coinsLoad;
+    }
+    function announce(text) {
+        if (!live) { live = el('div', 'coin-live'); live.setAttribute('aria-live', 'polite'); document.body.appendChild(live); }
+        live.textContent = '';
+        setTimeout(function () { live.textContent = text; }, 50);
+    }
+    function bump() {
+        const t = coinTab();
+        if (!t) return;
+        t.classList.add('is-bump');
+        setTimeout(function () { t.classList.remove('is-bump'); }, 160);
+    }
+    function flip() {
+        const img = coinTab() && coinTab().querySelector('img');
+        if (img && img.animate && !reduceMotion.matches) img.animate([{ transform: 'rotateY(0)' }, { transform: 'rotateY(360deg)' }],
+                                                                      { duration: 650, easing: 'cubic-bezier(.3, .7, .3, 1)' });
+    }
+    // where the coins fly to: the balance, or the top right corner if it's out of sight
+    function target() {
+        const t = coinTab();
+        const r = t && !t.hidden && getComputedStyle(t).opacity !== '0' ? t.querySelector('img').getBoundingClientRect() : null;
+        return r && r.width ? { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width }
+                            : { x: innerWidth - 60, y: 40, size: 26 };
+    }
+
+    /* coins in the air: one animation loop for all of them.
+       burst: they shoot out from a point, spinning, slowed by air and pulled down a little;
+       then each one curves into the balance, and the number goes up as they land. */
+    let coins = [], raf = 0, flying = 0, last = 0;
+    function loop(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        coins = coins.filter(function (c) {
+            if (now < c.flyAt) {
+                c.vy += 900 * dt;                                   // gravity
+                const drag = Math.pow(0.08, dt);                    // air: most of the speed is gone in a second
+                c.vx *= drag; c.vy *= drag;
+                c.x += c.vx * dt; c.y += c.vy * dt;
+                c.spin += c.spinV * dt; c.spinV *= Math.pow(0.4, dt);
+                c.x0 = c.x; c.y0 = c.y;
+                draw(c, 1);
+                return true;
+            }
+            const T = target();
+            const k = Math.min(1, (now - c.flyAt) / c.dur), e = k * k * (3 - 2 * k) * 0.4 + k * k * 0.6;   // speeds up as it nears
+            const cx = (c.x0 + T.x) / 2 + c.bend, cy = Math.min(c.y0, T.y) - 140;
+            c.x = (1 - e) * (1 - e) * c.x0 + 2 * (1 - e) * e * cx + e * e * T.x;
+            c.y = (1 - e) * (1 - e) * c.y0 + 2 * (1 - e) * e * cy + e * e * T.y;
+            c.spin += c.spinV * 0.4 * dt + 14 * dt;
+            draw(c, 1 + (T.size / c.size - 1) * e);
+            if (k < 1) return true;
+            c.el.remove();
+            c.land();
+            return false;
+        });
+        raf = coins.length ? requestAnimationFrame(loop) : 0;
+    }
+    function draw(c, scale) {
+        // a coin spinning on its edge: squash it across as it turns
+        const sx = Math.cos(c.spin);
+        c.el.style.transform = 'translate(' + c.x.toFixed(1) + 'px,' + c.y.toFixed(1) + 'px) scale(' + (scale * Math.max(0.08, Math.abs(sx))).toFixed(3) + ',' + scale.toFixed(3) + ')';
+    }
+    function spawn(x, y, size, speed, angle, flyAt, land) {
+        const node = el('div', 'coin-fly');
+        node.innerHTML = '<img src="' + base() + 'assets/coin.svg" alt="" width="30" height="30">';
+        node.style.width = node.style.height = size + 'px';
+        node.style.margin = (-size / 2) + 'px 0 0 ' + (-size / 2) + 'px';
+        document.body.appendChild(node);
+        const c = { el: node, x: x, y: y, x0: x, y0: y, size: size, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+                    spin: Math.random() * 6, spinV: (Math.random() < 0.5 ? -1 : 1) * (10 + Math.random() * 14),
+                    flyAt: flyAt, dur: 560 + Math.random() * 180, bend: (Math.random() - 0.5) * 160, land: land };
+        draw(c, 1);
+        coins.push(c);
+        if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
+    }
+    // the "+15" that rides along and lands with the last coin
+    function toast(n, x, y, flyAt, dur) {
+        const t = el('div', 'coin-toast');
+        t.innerHTML = '<img src="' + base() + 'assets/coin.svg" alt="" width="22" height="22"><span>+' + n + '</span>';
+        document.body.appendChild(t);
+        const w = t.offsetWidth, h = t.offsetHeight, x0 = x - w / 2, y0 = y + 70;
+        const pop = t.animate([{ transform: 'translate(' + x0 + 'px,' + (y0 + 20) + 'px) scale(0.4)', opacity: 0 },
+                               { transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1.12)', opacity: 1, offset: 0.6 },
+                               { transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1)', opacity: 1 }],
+                              { duration: 380, easing: 'ease-out', fill: 'forwards' });
+        setTimeout(function () {
+            const T = target();
+            pop.cancel();
+            t.animate([{ transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1)', opacity: 1 },
+                       { transform: 'translate(' + ((x0 + T.x - w / 2) / 2) + 'px,' + (Math.min(y0, T.y) - 90) + 'px) scale(0.9)', opacity: 1, offset: 0.5 },
+                       { transform: 'translate(' + (T.x - w / 2) + 'px,' + (T.y - h / 2) + 'px) scale(0.35)', opacity: 0 }],
+                      { duration: dur, easing: 'cubic-bezier(.55, 0, .45, 1)', fill: 'forwards' }).onfinish = function () { t.remove(); };
+        }, Math.max(0, flyAt - performance.now()));
+    }
+
+    /* Coins earned: n of them, from the point (x, y), ending at the server's balance.
+       big: the burst from the celebration (more coins, a bigger blast, a moment in the air). */
+    function explode(n, from, balance, big) {
+        if (!(n > 0)) { if (balance != null) setCoins(balance); return; }
+        const start = coinsShown == null ? Math.max(0, (balance != null ? balance : n) - n) : coinsShown;
+        const end = balance != null ? balance : start + n;
+        keepCoins(end);
+        announce('+' + n + ' coins. You have ' + end + ' coins.');
+        if (reduceMotion.matches || !coinTab() || coinTab().hidden) { showCoins(end); return; }   // no motion: the number just changes
+        const count = big ? Math.min(18, Math.max(8, n + 3)) : Math.min(8, Math.max(4, Math.round(n / 2)));
+        const now = performance.now(), hold = big ? 820 : 380;
+        let landed = 0, credited = start;
+        flying++;
+        for (let i = 0; i < count; i++) {
+            const angle = (big ? i / count * Math.PI * 2 : -Math.PI / 2 + (i / (count - 1 || 1) - 0.5) * 2.2) + (Math.random() - 0.5) * 0.5;
+            const speed = big ? 620 + Math.random() * 520 : 260 + Math.random() * 200;
+            const size = big ? 30 + Math.round(Math.random() * 20) : 26;
+            spawn(from.x, from.y, size, speed, angle, now + hold + i * (big ? 55 : 70), function () {
+                landed++;
+                credited = landed === count ? end : Math.max(credited, start + Math.floor(n * landed / count));
+                showCoins(credited);
+                bump();
+                if (landed === count) { flip(); flying--; }
+            });
+        }
+        toast(n, from.x, from.y, now + hold + count * (big ? 55 : 70) - 200, 700);
+    }
+    window.ASCoins = {
+        refresh: loadRewards,                               // -> Promise of the GET /api/rewards reply (or null)
+        set: setCoins,
+        explode: function (n, from, balance) { explode(n, from, balance, true); },
+        add: function (n, from, balance) { explode(n, from || target(), balance, false); },
+        shown: function () { return coinsShown; }
+    };
+
+    /* the Rewards panel: loaded the first time it's opened */
+    let rewardsLoading = null;
+    function openRewards(from) {
+        if (!account()) { open('signup', from); return; }
+        close();
+        if (window.ASRewards) { ASRewards.open(from); return; }
+        if (!rewardsLoading) rewardsLoading = new Promise(function (resolve, reject) {
+            const s = document.createElement('script');
+            s.src = base() + (MIN ? 'rewards.min.js' : 'rewards.js');
+            s.onload = resolve;
+            s.onerror = function () { rewardsLoading = null; reject(); };
+            document.head.appendChild(s);
+        });
+        rewardsLoading.then(function () { ASRewards.open(from); }, function () { location.href = base() + 'services/education.html#rewards'; });
+    }
+    function rewardsFromHash() {
+        if (location.hash !== '#rewards') return;
+        history.replaceState(null, '', location.pathname + location.search);
+        openRewards();
+    }
+
     /* ---------- wire up ---------- */
+    document.addEventListener('click', function (e) {
+        const r = e.target.closest && e.target.closest('[data-rewards-open]');
+        if (!r || e.metaKey || e.ctrlKey || e.shiftKey) return;
+        e.preventDefault();
+        openRewards(r);
+    });
     document.addEventListener('click', function (e) {
         const b = e.target.closest && e.target.closest('[data-account-open]');
         if (!b || e.metaKey || e.ctrlKey || e.shiftKey) return;
@@ -313,9 +509,14 @@
     window.addEventListener('storage', function (e) { if (e.key === ACCOUNT_KEY) labels(); });   // signed in or out in another tab
     window.addEventListener('as-account-change', labels);                                        // the Order page's own sign-in
     window.addEventListener('resize', place);
-    window.addEventListener('hashchange', finishFromLink);   // the link opened in a tab that already had this page
-    window.ASAccount = { open: open, signedIn: function () { return !!account(); } };
+    window.addEventListener('hashchange', function () { finishFromLink(); rewardsFromHash(); });   // the link opened in a tab that already had this page
+    window.ASAccount = { open: open, signedIn: function () { return !!account(); }, token: function () { const a = account(); return a ? a.token : null; } };
+    window.dispatchEvent(new Event('as-coins-ready'));
 
-    function start() { labels(); place(); finishFromLink(); }
+    function start() {
+        labels(); place(); finishFromLink();
+        if (account()) { const t = coinTab(); if (t) showCoins(parseInt(t.querySelector('.coin-num').textContent, 10) || 0); loadRewards(); }
+        rewardsFromHash();
+    }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

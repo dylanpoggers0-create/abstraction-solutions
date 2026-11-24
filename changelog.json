@@ -94,5 +94,14 @@
             "Gradient descent: type any equation (x^2 + 3x, sin(3x) + 0.2x^2 ...), see it and its slope written out, and watch a ball roll down to the lowest point, step by step.",
             "Genetic algorithm: type a phrase and watch 250 random guesses evolve into it, generation by generation."
         ]
+    },
+    {
+        "date": "2026-11-24",
+        "title": "Coins for AI Education videos",
+        "items": [
+            "Signed in, finishing an AI Education video earns coins: 5, 10 or 15 depending on its length, once per video.",
+            "Coins burst out of the green check when you finish a video and fly into your balance next to Account.",
+            "Spend coins on 5% to 20% off one project from the new Rewards panel."
+        ]
     }
 ]

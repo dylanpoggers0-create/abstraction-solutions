@@ -1608,3 +1608,224 @@ a.pill.cta-main[class]:focus-visible {
 @media (prefers-reduced-motion: reduce) {
     .acct-backdrop, .acct-panel { transition: none; }
 }
+
+/* ---------- coins (account.js: the balance; rewards.js: the panel) ---------- */
+/* signed in, the title makes room for one more button */
+@media (min-width: 701px) {
+    .has-coins .brand-name { font-size: clamp(1.2rem, calc((100vw - 480px) / 16), 5.4rem) !important; }
+}
+/* the balance: a coin and a number, left of the Account button */
+.coin-tab {
+    position: fixed;
+    top: 30px;
+    right: calc(28px + var(--menu-w, 112px) + 10px + var(--acct-w, 138px) + 10px);
+    z-index: 120;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    padding: 0 16px 0 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(126, 233, 111, 0.55);
+    background: rgba(6, 9, 6, 0.72);
+    color: var(--paper);
+    font-weight: 700;
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9);
+    transition: border-color 0.2s ease, box-shadow 0.3s ease, color 0.2s ease, scale 0.35s cubic-bezier(.34, 1.56, .64, 1);
+}
+.coin-tab[hidden] { display: none; }
+.coin-tab img { width: 26px; height: 26px; display: block; }
+.coin-tab:hover, .coin-tab:focus-visible {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9), 0 0 30px -4px rgba(126, 233, 111, 0.5);
+}
+.coin-tab.is-bump { scale: 1.12; }
+.acct-open .coin-tab, .nav-check:checked ~ .coin-tab, .rw-open .coin-tab { opacity: 0; pointer-events: none; }
+@media (max-width: 700px) {
+    /* phones: the third button along the bottom left */
+    .coin-tab {
+        top: auto;
+        right: auto;
+        left: calc(16px + 52px + 10px + 52px + 10px);
+        bottom: calc(18px + env(safe-area-inset-bottom));
+        height: 52px;
+        padding: 0 15px 0 12px;
+    }
+}
+
+/* coins in flight (made by account.js): fixed to the screen, above everything */
+.coin-fly {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    z-index: 960;
+    pointer-events: none;
+    will-change: transform;
+}
+.coin-fly img { width: 100%; height: 100%; display: block; }
+.coin-toast {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 961;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px 6px 7px;
+    border-radius: 999px;
+    background: #000;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-weight: 800;
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.9);
+    will-change: transform, opacity;
+}
+.coin-toast img { width: 22px; height: 22px; }
+.coin-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- the Rewards panel (rewards.js) ---------- */
+.rw-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(0, 0, 0, 0.62);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.rw-backdrop.is-open { opacity: 1; }
+.rw-backdrop[hidden] { display: none; }
+.rw-panel {
+    position: relative;
+    width: min(560px, 100%);
+    max-height: calc(100dvh - 36px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 30px 28px 26px;
+    border-radius: 22px;
+    background: #000;
+    border: 1px solid rgba(245, 248, 244, 0.16);
+    color: #fff;
+    box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 1);
+    transform: translateY(12px) scale(0.98);
+    transition: transform 0.3s cubic-bezier(.2, .8, .3, 1);
+}
+.rw-backdrop.is-open .rw-panel { transform: none; }
+.rw-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(245, 248, 244, 0.2);
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+}
+.rw-close:hover, .rw-close:focus-visible { border-color: var(--green); color: var(--green); }
+.rw-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.rw-panel h2 { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: 0; color: #fff; }
+.rw-balance { display: flex; align-items: center; gap: 14px; margin: 14px 0 4px; }
+.rw-balance img { width: 56px; height: 56px; }
+.rw-balance strong { font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif; font-size: 2.8rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.rw-balance span { color: #b9c4ba; font-size: 0.95rem; }
+.rw-next { margin: 6px 0 0; color: #dfe7df; font-size: 0.95rem; }
+/* the bar: 0 to the top tier, a coin on each tier */
+.rw-track { position: relative; height: 8px; margin: 30px 14px 34px; border-radius: 8px; background: rgba(245, 248, 244, 0.14); }
+.rw-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 8px; background: var(--green); transition: width 0.6s cubic-bezier(.2, .8, .3, 1); }
+.rw-mark { position: absolute; top: 50%; width: 28px; height: 28px; margin: -14px 0 0 -14px; }
+.rw-mark img { width: 100%; height: 100%; display: block; filter: grayscale(1) brightness(0.55); transition: filter 0.3s ease; }
+.rw-mark.is-reached img { filter: none; }
+.rw-mark span { position: absolute; top: 32px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: #b9c4ba; font-variant-numeric: tabular-nums; }
+.rw-mark.is-reached span { color: var(--green); }
+/* the four discounts */
+.rw-tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.rw-tier {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(245, 248, 244, 0.14);
+    text-align: center;
+}
+.rw-tier strong { font-size: 1.4rem; font-weight: 800; color: #fff; }
+.rw-tier small { color: #b9c4ba; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.rw-tier.is-unlocked { border-color: rgba(126, 233, 111, 0.6); }
+.rw-tier.is-unlocked strong { color: var(--green); }
+.rw-tier button, .rw-confirm button {
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--green);
+    background: var(--green);
+    color: #041004;
+    font: inherit;
+    font-weight: 750;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: scale 0.3s cubic-bezier(.34, 1.56, .64, 1), background-color 0.2s ease;
+}
+.rw-tier button:hover, .rw-confirm button:hover { scale: 1.05; }
+.rw-tier button:disabled { background: transparent; border-color: rgba(245, 248, 244, 0.2); color: #8d988e; cursor: default; scale: 1; }
+.rw-confirm button.rw-ghost { background: transparent; color: #fff; border-color: rgba(245, 248, 244, 0.35); }
+.rw-confirm, .rw-code {
+    margin: 16px 0 0;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid var(--green);
+}
+.rw-confirm p, .rw-code p { margin: 0 0 12px; }
+.rw-confirm div { display: flex; gap: 10px; flex-wrap: wrap; }
+.rw-code strong { display: block; margin: 2px 0 8px; font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.06em; color: var(--green); user-select: all; }
+.rw-code p:last-child { margin: 0; color: #dfe7df; font-size: 0.92rem; }
+.rw-msg { min-height: 1.2em; margin: 10px 0 0; font-size: 0.9rem; color: #dfe7df; }
+.rw-msg.is-bad { color: #ff9a8a; }
+.rw-panel h3 { margin: 26px 0 8px; font-size: 0.98rem; font-weight: 700; color: #fff; letter-spacing: 0; }
+.rw-list { margin: 0; padding: 0; list-style: none; }
+.rw-list li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid rgba(245, 248, 244, 0.1); font-size: 0.92rem; }
+.rw-list li span:first-child { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rw-list .rw-coins { color: var(--green); font-weight: 750; font-variant-numeric: tabular-nums; }
+.rw-list time { color: #8d988e; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.rw-empty { color: #b9c4ba; font-size: 0.92rem; margin: 0; }
+.rw-empty a, .rw-rules a { color: var(--green); font-weight: 650; }
+.rw-rules { margin: 22px 0 0; color: #b9c4ba; font-size: 0.86rem; line-height: 1.5; }
+@media (max-width: 520px) {
+    .rw-panel { padding: 26px 18px 20px; }
+    .rw-tiers { grid-template-columns: repeat(2, 1fr); }
+    .rw-balance strong { font-size: 2.2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .rw-backdrop, .rw-panel, .rw-fill, .coin-tab { transition: none; }
+}
+
+/* admin Customers tab: the read-only coins and codes list (admin-page.js) */
+.admin-rewards { margin: 34px 0 0; }
+.admin-rewards h3 { margin: 0 0 10px; font-size: 1.05rem; }
+.admin-rewards-scroll { overflow-x: auto; border: 1px solid rgba(245, 248, 244, 0.14); border-radius: 12px; }
+.admin-rewards table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.admin-rewards th, .admin-rewards td { padding: 9px 12px; text-align: left; white-space: nowrap; border-bottom: 1px solid rgba(245, 248, 244, 0.08); }
+.admin-rewards th { color: #b9c4ba; font-weight: 650; font-size: 0.8rem; }
+.admin-rewards tr:last-child td { border-bottom: 0; }
+.admin-rewards td.is-open { color: var(--green); font-weight: 650; }

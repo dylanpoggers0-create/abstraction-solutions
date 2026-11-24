@@ -6,7 +6,7 @@ and commits the results, so you only ever edit the readable files:
     style.css  ->  style.min.css        nav.js    ->  nav.min.js
     ux.js      ->  ux.min.js            float.js  ->  float.min.js
     feel.js    ->  feel.min.js          gideon.js ->  gideon.min.js
-    account.js ->  account.min.js
+    account.js ->  account.min.js     rewards.js ->  rewards.min.js
 
 Pages load the .min files. The readable files stay in the repo (and admin.html and hydrocart.html still use them).
 Each .min file starts with a line naming its source and a fingerprint of it; tools/check_site.py uses that
@@ -16,7 +16,7 @@ import hashlib, os, re, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TERSER = "terser@5.36.0"
 CSSO = "csso-cli@4.0.2"
-JS = ["nav.js", "ux.js", "float.js", "feel.js", "gideon.js", "account.js"]
+JS = ["nav.js", "ux.js", "float.js", "feel.js", "gideon.js", "account.js", "rewards.js"]
 CSS = ["style.css"]
 # nav.js loads the other scripts by name; its condensed copy loads their condensed copies
 LOADS = ["ux", "float", "feel", "gideon", "account"]

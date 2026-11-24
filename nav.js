@@ -60,6 +60,16 @@ const ACCOUNT_LABEL = (function () {
         return a && a.expires * 1000 > Date.now() ? 'Account' : 'Sign in';
     } catch (e) { return 'Sign in'; }
 })();
+// Signed in: your coin balance sits next to the Account button (account.js keeps it up to date).
+// The last number seen in this browser shows straight away, so nothing jumps when the real one arrives.
+const COINS = (function () {
+    if (ACCOUNT_LABEL !== 'Account') return null;
+    document.documentElement.classList.add('has-coins');     // the title leaves room for the coin button
+    try {
+        const a = JSON.parse(localStorage.getItem('asAccount')), c = JSON.parse(localStorage.getItem('asCoins') || 'null');
+        return c && c.u === a.email ? String(c.b) : '0';
+    } catch (e) { return '0'; }
+})();
 
 // The menu. "id" must match data-page="..." on that page's <body>.
 // hrefs are relative to the main site folder (nav.js adds BASE in front of each one).
@@ -194,6 +204,11 @@ document.getElementById('site-nav').innerHTML =
     // Sign in / your account, next to Menu (account.js opens the panel; without JS it's a link to the Order page's sign-in)
     '<a href="' + BASE + 'order.html#signIn" class="acct-tab" data-account-open="login" aria-label="Sign in or sign up">' +
         svg('account') + '<span class="acct-initial" hidden></span><span data-account-label>' + ACCOUNT_LABEL + '</span></a>' +
+
+    // your coins (signed in only): opens the Rewards panel (rewards.js); without JS, the Education page
+    '<a href="' + BASE + 'services/education.html#rewards" class="coin-tab" data-rewards-open' + (COINS === null ? ' hidden' : '') +
+        ' aria-label="Rewards: ' + (COINS || 0) + ' coins">' +
+        '<img src="' + BASE + 'assets/coin.svg" alt="" width="24" height="24" decoding="async"><span class="coin-num">' + (COINS || 0) + '</span></a>' +
 
     // the side nav itself
     '<aside class="side-nav">' +

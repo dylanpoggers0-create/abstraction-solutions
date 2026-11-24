@@ -1699,6 +1699,51 @@
         } catch (error) {
             if (error.message !== 'logged out') msg.textContent = 'Couldn\'t load customers: ' + error.message;
         }
+        loadRewardsList();
+    }
+
+    // ---------- Customers tab: coins and discount codes (read-only) ----------
+    // One row per discount code, plus a row for each account with coins but no code yet.
+    // Codes don't plug into orders yet: customers mention them when they book.
+    async function loadRewardsList() {
+        let box = document.getElementById('rewardsList');
+        if (!box) {
+            box = el('section', 'admin-rewards');
+            box.id = 'rewardsList';
+            document.getElementById('customersPanel').append(box);
+        }
+        box.replaceChildren(el('h3', '', 'Coins and discount codes'), el('p', 'hint', 'Loading…'));
+        try {
+            const r = await api('/admin/rewards');
+            const balance = {};
+            r.users.forEach(function (u) { balance[u.user_id] = u.balance; });
+            const rows = r.codes.map(function (c) {
+                return [c.user_id, balance[c.user_id] != null ? balance[c.user_id] : 0, c.percent + '%', c.code,
+                        new Date(c.created_at).toLocaleDateString(), c.used_at ? 'Used ' + new Date(c.used_at).toLocaleDateString() : 'Unused'];
+            });
+            const withCode = new Set(r.codes.map(function (c) { return c.user_id; }));
+            r.users.filter(function (u) { return !withCode.has(u.user_id); }).forEach(function (u) {
+                rows.push([u.user_id, u.balance, '–', '–', '–', '–']);
+            });
+            box.replaceChildren(el('h3', '', 'Coins and discount codes'));
+            if (!rows.length) { box.append(el('p', 'empty', 'No one has earned coins yet.')); return; }
+            const wrap = el('div', 'admin-rewards-scroll');
+            const table = el('table');
+            const head = el('tr');
+            ['User ID', 'Coins', 'Tier', 'Code', 'Date', 'Status'].forEach(function (h) { const th = el('th', '', h); th.scope = 'col'; head.append(th); });
+            const thead = el('thead'); thead.append(head);
+            const tbody = el('tbody');
+            rows.forEach(function (row) {
+                const tr = el('tr');
+                row.forEach(function (v, i) { tr.append(el('td', i === 5 && v === 'Unused' ? 'is-open' : '', String(v))); });
+                tbody.append(tr);
+            });
+            table.append(thead, tbody);
+            wrap.append(table);
+            box.append(wrap, el('p', 'hint', 'Read-only. Codes aren\'t applied at checkout yet: customers mention them when they book, and you take the discount off by hand.'));
+        } catch (error) {
+            if (error.message !== 'logged out') box.replaceChildren(el('h3', '', 'Coins and discount codes'), el('p', 'msg', 'Couldn\'t load coins: ' + error.message));
+        }
     }
 
     function customerCard(c) {
