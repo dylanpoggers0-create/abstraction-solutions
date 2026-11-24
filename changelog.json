@@ -85,5 +85,14 @@
             "Finish a video for the first time and you get a small celebration.",
             "Every account now has a permanent 8-digit user ID, shown on the order page when you're signed in."
         ]
+    },
+    {
+        "date": "2026-11-24",
+        "title": "The AI Education Playground",
+        "items": [
+            "A new Playground page under AI Education, with two demos that run right in your browser.",
+            "Gradient descent: type any equation (x^2 + 3x, sin(3x) + 0.2x^2 ...), see it and its slope written out, and watch a ball roll down to the lowest point, step by step.",
+            "Genetic algorithm: type a phrase and watch 250 random guesses evolve into it, generation by generation."
+        ]
     }
 ]

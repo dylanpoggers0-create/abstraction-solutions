@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Qgci8qoVcpLYlrWEl50yYbLIR43Y9zABH79QrKMQgfw=' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co; frame-src 'self' https://buttondown.com; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>AI Playground: Gradient Descent and Genetic Algorithms | Abstraction Solutions</title>
+    <meta name="description" content="Try two machine learning ideas in your browser: type any equation and watch gradient descent roll down to its lowest point, or watch a genetic algorithm evolve your phrase.">
+    <link rel="canonical" href="https://abstraction-solutions.com/services/education/playground.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="AI Playground: Gradient Descent and Genetic Algorithms | Abstraction Solutions">
+    <meta property="og:description" content="Try two machine learning ideas in your browser: type any equation and watch gradient descent roll down to its lowest point, or watch a genetic algorithm evolve your phrase.">
+    <meta property="og:url" content="https://abstraction-solutions.com/services/education/playground.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Playground: Gradient Descent and Genetic Algorithms | Abstraction Solutions">
+    <meta name="twitter:description" content="Try two machine learning ideas in your browser: type any equation and watch gradient descent roll down to its lowest point, or watch a genetic algorithm evolve your phrase.">
+    <meta name="twitter:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <link rel="icon" type="image/jpeg" href="../../logo-small.jpg">
+
+    <!-- "../../" = up two folders (this page lives in services/education/) -->
+    <link rel="stylesheet" href="../../style.min.css">
+    <!-- KaTeX typesets the equations; served from this site (vendor/), no CDN -->
+    <link rel="stylesheet" href="../../vendor/katex/katex.min.css">
+
+    <style>
+        main {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 130px 24px 40px;
+        }
+        .back-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 1px solid var(--green-dim); background-color: var(--green-soft); color: var(--green);
+        }
+        .back-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .eyebrow { margin-top: 26px; color: var(--green); font-weight: bold; letter-spacing: 3px; }
+        h1 { font-size: 3rem; margin: 10px 0 14px; }
+        main .lead { font-size: 1.3rem; line-height: 1.6; color: #f2f6f2; max-width: 720px; margin: 0 0 34px; }
+
+        /* ---------- a demo card ---------- */
+        .pg-card {
+            margin: 0 0 40px;
+            padding: 30px;
+            border: 1px solid rgba(245, 248, 244, 0.14);
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)), rgba(4, 7, 5, 0.86);
+            box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.95);
+        }
+        .pg-card > h2 { margin: 0 0 6px; font-size: 1.7rem; color: #fff; }
+        .pg-card > .pg-sub { margin: 0 0 22px; color: var(--text-muted, #9aa69c); font-size: 1.02rem; line-height: 1.6; max-width: 760px; }
+        .pg-explain { margin: 24px 0 0; padding-top: 20px; border-top: 1px solid rgba(245, 248, 244, 0.1); color: #dfe7df; line-height: 1.7; max-width: 760px; }
+        .pg-explain a { color: var(--green); font-weight: 600; }
+
+        /* labels and inputs */
+        .pg-label { display: block; margin: 0 0 6px; font-size: 0.85rem; font-weight: 600; color: #dfe7df; }
+        .pg-input, .pg-num {
+            width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px;
+            border: 1px solid rgba(245, 248, 244, 0.18); background: #050805; color: #fff; font: inherit;
+        }
+        .pg-input { font-size: 1.3rem; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+        .pg-input:focus, .pg-num:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 4px rgba(126, 233, 111, 0.15); }
+        .pg-input[aria-invalid="true"] { border-color: #ff7a6b; }
+        .pg-err { min-height: 1.4em; margin: 8px 0 0; color: #ff9d90; font-size: 0.95rem; }
+
+        .pg-chips, .pg-keys, .pg-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pg-chips { margin: 0 0 16px; }
+        .pg-keys { margin: 10px 0 0; }
+        .pg-chip, .pg-key, .pg-btn {
+            min-height: 40px; padding: 8px 14px; border-radius: 999px; cursor: pointer; font: inherit;
+            border: 1px solid rgba(245, 248, 244, 0.22); background: rgba(255, 255, 255, 0.04); color: #fff;
+        }
+        .pg-key { min-width: 46px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+        .pg-chip:hover, .pg-key:hover, .pg-btn:hover { border-color: var(--green); }
+        .pg-btn.primary { background: var(--paper, #f5f8f4); color: #000; border-color: var(--paper, #f5f8f4); font-weight: 700; min-width: 96px; }
+        .pg-btn.primary:hover { background: var(--green); border-color: var(--green); }
+
+        /* live typeset preview */
+        .pg-preview { margin: 14px 0 0; display: grid; gap: 6px; font-size: 1.15rem; color: #fff; min-height: 3.6em; }
+        .pg-preview .katex { font-size: 1.15em; }
+        .pg-preview .lbl { color: var(--text-muted, #9aa69c); font-size: 0.85rem; margin-right: 8px; }
+
+        /* settings row */
+        .pg-settings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 20px 0; }
+        .pg-pair { display: grid; grid-template-columns: 1fr 96px; gap: 8px; align-items: center; }
+        .pg-pair input[type="range"], .pg-speed input[type="range"] { width: 100%; accent-color: var(--green); }
+
+        /* graph + readout */
+        .pg-stage { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 18px; align-items: start; }
+        .pg-canvas { display: block; width: 100%; height: 380px; border-radius: 16px; background: #020403; border: 1px solid rgba(245, 248, 244, 0.1); }
+        .pg-readout {
+            margin: 0; padding: 16px 18px; border-radius: 16px; border: 1px solid rgba(245, 248, 244, 0.1); background: rgba(255, 255, 255, 0.03);
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.9rem; line-height: 1.7; color: #dfe7df;
+        }
+        .pg-readout dt { color: var(--text-muted, #9aa69c); font-family: "Schibsted Grotesk", sans-serif; font-size: 0.78rem; }
+        .pg-readout dd { margin: 0 0 8px; color: #fff; overflow-wrap: anywhere; }
+        .pg-readout .upd { color: var(--green); }
+        .pg-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0 0; }
+        .pg-speed { display: flex; align-items: center; gap: 10px; margin-left: auto; min-width: 220px; }
+        .pg-speed label { font-size: 0.85rem; color: #dfe7df; white-space: nowrap; }
+        .pg-result { margin: 16px 0 0; padding: 14px 16px; border-radius: 14px; background: rgba(126, 233, 111, 0.08); border: 1px solid rgba(126, 233, 111, 0.3); color: #fff; line-height: 1.6; }
+        .pg-result.warn { background: rgba(255, 196, 80, 0.08); border-color: rgba(255, 196, 80, 0.4); }
+        .pg-result.bad { background: rgba(255, 122, 107, 0.08); border-color: rgba(255, 122, 107, 0.45); }
+        .pg-result:empty { display: none; }
+
+        /* ---------- genetic algorithm ---------- */
+        .ga-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: end; }
+        .ga-note { min-height: 1.4em; margin: 8px 0 0; font-size: 0.92rem; color: #ffcf7a; }
+        .ga-best {
+            margin: 22px 0 10px; padding: 18px; border-radius: 16px; background: #020403; border: 1px solid rgba(245, 248, 244, 0.1);
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: clamp(1.1rem, 3.2vw, 1.8rem);
+            letter-spacing: 0.06em; min-height: 1.6em; overflow-wrap: anywhere; color: rgba(245, 248, 244, 0.55);
+        }
+        .ga-best span { display: inline-block; min-width: 0.62em; text-align: center; transition: color 0.25s ease, text-shadow 0.25s ease; white-space: pre; }
+        .ga-best span.hit { color: var(--green); text-shadow: 0 0 12px rgba(126, 233, 111, 0.6); }
+        .ga-best span.lock { animation: ga-lock 0.45s cubic-bezier(.34, 1.56, .64, 1); }
+        @keyframes ga-lock { 0% { transform: scale(1.6); } 100% { transform: scale(1); } }
+        .ga-line { margin: 0 0 14px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.92rem; color: #dfe7df; overflow-wrap: anywhere; }
+        .ga-chart { display: block; width: 100%; height: 150px; border-radius: 14px; background: #020403; border: 1px solid rgba(245, 248, 244, 0.1); }
+
+        @media (max-width: 860px) {
+            .pg-stage { grid-template-columns: 1fr; }
+            .pg-settings { grid-template-columns: 1fr; }
+            .pg-canvas { height: 300px; }
+            .pg-speed { margin-left: 0; width: 100%; }
+        }
+        @media (max-width: 600px) {
+            main { padding: 110px 16px 30px 40px; }
+            h1 { font-size: 2.3rem; }
+            .pg-card { padding: 20px 16px; border-radius: 18px; }
+            .ga-row { grid-template-columns: 1fr; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ga-best span.lock { animation: none; }
+        }
+    </style>
+</head>
+<body data-page="playground">
+
+    <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/services/education.html">AI Education</a> · <a href="/order.html">Order</a></nav></noscript>
+    <script src="../../nav.min.js"></script>
+
+    <main>
+        <a href="../education.html" class="back-btn" aria-label="Back to AI Education" title="Back to AI Education">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </a>
+        <div class="eyebrow">AI EDUCATION</div>
+        <h1>Playground</h1>
+        <p class="lead">Two ideas behind machine learning that you can poke at yourself. Everything runs right here in
+            your browser: nothing you type is sent anywhere.</p>
+        <noscript><p class="lead">The Playground needs JavaScript turned on.</p></noscript>
+
+        <!-- ================= DEMO 1: GRADIENT DESCENT (../../playground/gradient-descent.js) ================= -->
+        <section class="pg-card" id="gradient-descent" aria-labelledby="gdTitle" data-af-skip>
+            <h2 id="gdTitle">Gradient descent</h2>
+            <p class="pg-sub">Type a curve, pick where to start, and watch a ball roll downhill to the lowest point it can find.
+                This is how AI models learn: take a small step in the direction that lowers the error, then repeat.</p>
+
+            <div class="pg-chips" role="group" aria-label="Example curves">
+                <button class="pg-chip" type="button" data-expr="x^2" data-start="4" data-lr="0.1">Simple bowl</button>
+                <button class="pg-chip" type="button" data-expr="x^2 + 3x" data-start="4" data-lr="0.1">Shifted bowl</button>
+                <button class="pg-chip" type="button" data-expr="sin(3x) + 0.2x^2" data-start="2.5" data-lr="0.05">Bumpy</button>
+                <button class="pg-chip" type="button" data-expr="x^2" data-start="4" data-lr="1.05">Too-big step</button>
+            </div>
+
+            <label class="pg-label" for="gdExpr">Your equation, using x</label>
+            <input class="pg-input" id="gdExpr" type="text" value="x^2" autocomplete="off" autocapitalize="off" spellcheck="false"
+                   inputmode="text" aria-describedby="gdErr" maxlength="120">
+            <div class="pg-keys" role="group" aria-label="Insert into the equation">
+                <button class="pg-key" type="button" data-insert="x">x</button>
+                <button class="pg-key" type="button" data-insert="^">^</button>
+                <button class="pg-key" type="button" data-insert="(">(</button>
+                <button class="pg-key" type="button" data-insert=")">)</button>
+                <button class="pg-key" type="button" data-insert="sin(">sin</button>
+                <button class="pg-key" type="button" data-insert="cos(">cos</button>
+                <button class="pg-key" type="button" data-insert="exp(">exp</button>
+                <button class="pg-key" type="button" data-insert="sqrt(">sqrt</button>
+                <button class="pg-key" type="button" data-insert="pi" aria-label="pi">π</button>
+            </div>
+            <p class="pg-err" id="gdErr" role="alert"></p>
+            <div class="pg-preview" aria-live="polite">
+                <div><span class="lbl">f(x) =</span><span id="gdTexF"></span></div>
+                <div><span class="lbl">f′(x) =</span><span id="gdTexD"></span></div>
+            </div>
+
+            <div class="pg-settings">
+                <div>
+                    <label class="pg-label" for="gdStart">Starting x</label>
+                    <input class="pg-num" id="gdStart" type="number" value="4" step="0.1" inputmode="decimal">
+                </div>
+                <div>
+                    <label class="pg-label" for="gdLrNum" id="gdLrLabel">Learning rate (step size)</label>
+                    <div class="pg-pair">
+                        <input id="gdLrRange" type="range" min="0" max="1000" step="1" aria-labelledby="gdLrLabel" aria-valuetext="0.1">
+                        <input class="pg-num" id="gdLrNum" type="number" value="0.1" min="0.001" max="1.5" step="0.001" inputmode="decimal">
+                    </div>
+                </div>
+                <div>
+                    <label class="pg-label" for="gdItersNum" id="gdItersLabel">Iterations (most steps to take)</label>
+                    <div class="pg-pair">
+                        <input id="gdItersRange" type="range" min="1" max="500" step="1" value="100" aria-labelledby="gdItersLabel">
+                        <input class="pg-num" id="gdItersNum" type="number" value="100" min="1" max="500" step="1" inputmode="numeric">
+                    </div>
+                </div>
+            </div>
+
+            <div class="pg-stage">
+                <div>
+                    <canvas class="pg-canvas" id="gdCanvas" role="img" aria-label="Graph of the curve with the ball rolling down it"></canvas>
+                    <div class="pg-controls">
+                        <button class="pg-btn primary" id="gdPlay" type="button">Play</button>
+                        <button class="pg-btn" id="gdStep" type="button">Step</button>
+                        <button class="pg-btn" id="gdReset" type="button">Reset</button>
+                        <div class="pg-speed">
+                            <label for="gdSpeed">Speed</label>
+                            <input id="gdSpeed" type="range" min="0.25" max="4" step="0.25" value="1" aria-valuetext="1x">
+                        </div>
+                    </div>
+                </div>
+                <dl class="pg-readout" aria-label="Current step">
+                    <dt>Iteration</dt><dd id="gdIt">0</dd>
+                    <dt>x</dt><dd id="gdX">–</dd>
+                    <dt>f(x)</dt><dd id="gdFx">–</dd>
+                    <dt>f′(x), the slope</dt><dd id="gdDx">–</dd>
+                    <dt>Next step</dt><dd class="upd" id="gdUpd">–</dd>
+                </dl>
+            </div>
+            <p class="pg-result" id="gdResult" role="status" aria-live="polite"></p>
+
+            <p class="pg-explain">Think of the curve as a valley and the ball as you, blindfolded, feeling the slope under your feet.
+                At every step you check which way is downhill (the slope, f′(x)) and move a little that way. The learning rate is how
+                big that step is: too small and you crawl, too big and you leap right over the bottom. Training an AI model works the
+                same way, just with millions of numbers instead of one x.
+                <a href="../education.html#video-gradientdescent">Watch "Math is Art, Part 2: Gradient Descent"</a>.</p>
+        </section>
+
+        <!-- ================= DEMO 2: GENETIC ALGORITHM (../../playground/genetic.js) ================= -->
+        <section class="pg-card" id="genetic-algorithm" aria-labelledby="gaTitle" data-af-skip>
+            <h2 id="gaTitle">Genetic algorithm</h2>
+            <p class="pg-sub">Type a phrase and watch 250 random guesses evolve toward it. Each generation, the best fifth of the
+                guesses "breed", a few letters mutate at random, and the best guess so far is always kept.</p>
+
+            <div class="ga-row">
+                <div>
+                    <label class="pg-label" for="gaTarget">Target phrase (up to 40 letters, numbers, spaces and ! . , ?)</label>
+                    <input class="pg-input" id="gaTarget" type="text" value="Hello world!" maxlength="40" autocomplete="off" spellcheck="false" aria-describedby="gaNote">
+                </div>
+                <div class="pg-buttons">
+                    <button class="pg-btn primary" id="gaPlay" type="button">Play</button>
+                    <button class="pg-btn" id="gaReset" type="button">Reset</button>
+                </div>
+            </div>
+            <p class="ga-note" id="gaNote" role="status"></p>
+
+            <div class="pg-speed" style="margin-left:0;max-width:420px">
+                <label for="gaSpeed">Generations per second</label>
+                <input id="gaSpeed" type="range" min="1" max="60" step="1" value="4" aria-valuetext="4 per second">
+                <span id="gaSpeedOut" aria-hidden="true">4</span>
+            </div>
+
+            <div class="ga-best" id="gaBest" aria-label="Best guess so far"></div>
+            <p class="ga-line" id="gaLine" aria-live="off">Try 0 | Best: '' | Fit: 0.0%</p>
+            <canvas class="ga-chart" id="gaChart" role="img" aria-label="Best fitness over generations"></canvas>
+            <p class="pg-result" id="gaResult" role="status" aria-live="polite"></p>
+
+            <p class="pg-explain">Nobody tells the computer the answer. It just keeps the guesses that score best and mixes them,
+                like breeding the fastest racehorses, and random mutations add new ideas. Over generations, good letters
+                spread and the phrase appears. The same trick is used to design antennas, schedules and game strategies.</p>
+        </section>
+    </main>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+    <!-- math.js (parses equations, takes derivatives) and KaTeX (typesets them), both served from this site -->
+    <script src="../../vendor/mathjs/math.min.js"></script>
+    <script src="../../vendor/katex/katex.min.js"></script>
+    <script src="../../playground/gradient-descent.js"></script>
+    <script src="../../playground/genetic.js"></script>
+</body>
+</html>

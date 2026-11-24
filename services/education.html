@@ -598,6 +598,8 @@
             .vp-fill, .vp-sticker { transition: none; }
             .vp-sticker.vp-pop { animation: none; }
         }
+        .playground-link { margin: 6px 0 0; font-size: 1.02rem; color: #dfe7df; }
+        .playground-link a { color: var(--green); font-weight: 700; }
     </style>
     <script type="application/ld+json">
 {
@@ -883,6 +885,7 @@
             <div class="eyebrow">AI EDUCATION</div>
             <h1>Plain-English AI training, plus a certification guide.</h1>
             <p class="lead">Plain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background.</p>
+            <p class="playground-link">New: <a href="education/playground.html">try the Playground</a>. Type any equation and watch gradient descent find its lowest point, or watch a genetic algorithm evolve your own phrase.</p>
         </div>
 
         <!-- AI MADE SIMPLE SHORTS: vertical videos under a minute (files in ../videos/shorts) -->
@@ -1119,7 +1122,7 @@
                     </figcaption>
                 </figure>
 
-                <figure class="gallery-item">
+                <figure class="gallery-item" id="video-gradientdescent">
                     <video data-video-id="gradientdescent" controls preload="none" poster="../videos/gradientdescent-thumbnail.jpg" data-blurhash="L74f5Bx-IoM-yCt3WBWFD7RWxttJ">
                         <source src="../videos/gradientdescent.mp4" type="video/mp4">
                         Your browser does not support the video tag.

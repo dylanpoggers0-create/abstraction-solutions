@@ -72,6 +72,7 @@ const PAGES = [
     // hidden: true = not in the menu (linked from the footer), but still named correctly as the current page
     { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true },
     { id: 'recipes',   label: 'Automation Recipes', href: 'recipes/', icon: 'services', hidden: true },
+    { id: 'playground', label: 'Playground', href: 'services/education/playground.html', icon: 'services', hidden: true },   // under AI Education in the Services menu (ux.js)
     { id: 'hydrocart', label: 'HydroCart', href: 'hydrocart.html', icon: 'services', hidden: true }
 ];
 

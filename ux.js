@@ -55,7 +55,9 @@
             'border:1px solid var(--nav-line,#262626);border-radius:14px;box-shadow:8px 0 30px rgba(0,0,0,.6)}' +
         '.nav-flyout.open{display:flex}' +
         '.nav-flyout a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#dfe7df;text-decoration:none}' +
-        '.nav-flyout a:hover,.nav-flyout a:focus-visible{background:rgba(126,233,111,.1);color:var(--green,#7ee96f)}';
+        '.nav-flyout a:hover,.nav-flyout a:focus-visible{background:rgba(126,233,111,.1);color:var(--green,#7ee96f)}' +
+        // a sub-page (Playground under AI Education): indented, smaller, with a thin line joining it to its parent
+        '.nav-flyout a.nav-child,.side-sub a.nav-child{margin-left:14px;padding-left:14px;border-left:1px solid rgba(126,233,111,.35);border-radius:0 10px 10px 0;font-size:.9em}';
     document.head.appendChild(css);
 
     /* ---------- 12. Predictive back: the Android back gesture (and Esc) closes the top overlay
@@ -208,6 +210,7 @@
         { g: 'Pages', t: 'Home', href: '' },
         { g: 'Pages', t: 'Services', href: 'services.html' },
         { g: 'Pages', t: 'AI Education', href: 'services/education.html', k: 'courses videos learn' },
+        { g: 'Pages', t: 'Playground', href: 'services/education/playground.html', k: 'gradient descent genetic algorithm demo try interactive' },
         { g: 'Pages', t: 'Automation', href: 'services/automation.html' },
         { g: 'Pages', t: 'Custom AI models', href: 'services/models.html' },
         { g: 'Pages', t: 'Workflows', href: 'services/workflows.html' },
@@ -381,20 +384,22 @@
     /* ---------- 20. Services flyout with the "Amazon safe triangle": moving the mouse diagonally from
        "Services" toward its submenu (across other links) doesn't switch away, as long as the pointer
        stays inside the triangle between where it was and the submenu's near corners. ---------- */
-    const SERVICE_PAGES = [['AI Education', 'services/education.html'], ['Automation', 'services/automation.html'],
+    // a third item true = a sub-page, shown indented under the one above it (Playground sits under AI Education)
+    const SERVICE_PAGES = [['AI Education', 'services/education.html'], ['Playground', 'services/education/playground.html', true],
+                           ['Automation', 'services/automation.html'],
                            ['Custom AI models', 'services/models.html'], ['Workflows', 'services/workflows.html'],
                            ['Automation recipes', 'recipes/']];
     function servicesFlyout() {
         const link = Array.from(document.querySelectorAll('.side-links a')).find(function (a) { return /services\.html$/.test(a.getAttribute('href') || ''); });
         if (!link) return;
         const fly = el('nav', 'nav-flyout'); fly.setAttribute('aria-label', 'Services');
-        SERVICE_PAGES.forEach(function (p) { const a = el('a', null, p[0]); a.href = BASE + p[1]; fly.appendChild(a); });
+        SERVICE_PAGES.forEach(function (p) { const a = el('a', p[2] ? 'nav-child' : null, p[0]); a.href = BASE + p[1]; fly.appendChild(a); });
         document.body.appendChild(fly);
         const wide = matchMedia('(hover: hover) and (min-width: 900px)');
         // phones/tablets: a small arrow button opens the same links inline under Services
         const wrap = el('div', 'has-sub'); link.parentNode.insertBefore(wrap, link); wrap.appendChild(link);
         const inline = el('div', 'side-sub');
-        SERVICE_PAGES.forEach(function (p) { const a = el('a', null, p[0]); a.href = BASE + p[1]; inline.appendChild(a); });
+        SERVICE_PAGES.forEach(function (p) { const a = el('a', p[2] ? 'nav-child' : null, p[0]); a.href = BASE + p[1]; inline.appendChild(a); });
         const tog = el('button', 'sub-toggle'); tog.type = 'button'; tog.setAttribute('aria-label', 'Show service pages'); tog.setAttribute('aria-expanded', 'false');
         wrap.append(tog, inline);
         tog.addEventListener('click', function (e) {
