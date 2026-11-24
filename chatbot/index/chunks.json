@@ -279,7 +279,7 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Start your AI project with a free instant quote.",
-"text": "ckout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as"
+"text": "ckout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as User ID:"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -363,7 +363,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Privacy Policy",
-"text": "LEGAL\nEffective November 12, 2026 · Updated November 18, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or unsubscribe yourself, anytime, and email us to see or delete your data."
+"text": "LEGAL\nEffective November 12, 2026 · Updated November 24, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or unsubscribe yourself, anytime, and email us to see or delete your data."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -387,13 +387,19 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "order status, quote and whether it has been paid.\nAccounts (optional): if you sign in with Google or with an emailed sign-in link, we keep your email address, your name, your Google account ID (if you used Google) and when you last signed in, so you can see your orders in one place. Your browser keeps you signed in on your device; we don't use tracking cookies. You can delete your account yourself anytime from the order page."
+"text": "Accounts (optional): if you sign in with Google or with an emailed sign-in link, we keep your email address, your name, your Google account ID (if you used Google) and when you last signed in, so you can see your orders in one place. Your browser keeps you signed in on your device; we don't use tracking cookies. You can delete your account yourself anytime from the order page."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "our account yourself anytime from the order page.\nPayments: handled entirely by Stripe. Your card number never touches our servers. We only receive a record that the payment succeeded."
+"text": "our account yourself anytime from the order page. Signed-in accounts also store an 8-digit user ID and which AI Education videos you watched, and how much of each (if you watch while signed out, that stays in your browser until you next sign in)."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "Payments: handled entirely by Stripe. Your card number never touches our servers. We only receive a record that the payment succeeded."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -990,34 +996,70 @@
 "text": "A machine learning model that learns from historical pricing data and suggests price changes that increase profit .\nSuggests price adjustments based on past sales\nKeeps sales high while raising the price per unit\nFinds the price where profit is highest\nMachine Learning Pricing Sales Data"
 },
 {
+"url": "https://abstraction-solutions.com/services/education/playground.html",
+"title": "AI Playground: Gradient Descent and Genetic Algorithms",
+"heading": "Playground",
+"text": "AI EDUCATION\nTwo ideas behind machine learning that you can poke at yourself. Everything runs right here in your browser: nothing you type is sent anywhere."
+},
+{
+"url": "https://abstraction-solutions.com/services/education/playground.html",
+"title": "AI Playground: Gradient Descent and Genetic Algorithms",
+"heading": "Gradient descent",
+"text": "Type a curve, pick where to start, and watch a ball roll downhill to the lowest point it can find. This is how AI models learn: take a small step in the direction that lowers the error, then repeat.\nYour equation, using x\nf(x) =\nf′(x) =\nStarting x\nLearning rate (step size)\nIterations (most steps to take)\nSpeed\nIteration\n0\nx\n–\nf(x)\n–\nf′(x), the slope\n–\nNext step\n–"
+},
+{
+"url": "https://abstraction-solutions.com/services/education/playground.html",
+"title": "AI Playground: Gradient Descent and Genetic Algorithms",
+"heading": "Gradient descent",
+"text": "ation\n0\nx\n–\nf(x)\n–\nf′(x), the slope\n–\nNext step\n–\nThink of the curve as a valley and the ball as you, blindfolded, feeling the slope under your feet. At every step you check which way is downhill (the slope, f′(x)) and move a little that way. The learning rate is how big that step is: too small and you crawl, too big and you leap right over the bottom. Training an AI model works the same way, just with millions of numbers instead of one x. Watch \"Math is Art, Part 2: Gradient Descent\" ."
+},
+{
+"url": "https://abstraction-solutions.com/services/education/playground.html",
+"title": "AI Playground: Gradient Descent and Genetic Algorithms",
+"heading": "Genetic algorithm",
+"text": "Type a phrase and watch 250 random guesses evolve toward it. Each generation, the best fifth of the guesses \"breed\", a few letters mutate at random, and the best guess so far is always kept.\nTarget phrase (up to 40 letters, numbers, spaces and ! . , ?)\nGenerations per second\n4\nTry 0 | Best: '' | Fit: 0.0%"
+},
+{
+"url": "https://abstraction-solutions.com/services/education/playground.html",
+"title": "AI Playground: Gradient Descent and Genetic Algorithms",
+"heading": "Genetic algorithm",
+"text": "rations per second\n4\nTry 0 | Best: '' | Fit: 0.0%\nNobody tells the computer the answer. It just keeps the guesses that score best and mixes them, like breeding the fastest racehorses, and random mutations add new ideas. Over generations, good letters spread and the phrase appears. The same trick is used to design antennas, schedules and game strategies."
+},
+{
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
 "heading": "Plain-English AI training, plus a certification guide.",
-"text": "AI EDUCATION\nPlain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background."
+"text": "AI EDUCATION\nPlain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background.\nNew: try the Playground . Type any equation and watch gradient descent find its lowest point, or watch a genetic algorithm evolve your own phrase."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
 "heading": "AI Made Simple shorts",
-"text": "Under a minute each: one AI idea, explained for business owners and nonprofit teams. Follow along on TikTok: @abstraction.soluti\nYour browser does not support the video tag.\nSHORT · 0:37 Why AI Makes Things Up A noir case file on hallucinations: AI predicts likely words, it doesn't look facts up. The fix: real sources, citations, and checking what matters.\nYour browser does not support the video tag."
+"text": "Each short explains one AI idea in under a minute, made for business owners and nonprofit teams. Watch them below, or follow along on:\nTikTok @abstraction.soluti\nYouTube @abstractionsolutions\nInstagram @abstraction.solutions\nLinkedIn Abstraction Solutions\nYour progress shows for this visit. Sign in to save your progress .\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
 "heading": "AI Made Simple shorts",
-"text": "ers.\nYour browser does not support the video tag.\nSHORT · 0:37 Tokens: How AI Actually Reads AI reads chunks, not words. Why it charges per token, hits length limits, and can't count the r's in strawberry.\nYour browser does not support the video tag.\nSHORT · 0:34 Vague Prompt vs. Specific Prompt Same AI, same question, very different answers. The four parts of a good prompt: role, context, task and format.\nYour browser does not support the video tag."
+"text": "ss .\nYour browser does not support the video tag.\nSHORT · 0:37 Why AI Makes Things Up A noir case file on hallucinations: AI predicts likely words, it doesn't look facts up. The fix: real sources, citations, and checking what matters.\nYour browser does not support the video tag.\nSHORT · 0:37 Tokens: How AI Actually Reads AI reads chunks, not words. Why it charges per token, hits length limits, and can't count the r's in strawberry."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
 "heading": "AI Made Simple shorts",
-"text": "mat.\nYour browser does not support the video tag.\nSHORT · 0:37 Neural Networks: A Really Big Group Project Students passing notes, weighing who to trust, and adjusting when the group gets it wrong. That's training.\nShow all shorts (10 more)\nYour browser does not support the video tag.\nSHORT · 0:36 Overfitting: Memorizing the Answer Key 100% on the practice test, failed the real one. Why models memorize, and how variety and unseen test data fix it."
+"text": "th limits, and can't count the r's in strawberry.\nYour browser does not support the video tag.\nSHORT · 0:34 Vague Prompt vs. Specific Prompt Same AI, same question, very different answers. The four parts of a good prompt: role, context, task and format.\nYour browser does not support the video tag.\nSHORT · 0:37 Neural Networks: A Really Big Group Project Students passing notes, weighing who to trust, and adjusting when the group gets it wrong. That's training."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
 "heading": "AI Made Simple shorts",
-"text": "ize, and how variety and unseen test data fix it.\nYour browser does not support the video tag.\nSHORT · 0:42 Training vs. Using AI Writing the recipe takes months; cooking from it takes seconds. Why most small businesses never need to train their own AI.\nYour browser does not support the video tag.\nSHORT · 0:39 Chatbot vs. AI Agent A chatbot talks, an agent does. Why agents need guardrails and a human approving the big steps.\nYour browser does not support the video tag."
+"text": "ng when the group gets it wrong. That's training.\nShow all shorts (10 more)\nYour browser does not support the video tag.\nSHORT · 0:36 Overfitting: Memorizing the Answer Key 100% on the practice test, failed the real one. Why models memorize, and how variety and unseen test data fix it.\nYour browser does not support the video tag."
+},
+{
+"url": "https://abstraction-solutions.com/services/education.html",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "AI Made Simple shorts",
+"text": "it.\nYour browser does not support the video tag.\nSHORT · 0:42 Training vs. Using AI Writing the recipe takes months; cooking from it takes seconds. Why most small businesses never need to train their own AI.\nYour browser does not support the video tag.\nSHORT · 0:39 Chatbot vs. AI Agent A chatbot talks, an agent does. Why agents need guardrails and a human approving the big steps.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
@@ -1047,7 +1089,7 @@
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
 "heading": "Short explainers",
-"text": "Short videos that break down the ideas behind modern AI. New ones every week on Instagram: @abstraction.solutions\nYour browser does not support the video tag.\nVIDEO · 1:53 Math is Art: Backpropagation How AI models learn, explained through painting a picture: draft, step back, fix what's off, repeat.\nYour browser does not support the video tag."
+"text": "Short videos that break down the ideas behind modern AI. New ones every week on Instagram: @abstraction.solutions\nYour progress shows for this visit. Sign in to save your progress .\nYour browser does not support the video tag.\nVIDEO · 1:53 Math is Art: Backpropagation How AI models learn, explained through painting a picture: draft, step back, fix what's off, repeat.\nYour browser does not support the video tag."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
@@ -1606,5 +1648,17 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "nprofits keep 50% off. The discounts don't stack.\n2026-11-07: Fewer pages, easier to find. Nonprofit work and Built in Memphis now live on the Custom Workflows page, so there are fewer pages to click through. Join our mailing list on the homepage for offers, early access, newsletters and giveaways. Find us on TikTok, linked in the footer."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "veaways. Find us on TikTok, linked in the footer.\n2026-11-24: Track your progress on AI Education videos. Every Education video now shows how much of it you've watched, and a green check once you've watched it all. Sign in to save your progress to your account. Only time you actually watch counts, so skipping to the end doesn't. Finish a video for the first time and you get a small celebration. Every account now has a permanent 8-digit user ID, shown on the order page when you're signed in."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "D, shown on the order page when you're signed in.\n2026-11-24: The AI Education Playground. A new Playground page under AI Education, with two demos that run right in your browser. Gradient descent: type any equation (x^2 + 3x, sin(3x) + 0.2x^2 ...), see it and its slope written out, and watch a ball roll down to the lowest point, step by step. Genetic algorithm: type a phrase and watch 250 random guesses evolve into it, generation by generation."
 }
 ]
