@@ -29,7 +29,7 @@
     const isAdmin = /\/admin(\.html)?$/.test(location.pathname);   // a work screen: styled, but kept still
 
     /* ---------- 1. tagging ---------- */
-    const SKIP = '.side-nav, .side-tab, .header-wrapper, .chat-box, video, iframe, svg, canvas, [data-af-skip]';   // the chat window keeps its own solid look
+    const SKIP = '.side-nav, .side-tab, .acct-tab, .acct-backdrop, .header-wrapper, .chat-box, video, iframe, svg, canvas, [data-af-skip]';   // the chat window keeps its own solid look
 
     function rgba(str) {
         const m = str && str.match(/rgba?\(([^)]+)\)/);

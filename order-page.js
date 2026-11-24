@@ -169,11 +169,13 @@
         const account = { token: result.token, email: result.customer.email, name: result.customer.name || '',
                           userId: result.customer.user_id || null, expires: Number(result.token.split('.')[1]) };
         try { localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account)); } catch (e) {}
+        window.dispatchEvent(new Event('as-account-change'));   // the Sign in button next to Menu (account.js)
         return account;
     }
 
     function signOut() {
         try { localStorage.removeItem(ACCOUNT_KEY); localStorage.removeItem(ORDERS_SNAP); } catch (e) {}
+        window.dispatchEvent(new Event('as-account-change'));
         if (window.google && google.accounts) google.accounts.id.disableAutoSelect();
         renderAccount();
     }

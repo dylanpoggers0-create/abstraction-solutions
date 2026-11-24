@@ -30,7 +30,7 @@
     const fine = window.matchMedia('(pointer: fine)').matches;
     const SPRING = 'cubic-bezier(.34, 1.56, .64, 1)';
     const OUT = 'cubic-bezier(.16, 1, .3, 1)';
-    const PRESSABLE = '[data-af~="btn"], .side-tab, button:not([disabled]), [role="button"], .cmdk-item, summary';
+    const PRESSABLE = '[data-af~="btn"], .side-tab, .acct-tab, button:not([disabled]), [role="button"], .cmdk-item, summary';
 
     function ready(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
     function anim(el, frames, opts) { return el.animate ? el.animate(frames, opts) : null; }

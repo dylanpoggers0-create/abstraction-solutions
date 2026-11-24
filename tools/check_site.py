@@ -75,7 +75,7 @@ summary = os.environ.get("GITHUB_STEP_SUMMARY")
 # condensed copies (tools/minify.py): they must exist; if one is older than its source, say so
 # (GitHub rebuilds them automatically after a push, so this is a note, not a failure)
 import hashlib
-for src in ["style.css", "nav.js", "ux.js", "float.js", "feel.js", "gideon.js"]:
+for src in ["style.css", "nav.js", "ux.js", "float.js", "feel.js", "gideon.js", "account.js"]:
     base, ext = os.path.splitext(src); mn = os.path.join(ROOT, base + ".min" + ext)
     if not os.path.exists(mn):
         bad(mn, 1, f"missing: run python3 tools/minify.py to build it from {src}"); continue

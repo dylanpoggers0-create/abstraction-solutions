@@ -38,6 +38,7 @@ const ICONS = {
     contact:  '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>',
     menu:     '<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>',
     close:    '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    account:  '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 18.4a7 7 0 0 1 11.6 0"/>',
     about:    '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     order:    '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>',
     admin:    '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
@@ -50,6 +51,15 @@ const ICONS = {
     memphis:  '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
     clubs:    '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'
 };
+
+// Signed in? (the sign-in the Order page and account.js save in this browser). Read now so the
+// "Sign in" / "Account" button is right from the first paint; account.js keeps it up to date.
+const ACCOUNT_LABEL = (function () {
+    try {
+        const a = JSON.parse(localStorage.getItem('asAccount') || 'null');
+        return a && a.expires * 1000 > Date.now() ? 'Account' : 'Sign in';
+    } catch (e) { return 'Sign in'; }
+})();
 
 // The menu. "id" must match data-page="..." on that page's <body>.
 // hrefs are relative to the main site folder (nav.js adds BASE in front of each one).
@@ -181,6 +191,10 @@ document.getElementById('site-nav').innerHTML =
     // Menu button (top right; bottom left on phones) — opens the nav
     '<label for="nav-toggle" class="side-tab" title="Open menu">' + svg('menu') + '<span>Menu</span></label>' +
 
+    // Sign in / your account, next to Menu (account.js opens the panel; without JS it's a link to the Order page's sign-in)
+    '<a href="' + BASE + 'order.html#signIn" class="acct-tab" data-account-open="login" aria-label="Sign in or sign up">' +
+        svg('account') + '<span class="acct-initial" hidden></span><span data-account-label>' + ACCOUNT_LABEL + '</span></a>' +
+
     // the side nav itself
     '<aside class="side-nav">' +
         '<div class="side-nav-top">' +
@@ -194,6 +208,9 @@ document.getElementById('site-nav').innerHTML =
             '<small>CURRENT PAGE</small>' +
             '<div><span class="icon-badge">' + svg(current.icon) + '</span>' + current.label + '</div>' +
         '</div>' +
+        '<a href="' + BASE + 'order.html#signIn" class="acct-side" data-account-open="signup">' +
+            '<span class="icon-badge">' + svg('account') + '</span><span class="acct-initial" hidden></span>' +
+            '<span data-account-label>' + (ACCOUNT_LABEL === 'Sign in' ? 'Sign in or sign up' : ACCOUNT_LABEL) + '</span></a>' +
         '<nav class="side-links"><small>PAGES</small>' + links + '</nav>' +
         '<div class="side-footer">© 2026 Abstraction Solutions</div>' +
     '</aside>' +
@@ -230,6 +247,13 @@ window.uxReady.catch(function () {});
 (function () {
     const s = document.createElement('script');
     s.src = BASE + 'feel.js';
+    document.head.appendChild(s);
+})();
+
+/* Sign in / sign up from any page (the button next to Menu and the top of the side menu): see account.js. */
+(function () {
+    const s = document.createElement('script');
+    s.src = BASE + 'account.js';
     document.head.appendChild(s);
 })();
 
