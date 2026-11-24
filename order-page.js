@@ -136,6 +136,7 @@
         });
     });
     if (location.hash === '#newOrder') document.getElementById('newOrder').open = true;
+    if (location.hash === '#signIn') document.getElementById('signIn').open = true;   // "Sign in to save your progress" links here
     // phones: show the bottom button only while the top one is off screen and the order form is closed
     (function () {
         const bar = document.querySelector('.mobile-cta'), top = document.querySelector('.order-main-cta'), form = document.getElementById('newOrder');
@@ -164,9 +165,9 @@
         return null;
     }
 
-    function saveAccount(result) {   // result = { token: "42.1731200000.sig", customer: { email, name } }
+    function saveAccount(result) {   // result = { token: "42.1731200000.sig", customer: { email, name, user_id } }
         const account = { token: result.token, email: result.customer.email, name: result.customer.name || '',
-                          expires: Number(result.token.split('.')[1]) };
+                          userId: result.customer.user_id || null, expires: Number(result.token.split('.')[1]) };
         try { localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account)); } catch (e) {}
         return account;
     }
@@ -204,12 +205,33 @@
         document.getElementById('lookupManual').hidden = !!account;
         lookupPanel.querySelector('.panel-sub').textContent = account
             ? 'Your orders, ready to open' : 'See the status and quote of an existing order';
+        showUserId(account);
         if (account) {
             document.getElementById('accountEmail').textContent = account.email;
             document.getElementById('lookupMineEmail').textContent = account.email;
             loadMyOrders();
         }
         placeOrderForm();
+    }
+
+    // The account's permanent 8-digit user ID (a label, not a password). Older saved sign-ins don't have it yet,
+    // so it's fetched once from /me and remembered.
+    function showUserId(account) {
+        const box = document.getElementById('accountUserId');
+        if (!box) return;
+        box.hidden = !(account && account.userId);
+        if (account && account.userId) { box.querySelector('strong').textContent = account.userId; return; }
+        if (!account) return;
+        fetchWithWake(API_BASE + '/me', { headers: { Authorization: 'Bearer ' + account.token } })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (me) {
+                if (!me || !me.user_id) return;
+                const now = currentAccount();
+                if (!now || now.token !== account.token) return;
+                now.userId = me.user_id;
+                try { localStorage.setItem(ACCOUNT_KEY, JSON.stringify(now)); } catch (e) {}
+                showUserId(now);
+            }).catch(function () {});
     }
 
     // Snapshot of the signed-in customer's order list on this device: it shows instantly next visit

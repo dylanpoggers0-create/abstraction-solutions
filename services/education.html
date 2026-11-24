@@ -534,6 +534,70 @@
         .follow-list strong { font-size: 1rem; }
         .follow-list small { color: var(--text-muted, #9aa69c); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         @media (max-width: 560px) { .follow-list { grid-template-columns: 1fr; } }
+        /* ---------- video progress (education-progress.js) ---------- */
+        .vp-card { position: relative; }
+        .progress-note { margin: 4px 0 14px; font-size: 0.9rem; color: var(--text-muted, #9aa69c); }
+        .progress-note a { color: var(--green); font-weight: 600; }
+        /* the sticker in each card's corner: a ring that fills to the percent, or a green check */
+        .vp-sticker {
+            position: absolute; top: 10px; right: 10px; z-index: 3;
+            width: 44px; height: 44px; border-radius: 50%;
+            display: grid; place-items: center;
+            background: rgba(0, 0, 0, 0.72);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            transition: opacity 0.3s ease, box-shadow 0.6s ease;
+        }
+        .vp-sticker svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .vp-track { fill: none; stroke: rgba(245, 248, 244, 0.18); stroke-width: 3; }
+        .vp-fill { fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.4s ease; }
+        .vp-pct { position: relative; font-size: 0.66rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+        .vp-done { opacity: 0; transition: opacity 0.3s ease; }
+        .vp-done circle { fill: var(--green); }
+        .vp-done path { fill: none; stroke: #041004; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+        .vp-sticker.is-zero { opacity: 0.55; }
+        .vp-sticker.is-done .vp-done { opacity: 1; }
+        .vp-sticker.is-done .vp-pct, .vp-sticker.is-done .vp-track, .vp-sticker.is-done .vp-fill { opacity: 0; }
+        .vp-sticker.is-done {               /* finished: a steady soft green glow */
+            background: transparent;
+            box-shadow: 0 0 0 2px rgba(126, 233, 111, 0.3), 0 0 14px rgba(126, 233, 111, 0.6), 0 0 30px rgba(126, 233, 111, 0.25);
+        }
+        .vp-sticker.vp-fade .vp-done { transition-duration: 0.9s; }     /* reduce motion: the check just fades in */
+        .vp-sticker.vp-pop { animation: vp-pop 0.6s cubic-bezier(.34, 1.56, .64, 1); }
+        @keyframes vp-pop {
+            0% { transform: scale(0.6); box-shadow: 0 0 0 0 rgba(126, 233, 111, 0.9), 0 0 30px rgba(126, 233, 111, 0.9); }
+            60% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+        /* the big celebration */
+        .vp-overlay {
+            position: fixed; inset: 0; z-index: 900;
+            display: grid; place-items: center;
+            background: rgba(0, 0, 0, 0);
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        .vp-overlay.is-in { background: rgba(0, 0, 0, 0.66); }
+        .vp-overlay.is-leaving { background: rgba(0, 0, 0, 0); transition-duration: 0.6s; }
+        .vp-badge {
+            position: relative; width: min(56vw, 240px); aspect-ratio: 1;
+            transform: scale(0.6); opacity: 0;
+            transition: transform 0.45s cubic-bezier(.34, 1.56, .64, 1), opacity 0.25s ease;
+            will-change: transform;
+        }
+        .vp-overlay.is-in .vp-badge { transform: scale(1); opacity: 1; }
+        .vp-badge svg { position: relative; display: block; width: 100%; height: 100%; }
+        .vp-glow { position: absolute; inset: 7%; border-radius: 50%; opacity: 0; }
+        .vp-badge.is-glowing .vp-glow { animation: vp-glow 0.65s ease-out forwards; }
+        @keyframes vp-glow {
+            0% { opacity: 0; box-shadow: 0 0 0 0 rgba(126, 233, 111, 0.8); }
+            40% { opacity: 1; box-shadow: 0 0 0 14px rgba(126, 233, 111, 0.25), 0 0 60px rgba(126, 233, 111, 0.95), 0 0 130px rgba(126, 233, 111, 0.5); }
+            100% { opacity: 1; box-shadow: 0 0 0 28px rgba(126, 233, 111, 0), 0 0 40px rgba(126, 233, 111, 0.75), 0 0 90px rgba(126, 233, 111, 0.35); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .vp-fill, .vp-sticker { transition: none; }
+            .vp-sticker.vp-pop { animation: none; }
+        }
     </style>
     <script type="application/ld+json">
 {
@@ -841,10 +905,11 @@
                     <span><strong>LinkedIn</strong><small>Abstraction Solutions</small></span></a></li>
             </ul>
 
+            <p class="progress-note" data-progress-note hidden>Your progress shows for this visit. <a href="../order.html#signIn">Sign in to save your progress</a>.</p>
             <div class="gallery shorts">
 
                 <figure class="gallery-item">
-                    <video controls preload="none" playsinline poster="../videos/shorts/hallucinations-thumbnail.jpg" data-blurhash="videos/shorts/hallucinations-thumbnail.jpg">
+                    <video data-video-id="hallucinations" controls preload="none" playsinline poster="../videos/shorts/hallucinations-thumbnail.jpg" data-blurhash="videos/shorts/hallucinations-thumbnail.jpg">
                         <source src="../videos/shorts/hallucinations.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -856,7 +921,7 @@
                 </figure>
 
                 <figure class="gallery-item">
-                    <video controls preload="none" playsinline poster="../videos/shorts/tokens-thumbnail.jpg" data-blurhash="videos/shorts/tokens-thumbnail.jpg">
+                    <video data-video-id="tokens" controls preload="none" playsinline poster="../videos/shorts/tokens-thumbnail.jpg" data-blurhash="videos/shorts/tokens-thumbnail.jpg">
                         <source src="../videos/shorts/tokens.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -868,7 +933,7 @@
                 </figure>
 
                 <figure class="gallery-item">
-                    <video controls preload="none" playsinline poster="../videos/shorts/prompts-thumbnail.jpg" data-blurhash="videos/shorts/prompts-thumbnail.jpg">
+                    <video data-video-id="prompts" controls preload="none" playsinline poster="../videos/shorts/prompts-thumbnail.jpg" data-blurhash="videos/shorts/prompts-thumbnail.jpg">
                         <source src="../videos/shorts/prompts.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -880,7 +945,7 @@
                 </figure>
 
                 <figure class="gallery-item">
-                    <video controls preload="none" playsinline poster="../videos/shorts/neural-networks-thumbnail.jpg" data-blurhash="videos/shorts/neural-networks-thumbnail.jpg">
+                    <video data-video-id="neural-networks" controls preload="none" playsinline poster="../videos/shorts/neural-networks-thumbnail.jpg" data-blurhash="videos/shorts/neural-networks-thumbnail.jpg">
                         <source src="../videos/shorts/neural-networks.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -897,7 +962,7 @@
                 <summary>Show all shorts (10 more)</summary>
                 <div class="gallery shorts">
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/overfitting-thumbnail.jpg" data-blurhash="videos/shorts/overfitting-thumbnail.jpg">
+                        <video data-video-id="overfitting" controls preload="none" playsinline data-poster="../videos/shorts/overfitting-thumbnail.jpg" data-blurhash="videos/shorts/overfitting-thumbnail.jpg">
                             <source src="../videos/shorts/overfitting.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -909,7 +974,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/training-vs-inference-thumbnail.jpg" data-blurhash="videos/shorts/training-vs-inference-thumbnail.jpg">
+                        <video data-video-id="training-vs-inference" controls preload="none" playsinline data-poster="../videos/shorts/training-vs-inference-thumbnail.jpg" data-blurhash="videos/shorts/training-vs-inference-thumbnail.jpg">
                             <source src="../videos/shorts/training-vs-inference.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -921,7 +986,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/chatbot-vs-agent-thumbnail.jpg" data-blurhash="videos/shorts/chatbot-vs-agent-thumbnail.jpg">
+                        <video data-video-id="chatbot-vs-agent" controls preload="none" playsinline data-poster="../videos/shorts/chatbot-vs-agent-thumbnail.jpg" data-blurhash="videos/shorts/chatbot-vs-agent-thumbnail.jpg">
                             <source src="../videos/shorts/chatbot-vs-agent.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -933,7 +998,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/embeddings-thumbnail.jpg" data-blurhash="videos/shorts/embeddings-thumbnail.jpg">
+                        <video data-video-id="embeddings" controls preload="none" playsinline data-poster="../videos/shorts/embeddings-thumbnail.jpg" data-blurhash="videos/shorts/embeddings-thumbnail.jpg">
                             <source src="../videos/shorts/embeddings.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -945,7 +1010,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/paste-it-or-pass-it-thumbnail.jpg" data-blurhash="videos/shorts/paste-it-or-pass-it-thumbnail.jpg">
+                        <video data-video-id="paste-it-or-pass-it" controls preload="none" playsinline data-poster="../videos/shorts/paste-it-or-pass-it-thumbnail.jpg" data-blurhash="videos/shorts/paste-it-or-pass-it-thumbnail.jpg">
                             <source src="../videos/shorts/paste-it-or-pass-it.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -957,7 +1022,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/ai-bias-thumbnail.jpg" data-blurhash="videos/shorts/ai-bias-thumbnail.jpg">
+                        <video data-video-id="ai-bias" controls preload="none" playsinline data-poster="../videos/shorts/ai-bias-thumbnail.jpg" data-blurhash="videos/shorts/ai-bias-thumbnail.jpg">
                             <source src="../videos/shorts/ai-bias.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -969,7 +1034,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/temperature-thumbnail.jpg" data-blurhash="videos/shorts/temperature-thumbnail.jpg">
+                        <video data-video-id="temperature" controls preload="none" playsinline data-poster="../videos/shorts/temperature-thumbnail.jpg" data-blurhash="videos/shorts/temperature-thumbnail.jpg">
                             <source src="../videos/shorts/temperature.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -981,7 +1046,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/attention-thumbnail.jpg" data-blurhash="videos/shorts/attention-thumbnail.jpg">
+                        <video data-video-id="attention" controls preload="none" playsinline data-poster="../videos/shorts/attention-thumbnail.jpg" data-blurhash="videos/shorts/attention-thumbnail.jpg">
                             <source src="../videos/shorts/attention.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -993,7 +1058,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/when-not-to-use-ai-thumbnail.jpg" data-blurhash="videos/shorts/when-not-to-use-ai-thumbnail.jpg">
+                        <video data-video-id="when-not-to-use-ai" controls preload="none" playsinline data-poster="../videos/shorts/when-not-to-use-ai-thumbnail.jpg" data-blurhash="videos/shorts/when-not-to-use-ai-thumbnail.jpg">
                             <source src="../videos/shorts/when-not-to-use-ai.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1005,7 +1070,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" playsinline data-poster="../videos/shorts/vibe-coded-apps-thumbnail.jpg" data-blurhash="videos/shorts/vibe-coded-apps-thumbnail.jpg">
+                        <video data-video-id="vibe-coded-apps" controls preload="none" playsinline data-poster="../videos/shorts/vibe-coded-apps-thumbnail.jpg" data-blurhash="videos/shorts/vibe-coded-apps-thumbnail.jpg">
                             <source src="../videos/shorts/vibe-coded-apps.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1026,11 +1091,12 @@
                 New ones every week on Instagram: <a href="https://www.instagram.com/abstraction.solutions/" target="_blank" rel="noopener"
                 style="color: var(--green); font-weight: bold;">@abstraction.solutions</a></p>
 
+            <p class="progress-note" data-progress-note hidden>Your progress shows for this visit. <a href="../order.html#signIn">Sign in to save your progress</a>.</p>
             <div class="gallery">
 
                 <!-- VIDEO (copy this whole <figure> block to add another video) -->
                 <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/mathisart-thumbnail.jpg" data-blurhash="L967l_Nb5P-Bj^ofocWU0{xZ^QEf">
+                    <video data-video-id="mathisart" controls preload="none" poster="../videos/mathisart-thumbnail.jpg" data-blurhash="L967l_Nb5P-Bj^ofocWU0{xZ^QEf">
                         <source src="../videos/mathisart.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -1042,7 +1108,7 @@
                 </figure>
 
                 <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/ragexplained-thumbnail.jpg" data-blurhash="L02F*-x]M2o3x[xux[tQH[xu%yo{">
+                    <video data-video-id="ragexplained" controls preload="none" poster="../videos/ragexplained-thumbnail.jpg" data-blurhash="L02F*-x]M2o3x[xux[tQH[xu%yo{">
                         <source src="../videos/ragexplained.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -1054,7 +1120,7 @@
                 </figure>
 
                 <figure class="gallery-item">
-                    <video controls preload="none" poster="../videos/gradientdescent-thumbnail.jpg" data-blurhash="L74f5Bx-IoM-yCt3WBWFD7RWxttJ">
+                    <video data-video-id="gradientdescent" controls preload="none" poster="../videos/gradientdescent-thumbnail.jpg" data-blurhash="L74f5Bx-IoM-yCt3WBWFD7RWxttJ">
                         <source src="../videos/gradientdescent.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -1072,7 +1138,7 @@
                 <summary>Show all videos (10 more)</summary>
                 <div class="gallery">
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/decisiontrees-thumbnail.jpg" data-blurhash="L01MQDn,nAoy%ftRt7fkeCx]tjof">
+                        <video data-video-id="decisiontrees" controls preload="none" data-poster="../videos/decisiontrees-thumbnail.jpg" data-blurhash="L01MQDn,nAoy%ftRt7fkeCx]tjof">
                             <source src="../videos/decisiontrees.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1084,7 +1150,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/randomforests-thumbnail.jpg" data-blurhash="LA6RfNofMybHofj[oej[4TayxtjZ">
+                        <video data-video-id="randomforests" controls preload="none" data-poster="../videos/randomforests-thumbnail.jpg" data-blurhash="LA6RfNofMybHofj[oej[4TayxtjZ">
                             <source src="../videos/randomforests.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1096,7 +1162,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/clustering-thumbnail.jpg" data-blurhash="L01{j8y89anppIx@%1s=Djt9-:tK">
+                        <video data-video-id="clustering" controls preload="none" data-poster="../videos/clustering-thumbnail.jpg" data-blurhash="L01{j8y89anppIx@%1s=Djt9-:tK">
                             <source src="../videos/clustering.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1108,7 +1174,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/anomalydetection-thumbnail.jpg" data-blurhash="L026D|x]DQjE?ax]ayaKi3%Mt*Rj">
+                        <video data-video-id="anomalydetection" controls preload="none" data-poster="../videos/anomalydetection-thumbnail.jpg" data-blurhash="L026D|x]DQjE?ax]ayaKi3%Mt*Rj">
                             <source src="../videos/anomalydetection.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1120,7 +1186,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/reinforcementlearning-thumbnail.jpg" data-blurhash="L35#qgrd03cU%Pb]oZrZ01tP%fR7">
+                        <video data-video-id="reinforcementlearning" controls preload="none" data-poster="../videos/reinforcementlearning-thumbnail.jpg" data-blurhash="L35#qgrd03cU%Pb]oZrZ01tP%fR7">
                             <source src="../videos/reinforcementlearning.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1132,7 +1198,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/regressionclassification-thumbnail.jpg" data-blurhash="L02Frb%gMzNG?a%MjcV@IF%Lx@ae">
+                        <video data-video-id="regressionclassification" controls preload="none" data-poster="../videos/regressionclassification-thumbnail.jpg" data-blurhash="L02Frb%gMzNG?a%MjcV@IF%Lx@ae">
                             <source src="../videos/regressionclassification.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1144,7 +1210,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/showyourwork-thumbnail.jpg" data-blurhash="LjD,4TkC01WBayfPj[j[9Fay-;kB">
+                        <video data-video-id="showyourwork" controls preload="none" data-poster="../videos/showyourwork-thumbnail.jpg" data-blurhash="LjD,4TkC01WBayfPj[j[9Fay-;kB">
                             <source src="../videos/showyourwork.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1156,7 +1222,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/edgeai-thumbnail.jpg" data-blurhash="L13InpN[RQw|x]xat6S18y%ftQRQ">
+                        <video data-video-id="edgeai" controls preload="none" data-poster="../videos/edgeai-thumbnail.jpg" data-blurhash="L13InpN[RQw|x]xat6S18y%ftQRQ">
                             <source src="../videos/edgeai.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1168,7 +1234,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/staffroom1-thumbnail.jpg" data-blurhash="L86tw8ofE2ay%LofRkay0Mj[%1WC">
+                        <video data-video-id="staffroom1" controls preload="none" data-poster="../videos/staffroom1-thumbnail.jpg" data-blurhash="L86tw8ofE2ay%LofRkay0Mj[%1WC">
                             <source src="../videos/staffroom1.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1180,7 +1246,7 @@
                     </figure>
 
                     <figure class="gallery-item">
-                        <video controls preload="none" data-poster="../videos/staffroom2-thumbnail.jpg" data-blurhash="L02PPZ?JMfEJx[x[xuoyD6XNyCxc">
+                        <video data-video-id="staffroom2" controls preload="none" data-poster="../videos/staffroom2-thumbnail.jpg" data-blurhash="L02PPZ?JMfEJx[x[xuoyD6XNyCxc">
                             <source src="../videos/staffroom2.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1352,5 +1418,6 @@
     <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a> · <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></nav></noscript>
 
     <script src="education.page-3.js"></script>
+    <script src="education-progress.js"></script>
 </body>
 </html>

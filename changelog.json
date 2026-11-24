@@ -75,5 +75,15 @@
             "Join our mailing list on the homepage for offers, early access, newsletters and giveaways.",
             "Find us on TikTok, linked in the footer."
         ]
+    },
+    {
+        "date": "2026-11-24",
+        "title": "Track your progress on AI Education videos",
+        "items": [
+            "Every Education video now shows how much of it you've watched, and a green check once you've watched it all.",
+            "Sign in to save your progress to your account. Only time you actually watch counts, so skipping to the end doesn't.",
+            "Finish a video for the first time and you get a small celebration.",
+            "Every account now has a permanent 8-digit user ID, shown on the order page when you're signed in."
+        ]
     }
 ]
