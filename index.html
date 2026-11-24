@@ -112,41 +112,56 @@
             display: block;
         }
 
-        /* PROJECT NOTES: one card that flips between facts (no daily-use claims) */
-        .proof {
-            max-width: 760px;
-            margin: 40px auto 10px;
-            padding: 0 24px;
+        /* QUOTES: one quote at a time under the hero, fading to the next (index.page.js) */
+        .home-quotes {
+            max-width: 980px;
+            margin: 64px auto 24px;
+            padding: 0 32px;
         }
 
-        .stat-carousel .stat { transition: opacity 0.45s ease, transform 0.45s ease; }
-        .stat-carousel .stat.out { opacity: 0; transform: translateY(8px); }
-        .stat-dots { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
-        .stat-dots button {
-            width: 9px; height: 9px; padding: 0; border-radius: 50%;
-            border: 1px solid var(--green); background: transparent; cursor: pointer;
-        }
-        .stat-dots button[aria-current="true"] { background: var(--green); }
-
-        .stat {
+        .home-quote-card {
+            margin: 0;
+            padding: 0;
+            background: none;
+            border: 0;
+            min-height: 12rem;             /* index.page.js sets this to fit the longest quote at the current width */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             text-align: center;
-            padding: 26px 20px;
-            background-color: rgba(11, 16, 12, 0.85);
-            border: 1px solid var(--line);
-            border-radius: 18px;
+            transition: opacity 0.7s ease;
+        }
+        .home-quote-card.is-out { opacity: 0; }
+
+        .home-quote-text {
+            margin: 0;
+            font-family: "Newsreader", "Source Serif 4", Georgia, "Times New Roman", serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(1.45rem, 3vw, 2.5rem);
+            line-height: 1.32;
+            color: #ffffff;
+            text-wrap: balance;
+        }
+        .home-quote-text .hl { color: var(--green); }
+
+        .home-quote-attr {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: var(--text-muted, #9aa69c);
         }
 
-        .stat strong {
-            display: block;
-            color: var(--green);
-            font-size: 2.2rem;
-            margin-bottom: 8px;
+        .home-quote-dots { display: flex; justify-content: center; gap: 2px; margin-top: 22px; }
+        .home-quote-dots button {
+            width: 28px; height: 28px; padding: 0; border: 0; background: none; cursor: pointer;
+            display: grid; place-items: center;
         }
-
-        .stat span {
-            color: #d6ddd7;
-            line-height: 1.5;
+        .home-quote-dots button::before {
+            content: ""; width: 8px; height: 8px; border-radius: 50%;
+            border: 1px solid rgba(126, 233, 111, 0.7); transition: background-color 0.3s ease, transform 0.3s ease;
         }
+        .home-quote-dots button[aria-current="true"]::before { background: var(--green); transform: scale(1.15); }
+        .home-quote-dots button:hover::before { border-color: var(--green); }
 
         @media (max-width: 900px) {
             .hero-split {
@@ -162,8 +177,9 @@
 
             .hero-text p { font-size: 1.12rem; }
 
-            .proof {
-                padding: 0 20px 0 40px;
+            .home-quotes {
+                margin-top: 44px;
+                padding: 0 22px 0 44px;
             }
         }
 
@@ -640,11 +656,12 @@
     </section>
 
 
-    <section class="proof" aria-label="Projects">
-        <div class="stat-carousel" id="statCarousel" aria-live="polite">
-            <div class="stat"><strong id="statBig">School-wide</strong><span id="statSmall">our AI chatbot is deployed for every faculty member at a high school</span></div>
-            <div class="stat-dots" id="statDots"></div>
-        </div>
+    <section class="home-quotes" id="homeQuotes" aria-label="Quotes">
+        <figure class="home-quote-card" id="homeQuoteCard" data-af-skip aria-live="polite">
+            <blockquote class="home-quote-text" id="homeQuoteText"></blockquote>
+            <figcaption class="home-quote-attr" id="homeQuoteAttr"></figcaption>
+        </figure>
+        <div class="home-quote-dots" id="homeQuoteDots"></div>
     </section>
     <script src="index.page.js"></script>
 

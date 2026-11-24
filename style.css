@@ -674,6 +674,14 @@ kbd {
    ========================================================= */
 
 @font-face {
+    font-family: "Newsreader";   /* the home page quotes (OFL, fonts/OFL-newsreader.txt) */
+    src: url("fonts/newsreader-latin-italic.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
     font-family: "Schibsted Grotesk";
     src: url("fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2");
     font-weight: 400 900;
@@ -1019,18 +1027,6 @@ p, li { text-wrap: pretty; }
     .side-tab .icon { width: 22px !important; height: 22px !important; }
 }
 
-/* ---------- more white: the project highlight on the home page is a white card ---------- */
-.proof .stat-carousel .stat[data-af] {
-    background-color: transparent !important;
-    background-image: linear-gradient(180deg, #ffffff, #eef3ed) !important;
-    border-color: rgba(255, 255, 255, 0.9) !important;
-    box-shadow: 0 30px 70px -36px rgba(126, 233, 111, 0.55), 0 20px 40px -26px rgba(0, 0, 0, 0.9) !important;
-}
-.proof .stat-carousel .stat strong { color: #17702b !important; }
-.proof .stat-carousel .stat span { color: #2d3830 !important; }
-.proof .stat-dots button { border-color: var(--paper); }
-.proof .stat-dots button[aria-current="true"] { background: var(--paper); }
-
 /* ---------- the title's flicker fonts (cut down to just its letters, about 20 KB in all) ---------- */
 @font-face { font-family: "G Audiowide"; src: url("fonts/glitch/audiowide.woff2") format("woff2"); font-display: block; }
 @font-face { font-family: "G Chakra"; src: url("fonts/glitch/chakra-petch.woff2") format("woff2"); font-display: block; }
@@ -1042,6 +1038,7 @@ p, li { text-wrap: pretty; }
 @font-face { font-family: "G VT323"; src: url("fonts/glitch/vt323.woff2") format("woff2"); font-display: block; }
 .brand-name .af-ch.af-fixed {
     text-align: center;
+    vertical-align: top;   /* other typefaces' baselines can't stretch the line */
     white-space: nowrap;
 }
 
@@ -1291,10 +1288,15 @@ af-w { display: inline-block; }
     40% { transform: translateY(0) scale(0.92, 1.05); }
 }
 
-/* typing: each word fades and lifts in as it's "typed" */
-.g-word { opacity: 0; display: inline-block; transform: translateY(4px); filter: blur(3px);
-          transition: opacity 0.22s ease, transform 0.3s cubic-bezier(.16, 1, .3, 1), filter 0.22s ease; }
-.g-word.g-in { opacity: 1; transform: none; filter: none; }
+/* typing: words take no space until typed, then fade and lift in; empty blocks wait for their first word */
+.g-word { display: none; }
+.g-word.g-in { display: inline-block; animation: g-word-in 0.3s cubic-bezier(.16, 1, .3, 1); }
+.g-word.g-still { animation: none; }
+.g-pending { display: none !important; }
+@keyframes g-word-in {
+    from { opacity: 0; transform: translateY(4px); filter: blur(3px); }
+    to { opacity: 1; transform: none; filter: none; }
+}
 .g-typing a { text-decoration-color: transparent !important; }
 
 .chat-head .chat-title { font-family: "Unbounded", "Schibsted Grotesk", sans-serif; font-weight: 600; letter-spacing: 0.01em; }
@@ -1302,5 +1304,5 @@ af-w { display: inline-block; }
 @media (prefers-reduced-motion: reduce) {
     .gideon-dots i { animation: g-dot-calm 1.2s linear infinite; }
     @keyframes g-dot-calm { 0%, 60%, 100% { background: rgba(245, 248, 244, 0.35); } 25% { background: var(--green); } }
-    .g-word { transition: none; transform: none; filter: none; }
+    .g-word.g-in { animation: none; }
 }

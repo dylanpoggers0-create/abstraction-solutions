@@ -1,5 +1,6 @@
 /* =========================================================
-   gideon.js: Gideon, the face of the site assistant. Loaded by nav.js on every page;
+   gideon.js: Gideon, the face of the site assistant. nav.js loads it lazily (first hover/focus/tap of
+   "Ask our site", opening the chat, or browser idle time), so it never holds up the page;
    styles are at the end of style.css. The chat itself (search, answers) stays in nav.js.
 
    What's here:
@@ -8,10 +9,11 @@
                    into a smile, and it can "talk" (mouth opens and closes) while typing.
    2. The peek     hovering "Ask our site" pops Gideon up over the button: he bounces in with
                    squash and stretch, smiles, blinks, and keeps bobbing while you stay.
-   3. thinking()   the three dots shown while Gideon "thinks": each one hops and lights up green
-                   in turn. The chat holds them for 2.5 seconds (promptProcess in nav.js).
+   3. thinking()   the three dots shown while Gideon "thinks" (while the search runs): each one hops
+                   and lights up green in turn.
    4. typeOut()    reveals an answer one word at a time, like it's being typed, with a short pause
-                   after punctuation. Links, lists and quotes keep their formatting.
+                   after punctuation. Links, lists and quotes keep their formatting. The answer grows
+                   as it types, and the chat follows the newest words unless you've scrolled up.
 
    With "reduce motion" on: no bouncing; the dots just glow in turn and answers appear whole.
    ========================================================= */
@@ -195,10 +197,15 @@
         return function stop() { dots.remove(); };
     }
 
-    /* ---------- 4. type the answer out one word at a time ---------- */
+    /* ---------- 4. type the answer out one word at a time ----------
+       Words that haven't been "typed" yet take up no space, and neither do paragraphs, lists or quotes
+       until their first word arrives. So the answer grows as it's typed, the way a real reply would,
+       and opts.pin() can keep the newest words in view. */
+    const BLOCKS = 'p, ul, ol, li, blockquote, div, table, tr, td, pre';
     function typeOut(msg, opts) {
         opts = opts || {};
-        // wrap every word in its own span (inside links, lists and quotes too), hidden for now.
+        const pin = opts.pin || function () {};
+        // wrap every word in its own span (inside links, lists and quotes too).
         // This runs before the browser draws, so the full answer never flashes up first.
         const words = [];
         const walker = document.createTreeWalker(msg, NodeFilter.SHOW_TEXT);
@@ -217,20 +224,33 @@
             });
             t.parentNode.replaceChild(frag, t);
         });
-        if (reduce || !words.length) { words.forEach(function (w) { w.classList.add('g-in'); }); return Promise.resolve(); }
+        if (reduce || !words.length) {           // reduce motion: the whole answer at once
+            words.forEach(function (w) { w.classList.add('g-in', 'g-still'); });
+            pin();
+            return Promise.resolve();
+        }
+        const blocks = Array.prototype.slice.call(msg.querySelectorAll(BLOCKS));
+        blocks.forEach(function (b) { b.classList.add('g-pending'); });
+        msg.classList.add('g-typing');            // hides link underlines until their words arrive
 
+        function reveal(w) {
+            for (let el = w.parentElement; el && el !== msg; el = el.parentElement) el.classList.remove('g-pending');
+            w.classList.add('g-in');
+        }
         // a steady pace, a little uneven like typing, quicker for long answers so nobody waits too long
         const pace = Math.max(22, Math.min(70, 3800 / words.length));
-        msg.classList.add('g-typing');            // hides link underlines until their words arrive
         return (async function () {
             for (let i = 0; i < words.length; i++) {
-                words[i].classList.add('g-in');
+                reveal(words[i]);
                 if (opts.onWord) opts.onWord(words[i], i);
-                if (opts.scroller) opts.scroller.scrollTop = opts.scroller.scrollHeight;
-                const pause = /[.!?]$/.test(words[i].textContent) ? 220 : /[,:;]$/.test(words[i].textContent) ? 110 : 0;
+                pin();
+                // a breath after punctuation, shorter on long answers so they don't drag
+                const pause = (/[.!?]$/.test(words[i].textContent) ? 220 : /[,:;]$/.test(words[i].textContent) ? 110 : 0) * pace / 70;
                 await sleep(pace * (0.75 + Math.random() * 0.5) + pause);
             }
+            blocks.forEach(function (b) { b.classList.remove('g-pending'); });   // anything with no words (e.g. empty rows)
             msg.classList.remove('g-typing');
+            pin();
         })();
     }
 

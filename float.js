@@ -559,6 +559,7 @@
             let busy = false, modes = [];
 
             function lockWidths() {
+                name.style.height = '';
                 chars.forEach(function (ch) { ch.classList.remove('af-fixed'); ch.style.width = ''; ch.style.height = ''; ch.style.lineHeight = ''; });
                 chars.forEach(function (ch) {
                     const r = ch.getBoundingClientRect();
@@ -567,6 +568,8 @@
                     ch.style.lineHeight = r.height + 'px';
                     ch.classList.add('af-fixed');
                 });
+                // the title's own height is fixed too, so a glitch round never nudges the page below it
+                name.style.height = name.getBoundingClientRect().height + 'px';
             }
             function setFace(ch, f) {
                 ch.classList.remove('af-glyph');

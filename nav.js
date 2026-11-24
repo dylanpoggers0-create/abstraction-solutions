@@ -271,6 +271,13 @@ window.uxReady.catch(function () {});
    The free Render server sleeps after 15 minutes. Poking it from every page
    means it's usually awake by the time someone asks for a quote or orders.
    --------------------------------------------------------- */
+(function () {
+    const l = document.createElement('link');
+    l.rel = 'preconnect';
+    l.href = 'https://abstraction-quote-engine.onrender.com';
+    l.crossOrigin = 'anonymous';
+    document.head.appendChild(l);
+})();
 fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () {});
 
 /* Quote promo lines (<p class="promo-line" data-promo-until="...">).
@@ -459,6 +466,13 @@ window.CrisisSupport = (function () {
    The search index lives in chatbot/index/ and is rebuilt from the pages by a GitHub Action on every push.
      - keyword search (BM25) works immediately
      - when chatbot/index/vectors.json exists, it also loads the MiniLM model in the browser for smarter matching
+   What loads when (so pages stay light):
+     - the "Ask our site" button: straight away, it's just a few lines of HTML
+     - gideon.js (the face and typing): on first hover/focus/tap of the button, or when the browser is idle
+     - the search index (chunks.json, ~870 KB with vectors.json): only when the chat is opened, then kept in the
+       browser's Cache Storage so repeat visits don't download it again
+     - the MiniLM model (~23 MB): only after the chat is open, never with data saver on, and the first answers
+       never wait for it (keyword search answers until it's ready)
    Set CHAT_ON to false to hide the bubble.
    --------------------------------------------------------- */
 const CHAT_ON = true;
@@ -617,24 +631,51 @@ const CHAT_ON = true;
           .sort(function (a, b) { return b.score - a.score; }).slice(0, 3);
     }
 
-    function load() {   // the index is small; the MiniLM model (~23 MB) only loads if vectors exist and data saver is off
-        if (loading) return loading;
-        loading = fetch(INDEX + 'chunks.json').then(function (r) {
-            if (!r.ok) throw new Error('index');
+    // Cache Storage copy of the index: answer from the saved copy at once, refresh it quietly in the background
+    const CACHE = 'as-chat-index-v1';
+    function getJSON(url, ms) {
+        const ctrl = 'AbortController' in window ? new AbortController() : null;
+        const t = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms || 10000);   // never wait in silence
+        const net = fetch(url, ctrl ? { signal: ctrl.signal, cache: 'no-cache' } : {}).then(function (r) {
+            clearTimeout(t);
+            if (!r.ok) throw new Error('http ' + r.status);
+            if (window.caches) caches.open(CACHE).then(function (c) { c.put(url, r.clone()); }).catch(function () {});
             return r.json();
-        }).then(function (data) {
+        });
+        if (!window.caches) return net;
+        return caches.open(CACHE).then(function (c) { return c.match(url); }).then(function (hit) {
+            if (!hit) return net;
+            net.catch(function () {});                // the saved copy is used; the fresh one replaces it for next time
+            return hit.json();
+        }, function () { return net; });
+    }
+
+    function load() {   // the index only: small and fast. The model is started separately, after the chat opens.
+        if (loading) return loading;
+        loading = getJSON(INDEX + 'chunks.json').then(function (data) {
             chunks = data;
             buildBM25();
-            if (navigator.connection && navigator.connection.saveData) return;
-            fetch(INDEX + 'vectors.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (vj) {
-                if (!vj || vj.vectors.length !== chunks.length) return;
-                return import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2').then(function (t) {
-                    return t.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-                }).then(function (m) { model = m; vectors = vj.vectors; });
-            }).catch(function () { model = null; });   // keyword search keeps working without it
         });
-        loading.catch(function () { loading = null; });
+        loading.catch(function () { loading = null; });   // a failed load can be retried next question
         return loading;
+    }
+
+    let modelStarted = false;
+    function warmModel() {   // MiniLM (~23 MB): only once the chat is open, never with data saver on
+        if (modelStarted || (navigator.connection && navigator.connection.saveData)) return;
+        modelStarted = true;
+        ['https://cdn.jsdelivr.net', 'https://huggingface.co'].forEach(function (o) {
+            const l = document.createElement('link'); l.rel = 'preconnect'; l.href = o; l.crossOrigin = 'anonymous';
+            document.head.appendChild(l);
+        });
+        load().then(function () {
+            return getJSON(INDEX + 'vectors.json', 20000);
+        }).then(function (vj) {
+            if (!vj || !chunks || vj.vectors.length !== chunks.length) return;
+            return import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2').then(function (t) {
+                return t.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+            }).then(function (m) { model = m; vectors = vj.vectors; });   // later questions use it from here on
+        }).catch(function () { model = null; modelStarted = false; });  // keyword search keeps working without it
     }
 
     function passage(text) {
@@ -724,8 +765,8 @@ const CHAT_ON = true;
         '</form>';
 
     function ready() { document.body.append(btn, box); }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
-    else ready();
+    if (document.body) ready();                       // the button shows as soon as the page can paint
+    else document.addEventListener('DOMContentLoaded', ready);
 
     const log = box.querySelector('.chat-log');
     const form = box.querySelector('form');
@@ -742,10 +783,19 @@ const CHAT_ON = true;
         a.href = href;
         return a;
     }
+    // Follow-along: the log sticks to the newest text while you're at the bottom. Scroll up to read
+    // something and it leaves you there; scroll back to the bottom and it follows again.
+    let following = true;
+    log.addEventListener('scroll', function () {
+        following = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+    }, { passive: true });
+    function pin() { if (following) log.scrollTop = log.scrollHeight; }
+
     function say(cls, text) {
         const m = el('div', 'chat-msg ' + cls, text);
         log.appendChild(m);
-        log.scrollTop = log.scrollHeight;
+        if (cls === 'me') following = true;          // you just asked something: show the reply as it comes
+        pin();
         return m;
     }
 
@@ -764,6 +814,8 @@ const CHAT_ON = true;
         if (!chatWatcher && window.UX && UX.closeWatch) chatWatcher = UX.closeWatch(function () { chatWatcher = null; closeChat(); });
         if (phone.matches) document.documentElement.style.overflow = 'hidden';   // the page behind stays still
         load().catch(function () {});
+        warmModel();
+        loadGideon();
         if (!log.children.length) {
             // Gideon says up front that he's automated and answers from our website
             const hi = say('bot', 'Hi, I\'m Gideon, Abstraction Solutions\' automated assistant. I answer from our website. ' +
@@ -830,15 +882,17 @@ const CHAT_ON = true;
         const m = say('bot', '');
         if (window.CrisisSupport && CrisisSupport.test(q)) {      // help first, no search results
             m.appendChild(CrisisSupport.card());
-            log.scrollTop = log.scrollHeight;
+            pin();
             return;
         }
         window.trackEvent && trackEvent('chat-question');
 
-        // Gideon "thinks" for 2.5 seconds: three dots hop and light up in turn while the search runs alongside
+        // Gideon's thinking dots show while the search runs; the answer starts the moment it's ready
+        // (with a brief minimum so the dots don't just flicker)
         const G = window.Gideon;
         const stopThinking = G ? G.thinking(m) : function () {};
         if (avatar) avatar.think(true);
+        pin();
         let res = null;
         await Promise.all([
             answer(q).then(function (r) { res = r; }, function () { res = null; }),
@@ -847,7 +901,10 @@ const CHAT_ON = true;
         stopThinking();
         if (avatar) avatar.think(false);
         if (!res) {
-            m.textContent = 'The search couldn\'t load. Please refresh the page and try again.';
+            m.classList.add('chat-error');
+            m.textContent = 'Sorry, I couldn\'t reach the site\'s search just now. Check your connection and ask again, ' +
+                            'or email ' + EMAIL + '.';
+            pin();
             return;
         }
         if (res.overview && res.overview.length) {
@@ -899,21 +956,20 @@ const CHAT_ON = true;
         if (!phone.matches) input.focus();
     }
 
-    // The 2.5-second think, the JavaScript version of:
-    //     def prompt_process():
-    //         time.sleep(2.5)
-    // It runs at the same time as the search (Promise.all above), so a slow search doesn't add on top of it.
+    // A short beat for the thinking dots: runs alongside the search (Promise.all above), so it only
+    // matters when the search is near-instant. (It used to be a fixed 2.5 seconds.)
     function promptProcess() {
-        return new Promise(function (resolve) { setTimeout(resolve, 2500); });
+        return new Promise(function (resolve) { setTimeout(resolve, 350); });
     }
 
     // Shows a finished answer one word at a time, and Gideon's mouth moves with each word.
+    // The log follows the words as they appear, unless you've scrolled up (see pin()).
     function reply(m) {
-        if (!window.Gideon) { log.scrollTop = log.scrollHeight; return Promise.resolve(); }
+        if (!window.Gideon) { pin(); return Promise.resolve(); }
         return Gideon.typeOut(m, {
-            scroller: log,
+            pin: pin,
             onWord: function (w, i) { if (avatar && i % 2 === 0) avatar.talk(); }
-        }).then(function () { log.scrollTop = log.scrollHeight; });
+        }).then(pin);
     }
 
     // Gideon's face: small in the chat's header, and popping up over the button on hover (gideon.js)
@@ -926,9 +982,21 @@ const CHAT_ON = true;
         Gideon.attachPeek(btn);
     }
     if (window.Gideon) meetGideon(); else document.addEventListener('gideon-ready', meetGideon, { once: true });
-    (function () {
+
+    // gideon.js isn't needed to show the page: load it on first hover, focus or tap of the button,
+    // when the chat opens, or when the browser is idle after the page has loaded, whichever comes first
+    let gideonAsked = false;
+    function loadGideon() {
+        if (gideonAsked || window.Gideon) return;
+        gideonAsked = true;
         const s = document.createElement('script');
         s.src = BASE + 'gideon.js';
+        s.onerror = function () { gideonAsked = false; };   // the chat still works without the face
         document.head.appendChild(s);
-    })();
+    }
+    ['pointerenter', 'focus', 'touchstart'].forEach(function (ev) { btn.addEventListener(ev, loadGideon, { once: true, passive: true }); });
+    window.addEventListener('load', function () {
+        if ('requestIdleCallback' in window) requestIdleCallback(loadGideon, { timeout: 4000 });
+        else setTimeout(loadGideon, 2500);
+    });
 })();
