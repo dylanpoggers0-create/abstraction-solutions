@@ -41,7 +41,7 @@
         return a;
     }
     function signOut() {
-        try { localStorage.removeItem(ACCOUNT_KEY); localStorage.removeItem(ORDERS_SNAP); localStorage.removeItem(COINS_KEY); } catch (e) {}
+        try { localStorage.removeItem(ACCOUNT_KEY); localStorage.removeItem(ORDERS_SNAP); } catch (e) {}
         if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
         location.reload();
     }
@@ -61,6 +61,17 @@
         const coin = coinTab();
         if (coin) coin.hidden = !a;
         document.documentElement.classList.toggle('has-coins', !!a);
+        // signed in (here, on the Order page, or in another tab) as someone whose balance isn't loaded yet:
+        // show the last number this browser saw for them, then ask the server
+        if (a && coinsFor !== a.email) {
+            coinsFor = a.email;
+            let c = null;
+            try { c = JSON.parse(localStorage.getItem(COINS_KEY) || 'null'); } catch (e) {}
+            showCoins(c && c.u === a.email ? c.b : 0);
+            loadRewards(true);
+        }
+        if (!a) coinsFor = null;
+        fitTitle();
     }
     // keep the Menu button and this one side by side, whatever the Menu button's width
     function place() {
@@ -68,6 +79,51 @@
         if (tab) document.documentElement.style.setProperty('--menu-w', Math.round(tab.getBoundingClientRect().width) + 'px');
         const acct = document.querySelector('.acct-tab');
         if (acct) document.documentElement.style.setProperty('--acct-w', Math.round(acct.getBoundingClientRect().width) + 'px');
+        fitTitle();
+    }
+    /* Keep the big title clear of the buttons on its right. The CSS size is a good guess; this measures what's
+       really there (the buttons' widths change with the balance and the Account label) and shrinks the title
+       if it would run under them. float.js locks each letter's width, so after a change it's asked to re-lock. */
+    let fitT = 0, measurer = null;
+    function fitTitle() {
+        cancelAnimationFrame(fitT);
+        fitT = requestAnimationFrame(function () {
+            const name = document.querySelector('.brand-name'), box = document.querySelector('.header-container');
+            if (!name || !box) return;
+            const before = name.style.getPropertyValue('font-size') + (name.classList.contains('is-two-line') ? '2' : '');
+            name.style.removeProperty('font-size');
+            name.classList.remove('is-two-line');
+            let size = '', two = false, maxWord = 0;
+            if (innerWidth > 700) {
+                const btns = ['.side-tab', '.acct-tab', '.coin-tab'].map(function (s) { return document.querySelector(s); })
+                    .filter(function (b) { return b && !b.hidden && b.offsetWidth; });
+                const edge = Math.min.apply(null, btns.map(function (b) { return b.getBoundingClientRect().left; }).concat([innerWidth]));
+                const cs = getComputedStyle(name), fs = parseFloat(cs.fontSize);
+                // the name's natural width at the CSS size (its letters may be locked to an older size)
+                if (!measurer) { measurer = document.createElement('span'); measurer.setAttribute('aria-hidden', 'true');
+                                 measurer.style.cssText = 'position:absolute;left:-9999px;top:0;white-space:nowrap;visibility:hidden'; document.body.appendChild(measurer); }
+                ['fontFamily', 'fontSize', 'fontWeight', 'fontStretch', 'letterSpacing'].forEach(function (k) { measurer.style[k] = cs[k]; });
+                if (!name.dataset.text) name.dataset.text = (name.getAttribute('aria-label') || name.textContent).replace(/\s+/g, ' ').trim();   // never glitch letters
+                function width(t) { measurer.textContent = t; return measurer.getBoundingClientRect().width; }
+                const natural = width(name.dataset.text);
+                const longest = Math.max.apply(null, name.dataset.text.split(' ').map(width));
+                maxWord = longest / fs;                                   // the longest word's width per px of font size
+                const nr = name.getBoundingClientRect(), br = box.getBoundingClientRect();
+                const others = br.width - nr.width;                         // the logo and the gap beside the name
+                const room = edge - 36 - br.left - others;
+                if (room > 0) {
+                    // as big as fits (up to the CSS cap of 5.4rem), on one line if that's still a good size
+                    const cap = 5.4 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+                    const one = Math.min(cap, fs * room / natural);
+                    if (one >= 26) size = Math.floor(one) + 'px';
+                    else { two = true; size = Math.max(16, Math.floor(Math.min(cap, 40, fs * room / longest))) + 'px'; }   // too small on one line: two lines
+                }
+            }
+            if (size) name.style.setProperty('font-size', size, 'important');
+            name.classList.toggle('is-two-line', two);
+            name.style.maxWidth = two ? Math.ceil(maxWord * parseFloat(size) + 6) + 'px' : '';
+            if (size + (two ? '2' : '') !== before) window.dispatchEvent(new Event('resize'));  // float.js re-locks the letters
+        });
     }
 
     /* ---------- the panel ---------- */
@@ -315,13 +371,15 @@
     /* ---------- coins: the balance next to Account ---------- */
     const COINS_KEY = 'asCoins';                       // { u: email, b: balance }: the last balance seen, shown at once
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let coinsShown = null, coinsLoad = null, live = null;
+    let coinsShown = null, coinsLoad = null, live = null, coinsFor = null;
     function coinTab() { return document.querySelector('.coin-tab'); }
     function showCoins(n) {
         coinsShown = n;
         const t = coinTab();
         if (!t) return;
+        const was = t.querySelector('.coin-num').textContent;
         t.querySelector('.coin-num').textContent = n;
+        if (String(n).length !== was.length) place();
         t.setAttribute('aria-label', 'Rewards: ' + n + ' coin' + (n === 1 ? '' : 's'));
     }
     function keepCoins(n) {
@@ -330,18 +388,31 @@
     }
     function setCoins(n) { keepCoins(n); showCoins(n); }
     // the server is the only source of the balance; this asks it (once per page unless forced)
+    // (the free server can take a while to wake up, so a failed try is repeated a few times)
     function loadRewards(force) {
         const a = account();
         if (!a) return Promise.resolve(null);
         if (coinsLoad && !force) return coinsLoad;
-        coinsLoad = fetch(API + '/api/rewards', { headers: { Authorization: 'Bearer ' + a.token } })
-            .then(function (r) {
-                if (r.status === 401) { try { localStorage.removeItem(ACCOUNT_KEY); } catch (e) {} labels(); return null; }
-                return r.ok ? r.json() : null;
+        function attempt(n) {
+            return fetch(API + '/api/rewards', { headers: { Authorization: 'Bearer ' + a.token } })
+                .then(function (r) {
+                    if (r.status === 401) { try { localStorage.removeItem(ACCOUNT_KEY); } catch (e) {} labels(); return null; }
+                    if (!r.ok) throw new Error('rewards ' + r.status);
+                    return r.json();
+                })
+                .catch(function (err) {
+                    if (n >= 3) throw err;
+                    return new Promise(function (res) { setTimeout(res, [3000, 8000, 20000][n]); }).then(function () { return attempt(n + 1); });
+                });
+        }
+        const p = coinsLoad = attempt(0)
+            .then(function (d) {
+                const now = account();
+                if (d && now && now.email === a.email && !flying) setCoins(d.balance);
+                return d;
             })
-            .then(function (d) { if (d && !flying) setCoins(d.balance); return d; })
-            .catch(function () { coinsLoad = null; return null; });
-        return coinsLoad;
+            .catch(function () { if (coinsLoad === p) coinsLoad = null; return null; });
+        return p;
     }
     function announce(text) {
         if (!live) { live = el('div', 'coin-live'); live.setAttribute('aria-live', 'polite'); document.body.appendChild(live); }
@@ -515,7 +586,7 @@
 
     function start() {
         labels(); place(); finishFromLink();
-        if (account()) { const t = coinTab(); if (t) showCoins(parseInt(t.querySelector('.coin-num').textContent, 10) || 0); loadRewards(); }
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
         rewardsFromHash();
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();

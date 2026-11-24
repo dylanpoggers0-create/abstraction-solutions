@@ -1613,6 +1613,14 @@ a.pill.cta-main[class]:focus-visible {
 /* signed in, the title makes room for one more button */
 @media (min-width: 701px) {
     .has-coins .brand-name { font-size: clamp(1.2rem, calc((100vw - 480px) / 16), 5.4rem) !important; }
+    /* account.js: when one line won't fit beside the buttons, the name takes two */
+    .brand-name.is-two-line { white-space: normal; line-height: 1.02; }
+    .brand-name.is-two-line .af-w { display: block; }
+}
+@media (min-width: 701px) and (max-width: 1000px) {
+    /* narrower windows: Account shrinks to its round initial, so the title keeps more room */
+    .acct-tab.is-signed-in { padding: 11px; }
+    .acct-tab.is-signed-in [data-account-label] { display: none; }
 }
 /* the balance: a coin and a number, left of the Account button */
 .coin-tab {
