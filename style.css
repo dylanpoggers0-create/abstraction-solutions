@@ -1997,3 +1997,64 @@ a.pill.cta-main[class]:focus-visible {
     .qz-backdrop, .qz-panel, .qz-fill, .qz-btn, .qz-go { transition: none; }
     .qz-mark.is-done { animation: none; }
 }
+
+/* ---------------------------------------------------------
+   ORDER PAGE: "Things we've built" (3D models in projects3d.js, switches in projects.page.js)
+   --------------------------------------------------------- */
+.built { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.built-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 28px; text-align: left; }
+.built-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 26px;
+    padding: 14px 14px 22px; display: flex; flex-direction: column; min-width: 0;
+}
+.built-stage {
+    position: relative; aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 60%, rgba(126, 233, 111, 0.14), rgba(0, 0, 0, 0) 65%), #050705;
+}
+.built-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+.viewer { position: absolute; inset: 0; cursor: grab; touch-action: pan-y; outline-offset: -3px; }
+.viewer:active { cursor: grabbing; }
+.viewer:focus-visible { outline: 2px solid var(--green); }
+.viewer-still, .viewer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.viewer-still { object-fit: cover; }
+.viewer-canvas { opacity: 0; transition: opacity 0.4s ease; }
+.viewer.is-live .viewer-canvas { opacity: 1; }
+.viewer.is-live .viewer-still { opacity: 0; transition: opacity 0.4s ease 0.15s; }
+.viewer.is-loading::after {
+    content: ""; position: absolute; right: 14px; top: 14px; width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--green-dim); border-top-color: var(--green); animation: built-spin 0.9s linear infinite;
+}
+@keyframes built-spin { to { transform: rotate(360deg); } }
+.viewer-hint {
+    position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); margin: 0; white-space: nowrap;
+    font-size: 0.8rem; color: #d7dfd8; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 5px 12px; border-radius: 999px; pointer-events: none; transition: opacity 0.4s ease;
+}
+.viewer:not(.is-live) .viewer-hint, .viewer-hint.gone { opacity: 0; }
+.built-switch { display: flex; gap: 8px; margin: 14px 0 0; }
+.pill.small { padding: 7px 16px; font-size: 0.88rem; border-width: 1.5px; }
+.built-switch .pill[aria-pressed="true"] { border-color: var(--green); color: var(--green); }
+.built-switch .pill[aria-pressed="true"]:hover { background: var(--green); color: #000; }
+.built-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.built-tools button {
+    font: inherit; font-size: 0.84rem; font-weight: 700; color: #e9efe9; background: #101510;
+    border: 1px solid #2a372b; border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 34px;
+}
+.built-tools button:hover { border-color: var(--green-dim); }
+.built-tools button[aria-pressed="true"] { border-color: var(--green); color: var(--green); }
+.built-status { margin: 8px 2px 0; min-height: 1.4em; font-size: 0.84rem; color: var(--text-muted); }
+.built-card [hidden] + .built-status, .built-tools[hidden] + .built-status { display: none; }
+.built-card h3 { margin: 14px 2px 6px; font-size: 1.15rem; }
+.built-card > p:last-child { margin: 0 2px; color: #c9d1ca; line-height: 1.55; font-size: 0.95rem; }
+.built-card a { color: var(--green); }
+.built-cta { margin-top: 30px; }
+@media (max-width: 980px) {
+    .built-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+    .built-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .built-stage { aspect-ratio: 4 / 5; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .viewer.is-loading::after { animation: none; }
+}

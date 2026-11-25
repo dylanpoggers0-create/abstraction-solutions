@@ -137,5 +137,13 @@
             "A short quiz on the AI Education page shows how much AI you know when you start, with your own 10 questions.",
             "Finish every lesson to unlock the same quiz again, then see how much you improved, topic by topic, with every answer explained."
         ]
+    },
+    {
+        "date": "2026-11-25",
+        "title": "Things we've built, on the Order page",
+        "items": [
+            "3D models you can turn and look inside: the Email Cyberdeck (press its YES and NO buttons) and HydroCart (grow lights and water flow).",
+            "Videos of the Email Cyberdeck, HydroCart and our new pantry app."
+        ]
     }
 ]
