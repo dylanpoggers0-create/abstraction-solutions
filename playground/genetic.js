@@ -156,7 +156,7 @@
         if (owed > 30) owed = 0;                              // a slow device doesn't pile up work
         if (ran) show();
         if (bestFit >= 1) {
-            stop();
+            stop();                                           // (stop() also forgets the frame, so Play works again)
             $('gaResult').textContent = 'Got it in ' + generation + ' generations: "' + best + '". No one told it the answer, it just kept the best guesses and mixed them.';
             return;
         }
@@ -167,9 +167,12 @@
         if (bestFit >= 1) reset();
         playing = true; playBtn.textContent = 'Pause';
         last = performance.now(); owed = 1;                   // the first generation right away
-        if (!raf) raf = requestAnimationFrame(tick);
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(tick);
     }
-    function stop() { playing = false; playBtn.textContent = 'Play'; }
+    // stopping always cancels the next frame. (It used to leave a finished run's frame number behind,
+    // so Play thought a run was still going and did nothing until the page was reloaded.)
+    function stop() { playing = false; playBtn.textContent = 'Play'; cancelAnimationFrame(raf); raf = 0; }
 
     playBtn.addEventListener('click', function () { playing ? stop() : play(); });
     $('gaReset').addEventListener('click', reset);
