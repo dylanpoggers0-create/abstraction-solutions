@@ -405,6 +405,12 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
+"text": "user ID; deleting your account deletes them too. If you ask for certification suggestions while signed in, the lessons you've watched help choose them; only the lesson titles are used, and you can untick that option."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
 "text": "Payments: handled entirely by Stripe. Your card number never touches our servers. We only receive a record that the payment succeeded."
 },
 {
@@ -1148,55 +1154,55 @@
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "Browse all certifications",
+"heading": "Recommended for you › Browse all certifications",
 "text": "Search\nField\nAll fields\nLevel\nAll levels Beginner Intermediate Advanced\nSort by\nCost: low to high Cost: high to low Name (A–Z)\nLoading certifications…"
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "AI training for teams and nonprofits",
+"heading": "Recommended for you › AI training for teams and nonprofits",
 "text": "Plain-English training on how AI works and how to use it well, for staff, students and volunteers. No math or engineering background needed. Registered nonprofits get 50% off. Get a free instant quote ."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "Questions",
+"heading": "Recommended for you › Questions",
 "text": "Is the certification recommender free?\nYes. It's free to use, with no account needed.\nDoes it store my resume?\nNo. Your resume is used once to make suggestions and is never saved. It is sent to our server, and to Google's Gemini model when that is available, only to make those suggestions.\nCan I sort by cost?\nYes. Sort the recommendations by cost, lowest or highest first."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "Teaching experience",
+"heading": "Recommended for you › Teaching experience",
 "text": "Years of helping students understand math, science and AI."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "Teaching Assistant",
+"heading": "Recommended for you › Teaching Assistant",
 "text": "Christian Brothers High School · Aug – Dec 2026\nTaught machine learning models and the Stanford design thinking process , and introduced hands-on projects for students to work on."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "Instructor",
+"heading": "Recommended for you › Instructor",
 "text": "Mathnasium · 8 months\nTaught math to students. Also developed software to collect and store star cards digitally to reduce paper use. It wasn't implemented, but I pitched upgrades to the center director, including fuzzy search , machine learning to forecast attendance and a team points calculator ."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "Tutor",
+"heading": "Recommended for you › Tutor",
 "text": "Christian Brothers High School · Several years\nTutored students for years, including teaching trigonometry ."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "Awards",
+"heading": "Recommended for you › Awards",
 "text": "Recognition for engineering and computer science work."
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
-"heading": "MAJEC 1st Place",
+"heading": "Recommended for you › MAJEC 1st Place",
 "text": "Designed a circuit breaker with an Arduino , then used the idea that breaking a circuit with a relay can trigger a change to design a bike lock . The win earned prize money for the school.\nAerospace Engineering Award Computer Science Award\nGet in touch"
 },
 {
@@ -1684,5 +1690,17 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "o 20% off one project from the new Rewards panel.\n2026-11-24: Glitching quotes, an all-caps title, and the AI Playground up front. The home page quotes glitch now and then, the way the title does, and glitch into the next quote. The site title now reads ABSTRACTION SOLUTIONS. The AI Playground has its own card on the home page and the AI Education page, with a small live demo."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "nd the AI Education page, with a small live demo.\n2026-11-24: Quotes that rewrite themselves, and words that glitch across the site. The home page quotes are now edited into one another: a green cursor backspaces one quote and types the next, which decodes from code as it lands. Every few seconds a random word somewhere on the page glitches the way the title does, then settles back."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "itches the way the title does, then settles back.\n2026-11-25: Certification picks that follow what you watch. Signed in, the AI Education lessons you watch now shape your certification suggestions, with a new Recommended for you card that updates as you finish lessons. The resume-based recommender can use your watched lessons too (a checkbox you can untick). Coins now unlock up to 10% off one project: 75 coins for 5%, 150 for 10%."
 }
 ]
