@@ -405,7 +405,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "user ID; deleting your account deletes them too. If you ask for certification suggestions while signed in, the lessons you've watched help choose them; only the lesson titles are used, and you can untick that option."
+"text": "user ID; deleting your account deletes them too. If you ask for certification suggestions while signed in, the lessons you've watched help choose them; only the lesson titles are used, and you can untick that option. If you take the AI Education quiz while signed in, we store your answers and scores to measure your learning progress."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -1702,5 +1702,11 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "itches the way the title does, then settles back.\n2026-11-25: Certification picks that follow what you watch. Signed in, the AI Education lessons you watch now shape your certification suggestions, with a new Recommended for you card that updates as you finish lessons. The resume-based recommender can use your watched lessons too (a checkbox you can untick). Coins now unlock up to 10% off one project: 75 coins for 5%, 150 for 10%."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "0% off one project: 75 coins for 5%, 150 for 10%.\n2026-11-25: A before and after AI quiz. A short quiz on the AI Education page shows how much AI you know when you start, with your own 10 questions. Finish every lesson to unlock the same quiz again, then see how much you improved, topic by topic, with every answer explained."
 }
 ]
