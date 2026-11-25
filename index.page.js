@@ -1,5 +1,5 @@
 /* Home page quotes under the hero (kept out of index.html so the page can forbid inline scripts).
-   One quote at a time; about every 9 seconds it glitches into the next, the way the title glitches.
+   One quote at a time; about every 14 seconds it's edited into the next one: backspaced, then typed.
    - Pauses while the pointer is over it, while anything in it has keyboard focus, and while a dot is pressed.
    - With "reduce motion" on: no auto-rotate, no glitching and no fade; the dots switch quotes instantly.
    - The card's height is set to fit the longest quote at the current width, so nothing below it moves. */
@@ -14,7 +14,7 @@
         ['“Just as <span class="hl">electricity</span> transformed industry after industry 100 years ago, I think <span class="hl">AI</span> will now do the same.”', 'Andrew Ng'],
         ['“We can only see a short distance <span class="hl">ahead</span>, but we can see plenty there that needs to be <span class="hl">done</span>.”', 'Alan Turing']
     ];
-    const EVERY = 9000, FADE = 700;
+    const EVERY = 14000, FADE = 700;
 
     const section = document.getElementById('homeQuotes');
     const card = document.getElementById('homeQuoteCard');
@@ -30,7 +30,7 @@
     /* Glitching (float.js lends its glitch kit as window.ASGlitch; without it, or with "reduce motion",
        quotes simply fade). Each quote is built letter by letter, the way the title is:
        - while it's showing, a word or two glitches now and then, on a different beat from the title
-       - the change to the next quote: the old one breaks up into bits left to right, then the new one decodes in
+       - the change to the next quote: it's backspaced and the next one typed in (see typeTo)
        Screen readers get the plain quote from a hidden copy; the moving letters are hidden from them. */
     const sr = document.createElement('span');
     sr.className = 'visually-hidden';
@@ -69,6 +69,7 @@
         attr.textContent = '— ' + QUOTES[n][1];
         sr.textContent = plain(n) + ' — ' + QUOTES[n][1];
         if (kit()) GK.lock(letters);
+        cur = tokens(n);
     }
     function fill(n) {
         if (kit()) { build(n); return; }
@@ -98,67 +99,134 @@
         if (!kit()) return;
         idle = setTimeout(function () { nudge(); idleLoop(); }, 2800 + Math.random() * 2200);
     }
-    /* the change to the next quote, in one continuous move:
-       1. the old quote turns to code, left to right (it stays where it is, nothing vanishes)
-       2. the new quote takes its place letter for letter: each new letter starts on top of an old one
-          (spread evenly, so a longer quote fans out and a shorter one gathers in) and glides to its own spot,
-          so the block of code reshapes itself into the new quote's lines
-       3. while they move the letters keep flickering through code, then each one decodes and settles */
+    /* the change to the next quote: it's edited, like someone at a keyboard.
+       A green caret backspaces the old quote from the end (the letters just ahead of it break into code
+       first), down to whatever the two quotes share, then types the new one. Each typed letter lands as
+       code and decodes a moment later. The block grows and shrinks line by line as it's edited, and
+       glides to stay centred. Deleting speeds up the longer it goes, like holding the key down. */
     const EASE = 'cubic-bezier(.22, .8, .24, 1)';
-    let flicker = null, flying = [];
-    function startFlicker() {
-        if (flicker) return;
-        flicker = setInterval(function () {
-            flying = flying.filter(function (l) { return l.__fly; });
-            flying.forEach(function (l) { if (Math.random() < 0.45) GK.setGlyph(l, GK.pick(Math.random() < 0.65 ? GK.BIN : GK.HEX)); });
-            if (!flying.length) { clearInterval(flicker); flicker = null; }
-        }, 85);
-    }
-    function glitchTo(n) {
-        const old = letters.slice(), OUT = Math.min(520, 160 + old.length * 3);
-        old.forEach(function (l, k) {
-            setTimeout(function () {
-                GK.setGlyph(l, GK.pick(k % 4 ? GK.BIN : GK.HEX)); GK.pulse(l, 120);
-                l.__fly = true; flying.push(l); startFlicker();
-            }, (k / old.length) * OUT * 0.8);
-        });
-        attr.animate([{ opacity: 1, filter: 'blur(0)' }, { opacity: 0, filter: 'blur(4px)' }], { duration: 320, delay: OUT * 0.4, fill: 'forwards', easing: 'ease-in' });
-        swapping = setTimeout(function () {
-            // where every old letter is right now
-            const from = old.map(function (l) { const r = l.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width }; });
-            old.forEach(function (l) { l.__fly = false; });
-            i = n; build(i); mark();
-            const total = letters.length, to = letters.map(function (l) { const r = l.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width }; });
-            let left = total;
-            letters.forEach(function (l, j) {
-                const src = from[Math.round(j * (from.length - 1) / Math.max(1, total - 1))] || to[j], dst = to[j];
-                const dx = src.x - dst.x, dy = src.y - dst.y, sc = Math.max(0.6, Math.min(1.6, src.w / Math.max(1, dst.w)));
-                GK.setGlyph(l, GK.pick(GK.BIN));
-                l.__fly = true; flying.push(l);
-                const delay = (j / total) * 220, dur = 760 + Math.random() * 160;
-                l.animate([{ transform: 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(' + sc.toFixed(2) + ')' },
-                           { transform: 'none' }], { duration: dur, delay: delay, easing: EASE, fill: 'backwards' });
-                // once it has arrived: a few last flickers, then the real letter
-                setTimeout(function () {
-                    l.__fly = false;
-                    GK.run(l, Math.random() * 140, 2 + (Math.random() * 3 | 0), 60, function (c, s2) {
-                        if (Math.random() < 0.25) GK.setFace(c, Math.random() * GK.FACES.length | 0);
-                        else GK.setGlyph(c, GK.pick(s2 ? GK.HEX : GK.BIN));
-                    }, function () { if (--left === 0) swapping = null; });
-                }, delay + dur - 60);
+    const caret = document.createElement('span');
+    caret.className = 'q-caret';
+    caret.setAttribute('aria-hidden', 'true');
+    let job = 0, cur = [];
+    function tokens(n) {                     // the quote as letters and spaces, each letter marked if it's highlighted
+        const d = document.createElement('div'); d.innerHTML = QUOTES[n][0];
+        const out = [];
+        (function walk(node, hl) {
+            Array.prototype.forEach.call(node.childNodes, function (c) {
+                if (c.nodeType === 1) { walk(c, hl || c.classList.contains('hl')); return; }
+                c.nodeValue.replace(/\s+/g, ' ').split('').forEach(function (ch) { out.push({ c: ch, hl: ch !== ' ' && hl }); });
             });
-            startFlicker();
+        })(d, false);
+        return out;
+    }
+    function reindex() {                     // letters and words from what's on screen, for the idle glitches
+        letters = Array.prototype.slice.call(text.querySelectorAll('.af-ch'));
+        words = Array.prototype.map.call(text.querySelectorAll('.qw'), function (w) { return Array.prototype.slice.call(w.children); });
+    }
+    // keeps the text centred without jumping when a line comes or goes
+    function steady(fn) {
+        const before = text.getBoundingClientRect().top;
+        fn();
+        const after = text.getBoundingClientRect().top;
+        if (Math.abs(before - after) > 1) text.animate([{ transform: 'translateY(' + (before - after).toFixed(1) + 'px)' }, { transform: 'none' }],
+                                                       { duration: 280, easing: EASE, composite: 'add' });
+    }
+    function lastUnit() { return caret.previousSibling; }
+    function backspace() {
+        const u = lastUnit();
+        if (!u) return;
+        if (u.nodeType === 3) { u.remove(); }
+        else {
+            u.lastChild.remove();
+            if (!u.firstChild) u.remove();
+        }
+        cur.pop();
+    }
+    function type(t) {
+        if (t.c === ' ') { text.insertBefore(document.createTextNode(' '), caret); cur.push(t); return null; }
+        let w = lastUnit();
+        if (!w || w.nodeType === 3 || w.classList.contains('hl') !== t.hl) {
+            w = document.createElement('span');
+            w.className = 'qw' + (t.hl ? ' hl' : '');
+            text.insertBefore(w, caret);
+        }
+        const l = document.createElement('span');
+        l.className = 'af-ch'; l.dataset.c = t.c; l.textContent = t.c;
+        w.appendChild(l);
+        cur.push(t);
+        GK.lock([l]);                        // its real width, so the glitches that follow don't nudge the line
+        return l;
+    }
+    function typeTo(n) {
+        const me = ++job, next = tokens(n);
+        swapping = { typing: me };
+        caret.classList.add('is-typing');
+        text.appendChild(caret);
+        sr.textContent = plain(n) + ' — ' + QUOTES[n][1];
+        i = n; mark();
+        attr.getAnimations().forEach(function (an) { an.cancel(); });
+        attr.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: 'forwards' });
+        // how much of the start the two quotes share (the opening quote mark, at least)
+        let keep = 0;
+        while (keep < cur.length && keep < next.length && cur[keep].c === next[keep].c && cur[keep].hl === next[keep].hl) keep++;
+        const keepLetters = cur.slice(0, keep).filter(function (t) { return t.c !== ' '; }).length;
+        let gap = 46;
+        (function del() {
+            if (me !== job) return;
+            if (cur.length > keep) {
+                steady(backspace);
+                // the next few letters break into code before the caret reaches them
+                const all = text.querySelectorAll('.af-ch'), z = all.length - 5 >= keepLetters ? all[all.length - 5] : null;
+                if (z && !z.classList.contains('af-glyph')) { GK.setGlyph(z, GK.pick(Math.random() < 0.6 ? GK.BIN : GK.SYM)); GK.pulse(z, 120); }
+                gap = Math.max(7, gap * 0.9);
+                setTimeout(del, gap);
+                return;
+            }
+            // anything kept that's mid-glitch settles back to its real letter before typing starts
+            Array.prototype.forEach.call(text.querySelectorAll('.af-ch.af-glyph'), function (l) { GK.land(l, function () {}); });
+            setTimeout(function () { typeNext(keep); }, 260);
+        })();
+        function typeNext(k) {
+            if (me !== job) return;
+            if (k >= next.length) { finish(); return; }
+            let l = null;
+            steady(function () { l = type(next[k]); });
+            if (l) {
+                GK.setGlyph(l, GK.pick(Math.random() < 0.7 ? GK.BIN : GK.HEX));
+                GK.pulse(l, 100);
+                GK.run(l, 60 + Math.random() * 90, 1 + (Math.random() * 3 | 0), 55, function (c, st) {
+                    if (Math.random() < 0.2) GK.setFace(c, Math.random() * GK.FACES.length | 0);
+                    else GK.setGlyph(c, GK.pick(st ? GK.HEX : GK.BIN));
+                }, function () {});
+            }
+            const ch = next[k].c;
+            setTimeout(function () { typeNext(k + 1); }, 16 + Math.random() * 22 + (/[.,;:!?]/.test(ch) ? 110 : ch === ' ' ? 18 : 0));
+        }
+        function finish() {
+            const who = '— ' + QUOTES[n][1];
             attr.getAnimations().forEach(function (an) { an.cancel(); });
-            attr.animate([{ opacity: 0, filter: 'blur(4px)', transform: 'translateY(6px)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }],
-                         { duration: 700, delay: 900, easing: EASE, fill: 'backwards' });
-            setTimeout(function () { if (swapping) swapping = null; }, 3200);   // never stuck
-        }, OUT);
+            attr.textContent = '';
+            let k = 0;
+            (function typeAttr() {
+                if (me !== job) return;
+                attr.textContent = who.slice(0, ++k);
+                if (k < who.length) { setTimeout(typeAttr, 14 + Math.random() * 14); return; }
+                caret.classList.remove('is-typing');
+                setTimeout(function () {
+                    if (me !== job) return;
+                    caret.remove();
+                    reindex();
+                    swapping = null;
+                }, 1400);
+            })();
+        }
     }
     function show(n) {
         if (n === i && !swapping) return;
-        clearTimeout(swapping);
+        clearTimeout(swapping);                        // (a quote being typed is stopped by typeTo itself)
         if (calm.matches) { i = n; fill(i); mark(); swapping = null; return; }
-        if (kit()) { if (!quiet) glitchTo(n); else setTimeout(function () { show(n); }, 400); return; }
+        if (kit()) { if (!quiet) typeTo(n); else setTimeout(function () { show(n); }, 400); return; }
         card.classList.add('is-out');
         swapping = setTimeout(function () {
             i = n; fill(i); mark();
@@ -193,7 +261,7 @@
         timer = null;
         if (calm.matches) return;
         timer = setInterval(function () {
-            if (hovered || focused || pressing || document.hidden) return;
+            if (hovered || focused || pressing || document.hidden || swapping) return;   // (never while one is being typed)
             show((i + 1) % QUOTES.length);
         }, EVERY);
     }

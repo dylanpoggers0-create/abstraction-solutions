@@ -112,5 +112,13 @@
             "The site title now reads ABSTRACTION SOLUTIONS.",
             "The AI Playground has its own card on the home page and the AI Education page, with a small live demo."
         ]
+    },
+    {
+        "date": "2026-11-24",
+        "title": "Quotes that rewrite themselves, and words that glitch across the site",
+        "items": [
+            "The home page quotes are now edited into one another: a green cursor backspaces one quote and types the next, which decodes from code as it lands.",
+            "Every few seconds a random word somewhere on the page glitches the way the title does, then settles back."
+        ]
     }
 ]

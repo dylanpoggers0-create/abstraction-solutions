@@ -1882,3 +1882,17 @@ a.pill.cta-main[class]:focus-visible {
 }
 .pg-promo .pill { display: inline-flex; white-space: nowrap; }
 @media (max-width: 760px) { .pg-promo .pill { display: flex; justify-content: center; width: 100%; box-sizing: border-box; } }
+
+/* a word in the page's text glitching for a moment (float.js, part 8) */
+.gw { white-space: nowrap; }
+.gw-said { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.gw .af-ch { display: inline-block; }
+.gw .af-ch.af-fixed { text-align: center; vertical-align: top; white-space: nowrap; }
+.gw .af-ch.af-glyph {
+    font-family: "G SpaceMono", "G VT323", ui-monospace, monospace;
+    font-style: normal;
+    font-weight: 700;
+    color: var(--green);
+    -webkit-text-fill-color: var(--green);
+    text-shadow: 0 0 12px rgba(126, 233, 111, 0.55);
+}

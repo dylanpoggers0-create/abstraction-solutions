@@ -587,7 +587,7 @@
                 fit(ch, 0.86);
             }
             function pulse(ch, d) {      // each change fades in, so the flicker reads as smooth, not jumpy
-                ch.animate([{ opacity: 0.35, filter: 'blur(2px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: Math.max(60, d * 0.8), easing: 'ease-out' });
+                ch.animate([{ opacity: 0.45, filter: 'blur(0.035em)' }, { opacity: 1, filter: 'blur(0)' }], { duration: Math.max(60, d * 0.8), easing: 'ease-out' });   // blur in em: as soft on a big title as on body text
             }
             function land(ch, done) {
                 ch.classList.remove('af-glyph');
@@ -662,6 +662,89 @@
         window.ASGlitch = GK;
         window.dispatchEvent(new Event('as-glitch-ready'));
         if (name) glitch(name);
+        sprinkle();
+
+        /* ---------- 8. words around the page glitch now and then ----------
+           Every few seconds one word (sometimes two) somewhere in the text on screen glitches the way the
+           title does, then goes back to plain text. Words are picked at random each time, from paragraphs,
+           lists and headings; never links, buttons, forms, the header, menu or footer, the home page quotes
+           (they glitch on their own) or anything being selected. The word is only split into letters while
+           it glitches, and its letters are sized to the word's exact width, so the line never shifts. */
+        function sprinkle() {
+            if (isAdmin || /^\/hydro/i.test(location.pathname)) return;
+            const ROOT = document.querySelector('main') || document.body;
+            const IN = 'p, li, td, dd, h2, h3, figcaption, .lead, .section-sub';
+            const SKIP = 'header, .header-wrapper, .side-nav, nav, footer, form, button, a, label, code, pre, svg, canvas, ' +
+                         '[contenteditable], [data-af-skip], #homeQuotes, .acct-backdrop, .rw-backdrop, [aria-hidden="true"], ' +
+                         '.visually-hidden, .coin-tab, .vp-coin, .gw, [role="dialog"], [aria-live]';
+            const WORD = /[A-Za-z][A-Za-z’']{3,}/g;
+            function visible(r) { return r.width > 0 && r.bottom > 60 && r.top < innerHeight - 60 && r.right > 0 && r.left < innerWidth; }
+            function pickWord() {
+                const nodes = [];
+                const walker = document.createTreeWalker(ROOT, NodeFilter.SHOW_TEXT, {
+                    acceptNode: function (n) {
+                        if (!/[A-Za-z]{4}/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+                        const p = n.parentElement;
+                        if (!p || !p.closest(IN) || p.closest(SKIP)) return NodeFilter.FILTER_REJECT;
+                        return visible(p.getBoundingClientRect()) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                    }
+                });
+                for (let n = walker.nextNode(); n; n = walker.nextNode()) nodes.push(n);
+                for (let tries = 0; tries < 6 && nodes.length; tries++) {
+                    const node = nodes[Math.random() * nodes.length | 0], found = [];
+                    let m; WORD.lastIndex = 0;
+                    while ((m = WORD.exec(node.nodeValue))) found.push([m.index, m[0]]);
+                    if (!found.length) continue;
+                    const f = found[Math.random() * found.length | 0];
+                    const range = document.createRange();
+                    range.setStart(node, f[0]); range.setEnd(node, f[0] + f[1].length);
+                    const rs = range.getClientRects();
+                    if (rs.length !== 1 || !visible(rs[0])) continue;      // skip words split across lines or off screen
+                    const p = node.parentElement, op = parseFloat(getComputedStyle(p).opacity);
+                    if (op < 0.9 || (p.closest('af-w') && parseFloat(getComputedStyle(p.closest('af-w')).opacity) < 0.9)) continue;
+                    return { node: node, at: f[0], word: f[1], width: rs[0].width };
+                }
+                return null;
+            }
+            function glitchWord(w) {
+                const mid = w.node.splitText(w.at);
+                mid.splitText(w.word.length);
+                const span = document.createElement('span');
+                span.className = 'gw';
+                const said = document.createElement('span');   // what screen readers get while the letters are busy
+                said.className = 'gw-said'; said.textContent = w.word;
+                span.appendChild(said);
+                const chars = w.word.split('').map(function (c) {
+                    const l = document.createElement('span');
+                    l.className = 'af-ch'; l.dataset.c = c; l.textContent = c; l.setAttribute('aria-hidden', 'true');
+                    span.appendChild(l); return l;
+                });
+                mid.parentNode.replaceChild(span, mid);
+                GK.lock(chars);
+                // letters on their own lose the font's kerning: share out the difference so the word keeps its width
+                const sum = chars.reduce(function (a, l) { return a + parseFloat(l.style.width); }, 0), k = sum ? w.width / sum : 1;
+                chars.forEach(function (l) { l.style.width = (parseFloat(l.style.width) * k).toFixed(3) + 'px'; });
+                const mode = GK.modes[Math.random() * GK.modes.length | 0];
+                GK.round(mode, chars, function () {
+                    setTimeout(function () {
+                        if (!span.parentNode) return;
+                        span.parentNode.replaceChild(document.createTextNode(w.word), span);
+                    }, 600);
+                });
+            }
+            function next() {
+                setTimeout(function () {
+                    const sel = window.getSelection && window.getSelection();
+                    if (!document.hidden && !(sel && !sel.isCollapsed)) {
+                        const a = pickWord();
+                        if (a) glitchWord(a);
+                        if (Math.random() < 0.25) { const b = pickWord(); if (b) glitchWord(b); }
+                    }
+                    next();
+                }, 2200 + Math.random() * 2600);
+            }
+            GK.ready.then(function () { setTimeout(next, 3800); }).catch(function () {});
+        }
 
         /* ---------- 7. the title glitches every few seconds ----------
            Each round picks a different style, so it never repeats the same way twice in a row:

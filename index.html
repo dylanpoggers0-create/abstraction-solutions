@@ -143,6 +143,14 @@
             color: var(--green);
             text-shadow: 0 0 14px rgba(126, 233, 111, 0.55);
         }
+        /* the caret that edits one quote into the next */
+        .home-quote-text .q-caret {
+            display: inline-block; width: 0.08em; height: 1.05em; margin-left: 0.04em; vertical-align: -0.16em;
+            background: var(--green); box-shadow: 0 0 12px rgba(126, 233, 111, 0.8); border-radius: 1px;
+            animation: q-blink 1s steps(1) infinite;
+        }
+        .home-quote-text .q-caret.is-typing { animation: none; }
+        @keyframes q-blink { 50% { opacity: 0; } }
         .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
         .home-quote-attr {
