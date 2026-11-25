@@ -120,6 +120,13 @@
                 }
             }
             if (size) name.style.setProperty('font-size', size, 'important');
+            // the three buttons sit on the logo's centre line (they're pinned, so this is for the top of the page)
+            const logo = box.querySelector('img');
+            if (innerWidth > 700 && logo) {
+                const lr = logo.getBoundingClientRect(), mid = lr.top + window.scrollY + lr.height / 2;
+                const h = (document.querySelector('.side-tab') || {}).offsetHeight || 46;
+                document.documentElement.style.setProperty('--bar-top', Math.max(16, Math.min(60, Math.round(mid - h / 2))) + 'px');
+            } else document.documentElement.style.removeProperty('--bar-top');
             name.classList.toggle('is-two-line', two);
             name.style.maxWidth = two ? Math.ceil(maxWord * parseFloat(size) + 6) + 'px' : '';
             if (size + (two ? '2' : '') !== before) window.dispatchEvent(new Event('resize'));  // float.js re-locks the letters

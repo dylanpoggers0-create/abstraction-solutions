@@ -556,7 +556,7 @@
             const BIN = '01', HEX = '0123456789ABCDEF', BLOCK = '▓▒░█', SYM = '#$%&@*+=<>/\\|_{}[]';
             const pick = function (s) { return s.charAt(Math.floor(Math.random() * s.length)); };
             const chars = Array.prototype.slice.call(name.querySelectorAll('.af-ch'));
-            let busy = false, modes = [];
+            let busy = false, modes = [], locked = '', pending = false;
 
             function lockWidths() {
                 name.style.height = '';
@@ -570,6 +570,15 @@
                 });
                 // the title's own height is fixed too, so a glitch round never nudges the page below it
                 name.style.height = name.getBoundingClientRect().height + 'px';
+                locked = getComputedStyle(name).fontSize;
+            }
+            // The title's size can change after the letters are locked (account.js fits it beside the buttons,
+            // and the window can be resized). The locked widths would then be too narrow and the letters would
+            // overlap, so they're measured again: straight away, or when the current round finishes.
+            function relock(force) {
+                if (!locked) return;
+                if (busy) { pending = true; return; }
+                if (force || getComputedStyle(name).fontSize !== locked) lockWidths();
             }
             function setFace(ch, f) {
                 ch.classList.remove('af-glyph');
@@ -663,7 +672,12 @@
                     mode = modes.shift();
                 }
                 let left = chars.length;
-                MODES[mode](function () { if (--left === 0) setTimeout(function () { busy = false; }, 200); });
+                MODES[mode](function () {
+                    if (--left === 0) setTimeout(function () {
+                        busy = false;
+                        if (pending) { pending = false; relock(true); }
+                    }, 200);
+                });
             }
             function every() {
                 setTimeout(function () { round(); every(); }, 6500 + Math.random() * 3500);
@@ -680,8 +694,9 @@
                 let rt = null;
                 window.addEventListener('resize', function () {
                     clearTimeout(rt);
-                    rt = setTimeout(function () { if (!busy) lockWidths(); }, 200);
+                    rt = setTimeout(function () { relock(true); }, 200);
                 });
+                new MutationObserver(function () { relock(false); }).observe(name, { attributes: true, attributeFilter: ['style', 'class'] });
                 let lastHover = 0;
                 header.addEventListener('pointerenter', function () {
                     if (Date.now() - lastHover > 2500) { lastHover = Date.now(); round(); }

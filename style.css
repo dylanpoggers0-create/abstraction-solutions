@@ -908,7 +908,7 @@ p, li { text-wrap: pretty; }
     /* as big as fits beside the Sign in and Menu buttons (about 360px of the width): the name is ~16 letters wide */
     font-size: clamp(1.2rem, calc((100vw - 380px) / 16), 5.4rem) !important;
     font-weight: 580 !important;
-    letter-spacing: 0.03em !important;   /* room between letters, so none touch */
+    letter-spacing: 0.085em !important;   /* clear room between letters, so none touch (Unbounded sets them tight) */
     line-height: 0.95;
     white-space: nowrap;
     color: var(--paper);
@@ -983,7 +983,7 @@ p, li { text-wrap: pretty; }
 .side-tab {
     left: auto !important;
     right: 28px;
-    top: 30px !important;
+    top: var(--bar-top, 30px) !important;
     transform: none !important;
     flex-direction: row !important;
     gap: 10px !important;
@@ -1370,7 +1370,7 @@ a.pill.cta-main[class]:focus-visible {
 /* the button next to Menu: dark glass, so Menu stays the white one */
 .acct-tab {
     position: fixed;
-    top: 30px;
+    top: var(--bar-top, 30px);
     right: calc(28px + var(--menu-w, 112px) + 10px);
     z-index: 120;
     display: inline-flex;
@@ -1619,19 +1619,19 @@ a.pill.cta-main[class]:focus-visible {
 }
 @media (min-width: 701px) and (max-width: 1000px) {
     /* narrower windows: Account shrinks to its round initial, so the title keeps more room */
-    .acct-tab.is-signed-in { padding: 11px; }
+    .acct-tab.is-signed-in { padding: 12px; }
     .acct-tab.is-signed-in [data-account-label] { display: none; }
 }
 /* the balance: a coin and a number, left of the Account button */
 .coin-tab {
     position: fixed;
-    top: 30px;
+    top: var(--bar-top, 30px);
     right: calc(28px + var(--menu-w, 112px) + 10px + var(--acct-w, 138px) + 10px);
     z-index: 120;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    height: 48px;
+    height: 46px;                      /* the same height as Account and Menu, so all three line up */
     padding: 0 16px 0 11px;
     border-radius: 999px;
     border: 1px solid rgba(126, 233, 111, 0.55);
