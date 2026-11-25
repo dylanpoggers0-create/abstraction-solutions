@@ -1896,3 +1896,104 @@ a.pill.cta-main[class]:focus-visible {
     -webkit-text-fill-color: var(--green);
     text-shadow: 0 0 12px rgba(126, 233, 111, 0.55);
 }
+
+/* ---------- the AI Education quiz (services/education.quiz.js) ---------- */
+.qz-bar { margin: 18px 0 6px; padding: 14px 18px; border-radius: 16px; border: 1px solid rgba(126, 233, 111, 0.4); background: rgba(6, 9, 6, 0.7); }
+.qz-bar[hidden] { display: none; }
+.qz-bar-text { margin: 0; color: #dfe7df; line-height: 1.6; }
+.qz-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--green); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.qz-link:hover, .qz-link:focus-visible { color: #b9f5ad; }
+.qz-go, .qz-btn {
+    min-height: 44px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--green); background: var(--green);
+    color: #041004; font: inherit; font-weight: 750; cursor: pointer;
+    transition: scale 0.3s cubic-bezier(.34, 1.56, .64, 1), background-color 0.2s ease, box-shadow 0.3s ease;
+}
+.qz-go { margin-left: 6px; min-height: 38px; padding: 0 16px; }
+.qz-go:hover, .qz-btn:hover { scale: 1.04; box-shadow: 0 0 26px -6px rgba(126, 233, 111, 0.8); }
+.qz-btn.is-ghost { background: transparent; color: #fff; border-color: rgba(245, 248, 244, 0.35); }
+.qz-btn.is-ghost:hover { border-color: var(--green); color: var(--green); box-shadow: none; }
+.qz-btn:disabled { opacity: 0.4; cursor: default; scale: 1; box-shadow: none; }
+.qz-backdrop {
+    position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px;
+    background: rgba(0, 0, 0, 0.66); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    opacity: 0; transition: opacity 0.2s ease;
+}
+.qz-backdrop.is-open { opacity: 1; }
+.qz-backdrop[hidden] { display: none; }
+.qz-panel {
+    position: relative; width: min(640px, 100%); max-height: calc(100dvh - 32px); overflow: auto; overscroll-behavior: contain;
+    padding: 30px 30px 26px; border-radius: 24px; background: #000; color: #fff;
+    border: 1px solid rgba(126, 233, 111, 0.35); box-shadow: 0 40px 90px -30px #000, 0 0 70px -40px rgba(126, 233, 111, 0.6);
+    transform: translateY(12px) scale(0.98); transition: transform 0.3s cubic-bezier(.2, .8, .3, 1);
+}
+.qz-backdrop.is-open .qz-panel { transform: none; }
+.qz-close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%;
+    border: 1px solid rgba(245, 248, 244, 0.2); background: transparent; color: #fff; cursor: pointer; }
+.qz-close:hover, .qz-close:focus-visible { border-color: var(--green); color: var(--green); }
+.qz-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.qz-panel h2 { margin: 0 44px 10px 0; font-size: clamp(1.35rem, 3.4vw, 1.8rem); line-height: 1.2; color: #fff; outline: none; }
+.qz-panel h3 { margin: 26px 0 10px; font-size: 1.02rem; color: #fff; }
+.qz-lead { margin: 0 0 18px; color: #dfe7df; font-size: 1.04rem; line-height: 1.55; }
+.qz-lead.is-bad { color: #ffb4a8; }
+.qz-note { margin: 16px 0 0; color: #b9c4ba; font-size: 0.92rem; line-height: 1.5; }
+.qz-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.qz-nav { justify-content: space-between; }
+/* the green check, the same look as finishing a lesson */
+.qz-mark { width: 74px; height: 74px; margin: 0 0 16px; border-radius: 50%; background: #000; border: 3px solid #1e3a22; position: relative; }
+.qz-mark::after { content: ""; position: absolute; left: 24px; top: 15px; width: 18px; height: 32px; border: solid #1e3a22; border-width: 0 7px 7px 0; transform: rotate(40deg); }
+.qz-mark.is-done { background: var(--green); border-color: #b9f5ad; box-shadow: 0 0 40px rgba(126, 233, 111, 0.7); animation: qz-pop 0.7s cubic-bezier(.34, 1.56, .64, 1); }
+.qz-mark.is-done::after { border-color: #041004; }
+@keyframes qz-pop { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+/* taking it */
+.qz-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-right: 44px; }
+.qz-top h2 { margin: 0; font-size: 1rem; color: #b9c4ba; font-weight: 650; }
+.qz-kind { color: var(--green); font-size: 0.85rem; font-weight: 700; }
+.qz-track { height: 6px; margin: 12px 0 22px; border-radius: 6px; background: rgba(245, 248, 244, 0.14); overflow: hidden; }
+.qz-fill { height: 100%; border-radius: 6px; background: var(--green); box-shadow: 0 0 12px rgba(126, 233, 111, 0.7); transition: width 0.4s cubic-bezier(.2, .8, .3, 1); }
+.qz-q { border: 0; margin: 0; padding: 0; }
+.qz-q legend { padding: 0; margin: 0 0 16px; font-size: clamp(1.12rem, 2.8vw, 1.32rem); font-weight: 700; line-height: 1.4; color: #fff; }
+.qz-choice {
+    position: relative; display: flex; align-items: center; gap: 12px; margin: 0 0 10px; padding: 14px 16px; border-radius: 14px;
+    border: 1px solid rgba(245, 248, 244, 0.16); cursor: pointer; transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.qz-choice:hover { border-color: rgba(126, 233, 111, 0.6); }
+.qz-choice input { position: absolute; left: 16px; top: 50%; opacity: 0; width: 1px; height: 1px; margin: 0; }   /* stays inside its choice, so focusing it never scrolls */
+.qz-letter { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(245, 248, 244, 0.3); font-weight: 700; font-size: 0.85rem; }
+.qz-choice-text { line-height: 1.45; }
+.qz-choice:has(input:checked) { border-color: var(--green); background: rgba(126, 233, 111, 0.1); }
+.qz-choice:has(input:checked) .qz-letter { background: var(--green); border-color: var(--green); color: #041004; }
+.qz-choice:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+/* results */
+.qz-topics { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.qz-topics li { display: grid; grid-template-columns: minmax(110px, 1fr) 2fr auto; gap: 12px; align-items: center; font-size: 0.92rem; }
+.qz-topic { color: #dfe7df; }
+.qz-bars { display: grid; gap: 4px; }
+.qz-b { display: block; height: 8px; min-width: 3%; border-radius: 8px; background: var(--green); box-shadow: 0 0 10px rgba(126, 233, 111, 0.5); }
+.qz-b.is-before { background: rgba(245, 248, 244, 0.35); box-shadow: none; }
+.qz-topic-n { color: #b9c4ba; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.qz-change { margin: 0 0 16px; font-size: 1.2rem; font-weight: 800; color: var(--green); text-shadow: 0 0 18px rgba(126, 233, 111, 0.5); }
+.qz-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.qz-stat { padding: 16px; border-radius: 16px; border: 1px solid var(--green); text-align: center; }
+.qz-stat.is-before { border-color: rgba(245, 248, 244, 0.2); }
+.qz-stat strong { display: block; font-size: 2rem; font-weight: 800; color: var(--green); font-variant-numeric: tabular-nums; }
+.qz-stat.is-before strong { color: #fff; }
+.qz-stat span { color: #b9c4ba; font-size: 0.88rem; }
+.qz-review { margin: 0; padding: 0; list-style: none; counter-reset: qz; display: grid; gap: 12px; }
+.qz-review li { padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(245, 248, 244, 0.14); border-left: 4px solid var(--green); }
+.qz-review li.is-wrong { border-left-color: rgba(245, 248, 244, 0.4); }
+.qz-review p { margin: 0 0 6px; line-height: 1.45; }
+.qz-rq { font-weight: 700; color: #fff; }
+.qz-yours { color: #b9c4ba; text-decoration: line-through; text-decoration-color: rgba(245, 248, 244, 0.4); }
+.qz-right { color: var(--green); font-weight: 700; }
+.qz-why { color: #dfe7df; font-size: 0.93rem; }
+.qz-lesson { color: var(--green); font-weight: 650; font-size: 0.9rem; }
+@media (max-width: 560px) {
+    .qz-panel { padding: 24px 18px 20px; border-radius: 20px; }
+    .qz-topics li { grid-template-columns: 1fr auto; }
+    .qz-bars { grid-column: 1 / -1; grid-row: 2; }
+    .qz-nav .qz-btn { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .qz-backdrop, .qz-panel, .qz-fill, .qz-btn, .qz-go { transition: none; }
+    .qz-mark.is-done { animation: none; }
+}

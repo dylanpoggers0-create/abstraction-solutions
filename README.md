@@ -11,5 +11,8 @@ Every new video needs all of these, or coins and certification picks won't work 
    - `fields`: the certification fields it builds toward, main one first
      (`ai`, `genai`, `data`, `cloud`, `business`, `governance`, `pm`); these steer each viewer's certification picks
    - `technical`: `true` for the maths-heavy ones
-3. Run the quote-engine tests (`python tools/run_tests.py`): `test_progress` fails if a video is missing any of these.
-4. Push quote-engine first, then the site.
+3. **In the quote-engine repo, `education_quiz.json`:** at least one quiz question for the video (`lesson_id` = its id),
+   with 4 choices, `answer_index`, `field` and `explanation`.
+4. Run the quote-engine tests (`python tools/run_tests.py`): `test_progress` fails if a video is missing any of these,
+   and `test_quiz` fails if it has no question.
+5. Push quote-engine first, then the site.
