@@ -98,34 +98,61 @@
         if (!kit()) return;
         idle = setTimeout(function () { nudge(); idleLoop(); }, 2800 + Math.random() * 2200);
     }
-    // the old quote breaks up left to right, then the new one decodes in
+    /* the change to the next quote, in one continuous move:
+       1. the old quote turns to code, left to right (it stays where it is, nothing vanishes)
+       2. the new quote takes its place letter for letter: each new letter starts on top of an old one
+          (spread evenly, so a longer quote fans out and a shorter one gathers in) and glides to its own spot,
+          so the block of code reshapes itself into the new quote's lines
+       3. while they move the letters keep flickering through code, then each one decodes and settles */
+    const EASE = 'cubic-bezier(.22, .8, .24, 1)';
+    let flicker = null, flying = [];
+    function startFlicker() {
+        if (flicker) return;
+        flicker = setInterval(function () {
+            flying = flying.filter(function (l) { return l.__fly; });
+            flying.forEach(function (l) { if (Math.random() < 0.45) GK.setGlyph(l, GK.pick(Math.random() < 0.65 ? GK.BIN : GK.HEX)); });
+            if (!flying.length) { clearInterval(flicker); flicker = null; }
+        }, 85);
+    }
     function glitchTo(n) {
-        const old = letters.slice(), span = Math.min(700, old.length * 8);
+        const old = letters.slice(), OUT = Math.min(520, 160 + old.length * 3);
         old.forEach(function (l, k) {
             setTimeout(function () {
-                GK.setGlyph(l, GK.pick(k % 3 ? GK.BIN : GK.SYM)); GK.pulse(l, 90);
-                setTimeout(function () { GK.setGlyph(l, GK.pick(GK.HEX)); GK.pulse(l, 90); }, 90);
-                setTimeout(function () { l.style.opacity = '0'; l.style.transition = 'opacity .18s'; }, 170);
-            }, (k / old.length) * span + Math.random() * 60);
+                GK.setGlyph(l, GK.pick(k % 4 ? GK.BIN : GK.HEX)); GK.pulse(l, 120);
+                l.__fly = true; flying.push(l); startFlicker();
+            }, (k / old.length) * OUT * 0.8);
         });
-        attr.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, delay: span * 0.5, fill: 'forwards' });
+        attr.animate([{ opacity: 1, filter: 'blur(0)' }, { opacity: 0, filter: 'blur(4px)' }], { duration: 320, delay: OUT * 0.4, fill: 'forwards', easing: 'ease-in' });
         swapping = setTimeout(function () {
+            // where every old letter is right now
+            const from = old.map(function (l) { const r = l.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width }; });
+            old.forEach(function (l) { l.__fly = false; });
             i = n; build(i); mark();
-            attr.getAnimations().forEach(function (a) { a.cancel(); });
-            // every letter starts as noise, then settles in a wave from the first word to the last
-            const total = letters.length;
+            const total = letters.length, to = letters.map(function (l) { const r = l.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width }; });
             let left = total;
-            letters.forEach(function (l, k) {
+            letters.forEach(function (l, j) {
+                const src = from[Math.round(j * (from.length - 1) / Math.max(1, total - 1))] || to[j], dst = to[j];
+                const dx = src.x - dst.x, dy = src.y - dst.y, sc = Math.max(0.6, Math.min(1.6, src.w / Math.max(1, dst.w)));
                 GK.setGlyph(l, GK.pick(GK.BIN));
-                const steps = 4 + (Math.random() * 4 | 0);
-                GK.run(l, (k / total) * 900 + Math.random() * 120, steps, 55, function (c, s, m) {
-                    if (s < m - 1 && Math.random() < 0.3) GK.setFace(c, Math.random() * GK.FACES.length | 0);
-                    else GK.setGlyph(c, GK.pick(s < m / 2 ? GK.BIN : GK.HEX));
-                }, function () { if (--left === 0) { swapping = null; } });
+                l.__fly = true; flying.push(l);
+                const delay = (j / total) * 220, dur = 760 + Math.random() * 160;
+                l.animate([{ transform: 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(' + sc.toFixed(2) + ')' },
+                           { transform: 'none' }], { duration: dur, delay: delay, easing: EASE, fill: 'backwards' });
+                // once it has arrived: a few last flickers, then the real letter
+                setTimeout(function () {
+                    l.__fly = false;
+                    GK.run(l, Math.random() * 140, 2 + (Math.random() * 3 | 0), 60, function (c, s2) {
+                        if (Math.random() < 0.25) GK.setFace(c, Math.random() * GK.FACES.length | 0);
+                        else GK.setGlyph(c, GK.pick(s2 ? GK.HEX : GK.BIN));
+                    }, function () { if (--left === 0) swapping = null; });
+                }, delay + dur - 60);
             });
-            attr.animate([{ opacity: 0, filter: 'blur(4px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: 600, delay: 700, fill: 'backwards' });
-            setTimeout(function () { if (swapping) swapping = null; }, 2600);   // never stuck
-        }, span + 260);
+            startFlicker();
+            attr.getAnimations().forEach(function (an) { an.cancel(); });
+            attr.animate([{ opacity: 0, filter: 'blur(4px)', transform: 'translateY(6px)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }],
+                         { duration: 700, delay: 900, easing: EASE, fill: 'backwards' });
+            setTimeout(function () { if (swapping) swapping = null; }, 3200);   // never stuck
+        }, OUT);
     }
     function show(n) {
         if (n === i && !swapping) return;
