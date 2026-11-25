@@ -539,7 +539,6 @@
         // prerendered pages wait until they're actually shown
         if (document.prerendering) document.addEventListener('prerenderingchange', play, { once: true });
         else play();
-        if (name) glitch(name);
 
         /* ---------- 7. the title glitches every few seconds ----------
            Each round picks a different style, so it never repeats the same way twice in a row:
@@ -550,35 +549,28 @@
            Every change fades in rather than snapping, letters slow down before they land,
            and each one settles with a small drop. Every letter keeps its usual width, so the
            name itself never shifts about. Hovering the title sets a round off too. */
-        function glitch(name) {
+        /* the glitch kit: the typefaces, the glyph pools and the per-letter moves. Shared by the title
+           (below) and the home page quotes (index.page.js, through window.ASGlitch). A letter is a span
+           whose data-c holds the character it settles on; its width is locked first, so nothing around it moves. */
+        const GK = (function () {
             const FACES = [['G Audiowide', 0.92], ['G Chakra', 1.08], ['G MajorMono', 0.9], ['G Michroma', 0.78],
                            ['G Orbitron', 0.92], ['G Silkscreen', 0.82], ['G SpaceMono', 0.96], ['G VT323', 1.32]];
             const BIN = '01', HEX = '0123456789ABCDEF', BLOCK = '▓▒░█', SYM = '#$%&@*+=<>/\\|_{}[]';
             const pick = function (s) { return s.charAt(Math.floor(Math.random() * s.length)); };
-            const chars = Array.prototype.slice.call(name.querySelectorAll('.af-ch'));
-            let busy = false, modes = [], locked = '', pending = false;
-
-            function lockWidths() {
-                name.style.height = '';
+            function lock(chars) {
                 chars.forEach(function (ch) { ch.classList.remove('af-fixed'); ch.style.width = ''; ch.style.height = ''; ch.style.lineHeight = ''; });
-                chars.forEach(function (ch) {
-                    const r = ch.getBoundingClientRect();
-                    ch.style.width = r.width + 'px';
-                    ch.style.height = r.height + 'px';
-                    ch.style.lineHeight = r.height + 'px';
+                const rs = chars.map(function (ch) { return ch.getBoundingClientRect(); });
+                chars.forEach(function (ch, i) {
+                    ch.style.width = rs[i].width + 'px';
+                    ch.style.height = rs[i].height + 'px';
+                    ch.style.lineHeight = rs[i].height + 'px';
                     ch.classList.add('af-fixed');
                 });
-                // the title's own height is fixed too, so a glitch round never nudges the page below it
-                name.style.height = name.getBoundingClientRect().height + 'px';
-                locked = getComputedStyle(name).fontSize;
             }
-            // The title's size can change after the letters are locked (account.js fits it beside the buttons,
-            // and the window can be resized). The locked widths would then be too narrow and the letters would
-            // overlap, so they're measured again: straight away, or when the current round finishes.
-            function relock(force) {
-                if (!locked) return;
-                if (busy) { pending = true; return; }
-                if (force || getComputedStyle(name).fontSize !== locked) lockWidths();
+            // a wide typeface shrinks to fit its letter's slot, so it never runs into the next letter
+            function fit(ch, size) {
+                const slot = parseFloat(ch.style.width), used = ch.scrollWidth;
+                if (slot && used > slot) ch.style.fontSize = (size * slot / used * 0.96).toFixed(3) + 'em';
             }
             function setFace(ch, f) {
                 ch.classList.remove('af-glyph');
@@ -586,11 +578,6 @@
                 ch.style.fontFamily = '"' + FACES[f][0] + '", monospace';
                 ch.style.fontSize = FACES[f][1] + 'em';
                 fit(ch, FACES[f][1]);
-            }
-            // a wide typeface shrinks to fit its letter's slot, so it never runs into the next letter
-            function fit(ch, size) {
-                const slot = parseFloat(ch.style.width), used = ch.scrollWidth;
-                if (slot && used > slot) ch.style.fontSize = (size * slot / used * 0.96).toFixed(3) + 'em';
             }
             function setGlyph(ch, c) {
                 ch.classList.add('af-glyph');
@@ -625,55 +612,94 @@
                     setTimeout(next, d);
                 }, startAt);
             }
-
+            // the four styles of round; each takes the letters to glitch and calls done() once per letter
             const MODES = {
-                decode: function (done) {
+                decode: function (chars, done) {
                     chars.forEach(function (ch, i) {
-                        const steps = 8 + i * 0.8 | 0;
+                        const steps = 8 + Math.min(i, 24) * 0.8 | 0;
                         run(ch, Math.random() * 120, steps, 70, function (c, k, n) { setGlyph(c, pick(k < n * 0.55 ? BIN : HEX)); }, done);
                     });
                 },
-                fonts: function (done) {
+                fonts: function (chars, done) {
                     chars.forEach(function (ch, i) {
                         let prev = -1;
-                        run(ch, i * 40 + Math.random() * 320, 4 + (Math.random() * 5 | 0), 70 + Math.random() * 90, function (c) {
+                        run(ch, Math.min(i, 30) * 40 + Math.random() * 320, 4 + (Math.random() * 5 | 0), 70 + Math.random() * 90, function (c) {
                             let f; do { f = Math.random() * FACES.length | 0; } while (f === prev);
                             prev = f; setFace(c, f);
                         }, done);
                     });
                 },
-                bits: function (done) {
-                    const n = chars.length;
+                bits: function (chars, done) {
+                    const n = chars.length, gap = Math.min(55, 1100 / Math.max(1, n));
                     chars.forEach(function (ch, i) {
-                        // out across the name, then back: each letter flips to bits twice as the wave passes
-                        const there = i * 55, back = (2 * n - i) * 55;
+                        // out across the letters, then back: each one flips to bits twice as the wave passes
+                        const there = i * gap, back = (2 * n - i) * gap;
                         run(ch, there, 3, 70, function (c) { setGlyph(c, pick(BIN)); }, function () {
-                            run(ch, back - there - 210, 3, 70, function (c) { setGlyph(c, pick(BIN)); }, done);
+                            run(ch, Math.max(0, back - there - 210), 3, 70, function (c) { setGlyph(c, pick(BIN)); }, done);
                         });
                     });
                 },
-                noise: function (done) {
+                noise: function (chars, done) {
                     const POOLS = [BIN, BLOCK, SYM, HEX];
-                    chars.forEach(function (ch, i) {
+                    chars.forEach(function (ch) {
                         run(ch, Math.random() * 600, 5 + (Math.random() * 6 | 0), 60 + Math.random() * 80, function (c) {
-                            const r = Math.random();
-                            if (r < 0.4) setFace(c, Math.random() * FACES.length | 0);
+                            if (Math.random() < 0.4) setFace(c, Math.random() * FACES.length | 0);
                             else setGlyph(c, pick(POOLS[Math.random() * POOLS.length | 0]));
                         }, done);
                     });
                 }
             };
+            // runs one round on `chars`; then(…) once every letter has landed
+            function round(mode, chars, then) {
+                let left = chars.length;
+                if (!left) { if (then) then(); return; }
+                MODES[mode](chars, function () { if (--left === 0 && then) then(); });
+            }
+            const ready = Promise.all(FACES.map(function (f) { return document.fonts.load('1em "' + f[0] + '"', 'AbstractionSolutions01'); }));
+            return { FACES: FACES, BIN: BIN, HEX: HEX, BLOCK: BLOCK, SYM: SYM, pick: pick, lock: lock, setFace: setFace, setGlyph: setGlyph,
+                     pulse: pulse, land: land, run: run, round: round, modes: Object.keys(MODES), ready: ready };
+        })();
+        window.ASGlitch = GK;
+        window.dispatchEvent(new Event('as-glitch-ready'));
+        if (name) glitch(name);
 
+        /* ---------- 7. the title glitches every few seconds ----------
+           Each round picks a different style, so it never repeats the same way twice in a row:
+             decode:  letters scramble through binary, then hex, and resolve left to right
+             fonts:   each letter runs through other tech typefaces at its own pace
+             bits:    a wave of 0s and 1s rolls across the name and back
+             noise:   a mix of typefaces, binary, block shades and symbols
+           Every change fades in rather than snapping, letters slow down before they land,
+           and each one settles with a small drop. Every letter keeps its usual width, so the
+           name itself never shifts about. Hovering the title sets a round off too. */
+        function glitch(name) {
+            const chars = Array.prototype.slice.call(name.querySelectorAll('.af-ch'));
+            let busy = false, modes = [], locked = '', pending = false;
+
+            function lockWidths() {
+                name.style.height = '';
+                GK.lock(chars);
+                // the title's own height is fixed too, so a glitch round never nudges the page below it
+                name.style.height = name.getBoundingClientRect().height + 'px';
+                locked = getComputedStyle(name).fontSize;
+            }
+            // The title's size can change after the letters are locked (account.js fits it beside the buttons,
+            // and the window can be resized). The locked widths would then be too narrow and the letters would
+            // overlap, so they're measured again: straight away, or when the current round finishes.
+            function relock(force) {
+                if (!locked) return;
+                if (busy) { pending = true; return; }
+                if (force || getComputedStyle(name).fontSize !== locked) lockWidths();
+            }
             function round(mode) {
                 if (busy || document.hidden) return;
                 busy = true;
                 if (!mode) {
-                    if (!modes.length) modes = Object.keys(MODES).sort(function () { return Math.random() - 0.5; });
+                    if (!modes.length) modes = GK.modes.slice().sort(function () { return Math.random() - 0.5; });
                     mode = modes.shift();
                 }
-                let left = chars.length;
-                MODES[mode](function () {
-                    if (--left === 0) setTimeout(function () {
+                GK.round(mode, chars, function () {
+                    setTimeout(function () {
                         busy = false;
                         if (pending) { pending = false; relock(true); }
                     }, 200);
@@ -683,9 +709,7 @@
                 setTimeout(function () { round(); every(); }, 6500 + Math.random() * 3500);
             }
 
-            Promise.all([document.fonts.load('1em "Unbounded"')].concat(FACES.map(function (f) {
-                return document.fonts.load('1em "' + f[0] + '"', 'AbstractionSolutions01');
-            }))).then(function () {
+            Promise.all([document.fonts.load('1em "Unbounded"'), GK.ready]).then(function () {
                 setTimeout(function () {
                     lockWidths();
                     round('decode');                                 // the first one always decodes

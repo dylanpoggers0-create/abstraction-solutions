@@ -102,7 +102,7 @@
                 // the name's natural width at the CSS size (its letters may be locked to an older size)
                 if (!measurer) { measurer = document.createElement('span'); measurer.setAttribute('aria-hidden', 'true');
                                  measurer.style.cssText = 'position:absolute;left:-9999px;top:0;white-space:nowrap;visibility:hidden'; document.body.appendChild(measurer); }
-                ['fontFamily', 'fontSize', 'fontWeight', 'fontStretch', 'letterSpacing'].forEach(function (k) { measurer.style[k] = cs[k]; });
+                ['fontFamily', 'fontSize', 'fontWeight', 'fontStretch', 'letterSpacing', 'textTransform'].forEach(function (k) { measurer.style[k] = cs[k]; });
                 if (!name.dataset.text) name.dataset.text = (name.getAttribute('aria-label') || name.textContent).replace(/\s+/g, ' ').trim();   // never glitch letters
                 function width(t) { measurer.textContent = t; return measurer.getBoundingClientRect().width; }
                 const natural = width(name.dataset.text);

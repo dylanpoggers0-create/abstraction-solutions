@@ -922,6 +922,7 @@ p, li { text-wrap: pretty; }
     animation: af-glint 9s cubic-bezier(.6, 0, .3, 1) 1.6s infinite;
     transition: filter 0.6s ease;
 }
+.brand-name { text-transform: uppercase; }   /* ABSTRACTION SOLUTIONS (the text stays normal case for screen readers) */
 .brand-name .af-w { white-space: nowrap; }
 .brand-name .af-ch {
     display: inline-block;
@@ -1077,7 +1078,7 @@ main a:not([data-af]):not(.pill):not([class*="btn"]):hover,
     .af-light { width: 600px; height: 600px; margin: -300px 0 0 -300px; }
     .af-aura { width: 800px; height: 800px; margin: -400px 0 0 -400px; }
     .header-wrapper { padding: 22px 22px 0 46px !important; margin-bottom: -76px; }
-    .brand-name { font-size: clamp(1.5rem, 7.9vw, 3rem) !important; white-space: normal; line-height: 1.02; }
+    .brand-name { font-size: clamp(1.3rem, 6.4vw, 2.6rem) !important; white-space: normal; line-height: 1.02; }
     .brand-box img { width: 54px !important; height: 54px !important; align-self: flex-start; }
 }
 
@@ -1837,3 +1838,47 @@ a.pill.cta-main[class]:focus-visible {
 .admin-rewards th { color: #b9c4ba; font-weight: 650; font-size: 0.8rem; }
 .admin-rewards tr:last-child td { border-bottom: 0; }
 .admin-rewards td.is-open { color: var(--green); font-weight: 650; }
+
+/* ---------- AI Playground promo (home page and Education page) ----------
+   Words and a button on the left; on the right, a ball finding the bottom of a curve by gradient descent
+   (an SVG animation: no script, and it stops for "reduce motion"). */
+.pg-promo {
+    max-width: 1080px;
+    margin: 40px auto 30px;
+    padding: 34px 36px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 34px;
+    align-items: center;
+    border: 1px solid rgba(126, 233, 111, 0.35);
+    border-radius: 28px;
+    background: rgba(6, 9, 6, 0.78);
+    box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9), 0 0 60px -30px rgba(126, 233, 111, 0.35);
+}
+.pg-promo h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; }
+.pg-promo h2 .badge { vertical-align: middle; }
+.pg-promo p { margin: 0 0 20px; color: #dfe7df; font-size: 1.06rem; line-height: 1.6; }
+.pg-promo-demo {
+    border-radius: 20px;
+    border: 1px solid rgba(245, 248, 244, 0.12);
+    background: #030503;
+    padding: 10px;
+}
+.pg-demo { display: block; width: 100%; height: auto; }
+.pg-grid line { stroke: rgba(245, 248, 244, 0.07); stroke-width: 1; }
+.pg-curve { fill: none; stroke: var(--green); stroke-width: 3.2; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(126, 233, 111, 0.6)); }
+.pg-steps circle { fill: rgba(126, 233, 111, 0.45); }
+.pg-ball { fill: #ecffe7; filter: drop-shadow(0 0 8px rgba(126, 233, 111, 0.95)); }
+.pg-ball-still { display: none; }
+@media (prefers-reduced-motion: reduce) {
+    .pg-ball-move { display: none; }
+    .pg-ball-still { display: inline; }
+}
+.pg-promo.is-compact { margin: 26px 0 34px; padding: 26px 28px; max-width: none; }
+.pg-promo.is-compact h2 { font-size: clamp(1.35rem, 2.6vw, 1.8rem); }
+@media (max-width: 760px) {
+    .pg-promo { grid-template-columns: 1fr; padding: 26px 22px; margin: 30px 22px 20px 44px; gap: 22px; }
+    .pg-promo.is-compact { margin: 22px 0 28px; }
+}
+.pg-promo .pill { display: inline-flex; white-space: nowrap; }
+@media (max-width: 760px) { .pg-promo .pill { display: flex; justify-content: center; width: 100%; box-sizing: border-box; } }

@@ -103,5 +103,14 @@
             "Coins burst out of the green check when you finish a video and fly into your balance next to Account.",
             "Spend coins on 5% to 20% off one project from the new Rewards panel."
         ]
+    },
+    {
+        "date": "2026-11-24",
+        "title": "Glitching quotes, an all-caps title, and the AI Playground up front",
+        "items": [
+            "The home page quotes glitch now and then, the way the title does, and glitch into the next quote.",
+            "The site title now reads ABSTRACTION SOLUTIONS.",
+            "The AI Playground has its own card on the home page and the AI Education page, with a small live demo."
+        ]
     }
 ]
