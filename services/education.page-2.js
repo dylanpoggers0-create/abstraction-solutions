@@ -152,6 +152,55 @@
                 return row;
             }
 
+            /* ---------- Recommended for you: from the lessons a signed-in visitor has watched ----------
+               The server works it out from their saved video progress (GET /api/certs/for-you). It refreshes
+               when they finish a lesson (education-progress.js sends 'as-lesson-done'). Signed out: a nudge to sign in. */
+            function account() {
+                try { const a = JSON.parse(localStorage.getItem('asAccount')); return a && a.token && a.expires * 1000 > Date.now() ? a : null; }
+                catch (e) { return null; }
+            }
+            let forYouBusy = false, forYouAgain = false;
+            async function forYou() {
+                const box = $('certForYou'), note = $('certForYouNote'), list = $('certForYouPicks');
+                const a = account();
+                $('certWatchRow').hidden = !a;
+                if (!a) {
+                    box.hidden = false; list.textContent = ''; note.textContent = '';
+                    const b = el('button', null, 'Sign in');
+                    b.type = 'button';
+                    b.addEventListener('click', function () { window.ASAccount ? ASAccount.open('signup', b) : (location.href = '../order.html#signIn'); });
+                    note.appendChild(b);
+                    note.appendChild(document.createTextNode(' and the lessons you watch here will pick certifications for you.'));
+                    return;
+                }
+                if (forYouBusy) { forYouAgain = true; return; }
+                forYouBusy = true;
+                try {
+                    const r = await fetch(API_BASE + '/api/certs/for-you', { headers: { Authorization: 'Bearer ' + a.token } });
+                    if (!r.ok) { box.hidden = true; return; }
+                    const d = await r.json();
+                    box.hidden = false; list.textContent = '';
+                    if (!d.ready) {
+                        note.textContent = '';
+                        note.appendChild(document.createTextNode('Watch ' + (d.needed - d.watched) + ' more '));
+                        const l = el('a', null, d.needed - d.watched === 1 ? 'lesson' : 'lessons'); l.href = '#shorts';
+                        note.appendChild(l);
+                        note.appendChild(document.createTextNode(' and we’ll suggest certifications based on what you watch (' + d.watched + ' of ' + d.needed + ' so far).'));
+                        return;
+                    }
+                    note.textContent = d.summary || 'Based on the lessons you’ve watched.';
+                    d.picks.filter(function (p) { return byId[p.id]; }).forEach(function (p, i) { list.appendChild(card(byId[p.id], i + 1, p.why)); });
+                } catch (e) { box.hidden = true; }
+                finally {
+                    forYouBusy = false;
+                    if (forYouAgain) { forYouAgain = false; forYou(); }
+                }
+            }
+            let fyT = 0;
+            window.addEventListener('as-lesson-done', function () { clearTimeout(fyT); fyT = setTimeout(forYou, 1200); });
+            window.addEventListener('storage', function (e) { if (e.key === 'asAccount') forYou(); });
+            window.addEventListener('as-account-change', forYou);
+
             function status(msg, isError) { const s = $('certStatus'); s.textContent = msg; s.className = 'cert-status' + (isError ? ' error' : ''); }
 
             $('certForm').addEventListener('submit', async function (ev) {
@@ -166,9 +215,12 @@
                 try {
                     let r, tries = 0;
                     while (true) {          // the free server may be asleep: retry a few times on 502/503/504
+                        const a = account(), useWatch = !!a && $('certUseWatch').checked;
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (useWatch) headers.Authorization = 'Bearer ' + a.token;      // so the lessons they've watched count too
                         r = await fetch(API_BASE + '/certs/recommend', {
-                            method: 'POST', headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ field: goal, resume: resume.slice(0, 15000) }),
+                            method: 'POST', headers: headers,
+                            body: JSON.stringify({ field: goal, resume: resume.slice(0, 15000), use_watch: useWatch }),
                             signal: AbortSignal.timeout(60000)
                         });
                         if ([502, 503, 504].indexOf(r.status) < 0 || ++tries >= 3) break;
@@ -191,7 +243,8 @@
                         if (data.feedback_token) li.appendChild(voteRow(data.feedback_token, p.id));
                         ol.appendChild(li);
                     });
-                    $('certSummary').textContent = data.summary || 'Suggested order, starting from the top:';
+                    $('certSummary').textContent = (data.summary || 'Suggested order, starting from the top:') +
+                        (data.watched_lessons && !/watched/i.test(data.summary || '') ? ' (Also based on the ' + data.watched_lessons + ' lessons you’ve watched here.)' : '');
                     $('certResults').hidden = false;
                     status('');
                     $('certResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -201,6 +254,6 @@
                 } finally { btn.disabled = false; }
             });
 
-            loadCatalog();
+            loadCatalog().then(forYou, forYou);
         })();
     

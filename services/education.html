@@ -259,6 +259,12 @@
             width: 24px; height: 24px; margin-right: 8px; border-radius: 50%;
             background-color: var(--green-soft); color: var(--green); font-size: 0.8rem;
         }
+        .cert-check { display: flex !important; align-items: center; gap: 10px; font-weight: normal !important; margin: 14px 0 0 !important; cursor: pointer; }
+        .cert-check[hidden] { display: none !important; }
+        .cert-check input { width: 20px; height: 20px; accent-color: var(--green); margin: 0; flex: none; }
+        .cert-foryou { border-color: rgba(126, 233, 111, 0.45); }
+        .cert-foryou .cert-hint a, .cert-foryou .cert-hint button { color: var(--green); font-weight: 700; }
+        .cert-foryou .cert-hint button { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; text-decoration: underline; }
         .cert-fine { color: var(--text-muted); font-size: 0.8rem; margin-top: 14px; line-height: 1.45; }
         .cert-vote { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem; }
         .cert-vote button { background: transparent; border: 1px solid var(--line); color: inherit; border-radius: 50px;
@@ -1310,6 +1316,13 @@
             <p class="section-note">Recognized industry certifications from AWS, Microsoft, Google, NVIDIA, CompTIA and others,
                 with official prices. Get suggestions for your background, or browse and sort them yourself.</p>
 
+            <!-- Recommended for you: picks from the lessons a signed-in visitor has watched (education.page-2.js) -->
+            <section class="cert-tool cert-foryou" id="certForYou" aria-labelledby="certForYouTitle" hidden>
+                <h3 id="certForYouTitle">Recommended for you</h3>
+                <p class="cert-hint" id="certForYouNote"></p>
+                <ol class="cert-list" id="certForYouPicks"></ol>
+            </section>
+
             <form class="cert-tool" id="certForm" novalidate>
                 <h3>Get recommendations</h3>
                 <p class="cert-hint">Tell us where you want to go and paste your resume. AI picks from the list below and explains why.</p>
@@ -1330,6 +1343,8 @@
                           placeholder="Paste your resume here: jobs, skills, school, projects. No need to include your name or contact details."></textarea>
                 <p class="cert-hint">Upload your resume as a PDF, or paste it. Leave out your phone number and address.
                     Your resume is used once to make suggestions and is never saved.</p>
+                <label class="cert-check" id="certWatchRow" hidden><input type="checkbox" id="certUseWatch" checked>
+                    Also use the lessons I've watched on this page</label>
                 <div class="cert-row">
                     <button class="cert-btn" type="submit" id="certGo">Recommend certifications</button>
                     <button class="cert-btn cert-btn-outline" type="button" id="certUpload">Upload resume.pdf</button>

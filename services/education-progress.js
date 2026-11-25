@@ -231,6 +231,7 @@
             if (!res) return;
             st.saved = Math.max(st.saved, res.percent || 0);
             gotAward(st, res);
+            if (res.first_completion) window.dispatchEvent(new Event('as-lesson-done'));   // "Recommended for you" refreshes
         }).catch(function () { st.dirty = true; });   // offline: try again on the next save
     }
     function keepPending(st, body) {
@@ -313,6 +314,7 @@
             }).then(function (res) {
                 // finished while signed out: the server re-checked the played seconds and may pay out now
                 setTimeout(function () { gotAward(st, res); }, 600 + i * 450);
+                if (res && res.first_completion) window.dispatchEvent(new Event('as-lesson-done'));
             });
         });
         Promise.all(jobs).then(function () { try { localStorage.removeItem(PENDING_KEY); } catch (e) {} }, function () {});

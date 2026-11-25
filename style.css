@@ -1768,7 +1768,7 @@ a.pill.cta-main[class]:focus-visible {
 .rw-mark span { position: absolute; top: 32px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: #b9c4ba; font-variant-numeric: tabular-nums; }
 .rw-mark.is-reached span { color: var(--green); }
 /* the four discounts */
-.rw-tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.rw-tiers { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; margin: 0; padding: 0; list-style: none; }   /* however many tiers the config has */
 .rw-tier {
     display: flex;
     flex-direction: column;
@@ -1822,7 +1822,7 @@ a.pill.cta-main[class]:focus-visible {
 .rw-rules { margin: 22px 0 0; color: #b9c4ba; font-size: 0.86rem; line-height: 1.5; }
 @media (max-width: 520px) {
     .rw-panel { padding: 26px 18px 20px; }
-    .rw-tiers { grid-template-columns: repeat(2, 1fr); }
+    .rw-tiers { grid-auto-flow: row; grid-template-columns: repeat(2, 1fr); }
     .rw-balance strong { font-size: 2.2rem; }
 }
 @media (prefers-reduced-motion: reduce) {

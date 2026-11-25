@@ -120,5 +120,14 @@
             "The home page quotes are now edited into one another: a green cursor backspaces one quote and types the next, which decodes from code as it lands.",
             "Every few seconds a random word somewhere on the page glitches the way the title does, then settles back."
         ]
+    },
+    {
+        "date": "2026-11-25",
+        "title": "Certification picks that follow what you watch",
+        "items": [
+            "Signed in, the AI Education lessons you watch now shape your certification suggestions, with a new Recommended for you card that updates as you finish lessons.",
+            "The resume-based recommender can use your watched lessons too (a checkbox you can untick).",
+            "Coins now unlock up to 10% off one project: 75 coins for 5%, 150 for 10%."
+        ]
     }
 ]
