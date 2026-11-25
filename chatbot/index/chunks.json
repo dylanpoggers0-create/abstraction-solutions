@@ -218,6 +218,12 @@
 {
 "url": "https://abstraction-solutions.com/",
 "title": "AI Made Simple for Small Business",
+"heading": "Watch AI learn, one step at a time",
+"text": "Our free AI Playground runs right in your browser. Type any equation and watch gradient descent roll downhill to the lowest point, or type a phrase and watch a genetic algorithm evolve it, one generation at a time.\nOpen the AI Playground"
+},
+{
+"url": "https://abstraction-solutions.com/",
+"title": "AI Made Simple for Small Business",
 "heading": "What we do",
 "text": "AI education, ethical AI, and custom tools for people, researchers and companies."
 },
@@ -1029,7 +1035,13 @@
 "url": "https://abstraction-solutions.com/services/education.html",
 "title": "Plain-English AI Training and Cert Guide",
 "heading": "Plain-English AI training, plus a certification guide.",
-"text": "AI EDUCATION\nPlain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background.\nNew: try the Playground . Type any equation and watch gradient descent find its lowest point, or watch a genetic algorithm evolve your own phrase."
+"text": "AI EDUCATION\nPlain-language explanations of how AI works and what's new, so anyone can follow along, without needing a math or engineering background."
+},
+{
+"url": "https://abstraction-solutions.com/services/education.html",
+"title": "Plain-English AI Training and Cert Guide",
+"heading": "AI Playground",
+"text": "See how AI learns, hands on. Type any equation and watch gradient descent find its lowest point, or type a phrase and watch a genetic algorithm evolve it.\nOpen the AI Playground"
 },
 {
 "url": "https://abstraction-solutions.com/services/education.html",
@@ -1666,5 +1678,11 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "guesses evolve into it, generation by generation.\n2026-11-24: Coins for AI Education videos. Signed in, finishing an AI Education video earns coins: 5, 10 or 15 depending on its length, once per video. Coins burst out of the green check when you finish a video and fly into your balance next to Account. Spend coins on 5% to 20% off one project from the new Rewards panel."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "o 20% off one project from the new Rewards panel.\n2026-11-24: Glitching quotes, an all-caps title, and the AI Playground up front. The home page quotes glitch now and then, the way the title does, and glitch into the next quote. The site title now reads ABSTRACTION SOLUTIONS. The AI Playground has its own card on the home page and the AI Education page, with a small live demo."
 }
 ]
