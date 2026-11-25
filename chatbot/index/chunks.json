@@ -303,13 +303,31 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Start your AI project with a free instant quote.",
-"text": "Home › Order\nORDER\nDescribe the work, get an estimate in seconds, and keep the final scope in email so you stay in control of what we build.\nGet a free instant quote Check an existing order\nI represent a nonprofit — show my 50% estimate\nGet a free instant quote\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nSign in to checkout Keep your orders and quotes in one place\nor"
+"text": "Home › Order\nORDER\nDescribe the work, get an estimate in seconds, and keep the final scope in email so you stay in control of what we build.\nGet a free instant quote Check an existing order\nI represent a nonprofit — show my 50% estimate\nGet a free instant quote\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack."
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
-"heading": "Start your AI project with a free instant quote.",
-"text": "ckout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as User ID:"
+"heading": "Things we've built",
+"text": "Turn the models, look inside, or watch them work. Each one started as a plain idea.\nDrag to turn · tap YES or NO\nA meeting request is waiting. Press YES or NO."
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Email Cyberdeck",
+"text": "AI reads and answers every email for you. Meeting requests are the only thing it asks about: they show up on the screen, and one button accepts or declines. A Raspberry Pi and an Arduino Mega inside.\nDrag to turn"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "HydroCart",
+"text": "Our showpiece, not a product for sale: six plants on one rolling cart. Sensors watch the water and our own AI model predicts where each reading is heading. How it works"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Pantry app",
+"text": "Tracks the pantry, fridge and freezer, puts what expires first at the top, and sends one short email before food goes bad. Barcode scanning and recipe ideas built in.\nTell us your idea: get a free instant quote\nSign in to checkout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as User ID:"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -1732,5 +1750,11 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "0% off one project: 75 coins for 5%, 150 for 10%.\n2026-11-25: A before and after AI quiz. A short quiz on the AI Education page shows how much AI you know when you start, with your own 10 questions. Finish every lesson to unlock the same quiz again, then see how much you improved, topic by topic, with every answer explained."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "ved, topic by topic, with every answer explained.\n2026-11-25: Things we've built, on the Order page. 3D models you can turn and look inside: the Email Cyberdeck (press its YES and NO buttons) and HydroCart (grow lights and water flow). Videos of the Email Cyberdeck, HydroCart and our new pantry app."
 }
 ]
