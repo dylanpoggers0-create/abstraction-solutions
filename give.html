@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Qgci8qoVcpLYlrWEl50yYbLIR43Y9zABH79QrKMQgfw=' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co https://accounts.google.com/gsi/; frame-src 'self' https://buttondown.com https://accounts.google.com/gsi/; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Give | Abstraction Solutions</title>
+    <meta name="description" content="Charities Abstraction Solutions supports. Donations are made securely on Every.org.">
+    <link rel="canonical" href="https://abstraction-solutions.com/give.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Abstraction Solutions">
+    <meta property="og:title" content="Give | Abstraction Solutions">
+    <meta property="og:description" content="Charities Abstraction Solutions supports. Donations are made securely on Every.org.">
+    <meta property="og:url" content="https://abstraction-solutions.com/give.html">
+    <meta property="og:image" content="https://abstraction-solutions.com/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Give | Abstraction Solutions">
+    <meta name="twitter:description" content="Charities Abstraction Solutions supports. Donations are made securely on Every.org.">
+    <meta name="twitter:image" content="https://abstraction-solutions.com/og-image.jpg">
+
+    <link rel="icon" type="image/jpeg" href="logo-small.jpg">
+    <link rel="stylesheet" href="style.min.css">
+
+    <!-- Styles only this page uses -->
+    <style>
+        .hero { padding: 150px 24px 10px; text-align: center; }
+        .eyebrow { color: var(--green); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; }
+        .hero h1 { font-size: 2.8rem; margin: 14px 0 10px; }
+        .hero .section-sub { max-width: 640px; margin-left: auto; margin-right: auto; }
+
+        .give { max-width: 980px; margin: 30px auto 30px; padding: 0 24px; }
+        .give-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+        .give-card {
+            display: flex; flex-direction: column; gap: 12px;
+            padding: 26px 24px; border-radius: 22px;
+            border: 1px solid rgba(126, 233, 111, 0.35); background: rgba(6, 9, 6, 0.78);
+        }
+        .give-card h2 { margin: 0; font-size: 1.25rem; line-height: 1.3; }
+        .give-card p { margin: 0; color: #dfe7df; line-height: 1.6; flex: 1; }
+        .give-card .pill { align-self: flex-start; margin: 4px 0 0; }
+        /* a charity whose Every.org link isn't in yet: a quiet, unclickable label instead of a button */
+        .give-soon {
+            align-self: flex-start; margin-top: 4px; padding: 10px 18px; border-radius: 999px;
+            border: 1px dashed rgba(245, 248, 244, 0.3); color: var(--text-muted); font-size: 0.92rem; font-weight: 700;
+        }
+        .give-note { max-width: 680px; margin: 26px auto 70px; padding: 0 24px; color: var(--text-muted); text-align: center; line-height: 1.7; font-size: 0.95rem; }
+        .give-note a { color: var(--green); }
+
+        @media (max-width: 600px) {
+            .hero { padding-top: 120px; }
+            .hero h1 { font-size: 2.1rem; }
+            .give { padding: 0 20px 0 40px; }   /* room for the Menu tab */
+            .give-note { padding: 0 20px 0 40px; }
+        }
+    </style>
+</head>
+
+<body data-page="give">
+
+    <div id="site-nav"></div>
+    <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a></nav></noscript>
+    <script src="nav.min.js"></script>
+
+    <section class="hero">
+        <div class="eyebrow">GIVE</div>
+        <h1>Charities we support</h1>
+        <p class="section-sub">These are nonprofits we believe in and want to point you toward. Every donation is made on Every.org, a free giving platform, so your gift goes straight to the charity. Nothing is paid on this site.</p>
+    </section>
+
+    <main class="give">
+        <!--
+            THE CHARITY LIST: one <li> per charity. To add a real one:
+              1. Put its name in the <h2> and a one-sentence description in the <p>.
+              2. Find its page on Every.org (www.every.org/its-name): the slug is the part after every.org/.
+              3. Swap the "Donate links coming soon" <span> for a live link, exactly like this:
+                 <a class="pill primary" href="https://www.every.org/SLUG#donate" target="_blank" rel="noopener noreferrer">Donate on Every.org</a>
+            For one Every.org fundraiser instead, use its URL (www.every.org/SLUG/f/FUNDRAISER) as the href.
+            PLACEHOLDERS below: replace with Dylan's list (name, every.org slug, optional short blurb). Never ship a placeholder slug as a link.
+        -->
+        <ul class="give-list">
+            <li class="give-card">
+                <h2>CHARITY_NAME_1</h2>
+                <p>Short description.</p>
+                <span class="give-soon" data-slug="PLACEHOLDER_SLUG_1">Donate links coming soon</span>
+            </li>
+            <li class="give-card">
+                <h2>CHARITY_NAME_2</h2>
+                <p>Short description.</p>
+                <span class="give-soon" data-slug="PLACEHOLDER_SLUG_2">Donate links coming soon</span>
+            </li>
+            <li class="give-card">
+                <h2>CHARITY_NAME_3</h2>
+                <p>Short description.</p>
+                <span class="give-soon" data-slug="PLACEHOLDER_SLUG_3">Donate links coming soon</span>
+            </li>
+        </ul>
+    </main>
+
+    <p class="give-note">Donating opens the charity's page on Every.org in a new tab, where you choose the amount and pay. Registered 501(c)(3) nonprofits each have their own Every.org profile at every.org/their-name. Abstraction Solutions doesn't handle or see your payment.</p>
+
+    <footer>© 2026 Abstraction Solutions</footer>
+
+    <noscript><nav class="nojs-foot" aria-label="Footer" style="padding:16px 24px 32px;text-align:center;font-size:.9rem"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a> · <a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></nav></noscript>
+</body>
+</html>
