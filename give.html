@@ -44,6 +44,12 @@
         .give-note a { color: var(--green); }
         .give-note-pledge, .pledge-on .give-note-links { display: none; }
         .pledge-on .give-note-pledge { display: block; }
+        .give-all { margin-top: 46px; padding: 26px 24px 30px; border-radius: 22px;
+                    border: 1px solid rgba(126, 233, 111, 0.35); background: rgba(6, 9, 6, 0.78); }
+        .give-all > h2 { margin: 0 0 8px; font-size: 1.35rem; }
+        .give-all-sub { margin: 0 0 18px; color: #dfe7df; line-height: 1.6; }
+        .give-all .plg-donate:not(:empty) { min-height: 520px; border-radius: 16px; overflow: hidden; }
+        .give-all-fallback { margin: 12px 0 0; color: var(--text-muted); }
         .give-thanks { max-width: 680px; margin: -40px auto 70px; padding: 14px 20px; text-align: center; color: var(--green);
                        border: 1px solid rgba(126, 233, 111, 0.45); border-radius: 16px; background: rgba(6, 9, 6, 0.78); font-weight: 700; }
 
@@ -116,6 +122,12 @@
                     <a class="pill primary" href="https://www.every.org/rocky-mountain-institute#donate" data-donate-slug="rocky-mountain-institute" data-ein="742244146" data-name="RMI" target="_blank" rel="noopener noreferrer" aria-label="Donate to RMI on Every.org">Donate on Every.org</a>
                 </li>
             </ul>
+        </section>
+        <section class="give-all" aria-labelledby="give-all-title">
+            <h2 id="give-all-title">Give to all of them at once</h2>
+            <p class="give-all-sub">Our Pledge fundraiser, AI Made Simple, Footprint Made Smaller, shares one gift across the charities it supports. Fill it in right here: Pledge processes the payment and emails your tax receipt.</p>
+            <div class="plg-donate" data-widget-id="MSythsDjZqaUx1uv" data-style-brand-color="#7ee96f"></div>
+            <p class="give-all-fallback" data-give-fallback hidden>The donation form couldn't load. You can still give to any of the charities above through its Every.org button.</p>
         </section>
     </main>
 
