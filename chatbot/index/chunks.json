@@ -129,43 +129,67 @@
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
 "heading": "Charities we support",
-"text": "GIVE\nThese are nonprofits we believe in and want to point you toward. Every donation is made on Every.org, a free giving platform, so your gift goes straight to the charity. Nothing is paid on this site."
+"text": "GIVE\nAI and the data centers behind it put pressure on artists, on water and on the climate. These groups work to offset that. You can donate right here on this page. Pledge processes each donation and emails you a tax receipt, and the money goes to the charities. Abstraction Solutions never touches your card details.\nGive to all six"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "Code.org",
-"text": "Brings computer science classes to K–12 schools so every student can learn how technology and AI work.\nDonate on Every.org"
+"heading": "Artists › Authors Guild Foundation",
+"text": "Protects writers' rights and livelihoods, including work on copyright as AI systems train on books.\nDonate on Every.org"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "Girls Who Code",
-"text": "Runs free coding programs that help girls and nonbinary students get into tech.\nDonate on Every.org"
+"heading": "Artists › Creative Capital",
+"text": "Funds working artists across the U.S. so they can keep making new work.\nDonate on Every.org"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "Khan Academy",
-"text": "Free, world-class math, science and computing lessons for anyone, anywhere.\nDonate on Every.org"
+"heading": "Clean water › charity: water",
+"text": "Funds clean drinking water projects for communities that don't have it.\nDonate on Every.org"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "Kiva",
-"text": "A nonprofit that connects small businesses and entrepreneurs with affordable loans. Gifts on Every.org support Kiva's work.\nDonate on Every.org"
+"heading": "Clean water › River Network",
+"text": "Helps local groups protect and restore rivers and water supplies across the country.\nDonate on Every.org"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "Feeding America",
-"text": "The largest hunger-relief network in the U.S., getting food to families through local food banks.\nDonate on Every.org"
+"heading": "Carbon and clean energy › Clean Air Task Force",
+"text": "Works on practical ways to cut the pollution and climate harm from how we make and use energy.\nDonate on Every.org"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "FoodCorps",
-"text": "Brings school gardens and hands-on food education to kids, teaching them how food is grown.\nDonate on Every.org\nDonating opens the charity's page on Every.org in a new tab, where you choose the amount and pay. Registered 501(c)(3) nonprofits each have their own Every.org profile at every.org/their-name. Abstraction Solutions doesn't handle or see your payment."
+"heading": "Carbon and clean energy › RMI",
+"text": "Helps industry and communities switch to cleaner energy and use less of it.\nDonate on Every.org"
+},
+{
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "Carbon and clean energy › Give to all of them at once",
+"text": "Our Pledge fundraiser, AI Made Simple, Footprint Made Smaller, shares one gift across the charities it supports. Fill it in right here: Pledge processes the payment and emails your tax receipt.\nThe donation form couldn't load. You can still give to any of the charities above through its Every.org button."
+},
+{
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "Carbon and clean energy › Give to all of them at once",
+"text": "the charities above through its Every.org button.\nThe button opens that charity's donation page on Every.org in a new tab, where you choose the amount and pay. Every.org processes the payment and sends your tax receipt. Abstraction Solutions never handles or sees your card details or your donation."
+},
+{
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "Carbon and clean energy › Give to all of them at once",
+"text": "ndles or sees your card details or your donation.\nDonations happen right here: the button opens a secure donation form from Pledge, a giving platform that processes the payment, sends your tax receipt and passes your gift to the charity. Abstraction Solutions never handles or sees your card details or your donation. If the form doesn't load, the button takes you to the charity's page on Every.org instead."
+},
+{
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "Carbon and clean energy › Give to all of them at once",
+"text": "s you to the charity's page on Every.org instead.\nThank you for giving. Your receipt is on its way to your email."
 },
 {
 "url": "https://abstraction-solutions.com/hydrocart.html",
@@ -483,7 +507,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "Donations: the Give page sends you to Every.org to donate. Every.org and its payment processors handle your donation and payment details; we don't receive them or the money, which goes to the charity you choose."
+"text": "Donations: on the Give page you donate through Pledge's donation form, which opens on our page but is run by Pledge, or through Every.org. Pledge or Every.org and their payment processors handle your donation and payment details and send your tax receipt. We don't receive your card details or the money, which goes to the charity you choose."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -579,7 +603,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": "ou choose to save (see Stripe's privacy policy ).\nEvery.org : handles donations made from our Give page (see Every.org's privacy policy )."
+"text": "ou choose to save (see Stripe's privacy policy ).\nEvery.org : handles donations made from our Give page (see Every.org's privacy policy ).\nPledge : runs the donation form on our Give page and processes those donations (see Pledge's privacy policy )."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -591,7 +615,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Cookies and browser storage",
-"text": ", and drafts so a form isn't lost if you refresh. Stripe's payment form loads only when you choose to pay, and Google's sign-in button loads only on the order page, where you choose whether to use it."
+"text": ", and drafts so a form isn't lost if you refresh. Stripe's payment form loads only when you choose to pay, and Google's sign-in button loads only on the order page, where you choose whether to use it. Pledge's donation form loads only on the Give page."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -1683,7 +1707,7 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Donations",
-"text": "Donations on our Give page are made to the charity you choose through Every.org, a separate nonprofit giving platform, under its terms. We don't collect, hold or receive donations, we aren't acting for the charities, and we don't get any share of what you give. Receipts, refunds and tax questions about a donation go to Every.org or the charity."
+"text": "Donations on our Give page are made to the charity you choose through Pledge or Every.org, separate giving platforms, under their terms. Pledge's form opens on our page, but Pledge runs it and processes the payment. We don't collect, hold or receive donations, we aren't acting for the charities, and we don't get any share of what you give. Receipts, refunds and tax questions about a donation go to Pledge, Every.org or the charity."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
