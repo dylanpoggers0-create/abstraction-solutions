@@ -2058,3 +2058,16 @@ a.pill.cta-main[class]:focus-visible {
 @media (prefers-reduced-motion: reduce) {
     .viewer.is-loading::after { animation: none; }
 }
+
+/* ---------- homepage: small "Giving back" panel pointing to give.html ---------- */
+.give-promo {
+    max-width: 980px; margin: 40px auto 10px; padding: 22px 28px;
+    display: flex; align-items: center; justify-content: space-between; gap: 22px;
+    border: 1px solid rgba(126, 233, 111, 0.3); border-radius: 22px; background: rgba(6, 9, 6, 0.78);
+}
+.give-promo h2 { margin: 0 0 6px; font-size: 1.2rem; color: var(--green); }
+.give-promo p { margin: 0; color: #dfe7df; line-height: 1.55; font-size: 0.98rem; max-width: 640px; }
+.give-promo .pill { flex: none; white-space: nowrap; }
+@media (max-width: 700px) {
+    .give-promo { flex-direction: column; align-items: flex-start; margin: 30px 22px 10px 44px; padding: 20px; }
+}
