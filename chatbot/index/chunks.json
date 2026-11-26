@@ -134,20 +134,38 @@
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "CHARITY_NAME_1",
-"text": "Short description.\nDonate links coming soon"
+"heading": "Code.org",
+"text": "Brings computer science classes to K–12 schools so every student can learn how technology and AI work.\nDonate on Every.org"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "CHARITY_NAME_2",
-"text": "Short description.\nDonate links coming soon"
+"heading": "Girls Who Code",
+"text": "Runs free coding programs that help girls and nonbinary students get into tech.\nDonate on Every.org"
 },
 {
 "url": "https://abstraction-solutions.com/give.html",
 "title": "Give",
-"heading": "CHARITY_NAME_3",
-"text": "Short description.\nDonate links coming soon\nDonating opens the charity's page on Every.org in a new tab, where you choose the amount and pay. Registered 501(c)(3) nonprofits each have their own Every.org profile at every.org/their-name. Abstraction Solutions doesn't handle or see your payment."
+"heading": "Khan Academy",
+"text": "Free, world-class math, science and computing lessons for anyone, anywhere.\nDonate on Every.org"
+},
+{
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "Kiva",
+"text": "A nonprofit that connects small businesses and entrepreneurs with affordable loans. Gifts on Every.org support Kiva's work.\nDonate on Every.org"
+},
+{
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "Feeding America",
+"text": "The largest hunger-relief network in the U.S., getting food to families through local food banks.\nDonate on Every.org"
+},
+{
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "FoodCorps",
+"text": "Brings school gardens and hands-on food education to kids, teaching them how food is grown.\nDonate on Every.org\nDonating opens the charity's page on Every.org in a new tab, where you choose the amount and pay. Registered 501(c)(3) nonprofits each have their own Every.org profile at every.org/their-name. Abstraction Solutions doesn't handle or see your payment."
 },
 {
 "url": "https://abstraction-solutions.com/hydrocart.html",
@@ -333,13 +351,13 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Your orders",
-"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nSigned in as . Pick an order to see its status, quote and payments.\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement\nCHANGE REQUESTS\nCANCEL THIS PROJECT"
+"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nSigned in as . Pick an order to see its status, quote and payments.\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Your orders",
-"text": "the agreement\nCHANGE REQUESTS\nCANCEL THIS PROJECT\nYou can cancel anytime, and nothing more will be due. If you've paid for a stage we haven't started, it comes back to you under our refund policy ."
+"text": "ote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement\nSigned in? You can save your card at checkout so it's filled in next time. Stripe keeps it, not us, and you can remove it whenever you pay.\nCHANGE REQUESTS\nCANCEL THIS PROJECT\nYou can cancel anytime, and nothing more will be due. If you've paid for a stage we haven't started, it comes back to you under our refund policy ."
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -411,7 +429,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Privacy Policy",
-"text": "LEGAL\nEffective November 12, 2026 · Updated November 24, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or unsubscribe yourself, anytime, and email us to see or delete your data."
+"text": "LEGAL\nEffective November 12, 2026 · Updated November 25, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or unsubscribe yourself, anytime, and email us to see or delete your data."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -453,13 +471,25 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "Payments: handled entirely by Stripe. Your card number never touches our servers. We only receive a record that the payment succeeded."
+"text": "Payments: handled entirely by Stripe. Your card number never touches our servers. We only receive a record that the payment succeeded. If you're signed in when you pay, Stripe keeps a customer record for your account (linked by your email) so you can choose to save a card for next time; the saved card stays with Stripe, and we only store Stripe's customer ID."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "only receive a record that the payment succeeded.\nMailing list: if you sign up on our homepage, your first and last name, email address, and the date you agreed, so we can send special offers, early access to videos and products, newsletters, giveaways, announcements and updates. Joining is free and has no commitment. You can unsubscribe at any time: every email has an unsubscribe link, or email us and we'll remove you.\nEmails you send us: whatever you choose to include."
+"text": "h Stripe, and we only store Stripe's customer ID. You can remove a saved card at checkout, and deleting your account deletes that Stripe customer record and every card saved on it."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "Donations: the Give page sends you to Every.org to donate. Every.org and its payment processors handle your donation and payment details; we don't receive them or the money, which goes to the charity you choose."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "What we collect",
+"text": "the money, which goes to the charity you choose.\nMailing list: if you sign up on our homepage, your first and last name, email address, and the date you agreed, so we can send special offers, early access to videos and products, newsletters, giveaways, announcements and updates. Joining is free and has no commitment. You can unsubscribe at any time: every email has an unsubscribe link, or email us and we'll remove you.\nEmails you send us: whatever you choose to include."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -543,7 +573,13 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Services we use",
-"text": "ignups are stored. It is not publicly accessible.\nRender and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data.\nHugging Face and jsDelivr : serve the public search model and code files your browser downloads for the site assistant. They see your IP address like any website you load files from.\nStripe : processes payments (see Stripe's privacy policy )."
+"text": "ignups are stored. It is not publicly accessible.\nRender and GitHub Pages : host our server and website.\nResend : sends our emails.\nGoatCounter : counts visits without cookies or personal data.\nHugging Face and jsDelivr : serve the public search model and code files your browser downloads for the site assistant. They see your IP address like any website you load files from.\nStripe : processes payments and keeps any card you choose to save (see Stripe's privacy policy )."
+},
+{
+"url": "https://abstraction-solutions.com/privacy.html",
+"title": "Privacy Policy",
+"heading": "Services we use",
+"text": "ou choose to save (see Stripe's privacy policy ).\nEvery.org : handles donations made from our Give page (see Every.org's privacy policy )."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -1515,7 +1551,7 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Terms of Service",
-"text": "LEGAL\nEffective November 4, 2026 · Updated November 18, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You pay in stages (Planning, Coding, Testing, Done) as each one begins, never all up front. You can request changes until Testing begins and cancel anytime. A stage you've paid for but we haven't started is fully refundable, and every project comes with one month of free bug fixes ."
+"text": "LEGAL\nEffective November 4, 2026 · Updated November 25, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You pay in stages (Planning, Coding, Testing, Done) as each one begins, never all up front. You can request changes until Testing begins and cancel anytime. A stage you've paid for but we haven't started is fully refundable, and every project comes with one month of free bug fixes ."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
@@ -1570,6 +1606,12 @@
 "title": "Terms of Service",
 "heading": "Payment in stages",
 "text": "l the project under the cancellation terms below.\nPayments are made online by card through Stripe, in US dollars. Prices don't include third-party costs your project might need (for example, software subscriptions, API usage or hosting) unless the quote says so. We'll tell you about those costs up front."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Payment in stages",
+"text": "ys so. We'll tell you about those costs up front.\nIf you're signed in, you can choose to save your card with Stripe for later payments. A saved card is only charged when you choose to pay; we never charge it on our own. You can remove it at checkout or by deleting your account."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
@@ -1636,6 +1678,12 @@
 "title": "Terms of Service",
 "heading": "Ownership",
 "text": "Once your project is paid in full, you own the custom work we deliver to you. We keep the right to reuse our general tools, methods and know-how, and to mention the project in our portfolio unless you ask us not to. Third-party software and services stay under their own licenses."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Donations",
+"text": "Donations on our Give page are made to the charity you choose through Every.org, a separate nonprofit giving platform, under its terms. We don't collect, hold or receive donations, we aren't acting for the charities, and we don't get any share of what you give. Receipts, refunds and tax questions about a donation go to Every.org or the charity."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
