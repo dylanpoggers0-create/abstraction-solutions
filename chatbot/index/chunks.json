@@ -363,7 +363,13 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "HydroCart",
-"text": "Our showpiece, not a product for sale: six plants on one rolling cart. Sensors watch the water and our own AI model predicts where each reading is heading. How it works\n6 plants on one rolling cart\nLive sensors read by our own AI model\nWEB APP · AUTOMATION"
+"text": "Our showpiece, not a product for sale: six plants on one rolling cart. Sensors watch the water and our own AI model predicts where each reading is heading. How it works\n6 plants on one rolling cart\nLive sensors read by our own AI model\nDrag to turn · tap Dry out a pot\nAll five plants are healthy. Press Dry out a pot to watch it water itself.\nHARDWARE · AUTOMATION"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Family Plant Monitor",
+"text": "Watches five houseplants around the clock and waters them when the soil runs dry. A probe in every pot reports to an Arduino Mega, a pump drips water into each pot through a PVC line, and a live status page shows how every plant is doing.\n5 plants watered automatically\nLive page moisture, temperature and humidity\nWEB APP · AUTOMATION"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -1846,5 +1852,11 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "ved, topic by topic, with every answer explained.\n2026-11-25: Things we've built, on the Order page. 3D models you can turn and look inside: the Email Cyberdeck (press its YES and NO buttons) and HydroCart (grow lights and water flow). Videos of the Email Cyberdeck, HydroCart and our new pantry app."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "mail Cyberdeck, HydroCart and our new pantry app.\n2026-11-26: Family Plant Monitor, on the Order page. A 3D model of the Family Plant Monitor: five houseplants with a moisture probe in every pot, a PVC drip line and a pump in a bucket under the shelf. Press Dry out a pot to watch one dry out, flip to Needs Water and get watered. A new video of the plant monitor, from the first dry pot to the daily email."
 }
 ]
