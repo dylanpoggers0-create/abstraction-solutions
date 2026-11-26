@@ -47,15 +47,21 @@
     };
     document.head.appendChild(s);
 
-    // thank the donor when Pledge says the donation went through
+    // messages from Pledge's frames: a finished donation (thank the donor), or the progress tracker's
+    // Donate button (take them to the form on this page instead of Pledge's site)
     var thanks = document.querySelector("[data-give-thanks]");
+    var form = document.getElementById("give-all-form");
     window.addEventListener("message", function (e) {
         if (e.origin !== "https://www.pledge.to" || typeof e.data !== "string") return;
         var payload;
         try { payload = JSON.parse(e.data); } catch (err) { return; }
-        if (payload && payload.message === "DonateCompleted" && thanks) {
+        if (!payload) return;
+        if (payload.message === "DonateCompleted" && thanks) {
             thanks.hidden = false;
             thanks.focus();
+        } else if (payload.action === "donate" && form) {
+            var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            form.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
         }
     });
 })();
