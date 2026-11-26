@@ -1,4 +1,5 @@
-# Rebuilds the condensed copies (style.min.css, nav.min.js, ux.min.js, float.min.js, feel.min.js, gideon.min.js, account.min.js, rewards.min.js)
+# Rebuilds the condensed copies (style.min.css, nav.min.js, ux.min.js, float.min.js, feel.min.js, gideon.min.js, account.min.js, rewards.min.js,
+# and each page's *.page.min.css)
 # whenever one of the readable files changes, commits them, and republishes the site.
 # You only ever edit the readable files; this keeps the .min copies in step.
 name: Condensed files
@@ -15,6 +16,8 @@ on:
       - 'gideon.js'
       - 'account.js'
       - 'rewards.js'
+      - '**/*.page.css'
+      - '**/*.page-*.css'
       - 'tools/minify.py'
       - '.github/workflows/minify.yml'
   workflow_dispatch:
@@ -42,7 +45,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add style.min.css nav.min.js ux.min.js float.min.js feel.min.js gideon.min.js account.min.js rewards.min.js
+          git add style.min.css nav.min.js ux.min.js float.min.js feel.min.js gideon.min.js account.min.js rewards.min.js ':(glob)**/*.page.min.css' ':(glob)**/*.page-*.min.css'
           if git diff --cached --quiet; then echo "Condensed files already up to date"; exit 0; fi
           git commit -m "Rebuild condensed files"
           git pull --rebase

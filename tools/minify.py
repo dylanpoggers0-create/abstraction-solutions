@@ -17,7 +17,23 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TERSER = "terser@5.36.0"
 CSSO = "csso-cli@4.0.2"
 JS = ["nav.js", "ux.js", "float.js", "feel.js", "gideon.js", "account.js", "rewards.js"]
-CSS = ["style.css"]
+CSS = ["style.css",
+       # each page's own styles (moved out of the HTML): pages load the .min.css copy
+       "aboutus.page.css",
+       "changelog.page.css",
+       "dpa.page.css",
+       "give.page.css",
+       "index.page-2.css",
+       "index.page.css",
+       "legal.page.css",
+       "order.page.css",
+       "roi.page.css",
+       "services.page.css",
+       "services/automation.page.css",
+       "services/education.page.css",
+       "services/education/playground.page.css",
+       "services/models.page.css",
+       "services/workflows.page.css"]
 # nav.js loads the other scripts by name; its condensed copy loads their condensed copies
 LOADS = ["ux", "float", "feel", "gideon", "account"]
 
@@ -43,6 +59,37 @@ def out_name(src):
     return base + ".min" + ext
 
 
+def squeeze_css(css):
+    """A careful condenser: drops comments and extra whitespace, never rewrites a value
+    (a full minifier turns `outline: none` into `outline: 0`, which isn't quite the same).
+    Strings are copied untouched; spaces are only removed next to { } ; and at line edges."""
+    out, i, n = [], 0, len(css)
+    while i < n:
+        c = css[i]
+        if c in "\"'":                                   # copy a string as-is
+            j = i + 1
+            while j < n and css[j] != c:
+                j += 2 if css[j] == "\\" else 1
+            out.append(css[i:j + 1]); i = j + 1
+        elif css.startswith("/*", i):                    # drop a comment
+            j = css.find("*/", i + 2)
+            i = n if j < 0 else j + 2
+            out.append(" ")
+        elif c.isspace():                                # any run of whitespace -> one space
+            j = i
+            while j < n and css[j].isspace():
+                j += 1
+            out.append(" "); i = j
+        else:
+            out.append(c); i += 1
+    text = "".join(out)
+    # remove the single spaces next to braces and semicolons (never inside strings: they were copied whole,
+    # and braces/semicolons inside strings would be rare and harmless to keep spaced)
+    text = re.sub(r" ?([{};]) ?", r"\1", text)
+    text = re.sub(r";}", "}", text)
+    return text.strip()
+
+
 def main():
     for src in JS:
         code = open(os.path.join(ROOT, src), encoding="utf-8").read()
@@ -57,7 +104,10 @@ def main():
             f.write(header(src) + mini.strip() + "\n")
     for src in CSS:
         css = open(os.path.join(ROOT, src), encoding="utf-8").read()
-        mini = run(["npx", "--yes", CSSO, "--no-restructure"], css)   # no rule merging: keeps the cascade exactly as written
+        if src == "style.css":
+            mini = run(["npx", "--yes", CSSO, "--no-restructure"], css)   # no rule merging: keeps the cascade exactly as written
+        else:
+            mini = squeeze_css(css)   # page styles: only comments and spaces go, every value stays exactly as written
         with open(os.path.join(ROOT, out_name(src)), "w", encoding="utf-8", newline="\n") as f:
             f.write(header(src) + mini.strip() + "\n")
     for src in JS + CSS:
