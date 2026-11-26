@@ -709,9 +709,13 @@
         payMsg.textContent = '';
         try {
             // we only say WHICH order; the server looks up the price itself
+            // signed in? the server offers "save my card" and fills in cards saved before (only on your own orders)
+            const payHeaders = { 'Content-Type': 'application/json' };
+            const payer = currentAccount();
+            if (payer) payHeaders.Authorization = 'Bearer ' + payer.token;
             const response = await fetch(API_BASE + '/orders/pay', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: payHeaders,
                 body: JSON.stringify(lastSearch)
             });
             const data = await response.json().catch(function () { return {}; });

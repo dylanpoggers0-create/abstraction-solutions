@@ -335,6 +335,7 @@
         .or-line { display: flex; align-items: center; gap: 12px; color: var(--text-muted); margin: 18px 0 0; font-size: 0.9rem; }
         .or-line::before, .or-line::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
         .panel .section-note.small { font-size: 0.85rem; text-align: center; margin: 0; }
+        .pay-save-note { flex-basis: 100%; }
         #signInMsg { min-height: 1.4em; margin: 10px 0 0; text-align: center; line-height: 1.5; }
         #signInMsg:empty { min-height: 0; margin: 0; }
         #cancelStart[hidden], #cancelForm[hidden], #cancelBox[hidden] { display: none; }
@@ -849,6 +850,7 @@
                     </div>
                     <div class="pill-container" id="payBox" hidden>
                         <button class="pill primary" id="payButton" type="button">Pay now</button>
+                        <p class="section-note small pay-save-note">Signed in? You can save your card at checkout so it's filled in next time. Stripe keeps it, not us, and you can remove it whenever you pay.</p>
                     </div>
                     <p class="note" id="payMsg" role="status"></p>
                     <!-- Stripe's embedded payment form appears here after "Pay" is clicked -->

@@ -76,7 +76,7 @@
     <section class="hero">
         <div class="eyebrow">LEGAL</div>
         <h1>Privacy Policy</h1>
-        <p class="updated">Effective November 12, 2026 · Updated November 24, 2026</p>
+        <p class="updated">Effective November 12, 2026 · Updated November 25, 2026</p>
     </section>
 
     <div class="legal">
@@ -106,7 +106,13 @@
                 tracking cookies. You can delete your account yourself anytime from the order page. Signed-in accounts also store an 8-digit user ID and which AI Education videos you watched, and how much of
                 each (if you watch while signed out, that stays in your browser until you next sign in). For rewards, we store the coins each finished video earned and any discount codes you redeem, linked only to that user ID; deleting your account deletes them too. If you ask for certification suggestions while signed in, the lessons you've watched help choose them; only the lesson titles are used, and you can untick that option. If you take the AI Education quiz while signed in, we store your answers and scores to measure your learning progress.</li>
             <li><strong>Payments:</strong> handled entirely by Stripe. Your card number never touches our servers. We only
-                receive a record that the payment succeeded.</li>
+                receive a record that the payment succeeded. If you're signed in when you pay, Stripe keeps a customer
+                record for your account (linked by your email) so you can choose to save a card for next time; the saved
+                card stays with Stripe, and we only store Stripe's customer ID. You can remove a saved card at checkout,
+                and deleting your account deletes that Stripe customer record and every card saved on it.</li>
+            <li><strong>Donations:</strong> the Give page sends you to Every.org to donate. Every.org and its payment
+                processors handle your donation and payment details; we don't receive them or the money, which goes
+                to the charity you choose.</li>
             <li><strong>Mailing list:</strong> if you sign up on our homepage, your first and last name, email address,
                 and the date you agreed, so we can send special offers, early access to videos and products,
                 newsletters, giveaways, announcements and updates. Joining is free and has no commitment. You can unsubscribe at any time: every email has an unsubscribe
@@ -184,7 +190,8 @@
             <li><strong>GoatCounter</strong>: counts visits without cookies or personal data.</li>
             <li><strong>Hugging Face</strong> and <strong>jsDelivr</strong>: serve the public search model and code files
                 your browser downloads for the site assistant. They see your IP address like any website you load files from.</li>
-            <li><strong>Stripe</strong>: processes payments (see <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe's privacy policy</a>).</li>
+            <li><strong>Stripe</strong>: processes payments and keeps any card you choose to save (see <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe's privacy policy</a>).</li>
+            <li><strong>Every.org</strong>: handles donations made from our Give page (see <a href="https://www.every.org/privacy" target="_blank" rel="noopener">Every.org's privacy policy</a>).</li>
         </ul>
 
         <h2>Cookies and browser storage</h2>
