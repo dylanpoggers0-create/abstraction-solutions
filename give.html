@@ -26,42 +26,63 @@
         .hero { padding: 150px 24px 10px; text-align: center; }
         .eyebrow { color: var(--green); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; }
         .hero h1 { font-size: 2.8rem; margin: 14px 0 10px; }
-        .hero .section-sub { max-width: 640px; margin-left: auto; margin-right: auto; }
+        .hero .section-sub { max-width: 660px; margin-left: auto; margin-right: auto; }
 
-        .give { max-width: 980px; margin: 30px auto 30px; padding: 0 24px; }
-        .give-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+        /* charities on the left, one donation panel on the right (stacked on phones) */
+        .give { max-width: 1160px; margin: 30px auto 70px; padding: 0 24px;
+                display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 30px; align-items: start; }
+        .give-group + .give-group { margin-top: 32px; }
+        .give-group > h2 { font-size: 1.05rem; letter-spacing: 0.04em; color: var(--green); margin: 0 0 12px; }
+        .give-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
         .give-card {
-            display: flex; flex-direction: column; gap: 12px;
-            padding: 26px 24px; border-radius: 22px;
-            border: 1px solid rgba(126, 233, 111, 0.35); background: rgba(6, 9, 6, 0.78);
+            display: flex; flex-direction: column; gap: 10px;
+            padding: 22px 20px; border-radius: 20px;
+            border: 1px solid rgba(126, 233, 111, 0.28); background: rgba(6, 9, 6, 0.78);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .give-group + .give-group { margin-top: 38px; }
-        .give-group > h2 { font-size: 1.05rem; letter-spacing: 0.04em; color: var(--green); margin: 0 0 14px; }
-        .give-card h3 { margin: 0; font-size: 1.25rem; line-height: 1.3; }
-        .give-card p { margin: 0; color: #dfe7df; line-height: 1.6; flex: 1; }
+        .give-card.is-chosen { border-color: var(--green); box-shadow: 0 0 0 1px var(--green), 0 0 28px rgba(126, 233, 111, 0.18); }
+        .give-card h3 { margin: 0; font-size: 1.15rem; line-height: 1.3; }
+        .give-card p { margin: 0; color: #dfe7df; line-height: 1.55; flex: 1; font-size: 0.95rem; }
         .give-card .pill { align-self: flex-start; margin: 4px 0 0; }
-        .give-note { max-width: 680px; margin: 26px auto 70px; padding: 0 24px; color: var(--text-muted); text-align: center; line-height: 1.7; font-size: 0.95rem; }
-        .give-note a { color: var(--green); }
-        .give-note-pledge, .pledge-on .give-note-links { display: none; }
-        .pledge-on .give-note-pledge { display: block; }
-        .give-all { margin-top: 46px; padding: 26px 24px 30px; border-radius: 22px;
-                    border: 1px solid rgba(126, 233, 111, 0.35); background: rgba(6, 9, 6, 0.78); }
-        .give-all > h2 { margin: 0 0 8px; font-size: 1.35rem; }
-        .give-all-sub { margin: 0 0 18px; color: #dfe7df; line-height: 1.6; }
-        .give-cta { margin-top: 18px; }
-        .give-all .plg-goal:not(:empty) { margin-bottom: 18px; }
-        .give-all .plg-donate:not(:empty) { min-height: 520px; border-radius: 16px; overflow: hidden; }
-        .give-all-fallback { margin: 12px 0 0; color: var(--text-muted); }
-        .give-thanks { max-width: 680px; margin: -40px auto 70px; padding: 14px 20px; text-align: center; color: var(--green);
-                       border: 1px solid rgba(126, 233, 111, 0.45); border-radius: 16px; background: rgba(6, 9, 6, 0.78); font-weight: 700; }
 
+        /* the donation panel: our heading and charity picker around Pledge's form */
+        .give-panel {
+            padding: 24px 22px 22px; border-radius: 24px; scroll-margin-top: 96px;
+            border: 1px solid rgba(126, 233, 111, 0.45); background: rgba(6, 9, 6, 0.9);
+        }
+        .give-panel > h2 { margin: 0; font-size: 1.4rem; }
+        .give-to { margin: 6px 0 16px; color: #dfe7df; line-height: 1.55; }
+        .give-to strong { color: var(--green); }
+        .give-pick { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; padding: 0; border: 0; }
+        .give-pick legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .give-pick button {
+            font: inherit; font-size: 0.84rem; font-weight: 700; color: #e9efe9; background: #0d120d;
+            border: 1px solid #2a372b; border-radius: 999px; padding: 7px 13px; cursor: pointer; min-height: 36px;
+        }
+        .give-pick button:hover { border-color: rgba(126, 233, 111, 0.6); }
+        .give-pick button[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: #041004; }
+        .give-slot { border-radius: 16px; overflow: hidden; background: #0d120d; border: 1px solid #1f2a20; min-height: 120px; }
+        .give-slot .plg-donate:not(:empty) { min-height: 560px; }
+        .give-slot iframe { display: block; width: 100% !important; border: 0; }
+        .give-slot-msg { margin: 0; padding: 22px 18px; color: var(--text-muted); line-height: 1.6; }
+        .give-slot-msg a { color: var(--green); }
+        .give-fine { margin: 14px 2px 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
+        .give-thanks { margin: 14px 0 0; padding: 12px 16px; color: var(--green); font-weight: 700;
+                       border: 1px solid rgba(126, 233, 111, 0.45); border-radius: 14px; }
+        .give-panel:not(.is-live) .give-pick, .give-panel:not(.is-live) .give-to { display: none; }
+
+        @media (min-width: 961px) and (min-height: 960px) { .give-panel { position: sticky; top: 96px; } }   /* stays beside the cards when the whole panel fits */
+        @media (max-width: 960px) {
+            .give { grid-template-columns: minmax(0, 1fr); }
+        }
         @media (max-width: 600px) {
             .hero { padding-top: 120px; }
             .hero h1 { font-size: 2.1rem; }
             .give { padding: 0 20px 0 40px; }   /* room for the Menu tab */
-            .give-note { padding: 0 20px 0 40px; }
             .give-list { grid-template-columns: minmax(0, 1fr); }
+            .give-panel { padding: 20px 14px 16px; }
         }
+        @media (prefers-reduced-motion: reduce) { .give-card { transition: none; } }
     </style>
 </head>
 
@@ -76,11 +97,12 @@
         <div class="eyebrow">GIVE</div>
         <h1>Charities we support</h1>
         <p class="section-sub">AI and the data centers behind it put pressure on artists, on water and on the climate. These groups work to offset that. You can donate right here on this page. Pledge processes each donation and emails you a tax receipt, and the money goes to the charities. Abstraction Solutions never touches your card details.</p>
-        <div class="pill-container give-cta"><a class="pill primary" href="#give-all-title">Give to all six</a></div>
+        <div class="pill-container"><a class="pill primary" href="#donate" data-give-pick="all">Give to all six</a></div>
     </section>
 
     <!-- PLEDGE: data-pledge-key is our public partner key (pledge.to → Pledge APIs → Widgets). Remove it to fall back to plain Every.org links. -->
     <main class="give" data-pledge-key="21d306b06a8c32784f91ee8655805123">
+        <div class="give-charities">
         <section class="give-group" aria-labelledby="give-artists">
             <h2 id="give-artists">Artists</h2>
             <ul class="give-list">
@@ -126,18 +148,30 @@
                 </li>
             </ul>
         </section>
-        <section class="give-all" aria-labelledby="give-all-title">
-            <h2 id="give-all-title">Give to all of them at once</h2>
-            <p class="give-all-sub">Our Pledge fundraiser, AI Made Simple, Footprint Made Smaller, shares one gift across the charities it supports. Fill it in right here: Pledge processes the payment and emails your tax receipt.</p>
-            <div class="plg-goal" data-partner-key="21d306b06a8c32784f91ee8655805123" data-item-id="4cc646bb02d085c75dc52a0c4e62985a" data-show-donate-action="true"></div>
-            <div class="plg-donate" id="give-all-form" data-widget-id="MSythsDjZqaUx1uv" data-style-brand-color="#7ee96f"></div>
-            <p class="give-all-fallback" data-give-fallback hidden>The donation form couldn't load. You can still give to any of the charities above through its Every.org button.</p>
-        </section>
+        </div>
+
+        <!-- one donation form, ours around Pledge's: the picker and the cards choose who it gives to -->
+        <aside class="give-panel" id="donate" aria-labelledby="donate-title" data-give-panel>
+            <h2 id="donate-title">Donate</h2>
+            <p class="give-to" aria-live="polite">Giving to <strong data-give-to>all six charities</strong></p>
+            <fieldset class="give-pick" data-give-picker>
+                <legend>Choose who to give to</legend>
+                <button type="button" data-give-pick="all" aria-pressed="true">All six</button>
+                <button type="button" data-give-pick="authors-guild-foundation" aria-pressed="false">Authors Guild</button>
+                <button type="button" data-give-pick="creative-capital" aria-pressed="false">Creative Capital</button>
+                <button type="button" data-give-pick="charitywater" aria-pressed="false">charity: water</button>
+                <button type="button" data-give-pick="river-network" aria-pressed="false">River Network</button>
+                <button type="button" data-give-pick="cleanaircatf" aria-pressed="false">Clean Air Task Force</button>
+                <button type="button" data-give-pick="rocky-mountain-institute" aria-pressed="false">RMI</button>
+            </fieldset>
+            <div class="give-slot" data-give-slot>
+                <p class="give-slot-msg" data-give-fallback>The donation form needs JavaScript. You can still give to any of these charities through its Every.org button.</p>
+            </div>
+            <p class="give-thanks" data-give-thanks tabindex="-1" role="status" hidden>Thank you for giving. Your receipt is on its way to your email.</p>
+            <p class="give-fine">Pledge, a giving platform, processes the payment, emails your tax receipt and passes your gift to the charity. "All six" gives through our fundraiser, AI Made Simple, Footprint Made Smaller. Abstraction Solutions never handles or sees your card details or your donation.</p>
+        </aside>
     </main>
 
-    <p class="give-note give-note-links">The button opens that charity's donation page on Every.org in a new tab, where you choose the amount and pay. Every.org processes the payment and sends your tax receipt. Abstraction Solutions never handles or sees your card details or your donation.</p>
-    <p class="give-note give-note-pledge">Donations happen right here: the button opens a secure donation form from Pledge, a giving platform that processes the payment, sends your tax receipt and passes your gift to the charity. Abstraction Solutions never handles or sees your card details or your donation. If the form doesn't load, the button takes you to the charity's page on Every.org instead.</p>
-    <p class="give-thanks" data-give-thanks tabindex="-1" role="status" hidden>Thank you for giving. Your receipt is on its way to your email.</p>
 
     <footer>© 2026 Abstraction Solutions</footer>
 
