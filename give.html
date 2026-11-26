@@ -29,13 +29,15 @@
         .hero .section-sub { max-width: 640px; margin-left: auto; margin-right: auto; }
 
         .give { max-width: 980px; margin: 30px auto 30px; padding: 0 24px; }
-        .give-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+        .give-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
         .give-card {
             display: flex; flex-direction: column; gap: 12px;
             padding: 26px 24px; border-radius: 22px;
             border: 1px solid rgba(126, 233, 111, 0.35); background: rgba(6, 9, 6, 0.78);
         }
-        .give-card h2 { margin: 0; font-size: 1.25rem; line-height: 1.3; }
+        .give-group + .give-group { margin-top: 38px; }
+        .give-group > h2 { font-size: 1.05rem; letter-spacing: 0.04em; color: var(--green); margin: 0 0 14px; }
+        .give-card h3 { margin: 0; font-size: 1.25rem; line-height: 1.3; }
         .give-card p { margin: 0; color: #dfe7df; line-height: 1.6; flex: 1; }
         .give-card .pill { align-self: flex-start; margin: 4px 0 0; }
         .give-note { max-width: 680px; margin: 26px auto 70px; padding: 0 24px; color: var(--text-muted); text-align: center; line-height: 1.7; font-size: 0.95rem; }
@@ -46,6 +48,7 @@
             .hero h1 { font-size: 2.1rem; }
             .give { padding: 0 20px 0 40px; }   /* room for the Menu tab */
             .give-note { padding: 0 20px 0 40px; }
+            .give-list { grid-template-columns: minmax(0, 1fr); }
         }
     </style>
 </head>
@@ -59,45 +62,58 @@
     <section class="hero">
         <div class="eyebrow">GIVE</div>
         <h1>Charities we support</h1>
-        <p class="section-sub">These are nonprofits we believe in and want to point you toward. Every donation is made on Every.org, a free giving platform, so your gift goes straight to the charity. Nothing is paid on this site.</p>
+        <p class="section-sub">AI and the data centers behind it put pressure on artists, on water and on the climate. These groups work to offset that. Every.org handles each donation and emails you a tax receipt, and the money goes to the charity. Abstraction Solutions never touches your card details.</p>
     </section>
 
     <main class="give">
-        <ul class="give-list">
-            <li class="give-card">
-                <h2>Code.org</h2>
-                <p>Brings computer science classes to K–12 schools so every student can learn how technology and AI work.</p>
-                <a class="pill primary" href="https://www.every.org/codeorg#donate" target="_blank" rel="noopener noreferrer" aria-label="Donate to Code.org on Every.org">Donate on Every.org</a>
-            </li>
-            <li class="give-card">
-                <h2>Girls Who Code</h2>
-                <p>Runs free coding programs that help girls and nonbinary students get into tech.</p>
-                <a class="pill primary" href="https://www.every.org/girls-who-code#donate" target="_blank" rel="noopener noreferrer" aria-label="Donate to Girls Who Code on Every.org">Donate on Every.org</a>
-            </li>
-            <li class="give-card">
-                <h2>Khan Academy</h2>
-                <p>Free, world-class math, science and computing lessons for anyone, anywhere.</p>
-                <a class="pill primary" href="https://www.every.org/khan-academy#donate" target="_blank" rel="noopener noreferrer" aria-label="Donate to Khan Academy on Every.org">Donate on Every.org</a>
-            </li>
-            <li class="give-card">
-                <h2>Kiva</h2>
-                <p>A nonprofit that connects small businesses and entrepreneurs with affordable loans. Gifts on Every.org support Kiva's work.</p>
-                <a class="pill primary" href="https://www.every.org/kiva#donate" target="_blank" rel="noopener noreferrer" aria-label="Donate to Kiva on Every.org">Donate on Every.org</a>
-            </li>
-            <li class="give-card">
-                <h2>Feeding America</h2>
-                <p>The largest hunger-relief network in the U.S., getting food to families through local food banks.</p>
-                <a class="pill primary" href="https://www.every.org/feedingamerica#donate" target="_blank" rel="noopener noreferrer" aria-label="Donate to Feeding America on Every.org">Donate on Every.org</a>
-            </li>
-            <li class="give-card">
-                <h2>FoodCorps</h2>
-                <p>Brings school gardens and hands-on food education to kids, teaching them how food is grown.</p>
-                <a class="pill primary" href="https://www.every.org/foodcorps#donate" target="_blank" rel="noopener noreferrer" aria-label="Donate to FoodCorps on Every.org">Donate on Every.org</a>
-            </li>
-        </ul>
+        <section class="give-group" aria-labelledby="give-artists">
+            <h2 id="give-artists">Artists</h2>
+            <ul class="give-list">
+                <li class="give-card">
+                    <h3>Authors Guild Foundation</h3>
+                    <p>Protects writers' rights and livelihoods, including work on copyright as AI systems train on books.</p>
+                    <a class="pill primary" href="https://www.every.org/authors-guild-foundation#donate" data-donate-slug="authors-guild-foundation" target="_blank" rel="noopener noreferrer" aria-label="Donate to Authors Guild Foundation on Every.org">Donate on Every.org</a>
+                </li>
+                <li class="give-card">
+                    <h3>Creative Capital</h3>
+                    <p>Funds working artists across the U.S. so they can keep making new work.</p>
+                    <a class="pill primary" href="https://www.every.org/creative-capital#donate" data-donate-slug="creative-capital" target="_blank" rel="noopener noreferrer" aria-label="Donate to Creative Capital on Every.org">Donate on Every.org</a>
+                </li>
+            </ul>
+        </section>
+        <section class="give-group" aria-labelledby="give-water">
+            <h2 id="give-water">Clean water</h2>
+            <ul class="give-list">
+                <li class="give-card">
+                    <h3>charity: water</h3>
+                    <p>Funds clean drinking water projects for communities that don't have it.</p>
+                    <a class="pill primary" href="https://www.every.org/charitywater#donate" data-donate-slug="charitywater" target="_blank" rel="noopener noreferrer" aria-label="Donate to charity: water on Every.org">Donate on Every.org</a>
+                </li>
+                <li class="give-card">
+                    <h3>River Network</h3>
+                    <p>Helps local groups protect and restore rivers and water supplies across the country.</p>
+                    <a class="pill primary" href="https://www.every.org/river-network#donate" data-donate-slug="river-network" target="_blank" rel="noopener noreferrer" aria-label="Donate to River Network on Every.org">Donate on Every.org</a>
+                </li>
+            </ul>
+        </section>
+        <section class="give-group" aria-labelledby="give-climate">
+            <h2 id="give-climate">Carbon and clean energy</h2>
+            <ul class="give-list">
+                <li class="give-card">
+                    <h3>Clean Air Task Force</h3>
+                    <p>Works on practical ways to cut the pollution and climate harm from how we make and use energy.</p>
+                    <a class="pill primary" href="https://www.every.org/cleanaircatf#donate" data-donate-slug="cleanaircatf" target="_blank" rel="noopener noreferrer" aria-label="Donate to Clean Air Task Force on Every.org">Donate on Every.org</a>
+                </li>
+                <li class="give-card">
+                    <h3>RMI</h3>
+                    <p>Helps industry and communities switch to cleaner energy and use less of it.</p>
+                    <a class="pill primary" href="https://www.every.org/rocky-mountain-institute#donate" data-donate-slug="rocky-mountain-institute" target="_blank" rel="noopener noreferrer" aria-label="Donate to RMI on Every.org">Donate on Every.org</a>
+                </li>
+            </ul>
+        </section>
     </main>
 
-    <p class="give-note">Donating opens the charity's page on Every.org in a new tab, where you choose the amount and pay. Registered 501(c)(3) nonprofits each have their own Every.org profile at every.org/their-name. Abstraction Solutions doesn't handle or see your payment.</p>
+    <p class="give-note">The button opens that charity's donation page on Every.org in a new tab, where you choose the amount and pay. Every.org processes the payment and sends your tax receipt. Abstraction Solutions never handles or sees your card details or your donation.</p>
 
     <footer>© 2026 Abstraction Solutions</footer>
 
