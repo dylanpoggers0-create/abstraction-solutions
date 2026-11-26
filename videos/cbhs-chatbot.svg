@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="30 66 740 436" role="img" aria-labelledby="t">
-  <title id="t">CBHS chatbot: school documents are searched and the matching facts are passed to a chatbot, which answers a student's question with its source</title>
+  <title id="t">school chatbot: school documents are searched and the matching facts are passed to a chatbot, which answers a student's question with its source</title>
   <defs>
     <radialGradient id="bgGlow" cx="50%" cy="48%" r="60%">
       <stop offset="0" stop-color="#173a1c"/>
@@ -57,7 +57,7 @@
     <line x1="310" y1="136" x2="740" y2="136" stroke="#2f4a33" stroke-width="2"/>
     <circle cx="340" cy="112" r="13" fill="#7ee96f"/>
     <path d="M334 108 h12 M334 113 h8" stroke="#06120a" stroke-width="2.5" stroke-linecap="round"/>
-    <text x="362" y="117" font-size="15" font-weight="bold" fill="#f2f6f2">CBHS Assistant</text>
+    <text x="362" y="117" font-size="15" font-weight="bold" fill="#f2f6f2">School Assistant</text>
     <circle cx="712" cy="112" r="5" fill="#7ee96f"/>
     <circle cx="712" cy="112" r="10" fill="#7ee96f" opacity=".45" filter="url(#glow)"/>
 
@@ -82,7 +82,7 @@
 
     <!-- input bar -->
     <rect x="330" y="410" width="390" height="32" rx="16" fill="#070a08" stroke="#2f4a33" stroke-width="1.5"/>
-    <text x="348" y="431" font-size="13" fill="#5f6f62">Ask anything about CBHS...</text>
+    <text x="348" y="431" font-size="13" fill="#5f6f62">Ask anything about the school...</text>
     <circle cx="702" cy="426" r="12" fill="#7ee96f"/>
     <path d="M697 426 h10 M703 421 l5 5 l-5 5" fill="none" stroke="#06120a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   </g>

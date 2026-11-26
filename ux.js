@@ -217,7 +217,6 @@
         { g: 'Pages', t: 'Automation recipes', href: 'recipes/' },
         { g: 'Pages', t: 'About us', href: 'aboutus.html' },
         { g: 'Pages', t: 'Order', href: 'order.html', k: 'buy checkout' },
-        { g: 'Pages', t: 'Changelog', href: 'changelog.html' },
         { g: 'Jump to', t: 'Get a free quote', href: 'index.html#quote', k: 'price estimate cost' },
         { g: 'Jump to', t: 'ROI calculator', href: 'index.html#roi', k: 'savings' },
         { g: 'Jump to', t: 'Find a certification', href: 'services/education.html#certifications', k: 'certificate resume career' },

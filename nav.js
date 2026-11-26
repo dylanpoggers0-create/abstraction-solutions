@@ -90,7 +90,7 @@ const PAGES = [
     { id: 'dpa',      label: 'Data Processing (DPA)', href: 'dpa.html', icon: 'terms', group: 'legal', hidden: true },
 
     // hidden: true = not in the menu (linked from the footer), but still named correctly as the current page
-    { id: 'changelog', label: 'Changelog', href: 'changelog.html', icon: 'changelog', hidden: true },
+    { id: 'changelog', label: 'Page history', href: 'changelog.html', icon: 'changelog', hidden: true },   // linked only from admin.html
     { id: 'give',      label: 'Give',      href: 'give.html',      icon: 'about',     hidden: true },   // charities we support (footer link only)
     { id: 'recipes',   label: 'Automation Recipes', href: 'recipes/', icon: 'services', hidden: true },
     { id: 'playground', label: 'Playground', href: 'services/education/playground.html', icon: 'services', hidden: true },   // under AI Education in the Services menu (ux.js)
@@ -388,7 +388,7 @@ fetch('https://abstraction-quote-engine.onrender.com/health').catch(function () 
             '<div><h4>EXPLORE</h4><ul class="f-explore">' +
                 link('services.html', 'Services') + link('services/education.html', 'AI Education') + link('recipes/', 'Automation Recipes') + link('aboutus.html', 'About Us') +
                 link('order.html#case-studies', 'Case Studies') + link('index.html#roi', 'ROI Calculator') + link('index.html#quote', 'Free quote') + link('order.html', 'Order') +
-                link('order.html#lookup', 'Check an order') + link('hydrocart.html', 'HydroCart') + link('changelog.html', 'Changelog') + link('give.html', 'Give') +
+                link('order.html#lookup', 'Check an order') + link('give.html', 'Give') +
             '</ul></div>' +
             '<div class="f-side"><h4>CONTACT</h4><ul>' +
                 '<li><a href="mailto:dylanpogue@abstraction-solutions.com">dylanpogue@abstraction-solutions.com</a></li>' +

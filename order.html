@@ -360,63 +360,6 @@
         .my-orders .open-order { grid-row: span 2; }
         .agree a { color: var(--green); }
 
-        /* CASE STUDIES (moved here from case-studies.html) */
-        .cases {
-            max-width: 1000px;
-            margin: 20px auto 40px;
-            padding: 0 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        /* one case study: picture on the left, story on the right */
-        .case {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 26px;
-            align-items: center;
-            background-color: rgba(11, 16, 12, 0.9);
-            border: 1px solid var(--line);
-            border-radius: 20px;
-            padding: 22px;
-        }
-
-        .case img {
-            width: 100%;
-            border-radius: 16px;
-            border: 1px solid var(--line);
-        }
-
-        .case .kind {
-            color: var(--green);
-            font-size: 0.75rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        .case .case-title {
-            margin: 6px 0 8px;
-            font-size: 1.3rem;
-            color: white;
-            letter-spacing: normal;
-            text-transform: none;
-        }
-
-        .case h3 {
-            margin: 18px 0 6px;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .case p {
-            margin: 0;
-            color: #e8eee8;
-            line-height: 1.65;
-        }
-
         /* the big result numbers */
         .results {
             display: flex;
@@ -442,14 +385,6 @@
         .result span {
             color: #dfe7df;
             font-size: 0.9rem;
-        }
-
-        @media (max-width: 760px) {
-            .case { grid-template-columns: 1fr; padding: 20px; }
-            .case img { max-height: 170px; object-fit: cover; }
-        }
-        @media (max-width: 600px) {
-            .cases { padding: 0 16px 0 36px; }
         }
 
         /* SEO plan additions: breadcrumb, CTAs, pricing box, trust row, FAQ */
@@ -611,13 +546,15 @@
         <p class="promo-line" data-promo-until="2026-11-14T00:00:00-06:00">25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.</p>
     </section>
 
-    <!-- THINGS WE'VE BUILT: 3D models (projects3d.js, loaded when scrolled into view) and project videos -->
-    <section class="built" id="built" aria-labelledby="built-title">
+    <!-- THINGS WE'VE BUILT: every project in one place (was split with "Case studies" lower down).
+         3D models come from projects3d.js (loaded when scrolled into view); cards are skipped by the float effect so they
+         keep the footer's white edge that glows green on hover. -->
+    <section class="built" id="case-studies" aria-labelledby="built-title">
         <h2 class="section-title" id="built-title">Things we've built</h2>
         <p class="section-sub">Turn the models, look inside, or watch them work. Each one started as a plain idea.</p>
         <div class="built-grid">
 
-            <article class="built-card" data-built>
+            <article class="built-card" data-built data-af-skip>
                 <div class="built-stage">
                     <div class="viewer" data-model="cyberdeck" tabindex="0" role="img" aria-label="3D model of the Email Cyberdeck. Drag to turn it, use the arrow keys, or press its YES and NO buttons.">
                         <img class="viewer-still" src="videos/projects/cyberdeck-model.jpg" alt="" width="720" height="900" loading="lazy" decoding="async">
@@ -638,11 +575,13 @@
                     <button type="button" data-act="reset" aria-label="Reset the view">Reset</button>
                 </div>
                 <p class="built-status" data-deck-status aria-live="polite">A meeting request is waiting. Press YES or NO.</p>
+                <div class="kind">HARDWARE · EMAIL AUTOMATION</div>
                 <h3>Email Cyberdeck</h3>
                 <p>AI reads and answers every email for you. Meeting requests are the only thing it asks about: they show up on the screen, and one button accepts or declines. A Raspberry Pi and an Arduino Mega inside.</p>
+                <div class="results"><div class="result"><strong>Automatic</strong><span>replies to every email</span></div><div class="result"><strong>One button</strong><span>to accept or decline meetings</span></div></div>
             </article>
 
-            <article class="built-card" data-built>
+            <article class="built-card" data-built data-af-skip>
                 <div class="built-stage">
                     <div class="viewer" data-model="hydrocart" tabindex="0" role="img" aria-label="3D model of HydroCart, a hydroponic tower on a rolling cart. Drag to turn it or use the arrow keys.">
                         <img class="viewer-still" src="videos/projects/hydrocart-model.jpg" alt="" width="720" height="900" loading="lazy" decoding="async">
@@ -663,18 +602,52 @@
                     <button type="button" data-act="out" aria-label="Zoom out">−</button>
                     <button type="button" data-act="reset" aria-label="Reset the view">Reset</button>
                 </div>
+                <div class="kind">HARDWARE · AI MODEL</div>
                 <h3>HydroCart</h3>
                 <p>Our showpiece, not a product for sale: six plants on one rolling cart. Sensors watch the water and our own AI model predicts where each reading is heading. <a href="hydrocart.html">How it works</a></p>
+                <div class="results"><div class="result"><strong>6 plants</strong><span>on one rolling cart</span></div><div class="result"><strong>Live sensors</strong><span>read by our own AI model</span></div></div>
             </article>
 
-            <article class="built-card" data-built>
+            <article class="built-card" data-built data-af-skip>
                 <div class="built-stage">
                     <video controls playsinline preload="none" poster="videos/projects/pantry-app-poster.jpg" aria-label="Pantry app video">
                         <source src="videos/projects/pantry-app.mp4" type="video/mp4">
                     </video>
                 </div>
+                <div class="kind">WEB APP · AUTOMATION</div>
                 <h3>Pantry app</h3>
                 <p>Tracks the pantry, fridge and freezer, puts what expires first at the top, and sends one short email before food goes bad. Barcode scanning and recipe ideas built in.</p>
+                <div class="results"><div class="result"><strong>One email</strong><span>before food goes bad</span></div><div class="result"><strong>Barcode</strong><span>scanning built in</span></div></div>
+            </article>
+
+            <article class="built-card" data-af-skip>
+                <div class="built-stage is-picture">
+                    <img class="built-img" src="videos/cbhs-chatbot.svg" alt="Drawing of the school chatbot: school documents are searched for the right facts, and the chatbot answers a student's question with its source" width="720" height="400" loading="lazy" decoding="async">
+                </div>
+                <div class="kind">AI CHATBOT · EDUCATION</div>
+                <h3>School Information Chatbot</h3>
+                <p>A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.</p>
+                <div class="results"><div class="result"><strong>Sourced</strong><span>answers from the school's own information</span></div><div class="result"><strong>All faculty</strong><span>have it deployed</span></div></div>
+            </article>
+
+            <article class="built-card" data-af-skip>
+                <div class="built-stage is-picture">
+                    <img class="built-img" src="videos/price-model.svg" alt="Drawing of the price optimization model: past sales data feeds a machine learning model, which points to the price at the top of the profit curve" width="720" height="400" loading="lazy" decoding="async">
+                </div>
+                <div class="kind">MACHINE LEARNING · RETAIL</div>
+                <h3>Price Optimization &amp; Data Cleanup</h3>
+                <p>Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.</p>
+                <div class="results"><div class="result"><strong>Weekly</strong><span>used in real pricing decisions</span></div></div>
+            </article>
+
+            <article class="built-card" data-af-skip>
+                <div class="built-stage is-picture">
+                    <img class="built-img" src="videos/projects/playground.svg" alt="Gradient descent on a curve: a ball steps downhill to the lowest point" width="720" height="400" loading="lazy" decoding="async">
+                </div>
+                <div class="kind">AI EDUCATION · INTERACTIVE</div>
+                <h3>AI Playground</h3>
+                <p>Free demos that run in your browser: type an equation and watch gradient descent roll downhill, or type a phrase and watch a genetic algorithm evolve it. <a href="services/education/playground.html">Open the AI Playground</a></p>
+                <div class="results"><div class="result"><strong>Free</strong><span>runs right in your browser</span></div></div>
             </article>
 
         </div>
@@ -918,52 +891,6 @@
             <li><a href="returns.html">Returns</a> · <a href="terms.html">Terms</a></li>
         </ul>
     </section>
-
-    <!-- CASE STUDIES (moved here from case-studies.html, which now forwards to #case-studies) -->
-    <section id="case-studies">
-        <h2 class="section-title">Case studies</h2>
-        <p class="section-sub">A few things we've built, and what they do for the people who use them.</p>
-    </section>
-    <div class="cases">
-        <article class="case">
-            <img src="videos/cbhs-chatbot.svg"
-                 alt="Drawing of the CBHS chatbot: school documents are searched for the right facts, and the chatbot answers a student's question with its source">
-            <div>
-                <div class="kind">AI CHATBOT · EDUCATION</div>
-                <h3 class="case-title">CBHS Information Chatbot</h3>
-                <p>A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.</p>
-                <div class="results">
-                    <div class="result"><strong>Sourced</strong><span>answers from the school's own information</span></div>
-                    <div class="result"><strong>All faculty</strong><span>have it deployed</span></div>
-                </div>
-            </div>
-        </article>
-        <article class="case">
-            <img src="videos/price-model.svg"
-                 alt="Drawing of the price optimization model: past sales data feeds a machine learning model, which points to the price at the top of the profit curve">
-            <div>
-                <div class="kind">MACHINE LEARNING · RETAIL</div>
-                <h3 class="case-title">Price Optimization &amp; Data Cleanup</h3>
-                <p>Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.</p>
-                <div class="results">
-                    <div class="result"><strong>Weekly</strong><span>used in real pricing decisions</span></div>
-                </div>
-            </div>
-        </article>
-        <article class="case">
-            <img src="videos/cyberdeck.svg"
-                 alt="Drawing of the Email Response Cyberdeck: a small case with a 16x2 LCD screen, send and edit buttons, and a Raspberry Pi 4 and Arduino Uno inside">
-            <div>
-                <div class="kind">AUTOMATION · CLIENT PROJECT</div>
-                <h3 class="case-title">Email Response Cyberdeck</h3>
-                <p>A small device that drafts email replies and schedules meetings, and waits for your OK before anything is sent.</p>
-                <div class="results">
-                    <div class="result"><strong>Automatic</strong><span>replies and scheduling</span></div>
-                    <div class="result"><strong>In control</strong><span>you confirm every email</span></div>
-                </div>
-            </div>
-        </article>
-    </div>
 
     <!-- FAQ: keep these answers identical to the FAQPage data in <head> -->
     <section class="order-faq" id="faq">
