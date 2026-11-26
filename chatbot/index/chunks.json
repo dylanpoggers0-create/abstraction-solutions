@@ -180,6 +180,12 @@
 "text": "giving. Your receipt is on its way to your email.\nPledge, a giving platform, processes the payment, emails your tax receipt and passes your gift to the charity. \"All six\" gives through our fundraiser, AI Made Simple, Footprint Made Smaller. Abstraction Solutions never handles or sees your card details or your donation."
 },
 {
+"url": "https://abstraction-solutions.com/give.html",
+"title": "Give",
+"heading": "Carbon and clean energy › Donate",
+"text": "ndles or sees your card details or your donation.\nYou can give once or monthly. A monthly gift is charged by Pledge each month until you cancel it with the link in your Pledge receipt email. Donations to charities generally can't be refunded. Donation terms"
+},
+{
 "url": "https://abstraction-solutions.com/hydrocart.html",
 "title": "HydroCart Indoor Growing Tower",
 "heading": "HydroCart, an indoor growing tower from Abstraction Solutions.",
@@ -326,6 +332,12 @@
 {
 "url": "https://abstraction-solutions.com/",
 "title": "AI Made Simple for Small Business",
+"heading": "Giving back",
+"text": "AI runs on data centers that use water and power, and it learns from artists' work. We picked six charities that help with that, and you can donate to them right here on our site, once or monthly. Pledge processes every gift, so we never touch the money.\nSee the charities"
+},
+{
+"url": "https://abstraction-solutions.com/",
+"title": "AI Made Simple for Small Business",
 "heading": "Let's build something",
 "text": "Have a project or a question about AI? Reach out.\nEmail us YouTube Follow @abstraction.solutions TikTok LinkedIn"
 },
@@ -339,25 +351,43 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Things we've built",
-"text": "Turn the models, look inside, or watch them work. Each one started as a plain idea.\nDrag to turn · tap YES or NO\nA meeting request is waiting. Press YES or NO."
+"text": "Turn the models, look inside, or watch them work. Each one started as a plain idea.\nDrag to turn · tap YES or NO\nA meeting request is waiting. Press YES or NO.\nHARDWARE · EMAIL AUTOMATION"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Email Cyberdeck",
-"text": "AI reads and answers every email for you. Meeting requests are the only thing it asks about: they show up on the screen, and one button accepts or declines. A Raspberry Pi and an Arduino Mega inside.\nDrag to turn"
+"text": "AI reads and answers every email for you. Meeting requests are the only thing it asks about: they show up on the screen, and one button accepts or declines. A Raspberry Pi and an Arduino Mega inside.\nAutomatic replies to every email\nOne button to accept or decline meetings\nDrag to turn\nHARDWARE · AI MODEL"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "HydroCart",
-"text": "Our showpiece, not a product for sale: six plants on one rolling cart. Sensors watch the water and our own AI model predicts where each reading is heading. How it works"
+"text": "Our showpiece, not a product for sale: six plants on one rolling cart. Sensors watch the water and our own AI model predicts where each reading is heading. How it works\n6 plants on one rolling cart\nLive sensors read by our own AI model\nWEB APP · AUTOMATION"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Pantry app",
-"text": "Tracks the pantry, fridge and freezer, puts what expires first at the top, and sends one short email before food goes bad. Barcode scanning and recipe ideas built in.\nTell us your idea: get a free instant quote\nSign in to checkout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as User ID:"
+"text": "Tracks the pantry, fridge and freezer, puts what expires first at the top, and sends one short email before food goes bad. Barcode scanning and recipe ideas built in.\nOne email before food goes bad\nBarcode scanning built in\nAI CHATBOT · EDUCATION"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "School Information Chatbot",
+"text": "A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.\nSourced answers from the school's own information\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Price Optimization & Data Cleanup",
+"text": "Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.\nWeekly used in real pricing decisions\nAI EDUCATION · INTERACTIVE"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "AI Playground",
+"text": "Free demos that run in your browser: type an equation and watch gradient descent roll downhill, or type a phrase and watch a genetic algorithm evolve it. Open the AI Playground\nFree runs right in your browser\nTell us your idea: get a free instant quote\nSign in to checkout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as User ID:"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -398,30 +428,6 @@
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
-"heading": "Case studies",
-"text": "A few things we've built, and what they do for the people who use them.\nAI CHATBOT · EDUCATION"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Free Instant AI Project Quote",
-"heading": "CBHS Information Chatbot",
-"text": "A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.\nSourced answers from the school's own information\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Free Instant AI Project Quote",
-"heading": "Price Optimization & Data Cleanup",
-"text": "Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.\nWeekly used in real pricing decisions\nAUTOMATION · CLIENT PROJECT"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Free Instant AI Project Quote",
-"heading": "Email Response Cyberdeck",
-"text": "A small device that drafts email replies and schedules meetings, and waits for your OK before anything is sent.\nAutomatic replies and scheduling\nIn control you confirm every email"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Free Instant AI Project Quote",
 "heading": "Questions before you start",
 "text": "How much does a project cost?\nYou get a free instant estimate first. The final price is confirmed by email after we see the scope. We do not ask you to pay for the whole project up front.\nDo nonprofits really get 50% off?\nYes. Registered nonprofits get 50% off the quoted estimate. It is not combined with other offers.\nWhat if I change my mind?"
 },
@@ -441,7 +447,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "Privacy Policy",
-"text": "LEGAL\nEffective November 12, 2026 · Updated November 25, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or unsubscribe yourself, anytime, and email us to see or delete your data."
+"text": "LEGAL\nEffective November 12, 2026 · Updated November 26, 2026\nThe short version: we only collect what we need to quote, build and get paid for your project. We never sell your information. Card details go straight to Stripe, never to us. Some tools on this site use AI, and we say exactly which ones below. You can cancel a project, delete your account or unsubscribe yourself, anytime, and email us to see or delete your data."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -495,7 +501,7 @@
 "url": "https://abstraction-solutions.com/privacy.html",
 "title": "Privacy Policy",
 "heading": "What we collect",
-"text": "Donations: on the Give page you donate through Pledge's donation form, which opens on our page but is run by Pledge, or through Every.org. Pledge or Every.org and their payment processors handle your donation and payment details and send your tax receipt. We don't receive your card details or the money, which goes to the charity you choose."
+"text": "Donations: on the Give page you donate through Pledge's donation form, which appears on our page but is run by Pledge, or through Every.org. Pledge or Every.org and their payment processors handle your donation and payment details and send your tax receipt; for a monthly donation, they keep your payment details so they can charge you each month until you cancel. We don't receive your name, card details, donation history or the money, which goes to the charity you choose."
 },
 {
 "url": "https://abstraction-solutions.com/privacy.html",
@@ -987,7 +993,7 @@
 "url": "https://abstraction-solutions.com/returns.html",
 "title": "Returns & Refunds",
 "heading": "Returns & Refunds",
-"text": "LEGAL\nEffective November 4, 2026 · Updated November 9, 2026\nThe short version: you pay one stage at a time, so you're never far ahead of the work. Cancel anytime and nothing more is due. A stage you've paid for that we haven't started comes back to you in full. After delivery, every project comes with one month of free bug fixes ."
+"text": "LEGAL\nEffective November 4, 2026 · Updated November 26, 2026\nThe short version: you pay one stage at a time, so you're never far ahead of the work. Cancel anytime and nothing more is due. A stage you've paid for that we haven't started comes back to you in full. After delivery, every project comes with one month of free bug fixes ."
 },
 {
 "url": "https://abstraction-solutions.com/returns.html",
@@ -1018,6 +1024,12 @@
 "title": "Returns & Refunds",
 "heading": "How to request a refund or a fix",
 "text": "Email dylanpogue@abstraction-solutions.com from the address you ordered with.\nInclude your 8-digit confirmation number and what you need.\nWe'll reply within 2 business days.\nApproved refunds go back to your original payment method through Stripe. Depending on your bank, they usually appear within 5 to 10 business days."
+},
+{
+"url": "https://abstraction-solutions.com/returns.html",
+"title": "Returns & Refunds",
+"heading": "Donations",
+"text": "Donations on our Give page go to the charities through Pledge or Every.org, not to us, so we can't refund or cancel them. To stop a monthly donation, use the cancel link in your Pledge receipt email or contact Pledge at help.pledgeling.com . See Donations in our Terms ."
 },
 {
 "url": "https://abstraction-solutions.com/returns.html",
@@ -1563,7 +1575,7 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Terms of Service",
-"text": "LEGAL\nEffective November 4, 2026 · Updated November 25, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You pay in stages (Planning, Coding, Testing, Done) as each one begins, never all up front. You can request changes until Testing begins and cancel anytime. A stage you've paid for but we haven't started is fully refundable, and every project comes with one month of free bug fixes ."
+"text": "LEGAL\nEffective November 4, 2026 · Updated November 26, 2026\nThe short version: the instant estimate is a guide, and your final quote comes from us. You pay in stages (Planning, Coding, Testing, Done) as each one begins, never all up front. You can request changes until Testing begins and cancel anytime. A stage you've paid for but we haven't started is fully refundable, and every project comes with one month of free bug fixes ."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
@@ -1659,7 +1671,7 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Ongoing plans and trials",
-"text": "We don't offer free trials, and we never start charging you automatically when one ends. Ongoing maintenance is only set up by written agreement with you, and you can cancel it anytime by emailing us."
+"text": "We don't offer free trials, and we never start charging you automatically when one ends. We don't sell subscriptions or bill you automatically for our services. Ongoing maintenance is only set up by written agreement with you, and you can cancel it anytime by emailing us.\nThis is about our services. A monthly donation you choose on our Give page is set up, charged and cancelled with Pledge, not us; see Donations below."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
@@ -1695,7 +1707,25 @@
 "url": "https://abstraction-solutions.com/terms.html",
 "title": "Terms of Service",
 "heading": "Donations",
-"text": "Donations on our Give page are made to the charity you choose through Pledge or Every.org, separate giving platforms, under their terms. Pledge's form opens on our page, but Pledge runs it and processes the payment. We don't collect, hold or receive donations, we aren't acting for the charities, and we don't get any share of what you give. Receipts, refunds and tax questions about a donation go to Pledge, Every.org or the charity."
+"text": "Donations on our Give page are made to the charity you choose through Pledge or Every.org, separate giving platforms, under their terms. Pledge's form appears on our page, but Pledge runs it and processes the payment. We don't collect, hold or receive donations, we aren't acting for the charities, we don't charge anything for donating, and we don't get any share of what you give."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Donations",
+"text": "ing, and we don't get any share of what you give.\nOne-time or monthly is your choice. Pledge's form lets you give once or every month. If you choose monthly, you're authorizing Pledge, not Abstraction Solutions, to charge the amount you pick every month until you cancel, under Pledge's terms . The form shows the amount and how often before you confirm."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Donations",
+"text": "hows the amount and how often before you confirm.\nCancelling a monthly donation: use the cancel link in the receipt email Pledge sends you, or contact Pledge through help.pledgeling.com . Cancelling stops future charges. We can't see, change or cancel your donation for you, but if you get stuck, email us and we'll point you to the right place."
+},
+{
+"url": "https://abstraction-solutions.com/terms.html",
+"title": "Terms of Service",
+"heading": "Donations",
+"text": "email us and we'll point you to the right place.\nReceipts, refunds and taxes: Pledge or Every.org sends your tax receipt. Under Pledge's terms, donations to charities generally can't be refunded. Questions about a donation go to Pledge, Every.org or the charity."
 },
 {
 "url": "https://abstraction-solutions.com/terms.html",
