@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Qgci8qoVcpLYlrWEl50yYbLIR43Y9zABH79QrKMQgfw=' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.goatcounter.com; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co https://accounts.google.com/gsi/; frame-src 'self' https://buttondown.com https://accounts.google.com/gsi/; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Qgci8qoVcpLYlrWEl50yYbLIR43Y9zABH79QrKMQgfw=' 'wasm-unsafe-eval' https://gc.zgo.at https://cdn.jsdelivr.net https://accounts.google.com/gsi/client https://www.pledge.to; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.goatcounter.com https://www.pledge.to; font-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://abstraction-quote-engine.onrender.com https://*.goatcounter.com https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co https://*.hf.co https://accounts.google.com/gsi/ https://www.pledge.to; frame-src 'self' https://buttondown.com https://accounts.google.com/gsi/ https://www.pledge.to; worker-src 'self' blob:; form-action 'self' https://buttondown.com; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Give | Abstraction Solutions</title>
     <meta name="description" content="Charities Abstraction Solutions supports. Donations are made securely on Every.org.">
@@ -42,6 +42,10 @@
         .give-card .pill { align-self: flex-start; margin: 4px 0 0; }
         .give-note { max-width: 680px; margin: 26px auto 70px; padding: 0 24px; color: var(--text-muted); text-align: center; line-height: 1.7; font-size: 0.95rem; }
         .give-note a { color: var(--green); }
+        .give-note-pledge, .pledge-on .give-note-links { display: none; }
+        .pledge-on .give-note-pledge { display: block; }
+        .give-thanks { max-width: 680px; margin: -40px auto 70px; padding: 14px 20px; text-align: center; color: var(--green);
+                       border: 1px solid rgba(126, 233, 111, 0.45); border-radius: 16px; background: rgba(6, 9, 6, 0.78); font-weight: 700; }
 
         @media (max-width: 600px) {
             .hero { padding-top: 120px; }
@@ -58,6 +62,7 @@
     <div id="site-nav"></div>
     <noscript><nav class="nojs-nav" aria-label="Main" style="padding:16px 24px;text-align:center"><a href="/">Home</a> · <a href="/services.html">Services</a> · <a href="/aboutus.html">About</a> · <a href="/order.html">Order</a> · <a href="/#contact">Contact</a> · <a href="/recipes/">Recipes</a></nav></noscript>
     <script src="nav.min.js"></script>
+    <script src="give.js" defer></script>
 
     <section class="hero">
         <div class="eyebrow">GIVE</div>
@@ -65,19 +70,20 @@
         <p class="section-sub">AI and the data centers behind it put pressure on artists, on water and on the climate. These groups work to offset that. Every.org handles each donation and emails you a tax receipt, and the money goes to the charity. Abstraction Solutions never touches your card details.</p>
     </section>
 
-    <main class="give">
+    <!-- PLEDGE: paste the partner key from pledge.to (Pledge APIs → Widgets) into data-pledge-key to turn on donating on this page -->
+    <main class="give" data-pledge-key="">
         <section class="give-group" aria-labelledby="give-artists">
             <h2 id="give-artists">Artists</h2>
             <ul class="give-list">
                 <li class="give-card">
                     <h3>Authors Guild Foundation</h3>
                     <p>Protects writers' rights and livelihoods, including work on copyright as AI systems train on books.</p>
-                    <a class="pill primary" href="https://www.every.org/authors-guild-foundation#donate" data-donate-slug="authors-guild-foundation" target="_blank" rel="noopener noreferrer" aria-label="Donate to Authors Guild Foundation on Every.org">Donate on Every.org</a>
+                    <a class="pill primary" href="https://www.every.org/authors-guild-foundation#donate" data-donate-slug="authors-guild-foundation" data-ein="237248599" data-name="Authors Guild Foundation" target="_blank" rel="noopener noreferrer" aria-label="Donate to Authors Guild Foundation on Every.org">Donate on Every.org</a>
                 </li>
                 <li class="give-card">
                     <h3>Creative Capital</h3>
                     <p>Funds working artists across the U.S. so they can keep making new work.</p>
-                    <a class="pill primary" href="https://www.every.org/creative-capital#donate" data-donate-slug="creative-capital" target="_blank" rel="noopener noreferrer" aria-label="Donate to Creative Capital on Every.org">Donate on Every.org</a>
+                    <a class="pill primary" href="https://www.every.org/creative-capital#donate" data-donate-slug="creative-capital" data-ein="311605982" data-name="Creative Capital" target="_blank" rel="noopener noreferrer" aria-label="Donate to Creative Capital on Every.org">Donate on Every.org</a>
                 </li>
             </ul>
         </section>
@@ -87,12 +93,12 @@
                 <li class="give-card">
                     <h3>charity: water</h3>
                     <p>Funds clean drinking water projects for communities that don't have it.</p>
-                    <a class="pill primary" href="https://www.every.org/charitywater#donate" data-donate-slug="charitywater" target="_blank" rel="noopener noreferrer" aria-label="Donate to charity: water on Every.org">Donate on Every.org</a>
+                    <a class="pill primary" href="https://www.every.org/charitywater#donate" data-donate-slug="charitywater" data-ein="223936753" data-name="charity: water" target="_blank" rel="noopener noreferrer" aria-label="Donate to charity: water on Every.org">Donate on Every.org</a>
                 </li>
                 <li class="give-card">
                     <h3>River Network</h3>
                     <p>Helps local groups protect and restore rivers and water supplies across the country.</p>
-                    <a class="pill primary" href="https://www.every.org/river-network#donate" data-donate-slug="river-network" target="_blank" rel="noopener noreferrer" aria-label="Donate to River Network on Every.org">Donate on Every.org</a>
+                    <a class="pill primary" href="https://www.every.org/river-network#donate" data-donate-slug="river-network" data-ein="930969979" data-name="River Network" target="_blank" rel="noopener noreferrer" aria-label="Donate to River Network on Every.org">Donate on Every.org</a>
                 </li>
             </ul>
         </section>
@@ -102,18 +108,20 @@
                 <li class="give-card">
                     <h3>Clean Air Task Force</h3>
                     <p>Works on practical ways to cut the pollution and climate harm from how we make and use energy.</p>
-                    <a class="pill primary" href="https://www.every.org/cleanaircatf#donate" data-donate-slug="cleanaircatf" target="_blank" rel="noopener noreferrer" aria-label="Donate to Clean Air Task Force on Every.org">Donate on Every.org</a>
+                    <a class="pill primary" href="https://www.every.org/cleanaircatf#donate" data-donate-slug="cleanaircatf" data-ein="043512550" data-name="Clean Air Task Force" target="_blank" rel="noopener noreferrer" aria-label="Donate to Clean Air Task Force on Every.org">Donate on Every.org</a>
                 </li>
                 <li class="give-card">
                     <h3>RMI</h3>
                     <p>Helps industry and communities switch to cleaner energy and use less of it.</p>
-                    <a class="pill primary" href="https://www.every.org/rocky-mountain-institute#donate" data-donate-slug="rocky-mountain-institute" target="_blank" rel="noopener noreferrer" aria-label="Donate to RMI on Every.org">Donate on Every.org</a>
+                    <a class="pill primary" href="https://www.every.org/rocky-mountain-institute#donate" data-donate-slug="rocky-mountain-institute" data-ein="742244146" data-name="RMI" target="_blank" rel="noopener noreferrer" aria-label="Donate to RMI on Every.org">Donate on Every.org</a>
                 </li>
             </ul>
         </section>
     </main>
 
-    <p class="give-note">The button opens that charity's donation page on Every.org in a new tab, where you choose the amount and pay. Every.org processes the payment and sends your tax receipt. Abstraction Solutions never handles or sees your card details or your donation.</p>
+    <p class="give-note give-note-links">The button opens that charity's donation page on Every.org in a new tab, where you choose the amount and pay. Every.org processes the payment and sends your tax receipt. Abstraction Solutions never handles or sees your card details or your donation.</p>
+    <p class="give-note give-note-pledge">Donations happen right here: the button opens a secure donation form from Pledge, a giving platform that processes the payment, sends your tax receipt and passes your gift to the charity. Abstraction Solutions never handles or sees your card details or your donation. If the form doesn't load, the button takes you to the charity's page on Every.org instead.</p>
+    <p class="give-thanks" data-give-thanks tabindex="-1" role="status" hidden>Thank you for giving. Your receipt is on its way to your email.</p>
 
     <footer>© 2026 Abstraction Solutions</footer>
 
