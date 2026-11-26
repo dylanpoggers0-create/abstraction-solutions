@@ -19,7 +19,10 @@
     if (location.protocol !== "https:") { say("The donation form only loads on the live site (https). Use each charity's Every.org button here."); return; }
 
     var BRAND = "#7ee96f";                         // the site's green (--green)
-    var FUNDRAISER = "MSythsDjZqaUx1uv";           // AI Made Simple, Footprint Made Smaller: all six
+    // Our "all six" Pledge fundraiser (AI Made Simple, Footprint Made Smaller), widget MSythsDjZqaUx1uv.
+    // OFF for now: on Pledge it lists Authors Guild of Tennessee and Rocky Mountain Field Institute instead of
+    // the Authors Guild Foundation and RMI. Fix its nonprofits in Pledge, then put the id back here.
+    var FUNDRAISER = "";
     var cards = {};                                // slug -> { ein, name, card, link }
     Array.prototype.forEach.call(document.querySelectorAll("a[data-ein][data-donate-slug]"), function (a) {
         cards[a.getAttribute("data-donate-slug")] = {
@@ -84,7 +87,14 @@
 
     panel.classList.add("is-live");
     if (msg) msg.hidden = true;
-    render("all");
+    var allNote = document.querySelector("[data-give-all-note]");
+    if (FUNDRAISER) {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-give-pick="all"]'), function (b) { b.hidden = false; });
+        if (allNote) allNote.hidden = false;
+        render("all");
+    } else {
+        render(Object.keys(cards)[0]);           // starts on the first charity
+    }
 
     var s = document.createElement("script");
     s.src = "https://www.pledge.to/embed/widget.js";
