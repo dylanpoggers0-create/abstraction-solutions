@@ -211,6 +211,34 @@
 
             <article class="built-card" data-built data-af-skip>
                 <div class="built-stage">
+                    <div class="viewer" data-model="plant" tabindex="0" role="img" aria-label="3D model of the Family Plant Monitor: five houseplants on a shelf with a moisture probe in each pot, a PVC drip line above them and a pump in a bucket below. Drag to turn it, use the arrow keys, or press Dry out a pot.">
+                        <img class="viewer-still" src="videos/projects/plant-monitor-model.jpg" alt="" width="720" height="900" loading="lazy" decoding="async">
+                        <p class="viewer-hint" aria-hidden="true">Drag to turn · tap Dry out a pot</p>
+                    </div>
+                    <video hidden controls playsinline preload="none" poster="videos/projects/plant-monitor-poster.jpg" aria-label="Family Plant Monitor video">
+                        <source src="videos/projects/plant-monitor.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="built-switch" role="group" aria-label="Show">
+                    <button type="button" class="pill small" data-show="model" aria-pressed="true">3D model</button>
+                    <button type="button" class="pill small" data-show="video" aria-pressed="false">Video</button>
+                </div>
+                <div class="built-tools" role="group" aria-label="Model controls" hidden>
+                    <button type="button" data-act="dry">Dry out a pot</button>
+                    <button type="button" data-act="readings" aria-pressed="true">Readings</button>
+                    <button type="button" data-act="in" aria-label="Zoom in">+</button>
+                    <button type="button" data-act="out" aria-label="Zoom out">−</button>
+                    <button type="button" data-act="reset" aria-label="Reset the view">Reset</button>
+                </div>
+                <p class="built-status" data-plant-status aria-live="polite">All five plants are healthy. Press Dry out a pot to watch it water itself.</p>
+                <div class="kind">HARDWARE · AUTOMATION</div>
+                <h3>Family Plant Monitor</h3>
+                <p>Watches five houseplants around the clock and waters them when the soil runs dry. A probe in every pot reports to an Arduino Mega, a pump drips water into each pot through a PVC line, and a live status page shows how every plant is doing.</p>
+                <div class="results"><div class="result"><strong>5 plants</strong><span>watered automatically</span></div><div class="result"><strong>Live page</strong><span>moisture, temperature and humidity</span></div></div>
+            </article>
+
+            <article class="built-card" data-built data-af-skip>
+                <div class="built-stage">
                     <video controls playsinline preload="none" poster="videos/projects/pantry-app-poster.jpg" aria-label="Pantry app video">
                         <source src="videos/projects/pantry-app.mp4" type="video/mp4">
                     </video>

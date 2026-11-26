@@ -145,5 +145,13 @@
             "3D models you can turn and look inside: the Email Cyberdeck (press its YES and NO buttons) and HydroCart (grow lights and water flow).",
             "Videos of the Email Cyberdeck, HydroCart and our new pantry app."
         ]
+    },
+    {
+        "date": "2026-11-26",
+        "title": "Family Plant Monitor, on the Order page",
+        "items": [
+            "A 3D model of the Family Plant Monitor: five houseplants with a moisture probe in every pot, a PVC drip line and a pump in a bucket under the shelf. Press Dry out a pot to watch one dry out, flip to Needs Water and get watered.",
+            "A new video of the plant monitor, from the first dry pot to the daily email."
+        ]
     }
 ]

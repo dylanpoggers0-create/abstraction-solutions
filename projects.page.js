@@ -1,5 +1,5 @@
 /* Order page: "Things we've built". Switches each card between its 3D model and its video, and loads
-   the three.js models (projects3d.js) only when they scroll into view. Without WebGL or JavaScript,
+   the three.js models (projects3d.js: Email Cyberdeck, HydroCart, Family Plant Monitor) only when they scroll into view. Without WebGL or JavaScript,
    each viewer keeps its still picture and the videos still play. */
 (function () {
     "use strict";
@@ -64,6 +64,21 @@
                 viewer.classList.add("is-live");
                 if (tools) tools.hidden = viewer.hidden;
                 ctl.setVisible(onScreen && !viewer.hidden);
+                if (ctl.kind === "plant") {
+                    var pstatus = card.querySelector("[data-plant-status]");
+                    var dryBtn = tools && tools.querySelector('[data-act="dry"]');
+                    var words = {
+                        idle: "All five plants are healthy. Press Dry out a pot to watch it water itself.",
+                        drying: "Plant 3 is drying out. Its probe reads lower every two seconds.",
+                        needs: "Plant 3 dropped below 35%: Needs Water. The Mega clicks the relay on.",
+                        pump: "The pump pushes water up into the PVC line, and every pot gets a drip.",
+                        soak: "Watered. It waits 30 minutes for the water to soak in before checking again."
+                    };
+                    ctl.onState = function (s) {
+                        if (pstatus) pstatus.textContent = words[s] || words.idle;
+                        if (dryBtn) dryBtn.disabled = s !== "idle" && s !== "soak";
+                    };
+                }
                 if (ctl.kind === "cyberdeck") {
                     var status = card.querySelector("[data-deck-status]");
                     ctl.onState = function (s) {
@@ -84,7 +99,12 @@
                 var b = e.target.closest("button");
                 if (!b || !ctl) return;
                 var act = b.getAttribute("data-act");
-                if (act === "explode" || act === "lights" || act === "flow") {
+                if (act === "dry") ctl.runCycle();
+                else if (act === "readings") {
+                    var shown = b.getAttribute("aria-pressed") !== "true";
+                    b.setAttribute("aria-pressed", String(shown));
+                    ctl.setBadges(shown);
+                } else if (act === "explode" || act === "lights" || act === "flow") {
                     var on = b.getAttribute("aria-pressed") !== "true";
                     b.setAttribute("aria-pressed", String(on));
                     if (act === "explode") ctl.setExplode(on);
