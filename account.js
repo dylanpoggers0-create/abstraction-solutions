@@ -71,7 +71,7 @@
             loadRewards(true);
         }
         if (!a) coinsFor = null;
-        fitTitle();
+        place();                              // the account button's width changed (Sign in / initial)
     }
     // keep the Menu button and this one side by side, whatever the Menu button's width
     function place() {
@@ -79,6 +79,8 @@
         if (tab) document.documentElement.style.setProperty('--menu-w', Math.round(tab.getBoundingClientRect().width) + 'px');
         const acct = document.querySelector('.acct-tab');
         if (acct) document.documentElement.style.setProperty('--acct-w', Math.round(acct.getBoundingClientRect().width) + 'px');
+        const coin = coinTab();     // joined to Account; the cart button sits just past it
+        document.documentElement.style.setProperty('--coin-w', (coin && !coin.hidden ? Math.round(coin.getBoundingClientRect().width) : 0) + 'px');
         fitTitle();
     }
     /* Keep the big title clear of the buttons on its right. The CSS size is a good guess; this measures what's
@@ -95,7 +97,7 @@
             name.classList.remove('is-two-line');
             let size = '', two = false, maxWord = 0;
             if (innerWidth > 700) {
-                const btns = ['.side-tab', '.acct-tab', '.coin-tab'].map(function (s) { return document.querySelector(s); })
+                const btns = ['.side-tab', '.acct-tab', '.coin-tab', '.cart-tab'].map(function (s) { return document.querySelector(s); })
                     .filter(function (b) { return b && !b.hidden && b.offsetWidth; });
                 const edge = Math.min.apply(null, btns.map(function (b) { return b.getBoundingClientRect().left; }).concat([innerWidth]));
                 const cs = getComputedStyle(name), fs = parseFloat(cs.fontSize);

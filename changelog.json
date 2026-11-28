@@ -153,5 +153,15 @@
             "A 3D model of the Family Plant Monitor: five houseplants with a moisture probe in every pot, a PVC drip line and a pump in a bucket under the shelf. Press Dry out a pot to watch one dry out, flip to Needs Water and get watered.",
             "A new video of the plant monitor, from the first dry pot to the daily email."
         ]
+    },
+    {
+        "date": "2026-11-27",
+        "title": "A cleaner Order page",
+        "items": [
+            "Ordering is at the top now: one Place an order panel with a slider between guest checkout (the default) and account checkout, then Find an order you placed.",
+            "A new button at the top takes you down to Things we've built, which is now a showcase: pick a project from the row of projects and it opens big, model beside its story.",
+            "A cart button in the header takes you straight to ordering from any page. Signed in, your coins and your account share one button.",
+            "The Price Optimization card is gone from the Order page."
+        ]
     }
 ]

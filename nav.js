@@ -60,7 +60,7 @@ const ACCOUNT_LABEL = (function () {
         return a && a.expires * 1000 > Date.now() ? 'Account' : 'Sign in';
     } catch (e) { return 'Sign in'; }
 })();
-// Signed in: your coin balance sits next to the Account button (account.js keeps it up to date).
+// Signed in: your coin balance is joined to the Account button, one pill (account.js keeps it up to date).
 // The last number seen in this browser shows straight away, so nothing jumps when the real one arrives.
 const COINS = (function () {
     if (ACCOUNT_LABEL !== 'Account') return null;
@@ -210,6 +210,9 @@ document.getElementById('site-nav').innerHTML =
     '<a href="' + BASE + 'services/education.html#rewards" class="coin-tab" data-rewards-open' + (COINS === null ? ' hidden' : '') +
         ' aria-label="Rewards: ' + (COINS || 0) + ' coins">' +
         '<img src="' + BASE + 'assets/coin.svg" alt="" width="24" height="24" decoding="async"><span class="coin-num">' + (COINS || 0) + '</span></a>' +
+
+    // the cart: straight to placing an order (or checking one) on the Order page
+    '<a href="' + BASE + 'order.html#newOrder" class="cart-tab" aria-label="Order: place or check an order" title="Order">' + svg('order') + '</a>' +
 
     // the side nav itself
     '<aside class="side-nav">' +

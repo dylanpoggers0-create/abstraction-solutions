@@ -134,3 +134,85 @@
         });
     });
 })();
+
+/* Showcase: a rail of projects (built from each card's h3 and data-thumb) and one featured project at a time.
+   Hidden cards stop counting as on screen, so their 3D models pause; their videos are paused here. Without
+   JavaScript the section stays a plain grid of every project. */
+(function () {
+    "use strict";
+    var section = document.getElementById("case-studies");
+    var rail = section && section.querySelector("[data-built-rail]");
+    var grid = section && section.querySelector(".built-grid");
+    if (!rail || !grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".built-card"));
+    if (cards.length < 2) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var current = -1;
+
+    var tabs = cards.map(function (card, i) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "rail-tab"; b.setAttribute("role", "tab");
+        b.id = "tab-" + card.id; b.setAttribute("aria-controls", card.id);
+        card.setAttribute("role", "tabpanel"); card.setAttribute("aria-labelledby", b.id);
+        var img = document.createElement("img");
+        img.src = card.getAttribute("data-thumb"); img.alt = ""; img.width = 40; img.height = 40; img.decoding = "async";
+        var name = document.createElement("span");
+        name.className = "rail-name"; name.textContent = card.querySelector("h3").textContent;
+        b.appendChild(img); b.appendChild(name);
+        b.addEventListener("click", function () { select(i); });
+        rail.appendChild(b);
+        return b;
+    });
+
+    // Previous · 2 of 6 · Next, under the featured project
+    var step = document.createElement("div");
+    step.className = "built-step";
+    function arrow(label, path, d) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "step-btn"; b.setAttribute("aria-label", label);
+        b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + path + '"/></svg>';
+        b.addEventListener("click", function () { select((current + d + cards.length) % cards.length, true); });
+        return b;
+    }
+    var count = document.createElement("span");
+    count.className = "step-count"; count.setAttribute("aria-live", "polite");
+    step.appendChild(arrow("Previous project", "M15 5l-7 7 7 7", -1));
+    step.appendChild(count);
+    step.appendChild(arrow("Next project", "M9 5l7 7-7 7", 1));
+    grid.parentNode.insertBefore(step, grid.nextSibling);
+
+    function select(i, fromArrow) {
+        if (i === current) return;
+        var dir = i > current ? "r" : "l";
+        if (fromArrow) dir = (i === (current + 1) % cards.length) ? "r" : "l";
+        cards.forEach(function (card, k) {
+            var on = k === i;
+            card.hidden = !on;
+            card.classList.remove("is-enter-r", "is-enter-l");
+            if (!on) Array.prototype.forEach.call(card.querySelectorAll("video"), function (v) { v.pause(); });
+            tabs[k].setAttribute("aria-selected", String(on));
+            tabs[k].tabIndex = on ? 0 : -1;
+        });
+        if (current >= 0 && !reduce) { void cards[i].offsetWidth; cards[i].classList.add("is-enter-" + dir); }
+        current = i;
+        count.textContent = (i + 1) + " of " + cards.length;
+        // keep the chosen tab in view inside the rail (without scrolling the page)
+        var t = tabs[i], left = t.offsetLeft - (rail.clientWidth - t.offsetWidth) / 2;
+        rail.scrollTo({ left: Math.max(0, left), behavior: reduce ? "auto" : "smooth" });
+    }
+
+    rail.addEventListener("keydown", function (e) {
+        var k = e.key, n = cards.length, to = null;
+        if (k === "ArrowRight") to = (current + 1) % n;
+        else if (k === "ArrowLeft") to = (current - 1 + n) % n;
+        else if (k === "Home") to = 0;
+        else if (k === "End") to = n - 1;
+        if (to === null) return;
+        e.preventDefault(); select(to); tabs[to].focus();
+    });
+
+    section.classList.add("is-showcase");
+    rail.hidden = false;
+    var fromHash = location.hash && cards.findIndex(function (c) { return "#" + c.id === location.hash; });
+    select(fromHash > 0 ? fromHash : 0);
+})();

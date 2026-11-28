@@ -398,3 +398,82 @@
     .mobile-cta.away { transform: translateY(140%); opacity: 0; pointer-events: none; }
     body { padding-bottom: 80px; }
 }
+
+/* ---------- PLACE AN ORDER: guest / account checkout switch (order-page.js) ---------- */
+.checkout-mode { display: flex; justify-content: center; margin: 2px 0 10px; }
+.cm-switch {
+    position: relative; display: grid; grid-template-columns: 1fr 1fr; width: min(100%, 440px); padding: 5px;
+    border-radius: 999px; border: 1px solid var(--line); background: #070b07; cursor: pointer; font: inherit;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.cm-switch::before {               /* the green thumb slides under the chosen side */
+    content: ""; position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc(50% - 5px); border-radius: 999px;
+    background: var(--green); box-shadow: 0 0 22px rgba(126, 233, 111, 0.35);
+    transition: transform 0.35s cubic-bezier(.34, 1.3, .64, 1);
+}
+.cm-switch[aria-checked="true"]::before { transform: translateX(100%); }
+.cm-switch:hover { border-color: var(--green-dim); }
+.cm-switch:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.cm-opt { position: relative; z-index: 1; padding: 11px 8px; font-weight: 800; font-size: 0.95rem; color: var(--text-muted); transition: color 0.25s ease; white-space: nowrap; }
+.cm-switch[aria-checked="false"] .cm-opt[data-opt="guest"], .cm-switch[aria-checked="true"] .cm-opt[data-opt="account"] { color: #041004; }
+.cm-note { text-align: center; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0 0 4px; }
+#signIn[hidden], #guestFormSlot[hidden] { display: none; }
+#signIn { animation: cm-in 0.3s ease; }
+#guestFormSlot { animation: cm-in 0.3s ease; }
+@keyframes cm-in { from { opacity: 0; transform: translateY(6px); } }
+@media (max-width: 420px) { .cm-opt { font-size: 0.86rem; } }
+
+/* ---------- the way down to "Things we've built": a sweeping green edge around three model thumbnails ---------- */
+@property --bt-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.built-teaser {
+    position: relative; isolation: isolate; display: flex; align-items: center; gap: 18px; text-align: left;
+    max-width: 632px; margin: 30px auto 0; padding: 14px 16px 14px 14px; border-radius: 24px;
+    color: var(--paper, #f5f8f4); text-decoration: none; background: #040704;
+    border: 1px solid rgba(245, 248, 244, 0.22);
+    box-shadow: 0 0 0 1px rgba(245, 248, 244, 0.04), 0 18px 50px -24px rgba(126, 233, 111, 0.45);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+}
+.built-teaser::before {            /* the sweeping edge */
+    content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px; z-index: -1; pointer-events: none;
+    background: conic-gradient(from var(--bt-a), transparent 0 62%, rgba(126, 233, 111, 0.15) 70%, #7ee96f 80%, #e9ffe2 83%, transparent 88%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: bt-sweep 4.5s linear infinite;
+}
+@keyframes bt-sweep { to { --bt-a: 360deg; } }
+.built-teaser:hover, .built-teaser:focus-visible {
+    border-color: rgba(126, 233, 111, 0.8); transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.12), 0 0 34px rgba(126, 233, 111, 0.35), 0 18px 50px -20px rgba(126, 233, 111, 0.6);
+}
+.built-teaser:focus-visible { outline: 2px solid var(--green); outline-offset: 4px; }
+.bt-thumbs { display: flex; flex: none; padding-left: 14px; }
+.bt-thumbs img {
+    width: 56px; height: 56px; margin-left: -14px; border-radius: 50%; object-fit: cover; object-position: 50% 60%;
+    border: 2px solid #040704; background: #0b120b; box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.35);
+    transition: margin 0.3s ease, transform 0.3s ease;
+}
+.built-teaser:hover .bt-thumbs img { margin-left: -6px; }
+.built-teaser:hover .bt-thumbs img:nth-child(2) { transform: translateY(-4px); }
+.bt-text { flex: 1; min-width: 0; }
+.bt-title { display: block; font-size: 1.2rem; font-weight: 800; }
+.bt-sub { display: block; margin-top: 2px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; }
+.bt-arrow {
+    flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--green); color: #041004; transition: transform 0.3s ease;
+}
+.bt-arrow svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.built-teaser:hover .bt-arrow { transform: translateY(3px); }
+@media (max-width: 600px) {
+    .built-teaser { gap: 12px; padding: 12px; margin-top: 24px; }
+    .bt-thumbs img { width: 44px; height: 44px; margin-left: -16px; }
+    .bt-title { font-size: 1.05rem; }
+    .bt-sub { font-size: 0.82rem; }
+    .bt-arrow { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .built-teaser::before { animation: none; --bt-a: 200deg; }
+    .built-teaser, .bt-thumbs img, .bt-arrow, .cm-switch::before { transition: none; }
+    #signIn, #guestFormSlot { animation: none; }
+}
+/* the ordering panels sit right under the hero now */
+.panels { margin-top: 34px; }

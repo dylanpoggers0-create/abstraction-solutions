@@ -1656,6 +1656,58 @@ a.pill.cta-main[class]:focus-visible {
 }
 .coin-tab.is-bump { scale: 1.12; }
 .acct-open .coin-tab, .nav-check:checked ~ .coin-tab, .rw-open .coin-tab { opacity: 0; pointer-events: none; }
+
+/* Signed in: coins and Account are one pill, the balance on the left half and your initial on the right
+   (each half still opens its own panel). The Account half shows just the initial, so the header has room for the cart. */
+.has-coins .coin-tab:not([hidden]) {
+    right: calc(28px + var(--menu-w, 112px) + 10px + var(--acct-w, 52px));
+    border-radius: 999px 0 0 999px; border-right: 0; padding-right: 12px;
+    border-color: rgba(245, 248, 244, 0.45);
+}
+.has-coins .acct-tab.is-signed-in {
+    padding: 0 12px 0 11px; height: 46px; border-radius: 0 999px 999px 0;
+    border-left-color: rgba(245, 248, 244, 0.22);
+}
+.has-coins .acct-tab.is-signed-in [data-account-label] { display: none; }
+
+/* the cart: one round button, left of Account (and coins), straight to ordering */
+.cart-tab {
+    position: fixed;
+    top: var(--bar-top, 30px);
+    right: calc(28px + var(--menu-w, 112px) + 10px + var(--acct-w, 108px) + var(--coin-w, 0px) + 10px);
+    z-index: 120;
+    display: grid; place-items: center;
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1px solid rgba(245, 248, 244, 0.45);
+    background: rgba(6, 9, 6, 0.72); color: var(--paper);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9), 0 0 24px -8px rgba(245, 248, 244, 0.25);
+    transition: border-color 0.2s ease, box-shadow 0.3s ease, color 0.2s ease, opacity 0.2s ease;
+}
+.cart-tab svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; margin-left: -2px; }
+.cart-tab:hover, .cart-tab:focus-visible {
+    border-color: var(--green); color: var(--green);
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9), 0 0 30px -4px rgba(126, 233, 111, 0.5);
+}
+.cart-tab:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+body[data-page="order"] .cart-tab { border-color: var(--green); color: var(--green); }   /* you're here */
+.acct-open .cart-tab, .nav-check:checked ~ .cart-tab, .rw-open .cart-tab { opacity: 0; pointer-events: none; }
+@media (max-width: 700px) {
+    /* phones: along the bottom left after Menu, Account and coins */
+    .has-coins .coin-tab:not([hidden]) {
+        right: auto; left: calc(16px + 52px + 10px + 52px);
+        border-radius: 0 999px 999px 0; border-right: 1px solid rgba(245, 248, 244, 0.45); border-left: 0; padding: 0 15px 0 10px;
+    }
+    .has-coins .acct-tab.is-signed-in { height: 52px; padding: 0; border-radius: 999px 0 0 999px; border-left-color: rgba(245, 248, 244, 0.45); border-right-color: rgba(245, 248, 244, 0.22); }
+    .cart-tab {
+        top: auto; right: auto;
+        left: calc(16px + 52px + 10px + 52px + var(--coin-w, 0px) + 10px);
+        bottom: calc(18px + env(safe-area-inset-bottom));
+        width: 52px; height: 52px;
+    }
+    .cart-tab svg { width: 22px; height: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { .cart-tab { transition: none; } }
 @media (max-width: 700px) {
     /* phones: the third button along the bottom left */
     .coin-tab {
@@ -2072,6 +2124,75 @@ a.pill.cta-main[class]:focus-visible {
 @media (prefers-reduced-motion: reduce) {
     .viewer.is-loading::after { animation: none; }
     .built-card { transition: none; }
+}
+/* Showcase (projects.page.js): a rail of projects and one featured project, model beside its story */
+.built.is-showcase { max-width: 1120px; }
+.built-rail[hidden] { display: none; }
+.built-rail {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin: 26px auto 0; padding: 6px 4px 12px; scrollbar-width: none;
+}
+.built-rail::-webkit-scrollbar { display: none; }
+.rail-tab {
+    flex: none; scroll-snap-align: center; display: inline-flex; align-items: center; gap: 10px;
+    padding: 5px 16px 5px 5px; border-radius: 999px; cursor: pointer; font: inherit; color: #dfe7df;
+    background: #050805; border: 1px solid rgba(245, 248, 244, 0.2);
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+}
+.rail-tab img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: 50% 60%; background: #0b120b; flex: none; }
+.rail-name { font-weight: 750; font-size: 0.92rem; white-space: nowrap; }
+.rail-tab:hover { border-color: rgba(126, 233, 111, 0.55); color: #fff; }
+.rail-tab:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.rail-tab[aria-selected="true"] {
+    color: #fff; border-color: var(--green); background: rgba(126, 233, 111, 0.12);
+    box-shadow: 0 0 0 1px rgba(126, 233, 111, 0.2), 0 0 24px rgba(126, 233, 111, 0.3);
+}
+.built.is-showcase .built-grid { display: block; margin-top: 18px; }
+.built.is-showcase .built-card[hidden] { display: none; }
+.built.is-showcase .built-card {
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); column-gap: 38px; align-content: start;
+    padding: 18px 18px 18px;
+}
+.built.is-showcase .built-stage { grid-column: 1; grid-row: 1 / span 8; order: 0; }
+.built.is-showcase .built-card > :not(.built-stage) { grid-column: 2; }
+.built.is-showcase .built-card .kind { order: 1; margin-top: 18px; }
+.built.is-showcase .built-card h3 { order: 2; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.1; margin: 10px 2px 12px; }
+.built.is-showcase .built-card > p { order: 3; flex: none; font-size: 1.04rem; line-height: 1.6; }
+.built.is-showcase .built-card .results { order: 4; margin-top: 18px; }
+.built.is-showcase .built-switch { order: 5; margin-top: 22px; }
+.built.is-showcase .built-tools { order: 6; }
+.built.is-showcase .built-card > .built-status { order: 7; margin-top: 10px; font-size: 0.9rem; line-height: 1.5; }
+.built.is-showcase .built-stage.is-picture { align-self: start; }
+.built-card.is-enter-r { animation: sc-in-r 0.45s cubic-bezier(.2, .8, .2, 1); }
+.built-card.is-enter-l { animation: sc-in-l 0.45s cubic-bezier(.2, .8, .2, 1); }
+@keyframes sc-in-r { from { opacity: 0; transform: translateX(40px); } }
+@keyframes sc-in-l { from { opacity: 0; transform: translateX(-40px); } }
+.built-step { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 18px; }
+.step-btn {
+    display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; cursor: pointer;
+    background: #050805; color: #fff; border: 1px solid rgba(245, 248, 244, 0.35); transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.3s ease;
+}
+.step-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.step-btn:hover, .step-btn:focus-visible { border-color: var(--green); color: var(--green); box-shadow: 0 0 22px rgba(126, 233, 111, 0.35); }
+.step-count { min-width: 64px; text-align: center; color: var(--text-muted); font-variant-numeric: tabular-nums; font-weight: 600; }
+@media (max-width: 860px) {
+    /* phones and tablets: one row that scrolls sideways, fading at the edge so it reads as more */
+    .built-rail { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x proximity;
+                  -webkit-mask: linear-gradient(90deg, #000 85%, transparent); mask: linear-gradient(90deg, #000 85%, transparent); }
+    .built.is-showcase .built-card { grid-template-columns: minmax(0, 1fr); padding: 14px 14px 22px; }
+    .built.is-showcase .built-stage, .built.is-showcase .built-card > :not(.built-stage) { grid-column: 1; grid-row: auto; }
+    .built.is-showcase .built-card .kind { margin-top: 16px; }
+    .built.is-showcase .built-switch { order: 1; margin-top: 14px; }      /* model / video controls stay under the stage */
+    .built.is-showcase .built-tools { order: 1; }
+    .built.is-showcase .built-card > .built-status { order: 1; margin-top: 8px; }
+    .built.is-showcase .built-card .kind { order: 2; }
+    .built.is-showcase .built-card h3 { order: 3; }
+    .built.is-showcase .built-card > p { order: 4; }
+    .built.is-showcase .built-card .results { order: 5; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .built-card.is-enter-r, .built-card.is-enter-l { animation: none; }
+    .rail-tab, .step-btn { transition: none; }
 }
 
 /* ---------- homepage: small "Giving back" panel pointing to give.html ---------- */

@@ -105,11 +105,40 @@
         return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
     };
 
-    // ---------- THE THREE PANELS ----------
-    const signInPanel = document.getElementById('signIn');
+    // ---------- THE TWO PANELS: Place an order (with the guest / account switch) and Find an order ----------
+    const signInPanel = document.getElementById('signIn');        // the account side of Place an order
     const newOrderPanel = document.getElementById('newOrder');
     const lookupPanel = document.getElementById('lookup');
-    const allPanels = [signInPanel, newOrderPanel, lookupPanel];
+    const allPanels = [newOrderPanel, lookupPanel];
+
+    // Guest or account checkout. Guest is the default; signed in, it starts on their account.
+    const modeSwitch = document.getElementById('checkoutMode');
+    const modeBox = document.querySelector('.checkout-mode');
+    const modeNote = document.getElementById('checkoutModeNote');
+    let checkoutMode = 'guest';
+    function setMode(mode) {
+        checkoutMode = mode === 'account' ? 'account' : 'guest';
+        const account = checkoutMode === 'account';
+        modeSwitch.setAttribute('aria-checked', String(account));
+        modeBox.setAttribute('data-checkout-mode', checkoutMode);
+        signInPanel.hidden = !account;
+        document.getElementById('guestFormSlot').hidden = account;
+        modeNote.textContent = !account
+            ? 'No account needed. We email you a confirmation number to check on your order.'
+            : currentAccount() ? 'Orders you place here stay together in your account.'
+            : 'Sign in with Google or an emailed link. No password, and your orders and quotes stay in one place.';
+        placeOrderForm();
+    }
+    // open Place an order on one side: links to #signIn, the sign-in email link, "Accept this quote"
+    function openCheckout(mode) {
+        setMode(mode);
+        newOrderPanel.open = true;
+    }
+    // a click on either side picks that side; Space / Enter (and taps on the edge) flip it
+    modeSwitch.addEventListener('click', function (e) {
+        const opt = e.detail > 0 && e.target.closest('.cm-opt');
+        setMode(opt ? opt.getAttribute('data-opt') : checkoutMode === 'account' ? 'guest' : 'account');
+    });
 
     // opening one panel closes the others
     allPanels.forEach(function (panel) {
@@ -135,8 +164,11 @@
             history.replaceState(null, '', '#' + panel.id);
         });
     });
-    if (location.hash === '#newOrder') document.getElementById('newOrder').open = true;
-    if (location.hash === '#signIn') document.getElementById('signIn').open = true;   // "Sign in to save your progress" links here
+    if (location.hash === '#newOrder') newOrderPanel.open = true;            // the cart button in the header
+    window.addEventListener('hashchange', function () {                      // the cart clicked while already here
+        if (location.hash === '#newOrder') { newOrderPanel.open = true; newOrderPanel.scrollIntoView({ block: 'start' }); }
+    });
+    if (location.hash === '#signIn') { checkoutMode = 'account'; newOrderPanel.open = true; }   // "Sign in to save your progress" links here
     // phones: show the bottom button only while the top one is off screen and the order form is closed
     (function () {
         const bar = document.querySelector('.mobile-cta'), top = document.querySelector('.order-main-cta'), form = document.getElementById('newOrder');
@@ -180,13 +212,13 @@
         renderAccount();
     }
 
-    // The order form lives in one place at a time: inside "Sign in to checkout" when signed in, else "Checkout as guest"
+    // The order form lives in one place at a time: on the account side once signed in and switched there, else guest
     function placeOrderForm() {
         const account = currentAccount();
         const block = document.getElementById('orderBlock');
         const emailBox = document.getElementById('email');
         const nameBox = document.getElementById('name');
-        if (account && !newOrderPanel.open) {
+        if (account && checkoutMode === 'account') {
             document.getElementById('accountFormSlot').appendChild(block);
             emailBox.value = account.email;
             emailBox.readOnly = true;            // signed-in orders always use the account's email
@@ -201,8 +233,6 @@
         const account = currentAccount();
         document.getElementById('signedOut').hidden = !!account;
         document.getElementById('signedInBox').hidden = !account;
-        signInPanel.querySelector('.panel-sub').textContent = account
-            ? 'Signed in as ' + account.email : 'Keep your orders and quotes in one place';
         document.getElementById('lookupMine').hidden = !account;
         document.getElementById('lookupManual').hidden = !!account;
         lookupPanel.querySelector('.panel-sub').textContent = account
@@ -213,7 +243,7 @@
             document.getElementById('lookupMineEmail').textContent = account.email;
             loadMyOrders();
         }
-        placeOrderForm();
+        setMode(checkoutMode);                // the note and where the order form sits
     }
 
     // The account's permanent 8-digit user ID (a label, not a password). Older saved sign-ins don't have it yet,
@@ -360,7 +390,7 @@
         const linkCode = location.hash.startsWith('#signin=') ? location.hash.slice(8) : '';
         if (!linkCode) return;
         history.replaceState(null, '', location.pathname + location.search);   // take the code out of the address bar
-        signInPanel.open = true;
+        openCheckout('account');
         finishSignIn('/auth/email/verify', { token: linkCode });
     }
     signInFromLink();
@@ -485,6 +515,7 @@
         });
     })();
 
+    if (currentAccount()) checkoutMode = 'account';    // signed in: start on their account (signed out, guest is the default)
     renderAccount();
 
     // "Accept this quote" on the home page sends ?service=...&details=... : fill in and open an order panel
@@ -494,7 +525,7 @@
         const wanted = fromQuote.get('service');
         if ([...serviceBox.options].some(function (o) { return o.value === wanted; })) serviceBox.value = wanted;
         document.getElementById('details').value = fromQuote.get('details').slice(0, 3000);
-        (currentAccount() ? signInPanel : newOrderPanel).open = true;
+        openCheckout(currentAccount() ? 'account' : 'guest');
         document.getElementById(currentAccount() ? 'service' : 'name').focus();
     }
 
