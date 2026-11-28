@@ -345,7 +345,25 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "Start your AI project with a free instant quote.",
-"text": "Home › Order\nORDER\nDescribe the work, get an estimate in seconds, and keep the final scope in email so you stay in control of what we build.\nGet a free instant quote Check an existing order\nI represent a nonprofit — show my 50% estimate\nGet a free instant quote\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack."
+"text": "Home › Order\nORDER\nDescribe the work, get an estimate in seconds, and keep the final scope in email so you stay in control of what we build.\nGet a free instant quote\nI represent a nonprofit — show my 50% estimate\nGet a free instant quote\n25% off your project quote when you order by Fri Nov 13. Nonprofits keep 50%, and the two don't stack.\nSee what we've built Spin the 3D models, press their buttons, watch them work"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Start your AI project with a free instant quote.",
+"text": "e 3D models, press their buttons, watch them work\nPlace an order Tell us about your project\nNo account needed. We email you a confirmation number to check on your order.\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as User ID:"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Your orders",
+"text": "Find an order you placed See the status and quote of an existing order\nSigned in as . Pick an order to see its status, quote and payments.\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement\nSigned in? You can save your card at checkout so it's filled in next time. Stripe keeps it, not us, and you can remove it whenever you pay.\nCHANGE REQUESTS"
+},
+{
+"url": "https://abstraction-solutions.com/order.html",
+"title": "Free Instant AI Project Quote",
+"heading": "Your orders",
+"text": "u can remove it whenever you pay.\nCHANGE REQUESTS\nCANCEL THIS PROJECT\nYou can cancel anytime, and nothing more will be due. If you've paid for a stage we haven't started, it comes back to you under our refund policy ."
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -381,31 +399,13 @@
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "School Information Chatbot",
-"text": "A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.\nSourced answers from the school's own information\nAll faculty have it deployed\nMACHINE LEARNING · RETAIL"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Free Instant AI Project Quote",
-"heading": "Price Optimization & Data Cleanup",
-"text": "Automatic sales-data cleanup plus a model that suggests prices that raise profit without losing sales.\nWeekly used in real pricing decisions\nAI EDUCATION · INTERACTIVE"
+"text": "A school chatbot that looks up the answer in the school's own information before it replies, so it doesn't guess.\nSourced answers from the school's own information\nAll faculty have it deployed\nAI EDUCATION · INTERACTIVE"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
 "title": "Free Instant AI Project Quote",
 "heading": "AI Playground",
-"text": "Free demos that run in your browser: type an equation and watch gradient descent roll downhill, or type a phrase and watch a genetic algorithm evolve it. Open the AI Playground\nFree runs right in your browser\nTell us your idea: get a free instant quote\nSign in to checkout Keep your orders and quotes in one place\nor\nNo password needed. The link works once and expires in 15 minutes.\nSigned in as User ID:"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Free Instant AI Project Quote",
-"heading": "Your orders",
-"text": "Checkout as guest Tell us about your project, no account needed\nFind an order you placed See the status and quote of an existing order\nSigned in as . Pick an order to see its status, quote and payments.\nEnter the email you ordered with and the 8-digit confirmation number from your email.\nCONFIRMATION NUMBER\nService\nOrdered\nStatus\nQuote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement"
-},
-{
-"url": "https://abstraction-solutions.com/order.html",
-"title": "Free Instant AI Project Quote",
-"heading": "Your orders",
-"text": "ote\nPAYMENTS\nSERVICE AGREEMENT\nRead the agreement\nSigned in? You can save your card at checkout so it's filled in next time. Stripe keeps it, not us, and you can remove it whenever you pay.\nCHANGE REQUESTS\nCANCEL THIS PROJECT\nYou can cancel anytime, and nothing more will be due. If you've paid for a stage we haven't started, it comes back to you under our refund policy ."
+"text": "Free demos that run in your browser: type an equation and watch gradient descent roll downhill, or type a phrase and watch a genetic algorithm evolve it. Open the AI Playground\nFree runs right in your browser\nTell us your idea: get a free instant quote"
 },
 {
 "url": "https://abstraction-solutions.com/order.html",
@@ -1858,5 +1858,17 @@
 "title": "Changelog",
 "heading": "What's new",
 "text": "mail Cyberdeck, HydroCart and our new pantry app.\n2026-11-26: Family Plant Monitor, on the Order page. A 3D model of the Family Plant Monitor: five houseplants with a moisture probe in every pot, a PVC drip line and a pump in a bucket under the shelf. Press Dry out a pot to watch one dry out, flip to Needs Water and get watered. A new video of the plant monitor, from the first dry pot to the daily email."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "2026-11-27: A cleaner Order page. Ordering is at the top now: one Place an order panel with a slider between guest checkout (the default) and account checkout, then Find an order you placed. A new button at the top takes you down to Things we've built, which is now a showcase: pick a project from the row of projects and it opens big, model beside its story. A cart button in the header takes you straight to ordering from any page."
+},
+{
+"url": "https://abstraction-solutions.com/changelog.html",
+"title": "Changelog",
+"heading": "What's new",
+"text": "der takes you straight to ordering from any page. Signed in, your coins and your account share one button. The Price Optimization card is gone from the Order page."
 }
 ]
