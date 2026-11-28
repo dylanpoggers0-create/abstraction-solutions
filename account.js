@@ -73,7 +73,7 @@
         if (!a) coinsFor = null;
         place();                              // the account button's width changed (Sign in / initial)
     }
-    // keep the Menu button and this one side by side, whatever the Menu button's width
+    // measure the buttons: the title starts past Menu (left) and stops before Account, coins and the cart (right)
     function place() {
         const tab = document.querySelector('.side-tab');
         if (tab) document.documentElement.style.setProperty('--menu-w', Math.round(tab.getBoundingClientRect().width) + 'px');
@@ -97,8 +97,9 @@
             name.classList.remove('is-two-line');
             let size = '', two = false, maxWord = 0;
             if (innerWidth > 700) {
+                // the buttons to the title's right (Menu sits to its left, so it never limits the width)
                 const btns = ['.side-tab', '.acct-tab', '.coin-tab', '.cart-tab'].map(function (s) { return document.querySelector(s); })
-                    .filter(function (b) { return b && !b.hidden && b.offsetWidth; });
+                    .filter(function (b) { return b && !b.hidden && b.offsetWidth && b.getBoundingClientRect().left > innerWidth / 2; });
                 const edge = Math.min.apply(null, btns.map(function (b) { return b.getBoundingClientRect().left; }).concat([innerWidth]));
                 const cs = getComputedStyle(name), fs = parseFloat(cs.fontSize);
                 // the name's natural width at the CSS size (its letters may be locked to an older size)

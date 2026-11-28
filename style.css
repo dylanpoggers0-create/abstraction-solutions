@@ -175,7 +175,7 @@ body {
     border-right: 1px solid var(--nav-line);
     box-shadow: 8px 0 40px rgba(0, 0, 0, 0.6);
     transform: translateX(-105%);     /* hidden off the left edge */
-    transition: transform 0.35s ease;
+    transition: transform 0.5s cubic-bezier(.22, 1, .36, 1);   /* fast start, long soft landing */
 }
 
 .nav-check:checked ~ .side-nav {
@@ -319,7 +319,7 @@ body {
     background-color: rgba(0, 0, 0, 0.55);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s cubic-bezier(.22, 1, .36, 1);
     cursor: pointer;
 }
 
@@ -589,7 +589,7 @@ footer { padding-bottom: calc(40px + env(safe-area-inset-bottom)); }
 @view-transition { navigation: auto; }
 .header-container { view-transition-name: site-header; }
 .side-tab { view-transition-name: menu-tab; }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.22s; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.32s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
 @media (prefers-reduced-motion: reduce) {
     @view-transition { navigation: none; }
 }
@@ -980,10 +980,10 @@ p, li { text-wrap: pretty; }
     will-change: translate;
 }
 
-/* ---------- the menu button: a white pill pinned top right ---------- */
+/* ---------- the menu button: a white pill pinned top left, on the side the menu slides out from ---------- */
 .side-tab {
-    left: auto !important;
-    right: 28px;
+    left: calc(28px + env(safe-area-inset-left)) !important;
+    right: auto;
     top: var(--bar-top, 30px) !important;
     transform: none !important;
     flex-direction: row !important;
@@ -997,7 +997,7 @@ p, li { text-wrap: pretty; }
                 0 18px 40px -18px rgba(0, 0, 0, 0.9),
                 0 0 40px -6px rgba(126, 233, 111, 0.35) !important;
     corner-shape: round;   /* a squircle at full radius looks boxy */
-    transition: background-color 0.35s ease, box-shadow 0.45s ease, opacity 0.2s ease,
+    transition: background-color 0.35s ease, box-shadow 0.45s ease, opacity 0.35s cubic-bezier(.22, 1, .36, 1),
                 scale 0.45s cubic-bezier(.34, 1.56, .64, 1) !important;
 }
 .side-tab span {
@@ -1372,7 +1372,7 @@ a.pill.cta-main[class]:focus-visible {
 .acct-tab {
     position: fixed;
     top: var(--bar-top, 30px);
-    right: calc(28px + var(--menu-w, 112px) + 10px);
+    right: 28px;
     z-index: 120;
     display: inline-flex;
     align-items: center;
@@ -1627,7 +1627,7 @@ a.pill.cta-main[class]:focus-visible {
 .coin-tab {
     position: fixed;
     top: var(--bar-top, 30px);
-    right: calc(28px + var(--menu-w, 112px) + 10px + var(--acct-w, 138px) + 10px);
+    right: calc(28px + var(--acct-w, 138px) + 10px);
     z-index: 120;
     display: inline-flex;
     align-items: center;
@@ -1660,7 +1660,7 @@ a.pill.cta-main[class]:focus-visible {
 /* Signed in: coins and Account are one pill, the balance on the left half and your initial on the right
    (each half still opens its own panel). The Account half shows just the initial, so the header has room for the cart. */
 .has-coins .coin-tab:not([hidden]) {
-    right: calc(28px + var(--menu-w, 112px) + 10px + var(--acct-w, 52px));
+    right: calc(28px + var(--acct-w, 52px));
     border-radius: 999px 0 0 999px; border-right: 0; padding-right: 12px;
     border-color: rgba(245, 248, 244, 0.45);
 }
@@ -1674,7 +1674,7 @@ a.pill.cta-main[class]:focus-visible {
 .cart-tab {
     position: fixed;
     top: var(--bar-top, 30px);
-    right: calc(28px + var(--menu-w, 112px) + 10px + var(--acct-w, 108px) + var(--coin-w, 0px) + 10px);
+    right: calc(28px + var(--acct-w, 108px) + var(--coin-w, 0px) + 10px);
     z-index: 120;
     display: grid; place-items: center;
     width: 46px; height: 46px; border-radius: 50%;
@@ -2208,4 +2208,26 @@ body[data-page="order"] .cart-tab { border-color: var(--green); color: var(--gre
 .give-promo .pill { flex: none; white-space: nowrap; }
 @media (max-width: 700px) {
     .give-promo { flex-direction: column; align-items: flex-start; margin: 30px 22px 10px 44px; padding: 20px; }
+}
+
+/* ---------- smooth drop-downs: <details> grows and shrinks instead of jumping (newer browsers; others open instantly) ---------- */
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+    .panel, .faq-item, .model-pill, .agree-read { interpolate-size: allow-keywords; }
+    .panel::details-content, .faq-item::details-content, .model-pill::details-content, .agree-read::details-content {
+        block-size: 0; overflow: clip; opacity: 0;
+        transition: block-size 0.45s cubic-bezier(.22, 1, .36, 1), opacity 0.35s ease, content-visibility 0.45s allow-discrete;
+    }
+    .panel[open]::details-content, .faq-item[open]::details-content, .model-pill[open]::details-content, .agree-read[open]::details-content {
+        block-size: auto; opacity: 1;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .panel::details-content, .faq-item::details-content, .model-pill::details-content, .agree-read::details-content { transition: none; }
+    .side-nav, .nav-overlay { transition-duration: 0.01s; }
+}
+
+/* Menu sits top left (wider than a phone, touch tablets too): the logo and title start just past it.
+   Last in the file so it wins over the touch-screen header padding above. */
+@media (min-width: 701px) {
+    .header-wrapper { padding-left: calc(28px + var(--menu-w, 112px) + 30px + env(safe-area-inset-left)) !important; }
 }
