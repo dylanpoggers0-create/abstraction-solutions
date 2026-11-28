@@ -26,7 +26,6 @@
 }
 
 .hero-text { max-width: 860px; }
-.hero-text p { font-size: 1.3rem; max-width: 600px; }
 
 .hero-text h1 span {
     color: var(--green);

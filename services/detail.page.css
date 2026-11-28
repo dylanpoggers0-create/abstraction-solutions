@@ -1,4 +1,4 @@
-/* Styles only automation.html use.
+/* Styles the Services detail pages share (automation.html, models.html, workflows.html; each also loads its own extras).
    Moved out of the HTML so pages are smaller and the browser can cache it. Edit this file, then run python3 tools/minify.py. */
 main {
     max-width: 820px;
@@ -110,7 +110,8 @@ main .pill-container {
     margin-top: 10px;
 }
 
-.project img {
+.project img,
+.project video {
     width: 100%;
     display: block;
     border-radius: 16px;

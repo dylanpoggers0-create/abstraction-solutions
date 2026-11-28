@@ -2184,11 +2184,10 @@ body[data-page="order"] .cart-tab { border-color: var(--green); color: var(--gre
                   -webkit-mask: linear-gradient(90deg, #000 85%, transparent); mask: linear-gradient(90deg, #000 85%, transparent); }
     .built.is-showcase .built-card { grid-template-columns: minmax(0, 1fr); padding: 14px 14px 22px; }
     .built.is-showcase .built-stage, .built.is-showcase .built-card > :not(.built-stage) { grid-column: 1; grid-row: auto; }
-    .built.is-showcase .built-card .kind { margin-top: 16px; }
     .built.is-showcase .built-switch { order: 1; margin-top: 14px; }      /* model / video controls stay under the stage */
     .built.is-showcase .built-tools { order: 1; }
     .built.is-showcase .built-card > .built-status { order: 1; margin-top: 8px; }
-    .built.is-showcase .built-card .kind { order: 2; }
+    .built.is-showcase .built-card .kind { order: 2; margin-top: 16px; }
     .built.is-showcase .built-card h3 { order: 3; }
     .built.is-showcase .built-card > p { order: 4; }
     .built.is-showcase .built-card .results { order: 5; }

@@ -1,4 +1,4 @@
-/* Styles only the legal pages (privacy, terms, returns) use.
+/* Styles the legal pages (privacy, terms, returns) and dpa.html use.
    Moved out of the HTML so pages are smaller and the browser can cache it. Edit this file, then run python3 tools/minify.py. */
 .hero { padding: 150px 24px 10px; text-align: center; }
 .eyebrow { color: var(--green); font-size: 0.8rem; font-weight: bold; letter-spacing: 3px; }

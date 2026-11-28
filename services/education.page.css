@@ -460,6 +460,7 @@ main h2 {
 @media (max-width: 600px) {
     main {
         padding-top: 105px;
+        padding-left: 40px;   /* extra room on the left for the Menu tab */
     }
 
     .page-intro h1 {
@@ -474,10 +475,6 @@ main h2 {
         gap: 12px;
     }
     .gallery.shorts figcaption span:last-child { display: none; }   /* keep phone cards short */
-
-    main {
-        padding-left: 40px;   /* extra room on the left for the Menu tab */
-    }
 }
 .edu-faq .faq-item { border-bottom: 1px solid var(--line, #1e2a20); padding: 4px 0; }
 .edu-faq summary { cursor: pointer; padding: 12px 0; font-weight: bold; }
@@ -554,10 +551,10 @@ main h2 {
     position: fixed; inset: 0; z-index: 900;
     display: grid; place-items: center;
     background: rgba(0, 0, 0, 0);
-    transition: background-color 0.3s ease;
+    -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0);
+    transition: background-color 0.3s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease;
     cursor: pointer;
 }
-.vp-overlay { -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); transition: background-color 0.3s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease; }
 .vp-overlay.is-in { background: rgba(0, 0, 0, 0.5); -webkit-backdrop-filter: blur(12px) saturate(0.9); backdrop-filter: blur(12px) saturate(0.9); }
 .vp-overlay.is-leaving { background: rgba(0, 0, 0, 0); -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); transition-duration: 0.6s; }
 .vp-shock { position: absolute; inset: 7%; border-radius: 50%; border: 3px solid rgba(126, 233, 111, 0.9); box-shadow: 0 0 24px rgba(126, 233, 111, 0.7); pointer-events: none; }

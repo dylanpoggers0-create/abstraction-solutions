@@ -20,7 +20,7 @@
 /* ---------- THE TWO DROP-DOWN PANELS ---------- */
 .panels {
     max-width: 680px;
-    margin: 30px auto 60px;
+    margin: 34px auto 60px;
     padding: 0 24px;
     display: flex;
     flex-direction: column;
@@ -359,7 +359,7 @@
 /* SEO plan additions: breadcrumb, CTAs, pricing box, trust row, FAQ */
 .crumbs { font-size: 0.85rem; color: var(--text-muted, #9aa59b); margin-bottom: 14px; }
 .crumbs a { color: inherit; } .crumbs a:hover { color: var(--green, #7ee96f); }
-.order-ctas { justify-content: center; margin-top: 18px; }
+.order-ctas { justify-content: center; margin-top: 18px; margin-bottom: 0; }
 .agree-box { margin: 18px 0 6px; }
 .agree-status { margin: 4px 0 8px; }
 .agree-read summary { cursor: pointer; color: var(--green, #7ee96f); font-weight: bold; padding: 6px 0; }
@@ -381,7 +381,6 @@
 .np-box { border-color: var(--green, #7ee96f); }
 .order-info a { color: var(--green, #7ee96f); }
 .order-info .trust-row a { color: inherit; }
-.order-ctas { margin-bottom: 0; }
 .trust-row { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .trust-row li { border: 1px solid var(--line, #1e2a20); border-radius: 999px; padding: 6px 14px; font-size: 0.88rem; }
 .trust-row a { color: inherit; }
@@ -475,5 +474,3 @@
     .built-teaser, .bt-thumbs img, .bt-arrow, .cm-switch::before { transition: none; }
     #signIn, #guestFormSlot { animation: none; }
 }
-/* the ordering panels sit right under the hero now */
-.panels { margin-top: 34px; }
