@@ -2050,6 +2050,9 @@ body[data-page="order"] .cart-tab { border-color: var(--green); color: var(--gre
     .qz-mark.is-done { animation: none; }
 }
 
+/* a form field only bots fill in (the server turns those away): off screen for people and screen readers */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
 /* ---------------------------------------------------------
    ORDER PAGE: "Things we've built" (3D models in projects3d.js, switches in projects.page.js)
    --------------------------------------------------------- */

@@ -242,6 +242,12 @@
                         <textarea id="details" name="details" required minlength="20" maxlength="3000"
                             placeholder="What should we build? If you are a nonprofit, say so. Any deadline?"></textarea>
 
+                        <!-- hidden from people; spam bots fill it in, and the server turns those orders away -->
+                        <div class="hp" aria-hidden="true">
+                            <label for="orderWebsite">Website</label>
+                            <input type="text" id="orderWebsite" name="website" tabindex="-1" autocomplete="off">
+                        </div>
+
                         <label class="agree agree-tick" for="termsAccepted">
                             <input type="checkbox" id="termsAccepted" name="terms_accepted" value="true" required>
                             <span>I agree to the <a href="terms.html" target="_blank">Terms of Service &amp; Refund Policy</a>

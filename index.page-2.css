@@ -29,4 +29,3 @@
 .signup-card .signup-status { min-height: 1.4em; margin: 14px 0 0; font-size: 0.9rem; }
 .signup-card .signup-status.ok { color: #00ff66; }
 .signup-card .signup-status.err { color: #ff8080; }
-.signup-card .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

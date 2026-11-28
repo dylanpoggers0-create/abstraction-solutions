@@ -919,10 +919,26 @@ const CHAT_ON = true;
         ask(input.value.trim());
     });
 
+    // Junk and floods get a short reply instead of a search (the same checks the server runs on quotes and orders)
+    const askTimes = [];
+    function junkQuestion(q) {
+        const letters = (q.match(/\p{L}/gu) || []).length, words = q.toLowerCase().match(/\p{L}{2,}/gu) || [];
+        const long = words.filter(function (w) { return w.length >= 5; });
+        return letters < Math.max(2, q.length * 0.45) || /(.)\1{7,}/.test(q) ||
+            (q.match(/https?:\/\/|www\./gi) || []).length > 1 ||
+            (words.length >= 8 && new Set(words).size < words.length / 5) ||
+            (long.length >= 3 && long.filter(function (w) { return !/[aeiouyáéíóúàèìòùäëïöü]/.test(w); }).length / long.length > 0.4);
+    }
     async function ask(q) {
         if (q.length < 2) return;
+        const now = Date.now();
+        while (askTimes.length && now - askTimes[0] > 60000) askTimes.shift();
+        if (askTimes.length && now - askTimes[askTimes.length - 1] < 1200) return;     // a double press, or holding Enter
+        if (askTimes.length >= 15) { say('bot', 'That\'s a lot of questions at once. Give me a minute, then ask again.'); pin(); return; }
+        askTimes.push(now);
         say('me', q);
         input.value = '';
+        if (junkQuestion(q)) { say('bot', 'Ask me a question in words and I\'ll look it up on the site.'); pin(); return; }
         const m = say('bot', '');
         if (window.CrisisSupport && CrisisSupport.test(q)) {      // help first, no search results
             m.appendChild(CrisisSupport.card());

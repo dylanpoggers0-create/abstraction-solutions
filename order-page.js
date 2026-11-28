@@ -70,8 +70,12 @@
                 throw new Error('Your sign-in expired. Please sign in again (your order was not sent).');
             }
 
-            if (response.status === 422) throw new Error('Please check your email and give at least 20 characters of detail.');
-            if (response.status === 429) throw new Error('Too many orders from you today. Please email us instead.');
+            if (response.status === 422 || response.status === 429) {
+                // the server's own words when it gives them (junk or a repeated order), else the usual hint
+                const said = await response.json().then(function (r) { return typeof r.detail === 'string' ? r.detail : ''; }, function () { return ''; });
+                throw new Error(said || (response.status === 422 ? 'Please check your email and give at least 20 characters of detail.'
+                                                                 : 'Too many orders from you today. Please email us instead.'));
+            }
             if (!response.ok) throw new Error('Something went wrong on our end. Please try again or email us.');
 
             const result = await response.json();  // { ok: true, confirmation: "12345678" }
@@ -877,7 +881,10 @@
                 body: JSON.stringify(payload)
             });
             const data = await response.json().catch(function () { return {}; });
-            if (response.status === 422) throw new Error('Please describe the change in at least 10 characters.');
+            if (response.status === 422) {
+                const said = await response.json().then(function (r) { return typeof r.detail === 'string' ? r.detail : ''; }, function () { return ''; });
+                throw new Error(said || 'Please describe the change in at least 10 characters.');
+            }
             if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Something went wrong. Please try again.');
             doneWith('change');
             if (data.support && window.CrisisSupport) CrisisSupport.show(note, data.support);
